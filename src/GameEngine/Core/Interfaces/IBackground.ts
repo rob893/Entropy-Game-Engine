@@ -1,0 +1,3 @@
+interface IBackground {
+    render(): void;
+}
