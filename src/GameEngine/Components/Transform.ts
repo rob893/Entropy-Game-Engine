@@ -4,6 +4,8 @@ class Transform extends Component {
     public height: number = 0;
     //Position is the top left of the agent with width growing right and height growing down.
     public readonly position: Vector2;
+    //Rotation in radians
+    public rotation: number;
 
     private readonly onMove = new LiteEvent<void>();
 
@@ -13,11 +15,12 @@ class Transform extends Component {
         this.width = width;
         this.height = height;
         this.position = new Vector2(x, y);
+        this.rotation = 0;
     }
 
-    public translate(xVelocity: number, yVelocity: number, speed: number): void {
-        this.position.x += xVelocity * speed;
-        this.position.y += yVelocity * speed;
+    public translate(xVelocity: number, yVelocity: number, speed: number = 1): void {
+        this.position.x += xVelocity * Time.DeltaTime; //* speed;
+        this.position.y += yVelocity * Time.DeltaTime; //* speed;
         this.onMove.trigger();
     }
 

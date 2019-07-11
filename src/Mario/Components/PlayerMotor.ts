@@ -52,6 +52,10 @@ class PlayerMotor extends Motor {
         this.transform.translate(this.xVelocity, this.yVelocity, this.speed);
     }
 
+    private jump(): void {
+        
+    }
+
     private onKeyDown(event: KeyboardEvent) {
         if (event.keyCode == Keys.UP) {
             this.movingUp = true;

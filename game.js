@@ -638,6 +638,7 @@ class Player extends GameObject {
         let playerComponents = [];
         playerComponents.push(new RectangleCollider(this));
         playerComponents.push(new PlayerMotor(this));
+        playerComponents.push(new Rigidbody(this));
         playerComponents.push(new Animator(this, "./src/Mario/Resources/mario.png", 4, 1));
         this.setComponents(playerComponents);
     }
