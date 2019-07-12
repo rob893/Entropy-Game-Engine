@@ -117,10 +117,9 @@ class GameObject {
         }
         return this.componentMap.get(componentType);
     }
-    addComponent(component) {
-        let newComponent = new component;
+    addComponent(newComponent) {
         if (this.componentMap.has(newComponent.constructor.name)) {
-            throw new Error("There is already a component of type " + component.constructor.name + " on this object!");
+            throw new Error("There is already a component of type " + newComponent.constructor.name + " on this object!");
         }
         this.components.push(newComponent);
         this.componentMap.set(newComponent.constructor.name, newComponent);
@@ -445,6 +444,15 @@ class Transform extends Component {
         this.position = new Vector2(x, y);
         this.rotation = 0;
     }
+    get onMoved() {
+        return this.onMove.expose();
+    }
+    get center() {
+        return new Vector2(this.position.x + (this.width / 2), this.position.y + (this.height / 2));
+    }
+    get bottomCenter() {
+        return new Vector2(this.position.x + (this.width / 2), this.position.y + this.height);
+    }
     translate(translation) {
         this.position.x += translation.x;
         this.position.y += (-1 * translation.y);
@@ -454,15 +462,6 @@ class Transform extends Component {
         this.position.x = x;
         this.position.y = y;
         this.onMove.trigger();
-    }
-    get onMoved() {
-        return this.onMove.expose();
-    }
-    getCenter() {
-        return new Vector2(this.position.x + (this.width / 2), this.position.y + (this.height / 2));
-    }
-    getBottomCenter() {
-        return new Vector2(this.position.x + (this.width / 2), this.position.y + this.height);
     }
 }
 class Motor extends Component {
@@ -568,10 +567,10 @@ class ComputerMotor extends Motor {
         else {
             this.timer += Time.DeltaTime;
             if (this.timer > 0.15) {
-                if (this.transform.getCenter().y < this.ballTransform.getCenter().y - 10) {
+                if (this.transform.center.y < this.ballTransform.center.y - 10) {
                     this.yVelocity = -1;
                 }
-                else if (this.transform.getCenter().y > this.ballTransform.getCenter().y + 10) {
+                else if (this.transform.center.y > this.ballTransform.center.y + 10) {
                     this.yVelocity = 1;
                 }
                 else {
@@ -592,16 +591,6 @@ class GameManager extends Component {
     }
     start() {
         this.player = GameEngine.Instance.getGameObjectById("player");
-        try {
-            this.playerRenderer = this.player.getComponent(RectangleRenderer);
-            document.getElementById("white-button").addEventListener("click", () => this.setPlayerColor("white"));
-            document.getElementById("red-button").addEventListener("click", () => this.setPlayerColor("red"));
-            document.getElementById("blue-button").addEventListener("click", () => this.setPlayerColor("blue"));
-            document.getElementById("green-button").addEventListener("click", () => this.setPlayerColor("green"));
-        }
-        catch (_a) {
-            console.log("The player does not have a rectangle renderer!");
-        }
     }
     static get Instance() {
         if (this.instance === null || this.instance === undefined) {
@@ -625,9 +614,6 @@ class GameManager extends Component {
     testInstantiate() {
         GameEngine.Instance.instantiate(new Ball("ball2"));
     }
-    setPlayerColor(color) {
-        this.playerRenderer.setColor(color);
-    }
 }
 class PlayerMotor extends Motor {
     constructor(gameObject) {
@@ -638,6 +624,9 @@ class PlayerMotor extends Motor {
         this.movingLeft = false;
         document.addEventListener('keydown', () => this.onKeyDown(event));
         document.addEventListener('keyup', () => this.onKeyUp(event));
+    }
+    get isMoving() {
+        return this.xVelocity !== 0 || this.yVelocity !== 0;
     }
     handleOutOfBounds() {
         if (this.transform.position.y <= 0) {
@@ -654,23 +643,26 @@ class PlayerMotor extends Motor {
         }
     }
     move() {
-        this.xVelocity = 0;
-        this.yVelocity = 0;
         if (this.movingUp) {
-            this.yVelocity = -1;
-            this.transform.translate(Vector2.up.multiplyScalar(this.speed));
+            this.yVelocity = 1;
         }
         else if (this.movingDown) {
-            this.yVelocity = 1;
-            this.transform.translate(Vector2.down.multiplyScalar(this.speed));
+            this.yVelocity = -1;
+        }
+        else {
+            this.yVelocity = 0;
         }
         if (this.movingRight) {
             this.xVelocity = 1;
-            this.transform.translate(Vector2.right.multiplyScalar(this.speed));
         }
         else if (this.movingLeft) {
             this.xVelocity = -1;
-            this.transform.translate(Vector2.left.multiplyScalar(this.speed));
+        }
+        else {
+            this.xVelocity = 0;
+        }
+        if (this.isMoving) {
+            this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
         }
     }
     jump() {

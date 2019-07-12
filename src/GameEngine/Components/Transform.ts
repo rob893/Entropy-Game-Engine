@@ -18,6 +18,18 @@ class Transform extends Component {
         this.rotation = 0;
     }
 
+    public get onMoved(): ILiteEvent<void> { 
+        return this.onMove.expose(); 
+    }
+
+    public get center(): Vector2 {
+        return new Vector2(this.position.x + (this.width / 2), this.position.y + (this.height / 2));
+    }
+
+    public get bottomCenter(): Vector2 {
+        return new Vector2(this.position.x + (this.width / 2), this.position.y + this.height);
+    }
+
     public translate(translation: Vector2): void {
         this.position.x += translation.x;
         this.position.y += (-1 * translation.y); //This is to make a more positive y value go up instead of down.
@@ -28,17 +40,5 @@ class Transform extends Component {
         this.position.x = x;
         this.position.y = y;
         this.onMove.trigger();
-    }
-
-    public get onMoved() { 
-        return this.onMove.expose(); 
-    }
-
-    public getCenter(): Vector2 {
-        return new Vector2(this.position.x + (this.width / 2), this.position.y + (this.height / 2));
-    }
-
-    public getBottomCenter(): Vector2 {
-        return new Vector2(this.position.x + (this.width / 2), this.position.y + this.height);
     }
 }

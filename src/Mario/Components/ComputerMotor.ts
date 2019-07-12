@@ -47,10 +47,10 @@ class ComputerMotor extends Motor {
             this.timer += Time.DeltaTime;
 
             if(this.timer > 0.15) {
-                if(this.transform.getCenter().y < this.ballTransform.getCenter().y - 10) {
+                if(this.transform.center.y < this.ballTransform.center.y - 10) {
                     this.yVelocity = -1;
                 }
-                else if (this.transform.getCenter().y > this.ballTransform.getCenter().y + 10){
+                else if (this.transform.center.y > this.ballTransform.center.y + 10){
                     this.yVelocity = 1;
                 }
                 else {

@@ -47,18 +47,16 @@ abstract class GameObject {
         return <T>this.componentMap.get(componentType);
     }
 
-    public addComponent<T extends Component>(component: new (...args: any[]) => T): T {
-        let newComponent = new component;
-        
+    public addComponent<T extends Component>(newComponent: Component): T {
         if (this.componentMap.has(newComponent.constructor.name)) {
-            throw new Error("There is already a component of type " + component.constructor.name + " on this object!");
+            throw new Error("There is already a component of type " + newComponent.constructor.name + " on this object!");
         }
 
         this.components.push(newComponent);
         this.componentMap.set(newComponent.constructor.name, newComponent);
         newComponent.start();
 
-        return newComponent;
+        return <T>newComponent;
     }
 
     protected setComponents(components: Component[]): void {
