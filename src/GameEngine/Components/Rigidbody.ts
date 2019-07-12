@@ -1,12 +1,14 @@
 class Rigidbody extends Component {
 
-    private transform: Transform;
+    // In kg
     private mass: number;
     private velocity: Vector2;
     private acceleration: Vector2;
+    
+    private transform: Transform;
 
 
-    public constructor(gameObject: GameObject, mass = 1) {
+    public constructor(gameObject: GameObject, mass: number = 1) {
         super("Rigidbody", gameObject);
 
         this.transform = gameObject.getTransform();
@@ -17,15 +19,19 @@ class Rigidbody extends Component {
     }
 
     public update(): void {
-        this.acceleration.x = 
-        this.transform.translate(this.velocity.x, this.velocity.y);
+        //this.acceleration.x = 
+        //this.transform.translate(this.velocity.x, this.velocity.y);
     }
 
     public addForce(force: Vector2): void {
-        this.acceleration.x = force * Math.sin(this.transform.rotation);
+        //this.acceleration.x = force * Math.sin(this.transform.rotation);
     }
 
     public addGravity(force: number): void {
-        this.transform.translate(0, 1, force);
+        //this.transform.translate(0, 1, force);
+    }
+
+    private updateVelocity(): void {
+
     }
 }

@@ -37,19 +37,23 @@ class PlayerMotor extends Motor {
         
         if (this.movingUp) {
             this.yVelocity = -1;
+            this.transform.translate(Vector2.up.multiplyScalar(this.speed));
         }
         else if (this.movingDown) {
             this.yVelocity = 1;
+            this.transform.translate(Vector2.down.multiplyScalar(this.speed));
         }
 
         if (this.movingRight) {
             this.xVelocity = 1;
+            this.transform.translate(Vector2.right.multiplyScalar(this.speed));
         }
         else if (this.movingLeft) {
             this.xVelocity = -1;
+            this.transform.translate(Vector2.left.multiplyScalar(this.speed));
         }
 
-        this.transform.translate(this.xVelocity, this.yVelocity, this.speed);
+        //this.transform.translate(this.xVelocity, this.yVelocity, this.speed);
     }
 
     private jump(): void {
@@ -57,37 +61,37 @@ class PlayerMotor extends Motor {
     }
 
     private onKeyDown(event: KeyboardEvent) {
-        if (event.keyCode == Keys.UP) {
+        if (event.keyCode == Keys.UP || event.keyCode == Keys.W) {
             this.movingUp = true;
             this.movingDown = false;
         }
-        else if (event.keyCode == Keys.DOWN) {
+        else if (event.keyCode == Keys.DOWN || event.keyCode == Keys.S) {
             this.movingDown = true;
             this.movingUp = false;
         }
 
-        if (event.keyCode == Keys.RIGHT) {
+        if (event.keyCode == Keys.RIGHT || event.keyCode == Keys.D) {
             this.movingRight = true;
             this.movingLeft = false;
         }
-        else if (event.keyCode == Keys.LEFT) {
+        else if (event.keyCode == Keys.LEFT || event.keyCode == Keys.A) {
             this.movingRight = false;
             this.movingLeft = true;
         }
     }
 
     private onKeyUp(event: KeyboardEvent) {
-        if (event.keyCode == Keys.UP) {
+        if (event.keyCode == Keys.UP || event.keyCode == Keys.W) {
             this.movingUp = false;
         }
-        else if (event.keyCode == Keys.DOWN) {
+        else if (event.keyCode == Keys.DOWN || event.keyCode == Keys.S) {
             this.movingDown = false;
         }
 
-        if (event.keyCode == Keys.RIGHT) {
+        if (event.keyCode == Keys.RIGHT || event.keyCode == Keys.D) {
             this.movingRight = false;
         }
-        else if (event.keyCode == Keys.LEFT) {
+        else if (event.keyCode == Keys.LEFT || event.keyCode == Keys.A) {
             this.movingLeft = false;
         }
     }

@@ -60,6 +60,13 @@ class Vector2 {
         return equalX && equalY;
     }
 
+    public multiplyScalar(rightOperand: number): Vector2 {
+        let newX = this.x * rightOperand;
+        let newY = this.y * rightOperand;
+
+        return new Vector2(newX, newY);
+    }
+
     public static get up(): Vector2 {
         return new Vector2(0, 1);
     }

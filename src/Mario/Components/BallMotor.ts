@@ -35,10 +35,10 @@ class BallMotor extends Motor {
 
     protected handleOutOfBounds(): void {
         if(this.transform.position.y <= 0) {
-            this.yVelocity = Math.abs(this.yVelocity);
+            this.yVelocity *= -1;
         }
         else if(this.transform.position.y >= this.gameCanvas.height - this.transform.height) {
-            this.yVelocity *= -1;
+            this.yVelocity = Math.abs(this.yVelocity);
         }
 
         if(this.transform.position.x + this.transform.width <= 0) {
@@ -50,7 +50,7 @@ class BallMotor extends Motor {
     }
 
     protected move(): void {
-        this.transform.translate(this.xVelocity, this.yVelocity, this.speed);
+        this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
     }
 
     private reset(): void {

@@ -25,7 +25,7 @@ class GameManager extends Component {
             document.getElementById("blue-button").addEventListener("click", () => this.setPlayerColor("blue"));
             document.getElementById("green-button").addEventListener("click", () => this.setPlayerColor("green"));
         }
-        catch{
+        catch {
             console.log("The player does not have a rectangle renderer!");
         }
     }

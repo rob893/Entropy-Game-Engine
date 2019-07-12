@@ -1,6 +1,7 @@
 class GameEngine {
     constructor() {
         this.gameObjects = [];
+        this.gameObjectMap = new Map();
         this.gameInitialized = false;
         this.paused = false;
         this.gameInitialized = false;
@@ -32,12 +33,10 @@ class GameEngine {
         return newGameObject;
     }
     getGameObjectById(id) {
-        for (let i = 0; i < this.gameObjects.length; i++) {
-            if (gameObjects[i].id === id) {
-                return gameObjects[i];
-            }
+        if (!this.gameObjectMap.has(id)) {
+            throw new Error("No GameObject with id of " + id + " exists!");
         }
-        throw new Error("No GameObject with id of " + id + " exists!");
+        return this.gameObjectMap.get(id);
     }
     getGameCanvas() {
         return this.gameCanvas;
@@ -61,6 +60,12 @@ class GameEngine {
     }
     setGameObjects(gameObjects) {
         this.gameObjects = gameObjects;
+        for (let gameObject of gameObjects) {
+            if (this.gameObjectMap.has(gameObject.id)) {
+                throw new Error("Duplicate game object of " + gameObject.id + "!");
+            }
+            this.gameObjectMap.set(gameObject.id, gameObject);
+        }
     }
     update() {
         Time.updateTime();
@@ -83,6 +88,7 @@ class GameEngine {
 class GameObject {
     constructor(id, x = 0, y = 0, width = 0, height = 0) {
         this.components = [];
+        this.componentMap = new Map();
         this.id = id;
         this.transform = new Transform(this, x, y, width, height);
     }
@@ -105,16 +111,19 @@ class GameObject {
         return this.gameCanvas;
     }
     getComponent(componentType) {
-        componentType = componentType.toLowerCase();
-        for (let i = 0; i < this.components.length; i++) {
-            if (this.components[i].componentName.toLowerCase() === componentType) {
-                return this.components[i];
-            }
+        if (!this.componentMap.has(componentType)) {
+            throw new Error(componentType + " not found on the GameObject with id of " + this.id + "!");
         }
-        throw new Error(componentType + " not found on the GameObject with id of " + this.id + "!");
+        return this.componentMap.get(componentType);
     }
     setComponents(components) {
         this.components = components;
+        for (let component of components) {
+            if (this.componentMap.has(component.constructor.name)) {
+                throw new Error("There is already a component of type " + component.constructor.name + " on this object!");
+            }
+            this.componentMap.set(component.constructor.name, component);
+        }
     }
 }
 class ImageBackground {
@@ -187,10 +196,77 @@ class Vector2 {
         this.x = x;
         this.y = y;
     }
+    get sqrMagnitude() {
+        return (this.x * this.x) + (this.y * this.y);
+    }
+    get magnitude() {
+        return Math.sqrt(this.sqrMagnitude);
+    }
+    get normalized() {
+        if (this.magnitude === 0) {
+            return new Vector2(1, 0);
+        }
+        return this.divide(new Vector2(this.magnitude, this.magnitude));
+    }
+    add(rightOperand) {
+        let newX = this.x + rightOperand.x;
+        let newY = this.y + rightOperand.y;
+        return new Vector2(newX, newY);
+    }
+    subtract(rightOperand) {
+        let newX = this.x - rightOperand.x;
+        let newY = this.y - rightOperand.y;
+        return new Vector2(newX, newY);
+    }
+    multiply(rightOperand) {
+        let newX = this.x * rightOperand.x;
+        let newY = this.y * rightOperand.y;
+        return new Vector2(newX, newY);
+    }
+    divide(rightOperand) {
+        let newX = this.x / rightOperand.x;
+        let newY = this.y / rightOperand.y;
+        return new Vector2(newX, newY);
+    }
+    equals(rightOperand) {
+        let equalX = this.x === rightOperand.x;
+        let equalY = this.y === rightOperand.y;
+        return equalX && equalY;
+    }
+    multiplyScalar(rightOperand) {
+        let newX = this.x * rightOperand;
+        let newY = this.y * rightOperand;
+        return new Vector2(newX, newY);
+    }
+    static get up() {
+        return new Vector2(0, 1);
+    }
+    static get down() {
+        return new Vector2(0, -1);
+    }
+    static get left() {
+        return new Vector2(-1, 0);
+    }
+    static get right() {
+        return new Vector2(1, 0);
+    }
+    static get zero() {
+        return new Vector2(0, 0);
+    }
+    static get one() {
+        return new Vector2(1, 1);
+    }
     static distance(point1, point2) {
         let distanceX = point1.x - point2.x;
         let distanceY = point1.y - point2.y;
         return Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+    }
+    static angle(from, to) {
+        let cos0 = Vector2.dot(from, to) / (from.magnitude * to.magnitude);
+        return Math.acos(cos0);
+    }
+    static dot(point1, point2) {
+        return (point1.x * point2.x) + (point1.y * point2.y);
     }
 }
 var Keys;
@@ -199,6 +275,11 @@ var Keys;
     Keys[Keys["DOWN"] = 40] = "DOWN";
     Keys[Keys["LEFT"] = 37] = "LEFT";
     Keys[Keys["RIGHT"] = 39] = "RIGHT";
+    Keys[Keys["W"] = 87] = "W";
+    Keys[Keys["A"] = 65] = "A";
+    Keys[Keys["S"] = 83] = "S";
+    Keys[Keys["D"] = 68] = "D";
+    Keys[Keys["SPACE"] = 32] = "SPACE";
 })(Keys || (Keys = {}));
 class LiteEvent {
     constructor() {
@@ -326,13 +407,21 @@ class RectangleRenderer extends Component {
     }
 }
 class Rigidbody extends Component {
-    constructor(gameObject) {
+    constructor(gameObject, mass = 1) {
         super("Rigidbody", gameObject);
         this.transform = gameObject.getTransform();
+        this.mass = mass;
+        this.velocity = new Vector2(0, 0);
+        this.acceleration = new Vector2(0, 0);
         Physics.Instance.addRigidbody(this);
     }
+    update() {
+    }
+    addForce(force) {
+    }
     addGravity(force) {
-        this.transform.translate(0, 1, force);
+    }
+    updateVelocity() {
     }
 }
 class Transform extends Component {
@@ -344,10 +433,11 @@ class Transform extends Component {
         this.width = width;
         this.height = height;
         this.position = new Vector2(x, y);
+        this.rotation = 0;
     }
-    translate(xVelocity, yVelocity, speed) {
-        this.position.x += xVelocity * speed;
-        this.position.y += yVelocity * speed;
+    translate(translation) {
+        this.position.x += translation.x;
+        this.position.y += (-1 * translation.y);
         this.onMove.trigger();
     }
     setPosition(x, y) {
@@ -401,10 +491,10 @@ class BallMotor extends Motor {
     }
     handleOutOfBounds() {
         if (this.transform.position.y <= 0) {
-            this.yVelocity = Math.abs(this.yVelocity);
+            this.yVelocity *= -1;
         }
         else if (this.transform.position.y >= this.gameCanvas.height - this.transform.height) {
-            this.yVelocity *= -1;
+            this.yVelocity = Math.abs(this.yVelocity);
         }
         if (this.transform.position.x + this.transform.width <= 0) {
             this.reset();
@@ -414,7 +504,7 @@ class BallMotor extends Motor {
         }
     }
     move() {
-        this.transform.translate(this.xVelocity, this.yVelocity, this.speed);
+        this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
     }
     reset() {
         this.transform.setPosition(345, 195);
@@ -447,19 +537,19 @@ class ComputerMotor extends Motor {
     }
     handleOutOfBounds() {
         if (this.transform.position.y <= 0) {
-            this.yVelocity = 1;
+            this.yVelocity = -1;
         }
         else if (this.transform.position.y >= this.gameCanvas.height - this.transform.height) {
-            this.yVelocity = -1;
+            this.yVelocity = 1;
         }
     }
     move() {
         if (this.ballTransform.position.x < this.quarterFieldX) {
             if (this.transform.position.y > this.midFieldY + 5) {
-                this.yVelocity = -1;
+                this.yVelocity = 1;
             }
             else if (this.transform.position.y < this.midFieldY - 5) {
-                this.yVelocity = 1;
+                this.yVelocity = -1;
             }
             else {
                 this.yVelocity = 0;
@@ -469,10 +559,10 @@ class ComputerMotor extends Motor {
             this.timer += Time.DeltaTime;
             if (this.timer > 0.15) {
                 if (this.transform.getCenter().y < this.ballTransform.getCenter().y - 10) {
-                    this.yVelocity = 1;
+                    this.yVelocity = -1;
                 }
                 else if (this.transform.getCenter().y > this.ballTransform.getCenter().y + 10) {
-                    this.yVelocity = -1;
+                    this.yVelocity = 1;
                 }
                 else {
                     this.yVelocity = 0;
@@ -480,7 +570,7 @@ class ComputerMotor extends Motor {
                 this.timer = 0;
             }
         }
-        this.transform.translate(this.xVelocity, this.yVelocity, this.speed);
+        this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
     }
 }
 class GameManager extends Component {
@@ -558,47 +648,52 @@ class PlayerMotor extends Motor {
         this.yVelocity = 0;
         if (this.movingUp) {
             this.yVelocity = -1;
+            this.transform.translate(Vector2.up.multiplyScalar(this.speed));
         }
         else if (this.movingDown) {
             this.yVelocity = 1;
+            this.transform.translate(Vector2.down.multiplyScalar(this.speed));
         }
         if (this.movingRight) {
             this.xVelocity = 1;
+            this.transform.translate(Vector2.right.multiplyScalar(this.speed));
         }
         else if (this.movingLeft) {
             this.xVelocity = -1;
+            this.transform.translate(Vector2.left.multiplyScalar(this.speed));
         }
-        this.transform.translate(this.xVelocity, this.yVelocity, this.speed);
+    }
+    jump() {
     }
     onKeyDown(event) {
-        if (event.keyCode == Keys.UP) {
+        if (event.keyCode == Keys.UP || event.keyCode == Keys.W) {
             this.movingUp = true;
             this.movingDown = false;
         }
-        else if (event.keyCode == Keys.DOWN) {
+        else if (event.keyCode == Keys.DOWN || event.keyCode == Keys.S) {
             this.movingDown = true;
             this.movingUp = false;
         }
-        if (event.keyCode == Keys.RIGHT) {
+        if (event.keyCode == Keys.RIGHT || event.keyCode == Keys.D) {
             this.movingRight = true;
             this.movingLeft = false;
         }
-        else if (event.keyCode == Keys.LEFT) {
+        else if (event.keyCode == Keys.LEFT || event.keyCode == Keys.A) {
             this.movingRight = false;
             this.movingLeft = true;
         }
     }
     onKeyUp(event) {
-        if (event.keyCode == Keys.UP) {
+        if (event.keyCode == Keys.UP || event.keyCode == Keys.W) {
             this.movingUp = false;
         }
-        else if (event.keyCode == Keys.DOWN) {
+        else if (event.keyCode == Keys.DOWN || event.keyCode == Keys.S) {
             this.movingDown = false;
         }
-        if (event.keyCode == Keys.RIGHT) {
+        if (event.keyCode == Keys.RIGHT || event.keyCode == Keys.D) {
             this.movingRight = false;
         }
-        else if (event.keyCode == Keys.LEFT) {
+        else if (event.keyCode == Keys.LEFT || event.keyCode == Keys.A) {
             this.movingLeft = false;
         }
     }

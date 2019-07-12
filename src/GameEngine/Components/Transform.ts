@@ -18,9 +18,9 @@ class Transform extends Component {
         this.rotation = 0;
     }
 
-    public translate(xVelocity: number, yVelocity: number, speed: number = 1): void {
-        this.position.x += xVelocity * Time.DeltaTime; //* speed;
-        this.position.y += yVelocity * Time.DeltaTime; //* speed;
+    public translate(translation: Vector2): void {
+        this.position.x += translation.x;
+        this.position.y += (-1 * translation.y); //This is to make a more positive y value go up instead of down.
         this.onMove.trigger();
     }
 

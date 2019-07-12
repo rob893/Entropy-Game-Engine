@@ -7,6 +7,7 @@ class GameEngine {
     private background: IBackground;
     private physicsEngine: Physics;
     private gameObjects: GameObject[] = [];
+    private gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private gameInitialized: boolean = false;
     private paused: boolean = false;
 
@@ -52,13 +53,11 @@ class GameEngine {
     }
 
     public getGameObjectById(id: string): GameObject {
-        for(let i: number = 0; i < this.gameObjects.length; i++) {
-            if(gameObjects[i].id === id) {
-                return gameObjects[i];
-            }
+        if (!this.gameObjectMap.has(id)) {
+            throw new Error("No GameObject with id of " + id + " exists!");
         }
 
-        throw new Error("No GameObject with id of " + id + " exists!");
+        return this.gameObjectMap.get(id);
     }
 
     public getGameCanvas(): HTMLCanvasElement {
@@ -89,6 +88,15 @@ class GameEngine {
 
     private setGameObjects(gameObjects: GameObject[]): void {
         this.gameObjects = gameObjects;
+
+        for (let gameObject of gameObjects) {
+
+            if (this.gameObjectMap.has(gameObject.id)) {
+                throw new Error("Duplicate game object of " + gameObject.id + "!");
+            }
+
+            this.gameObjectMap.set(gameObject.id, gameObject);
+        }
     }
 
     private update(): void {
