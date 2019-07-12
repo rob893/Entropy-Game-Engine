@@ -9,7 +9,7 @@ class PlayerMotor extends Motor {
 
 
     public constructor(gameObject: GameObject) {
-        super("PlayerMotor", gameObject);
+        super(gameObject);
 
         document.addEventListener('keydown', () => this.onKeyDown(<KeyboardEvent>event));
         document.addEventListener('keyup', () => this.onKeyUp(<KeyboardEvent>event));

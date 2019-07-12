@@ -11,7 +11,7 @@ class Transform extends Component {
 
     
     public constructor(gameObject: GameObject, x: number, y: number, width: number, height: number) {
-        super("Transform", gameObject);
+        super(gameObject);
         this.width = width;
         this.height = height;
         this.position = new Vector2(x, y);

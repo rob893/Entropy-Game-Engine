@@ -10,7 +10,7 @@ class RectangleCollider extends Component {
 
 
     public constructor(gameObject: GameObject) {
-        super("RectangleCollider", gameObject);
+        super(gameObject);
 
         this.transform = gameObject.getTransform();
         let transform: Transform = this.transform;

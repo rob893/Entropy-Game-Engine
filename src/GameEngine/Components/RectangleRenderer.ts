@@ -6,7 +6,7 @@ class RectangleRenderer extends Component {
     private color: string;
 
     public constructor(gameObject: GameObject, color: string) {
-        super("RectangleRenderer", gameObject);
+        super(gameObject);
 
         this.transform = gameObject.getTransform();
         this.color = color

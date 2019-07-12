@@ -9,7 +9,7 @@ class ComputerMotor extends Motor {
 
 
     public constructor(gameObject: GameObject) {
-        super("ComputerMotor", gameObject);
+        super(gameObject);
 
         this.yVelocity = 1;
     }

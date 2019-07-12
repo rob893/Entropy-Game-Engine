@@ -110,11 +110,22 @@ class GameObject {
     getGameCanvas() {
         return this.gameCanvas;
     }
-    getComponent(componentType) {
+    getComponent(component) {
+        let componentType = component.name;
         if (!this.componentMap.has(componentType)) {
             throw new Error(componentType + " not found on the GameObject with id of " + this.id + "!");
         }
         return this.componentMap.get(componentType);
+    }
+    addComponent(component) {
+        let newComponent = new component;
+        if (this.componentMap.has(newComponent.constructor.name)) {
+            throw new Error("There is already a component of type " + component.constructor.name + " on this object!");
+        }
+        this.components.push(newComponent);
+        this.componentMap.set(newComponent.constructor.name, newComponent);
+        newComponent.start();
+        return newComponent;
     }
     setComponents(components) {
         this.components = components;
@@ -299,9 +310,8 @@ class LiteEvent {
     }
 }
 class Component {
-    constructor(componentName, gameObject) {
+    constructor(gameObject) {
         this.gameObject = gameObject;
-        this.componentName = componentName;
     }
     start() { }
     ;
@@ -310,7 +320,7 @@ class Component {
 }
 class Animator extends Component {
     constructor(gameObject, spriteSheetURL, numberOfFrames, numberOfRows) {
-        super("Animator", gameObject);
+        super(gameObject);
         this.frameWidth = 0;
         this.frameHeight = 0;
         this.numberOfFrames = 0;
@@ -351,7 +361,7 @@ class Animator extends Component {
 }
 class RectangleCollider extends Component {
     constructor(gameObject) {
-        super("RectangleCollider", gameObject);
+        super(gameObject);
         this.onCollide = new LiteEvent();
         this.transform = gameObject.getTransform();
         let transform = this.transform;
@@ -387,7 +397,7 @@ class RectangleCollider extends Component {
 }
 class RectangleRenderer extends Component {
     constructor(gameObject, color) {
-        super("RectangleRenderer", gameObject);
+        super(gameObject);
         this.transform = gameObject.getTransform();
         this.color = color;
     }
@@ -408,7 +418,7 @@ class RectangleRenderer extends Component {
 }
 class Rigidbody extends Component {
     constructor(gameObject, mass = 1) {
-        super("Rigidbody", gameObject);
+        super(gameObject);
         this.transform = gameObject.getTransform();
         this.mass = mass;
         this.velocity = new Vector2(0, 0);
@@ -426,7 +436,7 @@ class Rigidbody extends Component {
 }
 class Transform extends Component {
     constructor(gameObject, x, y, width, height) {
-        super("Transform", gameObject);
+        super(gameObject);
         this.width = 0;
         this.height = 0;
         this.onMove = new LiteEvent();
@@ -456,8 +466,8 @@ class Transform extends Component {
     }
 }
 class Motor extends Component {
-    constructor(componentName, gameObject) {
-        super(componentName, gameObject);
+    constructor(gameObject) {
+        super(gameObject);
         this.xVelocity = 0;
         this.yVelocity = 0;
         this.speed = 5;
@@ -473,14 +483,14 @@ class Motor extends Component {
 }
 class BallMotor extends Motor {
     constructor(gameObject) {
-        super("BallMotor", gameObject);
+        super(gameObject);
         this.reset();
     }
     start() {
         super.start();
-        this.collider = this.gameObject.getComponent("RectangleCollider");
-        this.playerCollider = GameEngine.Instance.getGameObjectById("player").getComponent("RectangleCollider");
-        this.computerCollider = GameEngine.Instance.getGameObjectById("computer").getComponent("RectangleCollider");
+        this.collider = this.gameObject.getComponent(RectangleCollider);
+        this.playerCollider = GameEngine.Instance.getGameObjectById("player").getComponent(RectangleCollider);
+        this.computerCollider = GameEngine.Instance.getGameObjectById("computer").getComponent(RectangleCollider);
     }
     update() {
         super.update();
@@ -525,7 +535,7 @@ class BallMotor extends Motor {
 }
 class ComputerMotor extends Motor {
     constructor(gameObject) {
-        super("ComputerMotor", gameObject);
+        super(gameObject);
         this.timer = 0;
         this.yVelocity = 1;
     }
@@ -574,8 +584,8 @@ class ComputerMotor extends Motor {
     }
 }
 class GameManager extends Component {
-    constructor(componentName, gameObject) {
-        super(componentName, gameObject);
+    constructor(gameObject) {
+        super(gameObject);
         document.getElementById("print-button").addEventListener("click", () => this.printGameData());
         document.getElementById("pause-button").addEventListener("click", () => this.togglePause());
         document.getElementById("add-ball").addEventListener("click", () => this.testInstantiate());
@@ -583,7 +593,7 @@ class GameManager extends Component {
     start() {
         this.player = GameEngine.Instance.getGameObjectById("player");
         try {
-            this.playerRenderer = this.player.getComponent("RectangleRenderer");
+            this.playerRenderer = this.player.getComponent(RectangleRenderer);
             document.getElementById("white-button").addEventListener("click", () => this.setPlayerColor("white"));
             document.getElementById("red-button").addEventListener("click", () => this.setPlayerColor("red"));
             document.getElementById("blue-button").addEventListener("click", () => this.setPlayerColor("blue"));
@@ -599,9 +609,9 @@ class GameManager extends Component {
         }
         return this.instance;
     }
-    static createInstance(componentName, gameObject) {
+    static createInstance(gameObject) {
         if (this.instance === null || this.instance === undefined) {
-            this.instance = new GameManager(componentName, gameObject);
+            this.instance = new GameManager(gameObject);
             return this.instance;
         }
         throw new Error("More than one GameManager cannot be created!");
@@ -621,7 +631,7 @@ class GameManager extends Component {
 }
 class PlayerMotor extends Motor {
     constructor(gameObject) {
-        super("PlayerMotor", gameObject);
+        super(gameObject);
         this.movingUp = false;
         this.movingDown = false;
         this.movingRight = false;
@@ -722,7 +732,7 @@ class GameManagerObject extends GameObject {
     constructor(id) {
         super(id, 0, 0, 0, 0);
         let gameManagerComponents = [];
-        let gameManager = GameManager.createInstance(id, this);
+        let gameManager = GameManager.createInstance(this);
         gameManagerComponents.push(gameManager);
         this.setComponents(gameManagerComponents);
     }

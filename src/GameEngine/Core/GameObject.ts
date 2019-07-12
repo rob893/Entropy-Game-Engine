@@ -37,12 +37,28 @@ abstract class GameObject {
         return this.gameCanvas;
     }
 
-    public getComponent<T extends Component>(componentType: string): T {
+    public getComponent<T extends Component>(component: new (...args: any[]) => T): T {
+        let componentType = component.name;
+
         if (!this.componentMap.has(componentType)) {
             throw new Error(componentType + " not found on the GameObject with id of " + this.id + "!");
         }
 
         return <T>this.componentMap.get(componentType);
+    }
+
+    public addComponent<T extends Component>(component: new (...args: any[]) => T): T {
+        let newComponent = new component;
+        
+        if (this.componentMap.has(newComponent.constructor.name)) {
+            throw new Error("There is already a component of type " + component.constructor.name + " on this object!");
+        }
+
+        this.components.push(newComponent);
+        this.componentMap.set(newComponent.constructor.name, newComponent);
+        newComponent.start();
+
+        return newComponent;
     }
 
     protected setComponents(components: Component[]): void {

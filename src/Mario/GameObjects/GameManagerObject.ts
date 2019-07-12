@@ -5,7 +5,7 @@ class GameManagerObject extends GameObject {
 
         let gameManagerComponents: Component[] = [];
         
-        let gameManager = GameManager.createInstance(id, this);
+        let gameManager = GameManager.createInstance(this);
         gameManagerComponents.push(gameManager);
 
         this.setComponents(gameManagerComponents);

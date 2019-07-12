@@ -7,8 +7,8 @@ abstract class Motor extends Component {
     protected speed: number = 5
 
 
-    public constructor(componentName: string, gameObject: GameObject) {
-        super(componentName, gameObject);
+    public constructor(gameObject: GameObject) {
+        super(gameObject);
         this.transform = gameObject.getTransform();
     }
 

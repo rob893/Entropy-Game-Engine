@@ -16,7 +16,7 @@ class Animator extends Component {
 
 
     public constructor(gameObject: GameObject, spriteSheetURL: string, numberOfFrames: number, numberOfRows: number) {
-        super("Animator", gameObject);
+        super(gameObject);
         this.spriteReady = false;
         this.spriteSheet = new Image();
         this.spriteSheet.src = spriteSheetURL;

@@ -9,7 +9,7 @@ class Rigidbody extends Component {
 
 
     public constructor(gameObject: GameObject, mass: number = 1) {
-        super("Rigidbody", gameObject);
+        super(gameObject);
 
         this.transform = gameObject.getTransform();
         this.mass = mass;

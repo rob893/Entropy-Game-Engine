@@ -6,8 +6,8 @@ class GameManager extends Component {
     private playerRenderer: RectangleRenderer;
 
 
-    private constructor(componentName: string, gameObject: GameObject) {
-        super(componentName, gameObject);
+    private constructor(gameObject: GameObject) {
+        super(gameObject);
 
         document.getElementById("print-button").addEventListener("click", () => this.printGameData());
         document.getElementById("pause-button").addEventListener("click", () => this.togglePause());
@@ -18,7 +18,7 @@ class GameManager extends Component {
         this.player = GameEngine.Instance.getGameObjectById("player");
 
         try {
-            this.playerRenderer = this.player.getComponent<RectangleRenderer>("RectangleRenderer");
+            this.playerRenderer = this.player.getComponent<RectangleRenderer>(RectangleRenderer);
 
             document.getElementById("white-button").addEventListener("click", () => this.setPlayerColor("white"));
             document.getElementById("red-button").addEventListener("click", () => this.setPlayerColor("red"));
@@ -38,9 +38,9 @@ class GameManager extends Component {
         return this.instance;
     }
 
-    public static createInstance(componentName: string, gameObject: GameObject): GameManager {
+    public static createInstance(gameObject: GameObject): GameManager {
         if(this.instance === null || this.instance === undefined) {
-            this.instance = new GameManager(componentName, gameObject);
+            this.instance = new GameManager(gameObject);
             return this.instance;
         }
         
