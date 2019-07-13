@@ -1,0 +1,40 @@
+{
+    "name": "mario-clone",
+    "version": "1.0.0",
+    "description": "Mario Clone made with custom engine",
+    "main": "game.js",
+    "directories": {
+        "test": "test"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@types/jest": "^24.0.15",
+        "jest": "^24.8.0",
+        "ts-jest": "^24.0.2",
+        "ts-loader": "^6.0.4",
+        "typescript": "^3.5.3",
+        "webpack": "^4.35.3",
+        "webpack-cli": "^3.3.5",
+        "webpack-dev-server": "^3.7.2"
+    },
+    "scripts": {
+        "test": "jest",
+        "dev": "webpack-dev-server --open",
+        "build": "webpack"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rob893/Mario-Clone.git"
+    },
+    "keywords": [
+        "game",
+        "engine",
+        "typescript"
+    ],
+    "author": "Robert Herber",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/rob893/Mario-Clone/issues"
+    },
+    "homepage": "https://github.com/rob893/Mario-Clone#readme"
+}

@@ -1,4 +1,6 @@
-class ImageBackground implements IBackground {
+import { IBackground } from "./Interfaces/IBackground";
+
+export class ImageBackground implements IBackground {
     
     private gameCanvas: HTMLCanvasElement;
     private canvasContext: CanvasRenderingContext2D;

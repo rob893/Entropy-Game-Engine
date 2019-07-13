@@ -1,6 +1,10 @@
-/// <reference path="Motor.ts" />
+import { Motor } from "./Motor";
+import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
+import { GameObject } from "../../GameEngine/Core/GameObject";
+import { GameEngine } from "../../GameEngine/Core/GameEngine";
+import { Vector2 } from "../../GameEngine/Core/Vector2";
 
-class BallMotor extends Motor {
+export class BallMotor extends Motor {
 
     private playerCollider: RectangleCollider;
     private computerCollider: RectangleCollider;

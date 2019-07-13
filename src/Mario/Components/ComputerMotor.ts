@@ -1,6 +1,11 @@
-/// <reference path="Motor.ts" />
+import { Motor } from "./Motor";
+import { Transform } from "../../GameEngine/Components/Transform";
+import { GameObject } from "../../GameEngine/Core/GameObject";
+import { GameEngine } from "../../GameEngine/Core/GameEngine";
+import { Time } from "../../GameEngine/Core/Time";
+import { Vector2 } from "../../GameEngine/Core/Vector2";
 
-class ComputerMotor extends Motor {
+export class ComputerMotor extends Motor {
 
     private ballTransform: Transform;
     private timer: number = 0;

@@ -1,3 +1,3 @@
-interface IBackground {
+export interface IBackground {
     render(): void;
 }

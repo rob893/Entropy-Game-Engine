@@ -1,4 +1,6 @@
-class LiteEvent<T> implements ILiteEvent<T> {
+import { ILiteEvent } from "../Interfaces/ILiteEvent";
+
+export class LiteEvent<T> implements ILiteEvent<T> {
 
     private handlers: { (data?: T): void; }[] = [];
 

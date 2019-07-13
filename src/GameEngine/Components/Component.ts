@@ -1,4 +1,6 @@
-abstract class Component {
+import { GameObject } from "../Core/GameObject";
+
+export abstract class Component {
 
     public readonly gameObject: GameObject;
 

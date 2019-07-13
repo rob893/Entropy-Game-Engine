@@ -1,4 +1,8 @@
-abstract class GameObject {
+import { Transform } from "../Components/Transform";
+import { Component } from "../Components/Component";
+import { GameEngine } from "./GameEngine";
+
+export abstract class GameObject {
     
     public readonly id: string;
 
@@ -16,7 +20,7 @@ abstract class GameObject {
 
     public start(): void {
         this.gameCanvas = GameEngine.Instance.getGameCanvas();
-        this.canvasContext = gameCanvas.getContext("2d");
+        this.canvasContext = this.gameCanvas.getContext("2d");
 
         for(let i: number = 0; i < this.components.length; i++) {
             this.components[i].start();

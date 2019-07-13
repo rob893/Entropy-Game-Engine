@@ -1,6 +1,8 @@
-/// <reference path="./Component.ts" />
+import { Transform } from "./Transform";
+import { Component } from "./Component";
+import { GameObject } from "../Core/GameObject";
 
-class Animator extends Component {
+export class Animator extends Component {
 
     private frameWidth: number = 0;
     private frameHeight: number = 0;

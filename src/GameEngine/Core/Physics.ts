@@ -1,4 +1,7 @@
-class Physics {
+import { Rigidbody } from "../Components/Rigidbody";
+import { RectangleCollider } from "../Components/RectangleCollider";
+
+export class Physics {
 
     private static instance: Physics;
 

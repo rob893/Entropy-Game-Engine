@@ -1,4 +1,4 @@
-abstract class Time {
+export abstract class Time {
 
     private static deltaTime: number = 0;
     private static startTime: number = 0;

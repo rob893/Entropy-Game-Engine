@@ -1,4 +1,9 @@
-class GameEngine {
+import { Physics } from "./Physics";
+import { GameObject } from "./GameObject";
+import { Time } from "./Time";
+import { IBackground } from "./Interfaces/IBackground";
+
+export class GameEngine {
 
     private static instance: GameEngine;
 
@@ -38,8 +43,8 @@ class GameEngine {
         Time.start();
         this.paused = false;
 
-        for(let i: number = 0; i < gameObjects.length; i++) {
-            gameObjects[i].start();
+        for(let i: number = 0; i < this.gameObjects.length; i++) {
+            this.gameObjects[i].start();
         }
 
         requestAnimationFrame(() => this.gameLoop());

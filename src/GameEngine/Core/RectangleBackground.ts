@@ -1,4 +1,6 @@
-class RectangleBackground implements IBackground {
+import { IBackground } from "./Interfaces/IBackground";
+
+export class RectangleBackground implements IBackground {
     
     private gameCanvas: HTMLCanvasElement;
     private canvasContext: CanvasRenderingContext2D;

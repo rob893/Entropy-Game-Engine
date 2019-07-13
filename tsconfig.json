@@ -1,19 +1,17 @@
 {
-    "compileOnSave": true,
     "compilerOptions": {
-        "module": "system",
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
-        "outFile": "game.js",
+        "outDir": "./out/",
         "sourceMap": true,
         "target": "ES6"
     },
     "include": [
-        "src/GameEngine/Core/**/*",
-        "src/GameEngine/Components/**/*",
-        "src/Mario/Components/**/*",
-        "src/Mario/GameObjects/**/*",
-        "src/Mario/game.ts"
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.test.ts"
     ]
 }

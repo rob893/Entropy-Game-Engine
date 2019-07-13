@@ -1,4 +1,8 @@
-abstract class Motor extends Component {
+import { Component } from "../../GameEngine/Components/Component";
+import { Transform } from "../../GameEngine/Components/Transform";
+import { GameObject } from "../../GameEngine/Core/GameObject";
+
+export abstract class Motor extends Component {
 
     protected transform: Transform;
     protected gameCanvas: HTMLCanvasElement;

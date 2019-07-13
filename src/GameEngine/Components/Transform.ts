@@ -1,4 +1,10 @@
-class Transform extends Component {
+import { Component } from "./Component";
+import { Vector2 } from "../Core/Vector2";
+import { LiteEvent } from "../Core/Helpers/LiteEvent";
+import { GameObject } from "../Core/GameObject";
+import { ILiteEvent } from "../Core/Interfaces/ILiteEvent";
+
+export class Transform extends Component {
 
     public width: number = 0;
     public height: number = 0;

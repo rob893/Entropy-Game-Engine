@@ -1,6 +1,9 @@
-/// <reference path="Motor.ts" />
+import { Motor } from "./Motor";
+import { GameObject } from "../../GameEngine/Core/GameObject";
+import { Vector2 } from "../../GameEngine/Core/Vector2";
+import { Keys } from "../../GameEngine/Core/Helpers/Keys";
 
-class PlayerMotor extends Motor {
+export class PlayerMotor extends Motor {
 
     private movingUp: boolean = false;
     private movingDown: boolean = false;

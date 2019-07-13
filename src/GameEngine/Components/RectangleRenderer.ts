@@ -1,4 +1,8 @@
-class RectangleRenderer extends Component {
+import { Component } from "./Component";
+import { Transform } from "./Transform";
+import { GameObject } from "../Core/GameObject";
+
+export class RectangleRenderer extends Component {
 
     private transform: Transform;
     private gameCanvas: HTMLCanvasElement;

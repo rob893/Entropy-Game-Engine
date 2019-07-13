@@ -1,4 +1,11 @@
-class GameManager extends Component {
+import { Component } from "../../GameEngine/Components/Component";
+import { Player } from "../GameObjects/Player";
+import { RectangleRenderer } from "../../GameEngine/Components/RectangleRenderer";
+import { GameObject } from "../../GameEngine/Core/GameObject";
+import { GameEngine } from "../../GameEngine/Core/GameEngine";
+import { Ball } from "../GameObjects/Ball";
+
+export class GameManager extends Component {
 
     private static instance: GameManager;
 

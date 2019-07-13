@@ -1,4 +1,10 @@
-class Rigidbody extends Component {
+import { Component } from "./Component";
+import { Vector2 } from "../Core/Vector2";
+import { Transform } from "./Transform";
+import { GameObject } from "../Core/GameObject";
+import { Physics } from "../Core/Physics";
+
+export class Rigidbody extends Component {
 
     // In kg
     private mass: number;

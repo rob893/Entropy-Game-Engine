@@ -1,4 +1,10 @@
-class RectangleCollider extends Component {
+import { Vector2 } from "../Core/Vector2";
+import { Component } from "./Component";
+import { Transform } from "./Transform";
+import { LiteEvent } from "../Core/Helpers/LiteEvent";
+import { GameObject } from "../Core/GameObject";
+
+export class RectangleCollider extends Component {
 
     public topLeft: Vector2;
     public topRight: Vector2;
