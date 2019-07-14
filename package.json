@@ -2,13 +2,14 @@
     "name": "mario-clone",
     "version": "1.0.0",
     "description": "Mario Clone made with custom engine",
-    "main": "game.js",
+    "private": true,
     "directories": {
         "test": "test"
     },
     "dependencies": {},
     "devDependencies": {
         "@types/jest": "^24.0.15",
+        "file-loader": "^4.0.0",
         "jest": "^24.8.0",
         "ts-jest": "^24.0.2",
         "ts-loader": "^6.0.4",
@@ -19,6 +20,7 @@
     },
     "scripts": {
         "test": "jest",
+        "test-watch": "jest --watch",
         "dev": "webpack-dev-server --open",
         "build": "webpack"
     },

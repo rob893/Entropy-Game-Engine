@@ -5,13 +5,14 @@ import { Player } from "./Mario/GameObjects/Player";
 import { Ball } from "./Mario/GameObjects/Ball";
 import { Computer } from "./Mario/GameObjects/Computer";
 import { GameObject } from "./GameEngine/Core/GameObject";
+import Background from "./assets/background.png";
 
 
 let gameEngine: GameEngine = GameEngine.Instance;
 
 let gameCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("game-canvas");
 
-let background: ImageBackground = new ImageBackground(gameCanvas, './assets/background.png');
+let background: ImageBackground = new ImageBackground(gameCanvas, Background);
 
 let gameManager: GameManagerObject = new GameManagerObject("GameManager");
 
