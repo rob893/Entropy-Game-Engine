@@ -1,4 +1,6 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
     mode: "development",
@@ -28,5 +30,14 @@ module.exports = {
     devServer: {
         contentBase: './dist',
         port: 8080
-    }
+    },
+    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpackPlugin({
+            title: "Mario Clone",
+            template: "src/index.html",
+            favicon: "src/assets/favicon.ico",
+            
+        })
+    ]
 };

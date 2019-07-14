@@ -18,39 +18,35 @@ export class Vector2 {
     }
 
     public get normalized(): Vector2 {
-        if (this.magnitude === 0) {
-            return new Vector2(1, 0);
-        }
-
         return this.divide(new Vector2(this.magnitude, this.magnitude));
     }
 
     public add(rightOperand: Vector2): Vector2 {
-        let newX = this.x + rightOperand.x;
-        let newY = this.y + rightOperand.y;
+        this.x += rightOperand.x;
+        this.y += rightOperand.y;
 
-        return new Vector2(newX, newY);
+        return this;
     }
 
     public subtract(rightOperand: Vector2): Vector2 {
-        let newX = this.x - rightOperand.x;
-        let newY = this.y - rightOperand.y;
+        this.x -= rightOperand.x;
+        this.y -= rightOperand.y;
 
-        return new Vector2(newX, newY);
+        return this;
     }
 
     public multiply(rightOperand: Vector2): Vector2 {
-        let newX = this.x * rightOperand.x;
-        let newY = this.y * rightOperand.y;
+        this.x *= rightOperand.x;
+        this.y *= rightOperand.y;
 
-        return new Vector2(newX, newY);
+        return this;
     }
 
     public divide(rightOperand: Vector2): Vector2 {
-        let newX = this.x / rightOperand.x;
-        let newY = this.y / rightOperand.y;
+        this.x /= rightOperand.x;
+        this.y /= rightOperand.y;
 
-        return new Vector2(newX, newY);
+        return this;
     }
 
     public equals(rightOperand: Vector2): boolean {
@@ -61,10 +57,24 @@ export class Vector2 {
     }
 
     public multiplyScalar(rightOperand: number): Vector2 {
-        let newX = this.x * rightOperand;
-        let newY = this.y * rightOperand;
+        this.x *= rightOperand;
+        this.y *= rightOperand;
 
-        return new Vector2(newX, newY);
+        return this;
+    }
+
+    public divideScalar(rightOperand: number): Vector2 {
+        this.x /= rightOperand;
+        this.y /= rightOperand;
+
+        return this;
+    }
+
+    public zero(): Vector2 {
+        this.x = 0;
+        this.y = 0;
+
+        return this;
     }
 
     public static get up(): Vector2 {

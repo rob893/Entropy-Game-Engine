@@ -21,11 +21,11 @@ export class Physics {
         return this.instance || (this.instance = new Physics());
     }
 
-    public updatePhysics(): void {
-        for(let i: number = 0, l: number = this.rigidbodies.length; i < l; i++) {
-            this.rigidbodies[i].addGravity(this.gravity);
-        }
-    }
+    // public updatePhysics(): void {
+    //     for(let i: number = 0, l: number = this.rigidbodies.length; i < l; i++) {
+    //         this.rigidbodies[i].addGravity(this.gravity);
+    //     }
+    // }
 
     public addRigidbody(rb: Rigidbody): void {
         this.rigidbodies.push(rb);

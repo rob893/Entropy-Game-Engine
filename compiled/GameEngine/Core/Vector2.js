@@ -12,9 +12,6 @@ export class Vector2 {
         return Math.sqrt(this.sqrMagnitude);
     }
     get normalized() {
-        if (this.magnitude === 0) {
-            return new Vector2(1, 0);
-        }
         return this.divide(new Vector2(this.magnitude, this.magnitude));
     }
     add(rightOperand) {
@@ -70,9 +67,12 @@ export class Vector2 {
         let distanceY = point1.y - point2.y;
         return Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
     }
-    static angle(from, to) {
+    static angleInRadians(from, to) {
         let cos0 = Vector2.dot(from, to) / (from.magnitude * to.magnitude);
         return Math.acos(cos0);
+    }
+    static angleInDegrees(from, to) {
+        return this.angleInRadians(from, to) * 180 / Math.PI;
     }
     static dot(point1, point2) {
         return (point1.x * point2.x) + (point1.y * point2.y);

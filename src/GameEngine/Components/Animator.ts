@@ -36,6 +36,13 @@ export class Animator extends Component {
         this.drawSprite();
     }
 
+    public setSprite(spriteSheetURL: string): void {
+        this.spriteReady = false;
+        this.spriteSheet = new Image();
+        this.spriteSheet.src = spriteSheetURL;
+        this.spriteSheet.onload = () => { this.spriteReady = true; };
+    }
+
     public setAnimationSpeed(numberOfFramesPerAnimationFrame: number) {
         this.framesPerAnimationFrame = numberOfFramesPerAnimationFrame;
     }

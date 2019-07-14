@@ -106,7 +106,7 @@ export class GameEngine {
 
     private update(): void {
         Time.updateTime();
-        this.physicsEngine.updatePhysics();
+        //this.physicsEngine.updatePhysics();
         
         for(let i: number = 0; i < this.gameObjects.length; i++){
             this.gameObjects[i].update();
