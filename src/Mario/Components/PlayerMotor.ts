@@ -6,16 +6,16 @@ import { Rigidbody } from "../../GameEngine/Components/Rigidbody";
 import MovingRightSprite from "../../assets/mario.png"
 import MovingLeftSprite from "../../assets/marioLeft.png"
 import { Animator } from "../../GameEngine/Components/Animator";
+import { Animation } from "../../GameEngine/Core/Animation";
+import { Physics } from "../../GameEngine/Core/Physics";
 
 
 export class PlayerMotor extends Motor {
 
-    private movingUp: boolean = false;
-    private movingDown: boolean = false;
     private movingRight: boolean = false;
     private movingLeft: boolean = false;
-    private movingRSprite: string;
-    private movingLSprite: string;
+    private moveRightAnimation: Animation;
+    private moveLeftAnimation: Animation;
     private jumping: boolean = false;
     private rigidBody: Rigidbody;
     private animator: Animator;
@@ -26,8 +26,9 @@ export class PlayerMotor extends Motor {
 
         document.addEventListener('keydown', () => this.onKeyDown(<KeyboardEvent>event));
         document.addEventListener('keyup', () => this.onKeyUp(<KeyboardEvent>event));
-        this.movingRSprite = MovingRightSprite;
-        this.movingLSprite = MovingLeftSprite;
+        document.addEventListener('click', () => this.onClick(<MouseEvent>event));
+        this.moveRightAnimation = new Animation(MovingRightSprite, 4, 1, 0.1);
+        this.moveLeftAnimation = new Animation(MovingLeftSprite, 4, 1, 0.1);
     }
 
     public start(): void {
@@ -60,16 +61,6 @@ export class PlayerMotor extends Motor {
     }
 
     protected move(): void {
-        // if (this.movingUp) {
-        //     this.yVelocity = 1;
-        // }
-        // else if (this.movingDown) {
-        //     this.yVelocity = -1;
-        // }
-        // else {
-        //     this.yVelocity = 0;
-        // }
-
         if (this.movingRight) {
             this.xVelocity = 1;
         }
@@ -96,25 +87,21 @@ export class PlayerMotor extends Motor {
         this.rigidBody.addForce(Vector2.up.multiplyScalar(400));
     }
 
-    private onKeyDown(event: KeyboardEvent) {
-        // if (event.keyCode == Keys.UP || event.keyCode == Keys.W) {
-        //     this.movingUp = true;
-        //     this.movingDown = false;
-        // }
-        // else if (event.keyCode == Keys.DOWN || event.keyCode == Keys.S) {
-        //     this.movingDown = true;
-        //     this.movingUp = false;
-        // }
+    private onClick(event: MouseEvent): void {
+        let hit = Physics.raycast(this.transform.position, Vector2.right, 50);
+        console.log(hit);
+    }
 
+    private onKeyDown(event: KeyboardEvent): void {
         if (event.keyCode == Keys.RIGHT || event.keyCode == Keys.D) {
             this.movingRight = true;
             this.movingLeft = false;
-            this.animator.setSprite(this.movingRSprite);
+            this.animator.setAnimation(this.moveRightAnimation);
         }
         else if (event.keyCode == Keys.LEFT || event.keyCode == Keys.A) {
             this.movingRight = false;
             this.movingLeft = true;
-            this.animator.setSprite(this.movingLSprite);
+            this.animator.setAnimation(this.moveLeftAnimation);
         }
 
         if (event.keyCode == Keys.SPACE) {
@@ -122,14 +109,7 @@ export class PlayerMotor extends Motor {
         }
     }
 
-    private onKeyUp(event: KeyboardEvent) {
-        // if (event.keyCode == Keys.UP || event.keyCode == Keys.W) {
-        //     this.movingUp = false;
-        // }
-        // else if (event.keyCode == Keys.DOWN || event.keyCode == Keys.S) {
-        //     this.movingDown = false;
-        // }
-
+    private onKeyUp(event: KeyboardEvent): void {
         if (event.keyCode == Keys.RIGHT || event.keyCode == Keys.D) {
             this.movingRight = false;
         }

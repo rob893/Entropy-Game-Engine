@@ -5,6 +5,7 @@ import { PlayerMotor } from "../Components/PlayerMotor";
 import { Rigidbody } from "../../GameEngine/Components/Rigidbody";
 import { Animator } from "../../GameEngine/Components/Animator";
 import MarioSprite from "../../assets/mario.png";
+import { Animation } from "../../GameEngine/Core/Animation";
 
 export class Player extends GameObject {
 
@@ -16,7 +17,11 @@ export class Player extends GameObject {
         playerComponents.push(new RectangleCollider(this));
         playerComponents.push(new PlayerMotor(this));
         playerComponents.push(new Rigidbody(this));
-        playerComponents.push(new Animator(this, MarioSprite, 4, 1));
+        
+        let initialAnimation = new Animation(MarioSprite, 4, 1, 0.1);
+
+        playerComponents.push(new Animator(this, initialAnimation));
+
 
         this.setComponents(playerComponents);
     }
