@@ -11,7 +11,7 @@ export class Animation {
     private timer: number = 0;
     
 
-    public constructor(spriteSheetUrl: string, numFrames: number, numRows: number, delay: number = 0) {
+    public constructor(spriteSheetUrl: string, numFrames: number, numRows: number, delay: number = 0, specificRows: number[] = null) {        
         this.delay = delay;
 
         let spriteSheet = new Image();
@@ -20,21 +20,47 @@ export class Animation {
             let spriteWidth = spriteSheet.width / numFrames;
             let spriteHeight = spriteSheet.height / numRows;
 
-            for (let i = 0; i < numRows; i++) {
-                for (let j = 0; j < numFrames; j++) {
-                    this.animationReady = false;
-                    let canvas = document.createElement('canvas');
-                    
-                    canvas.width = spriteWidth;
-                    canvas.height = spriteHeight;
+            if (specificRows !== null) {
+                for (let row of specificRows) {
+                    if (row < 1 || row > numRows) {
+                        throw new Error("Invalid specificRow argument. It must be greater than 0 and less than or equal to numRows.");
+                    }
 
-                    let context = canvas.getContext('2d');
-                    context.drawImage(spriteSheet, j * spriteWidth, i * spriteHeight, spriteWidth, spriteHeight, 0, 0, canvas.width, canvas.height);
-                    let frame = new Image();
-                    frame.src = canvas.toDataURL();
-                    frame.onload = () => {
-                        this.frames.push(frame);
-                        this.animationReady = true;
+                    for (let i = 0; i < numFrames; i++) {
+                        this.animationReady = false;
+                        let canvas = document.createElement('canvas');
+                        
+                        canvas.width = spriteWidth;
+                        canvas.height = spriteHeight;
+    
+                        let context = canvas.getContext('2d');
+                        context.drawImage(spriteSheet, i * spriteWidth, (row - 1) * spriteHeight, spriteWidth, spriteHeight, 0, 0, canvas.width, canvas.height);
+                        let frame = new Image();
+                        frame.src = canvas.toDataURL();
+                        frame.onload = () => {
+                            this.frames.push(frame);
+                            this.animationReady = true;
+                        }
+                    }
+                }
+            }
+            else {
+                for (let i = 0; i < numRows; i++) {
+                    for (let j = 0; j < numFrames; j++) {
+                        this.animationReady = false;
+                        let canvas = document.createElement('canvas');
+                        
+                        canvas.width = spriteWidth;
+                        canvas.height = spriteHeight;
+    
+                        let context = canvas.getContext('2d');
+                        context.drawImage(spriteSheet, j * spriteWidth, i * spriteHeight, spriteWidth, spriteHeight, 0, 0, canvas.width, canvas.height);
+                        let frame = new Image();
+                        frame.src = canvas.toDataURL();
+                        frame.onload = () => {
+                            this.frames.push(frame);
+                            this.animationReady = true;
+                        }
                     }
                 }
             }

@@ -6,6 +6,7 @@ import { Ball } from "./Mario/GameObjects/Ball";
 import { Computer } from "./Mario/GameObjects/Computer";
 import { GameObject } from "./GameEngine/Core/GameObject";
 import Background from "./assets/background.png";
+import { Trump } from "./Mario/GameObjects/Trump";
 
 
 let gameEngine: GameEngine = GameEngine.Instance;
@@ -19,8 +20,9 @@ let gameManager: GameManagerObject = new GameManagerObject("GameManager");
 let player: Player = new Player("player");
 let ball: Ball = new Ball("ball");
 let computer: Computer = new Computer("computer");
+let trump: Trump = new Trump("trump");
 
-let gameObjects: GameObject[] = [gameManager, player, computer, ball];
+let gameObjects: GameObject[] = [gameManager, player, computer, ball, trump];
 
 gameEngine.initializeGame(gameCanvas, gameObjects, background);
 

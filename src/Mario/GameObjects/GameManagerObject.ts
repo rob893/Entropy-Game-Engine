@@ -1,6 +1,7 @@
 import { Component } from "../../GameEngine/Components/Component";
 import { GameObject } from "../../GameEngine/Core/GameObject";
 import { GameManager } from "../Components/GameManager";
+import { FPSCounter } from "../../GameEngine/Components/FPSCounter";
 
 export class GameManagerObject extends GameObject {
 
@@ -11,6 +12,7 @@ export class GameManagerObject extends GameObject {
         
         let gameManager = GameManager.createInstance(this);
         gameManagerComponents.push(gameManager);
+        gameManagerComponents.push(new FPSCounter(this));
 
         this.setComponents(gameManagerComponents);
     }

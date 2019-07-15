@@ -5,6 +5,7 @@ import { Player } from "./Mario/GameObjects/Player";
 import { Ball } from "./Mario/GameObjects/Ball";
 import { Computer } from "./Mario/GameObjects/Computer";
 import Background from "./assets/background.png";
+import { Trump } from "./Mario/GameObjects/Trump";
 let gameEngine = GameEngine.Instance;
 let gameCanvas = document.getElementById("game-canvas");
 let background = new ImageBackground(gameCanvas, Background);
@@ -12,7 +13,8 @@ let gameManager = new GameManagerObject("GameManager");
 let player = new Player("player");
 let ball = new Ball("ball");
 let computer = new Computer("computer");
-let gameObjects = [gameManager, player, computer, ball];
+let trump = new Trump("trump");
+let gameObjects = [gameManager, player, computer, ball, trump];
 gameEngine.initializeGame(gameCanvas, gameObjects, background);
 gameEngine.startGame();
 //# sourceMappingURL=index.js.map

@@ -1,20 +1,21 @@
 import { GameObject } from "../../GameEngine/Core/GameObject";
 import { Component } from "../../GameEngine/Components/Component";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
-import { ComputerMotor } from "../Components/ComputerMotor";
-import { RectangleRenderer } from "../../GameEngine/Components/RectangleRenderer";
+import TrumpIdleSprite from "../../assets/trump_idle.png";
+import { Animation } from "../../GameEngine/Core/Animation";
+import { Animator } from "../../GameEngine/Components/Animator";
 
-
-export class Computer extends GameObject {
+export class Trump extends GameObject {
 
     public constructor(id: string) {
-        super(id, 688, 175, 10, 50);
+        super(id, 400, 280, 75, 75);
 
         let computerComponents: Component[] = [];
         
         computerComponents.push(new RectangleCollider(this));
-        computerComponents.push(new ComputerMotor(this));
-        computerComponents.push(new RectangleRenderer(this, "white"));
+
+        let initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
+        computerComponents.push(new Animator(this, initialAnimation));
 
         this.setComponents(computerComponents);
     }
