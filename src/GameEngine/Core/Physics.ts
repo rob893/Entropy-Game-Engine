@@ -70,5 +70,7 @@ export class Physics {
 
     public static sphereCast() {}
 
-    public static overlapSphere(): RectangleCollider[] { return [] }
+    public static overlapSphere(): RectangleCollider[] { 
+        return [];
+    }
 }

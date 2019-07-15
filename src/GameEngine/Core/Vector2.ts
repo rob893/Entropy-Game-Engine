@@ -21,6 +21,11 @@ export class Vector2 {
         return this.divide(new Vector2(this.magnitude, this.magnitude));
     }
 
+    /**
+     * This will add the passed in vector to the calling vector. The calling vector will be modified.
+     * 
+     * @param rightOperand 
+     */
     public add(rightOperand: Vector2): Vector2 {
         this.x += rightOperand.x;
         this.y += rightOperand.y;
@@ -103,6 +108,26 @@ export class Vector2 {
 
     public static add(leftOperand: Vector2, rightOperand: Vector2): Vector2 {
         return new Vector2(leftOperand.x + rightOperand.x, leftOperand.y + rightOperand.y);
+    }
+
+    public static subtract(leftOperand: Vector2, rightOperand: Vector2): Vector2 {
+        return new Vector2(leftOperand.x - rightOperand.x, leftOperand.y - rightOperand.y);
+    }
+
+    public static multiply(leftOperand: Vector2, rightOperand: Vector2): Vector2 {
+        return new Vector2(leftOperand.x * rightOperand.x, leftOperand.y * rightOperand.y);
+    }
+
+    public static divide(leftOperand: Vector2, rightOperand: Vector2): Vector2 {
+        return new Vector2(leftOperand.x / rightOperand.x, leftOperand.y / rightOperand.y);
+    }
+
+    public static multiplyScalar(leftOperand: Vector2, scalar: number): Vector2 {
+        return new Vector2(leftOperand.x * scalar, leftOperand.y * scalar);
+    }
+
+    public static divideScalar(leftOperand: Vector2, scalar: number): Vector2 {
+        return new Vector2(leftOperand.x / scalar, leftOperand.y / scalar);
     }
 
     public static distance(point1: Vector2, point2: Vector2): number {

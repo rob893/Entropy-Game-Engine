@@ -35,12 +35,20 @@ test('Find the angle between two vector2s.', () => {
 test('Add two vector2s together.', () => {
     expect(Vector2.one.add(Vector2.one)).toEqual(new Vector2(2, 2));
     expect(new Vector2(6, 2.23).add(new Vector2(1.1, 2.2))).toEqual(new Vector2(7.1, 4.43));
+    expect(Vector2.add(Vector2.one, Vector2.up)).toEqual(new Vector2(1, 2));
 });
 
 test('Subtract two vector2s.', () => {
     expect(Vector2.zero.subtract(Vector2.zero)).toEqual(Vector2.zero);
     expect(Vector2.zero.subtract(Vector2.one)).toEqual(new Vector2(-1, -1));
     expect(new Vector2(4, 5).subtract(new Vector2(-3, 2))).toEqual(new Vector2(7, 3));
+    expect(Vector2.subtract(new Vector2(4, 5), new Vector2(4, 5))).toEqual(Vector2.zero);
+});
+
+test('Multiply two vector2s.', () => {
+    expect(new Vector2(2, 3).multiply(new Vector2(5, 5))).toEqual(new Vector2(10, 15));
+    expect(new Vector2(4, 4).multiply(new Vector2(6, 6)).multiply(new Vector2(-1, -1))).toEqual(new Vector2(-24, -24));
+    expect(Vector2.multiply(Vector2.right, new Vector2(8, 123))).toEqual(new Vector2(8, 0));
 });
 
 test('Find distance between two vector2s.', () => {
