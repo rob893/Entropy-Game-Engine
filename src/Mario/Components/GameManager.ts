@@ -4,6 +4,7 @@ import { RectangleRenderer } from "../../GameEngine/Components/RectangleRenderer
 import { GameObject } from "../../GameEngine/Core/GameObject";
 import { GameEngine } from "../../GameEngine/Core/GameEngine";
 import { Ball } from "../GameObjects/Ball";
+import { AudioSource } from "../../GameEngine/Components/AudioSource";
 
 export class GameManager extends Component {
 
@@ -11,6 +12,7 @@ export class GameManager extends Component {
 
     private player: Player;
     private playerRenderer: RectangleRenderer;
+    private audioSource: AudioSource;
 
 
     private constructor(gameObject: GameObject) {
@@ -19,10 +21,13 @@ export class GameManager extends Component {
         document.getElementById("print-button").addEventListener("click", () => this.printGameData());
         document.getElementById("pause-button").addEventListener("click", () => this.togglePause());
         document.getElementById("add-ball").addEventListener("click", () => this.testInstantiate());
+        document.getElementById("toggle-music").addEventListener("click", () => this.toggleMusic());
     }
 
     public start(): void {
         this.player = GameEngine.Instance.getGameObjectById("player");
+        this.audioSource = this.gameObject.getComponent(AudioSource);
+        this.audioSource.loop = true;
     }
 
     public static get Instance(): GameManager {
@@ -40,6 +45,15 @@ export class GameManager extends Component {
         }
         
         throw new Error("More than one GameManager cannot be created!");
+    }
+
+    private toggleMusic(): void {
+        if (this.audioSource.isPlaying) {
+            this.audioSource.pause();
+        }
+        else {
+            this.audioSource.play();
+        }
     }
 
     private togglePause(): void {
