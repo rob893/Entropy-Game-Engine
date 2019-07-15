@@ -9,6 +9,7 @@ export class BallMotor extends Motor {
     private playerCollider: RectangleCollider;
     private computerCollider: RectangleCollider;
     private collider: RectangleCollider;
+    private ready: boolean = true;
 
 
     public constructor(gameObject: GameObject) {
@@ -24,17 +25,24 @@ export class BallMotor extends Motor {
         this.playerCollider = GameEngine.Instance.getGameObjectById("player").getComponent<RectangleCollider>(RectangleCollider);
         this.computerCollider = GameEngine.Instance.getGameObjectById("computer").getComponent<RectangleCollider>(RectangleCollider);
 
-        //this.collider.onCollided.add((other: RectangleCollider) => this.whoIHit(other));
+        this.collider.onCollided.add((other: RectangleCollider) => this.handleCollision(other));
     }
 
     public update(): void {
         super.update();
-        
-        this.handleCollisions();
+        this.detectCollisions();
     }
 
-    private whoIHit(other: RectangleCollider): void {
-        console.log("I hit " + other.gameObject.id);
+    private handleCollision(other: RectangleCollider): void {
+        if (this.ready) {
+            this.ready = false;
+            this.xVelocity *= -1;
+            this.speed += 0.125;
+
+            setTimeout(() => {
+                this.ready = true;
+            }, 250);
+        }
     }
 
     protected handleOutOfBounds(): void {
@@ -64,14 +72,8 @@ export class BallMotor extends Motor {
         this.speed = 3;
     }
 
-    private handleCollisions(): void {
-        if(this.collider.detectCollision(this.playerCollider)) {
-            this.xVelocity = 1;
-            this.speed += 0.125;
-        }
-        else if(this.collider.detectCollision(this.computerCollider)) {
-            this.xVelocity = -1;
-            this.speed += 0.125;
-        }
+    private detectCollisions(): void {
+        this.collider.detectCollision(this.playerCollider);
+        this.collider.detectCollision(this.computerCollider);
     }
 }

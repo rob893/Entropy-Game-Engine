@@ -13,6 +13,7 @@ export class GameEngine {
     private physicsEngine: Physics;
     private gameObjects: GameObject[] = [];
     private gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
+    private gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private gameInitialized: boolean = false;
     private paused: boolean = false;
 
@@ -51,6 +52,16 @@ export class GameEngine {
     }
 
     public instantiate(newGameObject: GameObject): GameObject {
+        if (this.gameObjectMap.has(newGameObject.id)) {
+            let originalId = newGameObject.id;
+            newGameObject.id += " Clone(" + this.gameObjectNumMap.get(originalId) + ")";
+            this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
+        }
+        else {
+            this.gameObjectNumMap.set(newGameObject.id, 1);
+        }
+        
+        this.gameObjectMap.set(newGameObject.id, newGameObject);
         this.gameObjects.push(newGameObject);
         newGameObject.start();
         
@@ -97,7 +108,12 @@ export class GameEngine {
         for (let gameObject of gameObjects) {
 
             if (this.gameObjectMap.has(gameObject.id)) {
-                throw new Error("Duplicate game object of " + gameObject.id + "!");
+                let originalId = gameObject.id;
+                gameObject.id += " Clone(" + this.gameObjectNumMap.get(originalId) + ")";
+                this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
+            }
+            else {
+                this.gameObjectNumMap.set(gameObject.id, 1);
             }
 
             this.gameObjectMap.set(gameObject.id, gameObject);
@@ -105,7 +121,12 @@ export class GameEngine {
     }
 
     private update(): void {
+        if (this.paused) {
+            return;
+        }
+
         Time.updateTime();
+        this.renderBackground();
         //this.physicsEngine.updatePhysics();
         
         for(let i: number = 0; i < this.gameObjects.length; i++){
@@ -117,12 +138,8 @@ export class GameEngine {
         this.background.render();
     }
 
-    private gameLoop(): void {
-        if(!this.paused) {
-            this.renderBackground();
-            this.update();
-        }
-       
+    private gameLoop(): void { 
+        this.update();
         requestAnimationFrame(() => this.gameLoop());
     }
 }

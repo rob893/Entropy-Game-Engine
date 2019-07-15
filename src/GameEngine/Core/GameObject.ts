@@ -4,7 +4,7 @@ import { GameEngine } from "./GameEngine";
 
 export abstract class GameObject {
     
-    public readonly id: string;
+    public id: string;
 
     protected transform: Transform;
     protected gameCanvas: HTMLCanvasElement;

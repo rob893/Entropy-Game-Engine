@@ -1,3 +1,5 @@
+import { Vector2 } from "./Vector2";
+import { Geometry } from "./Geometry";
 export class Physics {
     constructor() {
         this.rigidbodies = [];
@@ -7,15 +9,35 @@ export class Physics {
     static get Instance() {
         return this.instance || (this.instance = new Physics());
     }
-    updatePhysics() {
-        for (let i = 0, l = this.rigidbodies.length; i < l; i++) {
-            this.rigidbodies[i].addGravity(this.gravity);
-        }
-    }
     addRigidbody(rb) {
         this.rigidbodies.push(rb);
     }
-    static raycast() { }
+    addCollider(collider) {
+        this.colliders.push(collider);
+    }
+    static raycast(origin, direction, distance) {
+        let result = null;
+        let hitColliders = Physics.raycastAll(origin, direction, distance);
+        let closestColliderDistance = -10;
+        for (let collider of hitColliders) {
+            let colliderDistance = Vector2.distance(origin, collider.transform.position);
+            if (colliderDistance > closestColliderDistance) {
+                result = collider;
+                closestColliderDistance = colliderDistance;
+            }
+        }
+        return result;
+    }
+    static raycastAll(origin, direction, distance) {
+        let results = [];
+        let terminalPoint = Vector2.add(origin, direction.multiplyScalar(distance));
+        for (let collider of Physics.Instance.colliders) {
+            if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
+                results.push(collider);
+            }
+        }
+        return results;
+    }
     static sphereCast() { }
     static overlapSphere() { return []; }
 }

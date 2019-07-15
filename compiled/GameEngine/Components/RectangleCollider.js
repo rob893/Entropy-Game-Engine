@@ -1,6 +1,7 @@
 import { Vector2 } from "../Core/Vector2";
 import { Component } from "./Component";
 import { LiteEvent } from "../Core/Helpers/LiteEvent";
+import { Physics } from "../Core/Physics";
 export class RectangleCollider extends Component {
     constructor(gameObject) {
         super(gameObject);
@@ -12,6 +13,7 @@ export class RectangleCollider extends Component {
         this.topRight = new Vector2(transform.position.x + transform.width, transform.position.y);
         this.bottomLeft = new Vector2(transform.position.x, transform.position.y + transform.height);
         this.bottomRight = new Vector2(transform.position.x + transform.width, transform.position.y + transform.height);
+        Physics.Instance.addCollider(this);
     }
     detectCollision(other) {
         if (!(other.topLeft.x > this.topRight.x ||

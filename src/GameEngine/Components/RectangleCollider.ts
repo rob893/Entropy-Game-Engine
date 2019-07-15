@@ -3,6 +3,7 @@ import { Component } from "./Component";
 import { Transform } from "./Transform";
 import { LiteEvent } from "../Core/Helpers/LiteEvent";
 import { GameObject } from "../Core/GameObject";
+import { Physics } from "../Core/Physics";
 
 export class RectangleCollider extends Component {
 
@@ -27,6 +28,8 @@ export class RectangleCollider extends Component {
         this.topRight = new Vector2(transform.position.x + transform.width, transform.position.y);
         this.bottomLeft = new Vector2(transform.position.x, transform.position.y + transform.height);
         this.bottomRight = new Vector2(transform.position.x + transform.width, transform.position.y + transform.height);
+
+        Physics.Instance.addCollider(this);
     }
 
     public detectCollision(other: RectangleCollider): boolean {

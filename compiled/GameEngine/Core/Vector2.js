@@ -15,24 +15,24 @@ export class Vector2 {
         return this.divide(new Vector2(this.magnitude, this.magnitude));
     }
     add(rightOperand) {
-        let newX = this.x + rightOperand.x;
-        let newY = this.y + rightOperand.y;
-        return new Vector2(newX, newY);
+        this.x += rightOperand.x;
+        this.y += rightOperand.y;
+        return this;
     }
     subtract(rightOperand) {
-        let newX = this.x - rightOperand.x;
-        let newY = this.y - rightOperand.y;
-        return new Vector2(newX, newY);
+        this.x -= rightOperand.x;
+        this.y -= rightOperand.y;
+        return this;
     }
     multiply(rightOperand) {
-        let newX = this.x * rightOperand.x;
-        let newY = this.y * rightOperand.y;
-        return new Vector2(newX, newY);
+        this.x *= rightOperand.x;
+        this.y *= rightOperand.y;
+        return this;
     }
     divide(rightOperand) {
-        let newX = this.x / rightOperand.x;
-        let newY = this.y / rightOperand.y;
-        return new Vector2(newX, newY);
+        this.x /= rightOperand.x;
+        this.y /= rightOperand.y;
+        return this;
     }
     equals(rightOperand) {
         let equalX = this.x === rightOperand.x;
@@ -40,9 +40,19 @@ export class Vector2 {
         return equalX && equalY;
     }
     multiplyScalar(rightOperand) {
-        let newX = this.x * rightOperand;
-        let newY = this.y * rightOperand;
-        return new Vector2(newX, newY);
+        this.x *= rightOperand;
+        this.y *= rightOperand;
+        return this;
+    }
+    divideScalar(rightOperand) {
+        this.x /= rightOperand;
+        this.y /= rightOperand;
+        return this;
+    }
+    zero() {
+        this.x = 0;
+        this.y = 0;
+        return this;
     }
     static get up() {
         return new Vector2(0, 1);
@@ -61,6 +71,9 @@ export class Vector2 {
     }
     static get one() {
         return new Vector2(1, 1);
+    }
+    static add(leftOperand, rightOperand) {
+        return new Vector2(leftOperand.x + rightOperand.x, leftOperand.y + rightOperand.y);
     }
     static distance(point1, point2) {
         let distanceX = point1.x - point2.x;

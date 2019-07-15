@@ -4,6 +4,7 @@ export class GameEngine {
     constructor() {
         this.gameObjects = [];
         this.gameObjectMap = new Map();
+        this.gameObjectNumMap = new Map();
         this.gameInitialized = false;
         this.paused = false;
         this.gameInitialized = false;
@@ -30,6 +31,15 @@ export class GameEngine {
         requestAnimationFrame(() => this.gameLoop());
     }
     instantiate(newGameObject) {
+        if (this.gameObjectMap.has(newGameObject.id)) {
+            let originalId = newGameObject.id;
+            newGameObject.id += " Clone(" + this.gameObjectNumMap.get(originalId) + ")";
+            this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
+        }
+        else {
+            this.gameObjectNumMap.set(newGameObject.id, 1);
+        }
+        this.gameObjectMap.set(newGameObject.id, newGameObject);
         this.gameObjects.push(newGameObject);
         newGameObject.start();
         return newGameObject;
@@ -64,14 +74,22 @@ export class GameEngine {
         this.gameObjects = gameObjects;
         for (let gameObject of gameObjects) {
             if (this.gameObjectMap.has(gameObject.id)) {
-                throw new Error("Duplicate game object of " + gameObject.id + "!");
+                let originalId = gameObject.id;
+                gameObject.id += " Clone(" + this.gameObjectNumMap.get(originalId) + ")";
+                this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
+            }
+            else {
+                this.gameObjectNumMap.set(gameObject.id, 1);
             }
             this.gameObjectMap.set(gameObject.id, gameObject);
         }
     }
     update() {
+        if (this.paused) {
+            return;
+        }
         Time.updateTime();
-        this.physicsEngine.updatePhysics();
+        this.renderBackground();
         for (let i = 0; i < this.gameObjects.length; i++) {
             this.gameObjects[i].update();
         }
@@ -80,10 +98,7 @@ export class GameEngine {
         this.background.render();
     }
     gameLoop() {
-        if (!this.paused) {
-            this.renderBackground();
-            this.update();
-        }
+        this.update();
         requestAnimationFrame(() => this.gameLoop());
     }
 }

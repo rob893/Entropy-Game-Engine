@@ -88,8 +88,7 @@ export class PlayerMotor extends Motor {
     }
 
     private onClick(event: MouseEvent): void {
-        let hit = Physics.raycast(this.transform.position, Vector2.right, 50);
-        console.log(hit);
+        let hit = Physics.raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1), Vector2.right, 5000);
     }
 
     private onKeyDown(event: KeyboardEvent): void {

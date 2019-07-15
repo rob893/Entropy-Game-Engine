@@ -36,5 +36,6 @@ export class Animator extends Component {
         }
 
         this.canvasContext.drawImage(this.animation.currentFrame, this.transform.position.x, this.transform.position.y, this.transform.width, this.transform.height);
+        this.animation.updateAnimation();
     }
 }
