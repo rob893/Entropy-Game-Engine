@@ -19,7 +19,9 @@ export class TrumpMotor extends Motor {
     private runLeftAnimation: Animation;
     private animator: Animator;
     private audioSource: AudioSource;
-    private isMovingLeft = true;
+    private isMovingLeft: boolean = false;
+    private isMovingRight: boolean = false;
+    private isIdle: boolean = true;
 
 
     public constructor(gameObject: GameObject) {
@@ -32,7 +34,6 @@ export class TrumpMotor extends Motor {
 
     public start(): void {
         this.animator = this.gameObject.getComponent(Animator);
-        this.animator.setAnimation(this.runLeftAnimation);
         this.audioSource = this.gameObject.getComponent(AudioSource);
         this.audioSource.setClip(YouSuckSound);
         this.player = GameEngine.Instance.getGameObjectById('player');
@@ -45,13 +46,20 @@ export class TrumpMotor extends Motor {
 
         if (direction.x < -0.1 && !this.isMovingLeft) {
             this.isMovingLeft = true;
+            this.isMovingRight = false;
+            this.isIdle = false;
             this.animator.setAnimation(this.runLeftAnimation);
         }
-        else if (direction.x > 0.1 && this.isMovingLeft) {
+        else if (direction.x > 0.1 && !this.isMovingRight) {
             this.isMovingLeft = false;
+            this.isMovingRight = true;
+            this.isIdle = false;
             this.animator.setAnimation(this.runRightAnimation);
         }
-        else if (direction.x >= -0.1 && direction.x <= 0.1) {
+        else if (direction.x >= -0.1 && direction.x <= 0.1 && !this.isIdle) {
+            this.isMovingLeft = false;
+            this.isMovingRight = false;
+            this.isIdle = true;
             this.animator.setAnimation(this.idleAnimation);
             this.audioSource.play();
         }

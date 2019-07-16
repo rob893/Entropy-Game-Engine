@@ -11,7 +11,7 @@ export class Animation {
     private timer: number = 0;
     
 
-    public constructor(spriteSheetUrl: string, numFrames: number, numRows: number, delay: number = 0, specificRows: number[] = null) {        
+    public constructor(spriteSheetUrl: string, numFrames: number, numRows: number, delay: number = 0, specificRows: number[] = null, trimEdgesBy: number = 0) {        
         this.delay = delay;
 
         let spriteSheet = new Image();
@@ -34,7 +34,7 @@ export class Animation {
                         canvas.height = spriteHeight;
     
                         let context = canvas.getContext('2d');
-                        context.drawImage(spriteSheet, i * spriteWidth, (row - 1) * spriteHeight, spriteWidth, spriteHeight, 0, 0, canvas.width, canvas.height);
+                        context.drawImage(spriteSheet, (i * spriteWidth) + trimEdgesBy, ((row - 1) * spriteHeight) + trimEdgesBy, spriteWidth - trimEdgesBy, spriteHeight - trimEdgesBy, 0, 0, canvas.width, canvas.height);
                         let frame = new Image();
                         frame.src = canvas.toDataURL();
                         frame.onload = () => {
@@ -54,7 +54,7 @@ export class Animation {
                         canvas.height = spriteHeight;
     
                         let context = canvas.getContext('2d');
-                        context.drawImage(spriteSheet, j * spriteWidth, i * spriteHeight, spriteWidth, spriteHeight, 0, 0, canvas.width, canvas.height);
+                        context.drawImage(spriteSheet, (j * spriteWidth) + trimEdgesBy, (i * spriteHeight) + trimEdgesBy, spriteWidth - trimEdgesBy, spriteHeight - trimEdgesBy, 0, 0, canvas.width, canvas.height);
                         let frame = new Image();
                         frame.src = canvas.toDataURL();
                         frame.onload = () => {

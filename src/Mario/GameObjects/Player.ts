@@ -10,7 +10,7 @@ import { Animation } from "../../GameEngine/Core/Animation";
 export class Player extends GameObject {
 
     public constructor(id: string) {
-        super(id, 2, 175, 10, 50);
+        super(id, 2, 175, 50, 50);
 
         let playerComponents: Component[] = [];
         
