@@ -38,7 +38,7 @@ export class Transform extends Component {
 
     public translate(translation: Vector2): void {
         this.position.x += translation.x;
-        this.position.y += (-1 * translation.y); //This is to make a more positive y value go up instead of down.
+        this.position.y += (-1 * translation.y); //This is to make a more positive y value go up instead of down. TODO: Come back to this. Makes vector directions act funny.
         this.onMove.trigger();
     }
 

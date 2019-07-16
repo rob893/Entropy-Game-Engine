@@ -4,19 +4,23 @@ import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider
 import TrumpIdleSprite from "../../assets/trump_idle.png";
 import { Animation } from "../../GameEngine/Core/Animation";
 import { Animator } from "../../GameEngine/Components/Animator";
+import { TrumpMotor } from "../Components/TrumpMotor";
+import { AudioSource } from "../../GameEngine/Components/AudioSource";
 
 export class Trump extends GameObject {
 
     public constructor(id: string) {
         super(id, 400, 280, 75, 75);
 
-        let computerComponents: Component[] = [];
+        let components: Component[] = [];
         
-        computerComponents.push(new RectangleCollider(this));
+        components.push(new RectangleCollider(this));
+        components.push(new TrumpMotor(this));
 
         let initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
-        computerComponents.push(new Animator(this, initialAnimation));
+        components.push(new Animator(this, initialAnimation));
+        components.push(new AudioSource(this));
 
-        this.setComponents(computerComponents);
+        this.setComponents(components);
     }
 }

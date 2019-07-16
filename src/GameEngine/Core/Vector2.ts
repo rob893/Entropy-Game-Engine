@@ -150,4 +150,8 @@ export class Vector2 {
     public static dot(point1: Vector2, point2: Vector2): number {
         return (point1.x * point2.x) + (point1.y * point2.y);
     }
+
+    public static direction(point1: Vector2, point2: Vector2): Vector2 {
+        return new Vector2(point2.x - point1.x, point2.y - point1.y).normalized;
+    }
 }

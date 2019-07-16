@@ -7,7 +7,7 @@ export class AudioSource extends Component {
     private ready: boolean = false;
 
 
-    public constructor(gameObject: GameObject, audioURL: string) {
+    public constructor(gameObject: GameObject, audioURL?: string) {
         super(gameObject);
 
         let audioClip = new Audio(audioURL);
