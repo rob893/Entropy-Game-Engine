@@ -31,12 +31,12 @@ export class BallMotor extends Motor {
     }
     handleOutOfBounds() {
         if (this.transform.position.y <= 0) {
-            this.yVelocity *= -1;
-        }
-        else if (this.transform.position.y >= this.gameCanvas.height - this.transform.height) {
             this.yVelocity = Math.abs(this.yVelocity);
         }
-        if (this.transform.position.x + this.transform.width <= 0) {
+        else if (this.transform.position.y >= this.gameCanvas.height - this.collider.height) {
+            this.yVelocity *= -1;
+        }
+        if (this.transform.position.x + this.collider.width <= 0) {
             this.reset();
         }
         else if (this.transform.position.x >= this.gameCanvas.width) {

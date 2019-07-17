@@ -6,39 +6,28 @@ import { ILiteEvent } from "../Core/Interfaces/ILiteEvent";
 
 export class Transform extends Component {
 
-    public width: number = 0;
-    public height: number = 0;
     //Position is the top left of the agent with width growing right and height growing down.
     public readonly position: Vector2;
     //Rotation in radians
     public rotation: number;
+    public scale: Vector2;
 
     private readonly onMove = new LiteEvent<void>();
 
     
-    public constructor(gameObject: GameObject, x: number, y: number, width: number, height: number) {
+    public constructor(gameObject: GameObject, x: number, y: number) {
         super(gameObject);
-        this.width = width;
-        this.height = height;
         this.position = new Vector2(x, y);
         this.rotation = 0;
+        this.scale = Vector2.one;
     }
 
     public get onMoved(): ILiteEvent<void> { 
         return this.onMove.expose(); 
     }
 
-    public get center(): Vector2 {
-        return new Vector2(this.position.x + (this.width / 2), this.position.y + (this.height / 2));
-    }
-
-    public get bottomCenter(): Vector2 {
-        return new Vector2(this.position.x + (this.width / 2), this.position.y + this.height);
-    }
-
     public translate(translation: Vector2): void {
-        this.position.x += translation.x;
-        this.position.y += (-1 * translation.y); //This is to make a more positive y value go up instead of down. TODO: Come back to this. Makes vector directions act funny.
+        this.position.add(translation);
         this.onMove.trigger();
     }
 

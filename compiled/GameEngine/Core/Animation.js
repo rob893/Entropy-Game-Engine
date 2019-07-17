@@ -1,6 +1,6 @@
 import { Time } from "./Time";
 export class Animation {
-    constructor(spriteSheetUrl, numFrames, numRows, delay = 0, specificRows = null) {
+    constructor(spriteSheetUrl, numFrames, numRows, delay = 0, specificRows = null, trimEdgesBy = 0) {
         this.loop = true;
         this.animationReady = false;
         this.frames = [];
@@ -24,7 +24,7 @@ export class Animation {
                         canvas.width = spriteWidth;
                         canvas.height = spriteHeight;
                         let context = canvas.getContext('2d');
-                        context.drawImage(spriteSheet, i * spriteWidth, (row - 1) * spriteHeight, spriteWidth, spriteHeight, 0, 0, canvas.width, canvas.height);
+                        context.drawImage(spriteSheet, (i * spriteWidth) + trimEdgesBy, ((row - 1) * spriteHeight) + trimEdgesBy, spriteWidth - trimEdgesBy, spriteHeight - trimEdgesBy, 0, 0, canvas.width, canvas.height);
                         let frame = new Image();
                         frame.src = canvas.toDataURL();
                         frame.onload = () => {
@@ -42,7 +42,7 @@ export class Animation {
                         canvas.width = spriteWidth;
                         canvas.height = spriteHeight;
                         let context = canvas.getContext('2d');
-                        context.drawImage(spriteSheet, j * spriteWidth, i * spriteHeight, spriteWidth, spriteHeight, 0, 0, canvas.width, canvas.height);
+                        context.drawImage(spriteSheet, (j * spriteWidth) + trimEdgesBy, (i * spriteHeight) + trimEdgesBy, spriteWidth - trimEdgesBy, spriteHeight - trimEdgesBy, 0, 0, canvas.width, canvas.height);
                         let frame = new Image();
                         frame.src = canvas.toDataURL();
                         frame.onload = () => {

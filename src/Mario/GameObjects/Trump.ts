@@ -6,22 +6,20 @@ import { Animation } from "../../GameEngine/Core/Animation";
 import { Animator } from "../../GameEngine/Components/Animator";
 import { TrumpMotor } from "../Components/TrumpMotor";
 import { AudioSource } from "../../GameEngine/Components/AudioSource";
-import { RectangleRenderer } from "../../GameEngine/Components/RectangleRenderer";
 
 export class Trump extends GameObject {
 
     public constructor(id: string) {
-        super(id, 400, 280, 75, 75);
+        super(id, 400, 355);
 
         let components: Component[] = [];
         
-        components.push(new RectangleCollider(this));
+        components.push(new RectangleCollider(this, 75, 75));
         components.push(new TrumpMotor(this));
 
         let initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
-        components.push(new Animator(this, initialAnimation));
+        components.push(new Animator(this, 75, 75, initialAnimation));
         components.push(new AudioSource(this));
-        //components.push(new RectangleRenderer(this, 'red'));
 
         this.setComponents(components);
     }

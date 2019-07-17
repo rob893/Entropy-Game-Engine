@@ -9,11 +9,15 @@ export class Animator extends Component {
     private canvasContext: CanvasRenderingContext2D;
     private transform: Transform;
     private animation: Animation;
+    private renderHeight: number;
+    private renderWidth: number;
 
 
-    public constructor(gameObject: GameObject, initialAnimation: Animation) {
+    public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, initialAnimation: Animation) {
         super(gameObject);
         
+        this.renderWidth = renderWidth;
+        this.renderHeight = renderHeight;
         this.animation = initialAnimation;
     }
 
@@ -35,7 +39,8 @@ export class Animator extends Component {
             return;
         }
 
-        this.canvasContext.drawImage(this.animation.currentFrame, this.transform.position.x, this.transform.position.y, this.transform.width, this.transform.height);
+        this.canvasContext.drawImage(this.animation.currentFrame, this.transform.position.x - (this.renderWidth / 2), 
+            this.transform.position.y - this.renderHeight, this.renderWidth, this.renderHeight);
         this.animation.updateAnimation();
     }
 }

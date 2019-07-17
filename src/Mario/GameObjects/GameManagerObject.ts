@@ -8,7 +8,7 @@ import MarioTheme from "../../assets/marioTheme.mp3";
 export class GameManagerObject extends GameObject {
 
     public constructor(id: string) {
-        super(id, 0, 0, 0, 0);
+        super(id, 0, 0);
 
         let gameManagerComponents: Component[] = [];
         

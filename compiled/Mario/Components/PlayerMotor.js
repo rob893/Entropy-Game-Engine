@@ -7,6 +7,7 @@ import MovingLeftSprite from "../../assets/marioLeft.png";
 import { Animator } from "../../GameEngine/Components/Animator";
 import { Animation } from "../../GameEngine/Core/Animation";
 import { Physics } from "../../GameEngine/Core/Physics";
+import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
 export class PlayerMotor extends Motor {
     constructor(gameObject) {
         super(gameObject);
@@ -21,6 +22,7 @@ export class PlayerMotor extends Motor {
     }
     start() {
         super.start();
+        this.collider = this.gameObject.getComponent(RectangleCollider);
         this.rigidBody = this.gameObject.getComponent(Rigidbody);
         this.animator = this.gameObject.getComponent(Animator);
     }
@@ -31,16 +33,16 @@ export class PlayerMotor extends Motor {
         if (this.transform.position.y <= 0) {
             this.transform.position.y = 1;
         }
-        else if (this.transform.position.y + this.transform.height >= this.gameCanvas.height - 55) {
+        else if (this.transform.position.y >= this.gameCanvas.height - 55) {
             this.rigidBody.isKinomatic = true;
             this.jumping = false;
-            this.transform.position.y = (this.gameCanvas.height - this.transform.height) - 56;
+            this.transform.position.y = this.gameCanvas.height - 56;
         }
-        if (this.transform.position.x <= 0) {
-            this.transform.position.x = 1;
+        if (this.transform.position.x - (this.collider.width / 2) <= 0) {
+            this.transform.position.x = (this.collider.width / 2) + 1;
         }
-        else if (this.transform.position.x + this.transform.width >= this.gameCanvas.width) {
-            this.transform.position.x = (this.gameCanvas.width - this.transform.width) - 1;
+        else if (this.transform.position.x + (this.collider.width / 2) >= this.gameCanvas.width) {
+            this.transform.position.x = (this.gameCanvas.width - (this.collider.width / 2)) - 1;
         }
     }
     move() {

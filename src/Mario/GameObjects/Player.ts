@@ -10,17 +10,17 @@ import { Animation } from "../../GameEngine/Core/Animation";
 export class Player extends GameObject {
 
     public constructor(id: string) {
-        super(id, 2, 175, 50, 50);
+        super(id, 2, 175);
 
         let playerComponents: Component[] = [];
         
-        playerComponents.push(new RectangleCollider(this));
+        playerComponents.push(new RectangleCollider(this, 50, 50));
         playerComponents.push(new PlayerMotor(this));
         playerComponents.push(new Rigidbody(this));
         
         let initialAnimation = new Animation(MarioSprite, 4, 1, 0.1);
 
-        playerComponents.push(new Animator(this, initialAnimation));
+        playerComponents.push(new Animator(this, 50, 50, initialAnimation));
 
 
         this.setComponents(playerComponents);

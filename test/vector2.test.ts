@@ -35,7 +35,7 @@ test('Find the angle between two vector2s.', () => {
 test('Add two vector2s together.', () => {
     expect(Vector2.one.add(Vector2.one)).toEqual(new Vector2(2, 2));
     expect(new Vector2(6, 2.23).add(new Vector2(1.1, 2.2))).toEqual(new Vector2(7.1, 4.43));
-    expect(Vector2.add(Vector2.one, Vector2.up)).toEqual(new Vector2(1, 2));
+    expect(Vector2.add(Vector2.one, Vector2.up)).toEqual(new Vector2(1, 0));
 });
 
 test('Subtract two vector2s.', () => {

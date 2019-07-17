@@ -13,9 +13,9 @@ export abstract class GameObject {
     protected componentMap: Map<string, Component> = new Map<string, Component>();
     
 
-    public constructor(id: string, x: number = 0, y: number = 0, width: number = 0, height: number = 0) {
+    public constructor(id: string, x: number = 0, y: number = 0) {
         this.id = id;
-        this.transform = new Transform(this, x, y, width, height);
+        this.transform = new Transform(this, x, y);
     }
 
     public start(): void {

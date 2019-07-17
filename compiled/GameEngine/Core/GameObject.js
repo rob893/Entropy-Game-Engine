@@ -1,11 +1,11 @@
 import { Transform } from "../Components/Transform";
 import { GameEngine } from "./GameEngine";
 export class GameObject {
-    constructor(id, x = 0, y = 0, width = 0, height = 0) {
+    constructor(id, x = 0, y = 0) {
         this.components = [];
         this.componentMap = new Map();
         this.id = id;
-        this.transform = new Transform(this, x, y, width, height);
+        this.transform = new Transform(this, x, y);
     }
     start() {
         this.gameCanvas = GameEngine.Instance.getGameCanvas();

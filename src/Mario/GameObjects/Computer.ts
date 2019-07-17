@@ -8,13 +8,13 @@ import { RectangleRenderer } from "../../GameEngine/Components/RectangleRenderer
 export class Computer extends GameObject {
 
     public constructor(id: string) {
-        super(id, 688, 175, 10, 50);
+        super(id, 688, 175);
 
         let computerComponents: Component[] = [];
         
-        computerComponents.push(new RectangleCollider(this));
+        computerComponents.push(new RectangleCollider(this, 10, 50));
         computerComponents.push(new ComputerMotor(this));
-        computerComponents.push(new RectangleRenderer(this, "white"));
+        computerComponents.push(new RectangleRenderer(this, 10, 50, "white"));
 
         this.setComponents(computerComponents);
     }

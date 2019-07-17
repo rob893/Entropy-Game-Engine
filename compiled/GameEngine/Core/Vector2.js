@@ -55,10 +55,10 @@ export class Vector2 {
         return this;
     }
     static get up() {
-        return new Vector2(0, 1);
+        return new Vector2(0, -1);
     }
     static get down() {
-        return new Vector2(0, -1);
+        return new Vector2(0, 1);
     }
     static get left() {
         return new Vector2(-1, 0);
@@ -75,6 +75,21 @@ export class Vector2 {
     static add(leftOperand, rightOperand) {
         return new Vector2(leftOperand.x + rightOperand.x, leftOperand.y + rightOperand.y);
     }
+    static subtract(leftOperand, rightOperand) {
+        return new Vector2(leftOperand.x - rightOperand.x, leftOperand.y - rightOperand.y);
+    }
+    static multiply(leftOperand, rightOperand) {
+        return new Vector2(leftOperand.x * rightOperand.x, leftOperand.y * rightOperand.y);
+    }
+    static divide(leftOperand, rightOperand) {
+        return new Vector2(leftOperand.x / rightOperand.x, leftOperand.y / rightOperand.y);
+    }
+    static multiplyScalar(leftOperand, scalar) {
+        return new Vector2(leftOperand.x * scalar, leftOperand.y * scalar);
+    }
+    static divideScalar(leftOperand, scalar) {
+        return new Vector2(leftOperand.x / scalar, leftOperand.y / scalar);
+    }
     static distance(point1, point2) {
         let distanceX = point1.x - point2.x;
         let distanceY = point1.y - point2.y;
@@ -89,6 +104,9 @@ export class Vector2 {
     }
     static dot(point1, point2) {
         return (point1.x * point2.x) + (point1.y * point2.y);
+    }
+    static direction(point1, point2) {
+        return new Vector2(point2.x - point1.x, point2.y - point1.y).normalized;
     }
 }
 //# sourceMappingURL=Vector2.js.map

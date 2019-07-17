@@ -82,12 +82,18 @@ export class Vector2 {
         return this;
     }
 
+    /**
+     * Returns a new Vector2 with an up direction (a negative y value is up for html canvas)
+     */
     public static get up(): Vector2 {
-        return new Vector2(0, 1);
+        return new Vector2(0, -1);
     }
 
+    /**
+     * Returns a new Vector2 with an down direction (a positive y value is down for html canvas)
+     */
     public static get down(): Vector2 {
-        return new Vector2(0, -1);
+        return new Vector2(0, 1);
     }
 
     public static get left(): Vector2 {

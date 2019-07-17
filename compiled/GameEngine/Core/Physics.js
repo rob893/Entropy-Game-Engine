@@ -39,6 +39,8 @@ export class Physics {
         return results;
     }
     static sphereCast() { }
-    static overlapSphere() { return []; }
+    static overlapSphere() {
+        return [];
+    }
 }
 //# sourceMappingURL=Physics.js.map
