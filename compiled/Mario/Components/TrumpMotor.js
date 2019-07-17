@@ -3,9 +3,9 @@ import { GameEngine } from "../../GameEngine/Core/GameEngine";
 import { Vector2 } from "../../GameEngine/Core/Vector2";
 import { Animation } from "../../GameEngine/Core/Animation";
 import { Animator } from "../../GameEngine/Components/Animator";
-import TrumpRun from "../../assets/trump_run.png";
-import TrumpIdle from "../../assets/trump_idle.png";
-import YouSuckSound from "../../assets/suck.mp3";
+import TrumpRun from "../../assets/images/trump_run.png";
+import TrumpIdle from "../../assets/images/trump_idle.png";
+import YouSuckSound from "../../assets/sounds/suck.mp3";
 import { AudioSource } from "../../GameEngine/Components/AudioSource";
 export class TrumpMotor extends Motor {
     constructor(gameObject) {

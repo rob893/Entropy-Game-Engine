@@ -3,7 +3,7 @@ import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider
 import { PlayerMotor } from "../Components/PlayerMotor";
 import { Rigidbody } from "../../GameEngine/Components/Rigidbody";
 import { Animator } from "../../GameEngine/Components/Animator";
-import MarioSprite from "../../assets/mario.png";
+import MarioSprite from "../../assets/images/mario.png";
 import { Animation } from "../../GameEngine/Core/Animation";
 export class Player extends GameObject {
     constructor(id) {

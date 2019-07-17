@@ -2,7 +2,7 @@ import { GameObject } from "../../GameEngine/Core/GameObject";
 import { GameManager } from "../Components/GameManager";
 import { FPSCounter } from "../../GameEngine/Components/FPSCounter";
 import { AudioSource } from "../../GameEngine/Components/AudioSource";
-import MarioTheme from "../../assets/marioTheme.mp3";
+import MarioTheme from "../../assets/sounds/marioTheme.mp3";
 export class GameManagerObject extends GameObject {
     constructor(id) {
         super(id, 0, 0);

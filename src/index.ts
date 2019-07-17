@@ -5,7 +5,7 @@ import { Player } from "./Mario/GameObjects/Player";
 import { Ball } from "./Mario/GameObjects/Ball";
 import { Computer } from "./Mario/GameObjects/Computer";
 import { GameObject } from "./GameEngine/Core/GameObject";
-import Background from "./assets/background.png";
+import Background from "./assets/images/background.png";
 import { Trump } from "./Mario/GameObjects/Trump";
 
 

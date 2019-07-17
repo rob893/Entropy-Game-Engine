@@ -4,7 +4,7 @@ import { GameManagerObject } from "./Mario/GameObjects/GameManagerObject";
 import { Player } from "./Mario/GameObjects/Player";
 import { Ball } from "./Mario/GameObjects/Ball";
 import { Computer } from "./Mario/GameObjects/Computer";
-import Background from "./assets/background.png";
+import Background from "./assets/images/background.png";
 import { Trump } from "./Mario/GameObjects/Trump";
 let gameEngine = GameEngine.Instance;
 let gameCanvas = document.getElementById("game-canvas");

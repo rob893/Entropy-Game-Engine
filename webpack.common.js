@@ -12,8 +12,27 @@ module.exports = {
                 exclude: /node_modules/
             },
             {
-                test: /\.(png|svg|jpg|gif|mp3)$/,
-                use: 'file-loader',
+                test: /\.(png|svg|jpg|gif)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'assets/images'
+                        }
+                    }
+                ],
+                exclude: /node_modules/
+            },
+            {
+                test: /\.(mp3|ogg|wav)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'assets/sounds'
+                        }
+                    }
+                ],
                 exclude: /node_modules/
             }
         ]
@@ -29,7 +48,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: "Mario Clone",
             template: "src/index.html",
-            favicon: "src/assets/favicon.ico",
+            favicon: "src/assets/images/favicon.ico",
             
         })
     ]
