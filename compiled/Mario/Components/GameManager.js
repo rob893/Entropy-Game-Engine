@@ -11,19 +11,19 @@ export class GameManager extends Component {
         document.getElementById("toggle-music").addEventListener("click", () => this.toggleMusic());
     }
     start() {
-        this.player = GameEngine.Instance.getGameObjectById("player");
+        this.player = GameEngine.instance.getGameObjectById("player");
         this.audioSource = this.gameObject.getComponent(AudioSource);
         this.audioSource.loop = true;
     }
-    static get Instance() {
-        if (this.instance === null || this.instance === undefined) {
-            throw new Error("GameManager has not been created yet. Use the createInstance method first.");
+    static get instance() {
+        if (this._instance === null || this._instance === undefined) {
+            throw new Error("GameManager has not been created yet. Use the createinstance method first.");
         }
-        return this.instance;
+        return this._instance;
     }
-    static createInstance(gameObject) {
-        if (this.instance === null || this.instance === undefined) {
-            this.instance = new GameManager(gameObject);
+    static createinstance(gameObject) {
+        if (this._instance === null || this._instance === undefined) {
+            this._instance = new GameManager(gameObject);
             return this.instance;
         }
         throw new Error("More than one GameManager cannot be created!");
@@ -37,13 +37,13 @@ export class GameManager extends Component {
         }
     }
     togglePause() {
-        GameEngine.Instance.togglePause();
+        GameEngine.instance.togglePause();
     }
     printGameData() {
-        GameEngine.Instance.printGameData();
+        GameEngine.instance.printGameData();
     }
     testInstantiate() {
-        GameEngine.Instance.instantiate(new Ball("ball2"));
+        GameEngine.instance.instantiate(new Ball("ball2"));
     }
 }
 //# sourceMappingURL=GameManager.js.map

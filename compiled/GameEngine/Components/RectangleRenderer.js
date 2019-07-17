@@ -1,4 +1,5 @@
 import { Component } from "./Component";
+import { RenderingEngine } from "../Core/RenderingEngine";
 export class RectangleRenderer extends Component {
     constructor(gameObject, renderWidth, renderHeight, color) {
         super(gameObject);
@@ -6,20 +7,14 @@ export class RectangleRenderer extends Component {
         this.renderHeight = renderHeight;
         this.transform = gameObject.getTransform();
         this.color = color;
-    }
-    start() {
-        this.gameCanvas = this.gameObject.getGameCanvas();
-        this.canvasContext = this.gameCanvas.getContext("2d");
-    }
-    update() {
-        this.render();
+        RenderingEngine.instance.addRenderableObject(this);
     }
     setColor(color) {
         this.color = color;
     }
-    render() {
-        this.canvasContext.fillStyle = this.color;
-        this.canvasContext.fillRect(this.transform.position.x - (this.renderWidth / 2), this.transform.position.y - this.renderHeight, this.renderWidth, this.renderHeight);
+    render(context) {
+        context.fillStyle = this.color;
+        context.fillRect(this.transform.position.x - (this.renderWidth / 2), this.transform.position.y - this.renderHeight, this.renderWidth, this.renderHeight);
     }
 }
 //# sourceMappingURL=RectangleRenderer.js.map

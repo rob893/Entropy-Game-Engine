@@ -11,8 +11,8 @@ export class BallMotor extends Motor {
     start() {
         super.start();
         this.collider = this.gameObject.getComponent(RectangleCollider);
-        this.playerCollider = GameEngine.Instance.getGameObjectById("player").getComponent(RectangleCollider);
-        this.computerCollider = GameEngine.Instance.getGameObjectById("computer").getComponent(RectangleCollider);
+        this.playerCollider = GameEngine.instance.getGameObjectById("player").getComponent(RectangleCollider);
+        this.computerCollider = GameEngine.instance.getGameObjectById("computer").getComponent(RectangleCollider);
         this.collider.onCollided.add((other) => this.handleCollision(other));
     }
     update() {

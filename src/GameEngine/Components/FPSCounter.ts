@@ -1,21 +1,21 @@
 import { Component } from "./Component";
 import { Time } from "../Core/Time";
-import { GameEngine } from "../Core/GameEngine";
+import { IRenderableGUI } from "../Core/Interfaces/IRenderableGUI";
+import { RenderingEngine } from "../Core/RenderingEngine";
 
-export class FPSCounter extends Component {
+export class FPSCounter extends Component implements IRenderableGUI {
 
     private numFrames: number = 0;
     private timer: number = 0;
     private FPS: number = 0;
-    private canvasContext: CanvasRenderingContext2D;
 
 
     public start(): void {
-        this.canvasContext = GameEngine.Instance.getGameCanvasContext();
-        this.canvasContext.font = "20px Arial";
+        RenderingEngine.instance.addRenderableGUIElement(this);
+        RenderingEngine.instance.canvasContext.font = "20px Arial";
     }
 
-    public update(): void {
+    public renderGUI(context: CanvasRenderingContext2D): void {
         this.timer += Time.DeltaTime;
         this.numFrames++;
 
@@ -25,6 +25,6 @@ export class FPSCounter extends Component {
             this.numFrames = 0;
         }
 
-        this.canvasContext.fillText("FPS: " + this.FPS.toFixed(2), 0, 20);
+        context.fillText("FPS: " + this.FPS.toFixed(2), 0, 20);
     }
 }

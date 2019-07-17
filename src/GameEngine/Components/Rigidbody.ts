@@ -25,7 +25,7 @@ export class Rigidbody extends Component {
         this.velocity = new Vector2(0, 0);
         this.acceleration = new Vector2(0, 0);
         this.force = Vector2.zero;
-        Physics.Instance.addRigidbody(this);
+        Physics.instance.addRigidbody(this);
     }
 
     public update(): void {

@@ -1,14 +1,14 @@
 import { Component } from "./Component";
 import { Transform } from "./Transform";
 import { GameObject } from "../Core/GameObject";
+import { IRenderable } from "../Core/Interfaces/IRenderable";
+import { RenderingEngine } from "../Core/RenderingEngine";
 
-export class RectangleRenderer extends Component {
+export class RectangleRenderer extends Component implements IRenderable {
 
     private transform: Transform;
     private renderWidth: number;
     private renderHeight: number;
-    private gameCanvas: HTMLCanvasElement;
-    private canvasContext: CanvasRenderingContext2D;
     private color: string;
 
     public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, color: string) {
@@ -18,23 +18,16 @@ export class RectangleRenderer extends Component {
         this.renderHeight = renderHeight;
         this.transform = gameObject.getTransform();
         this.color = color
-    }
 
-    public start(): void {
-        this.gameCanvas = this.gameObject.getGameCanvas();
-        this.canvasContext = this.gameCanvas.getContext("2d");
-    }
-
-    public update(): void {
-        this.render();
+        RenderingEngine.instance.addRenderableObject(this);
     }
 
     public setColor(color: string): void {
         this.color = color;
     }
 
-    private render(): void {
-        this.canvasContext.fillStyle = this.color;
-        this.canvasContext.fillRect(this.transform.position.x - (this.renderWidth / 2), this.transform.position.y - this.renderHeight, this.renderWidth, this.renderHeight);
+    public render(context: CanvasRenderingContext2D): void {
+        context.fillStyle = this.color;
+        context.fillRect(this.transform.position.x - (this.renderWidth / 2), this.transform.position.y - this.renderHeight, this.renderWidth, this.renderHeight);
     }
 }

@@ -2,6 +2,7 @@ import { Vector2 } from "../Core/Vector2";
 import { Component } from "./Component";
 import { LiteEvent } from "../Core/Helpers/LiteEvent";
 import { Physics } from "../Core/Physics";
+import { RenderingEngine } from "../Core/RenderingEngine";
 export class RectangleCollider extends Component {
     constructor(gameObject, width, height) {
         super(gameObject);
@@ -11,20 +12,32 @@ export class RectangleCollider extends Component {
         this.height = height;
         this.transform = gameObject.getTransform();
         let transform = this.transform;
-        transform.onMoved.add(() => this.onTransformMoved());
-        this.topLeft = new Vector2(transform.position.x - (width / 2), transform.position.y - height);
-        this.topRight = new Vector2(transform.position.x + (width / 2), transform.position.y - height);
-        this.bottomLeft = new Vector2(transform.position.x - (width / 2), transform.position.y);
-        this.bottomRight = new Vector2(transform.position.x + (width / 2), transform.position.y);
-        Physics.Instance.addCollider(this);
+        this._topLeft = new Vector2(transform.position.x - (width / 2), transform.position.y - height);
+        this._topRight = new Vector2(transform.position.x + (width / 2), transform.position.y - height);
+        this._bottomLeft = new Vector2(transform.position.x - (width / 2), transform.position.y);
+        this._bottomRight = new Vector2(transform.position.x + (width / 2), transform.position.y);
+        Physics.instance.addCollider(this);
+        RenderingEngine.instance.addRenderableGizmo(this);
     }
-    start() {
-        this.canvasContext = this.gameObject.getGameCanvas().getContext('2d');
+    get topLeft() {
+        this._topLeft.x = this.transform.position.x - (this.width / 2);
+        this._topLeft.y = this.transform.position.y - this.height;
+        return this._topLeft;
     }
-    update() {
-        if (this.visualize) {
-            this.drawCollider();
-        }
+    get topRight() {
+        this._topRight.x = this.transform.position.x + (this.width / 2);
+        this._topRight.y = this.transform.position.y - this.height;
+        return this._topRight;
+    }
+    get bottomLeft() {
+        this._bottomLeft.x = this.transform.position.x - (this.width / 2);
+        this._bottomLeft.y = this.transform.position.y;
+        return this._bottomLeft;
+    }
+    get bottomRight() {
+        this._bottomRight.x = this.transform.position.x + (this.width / 2);
+        this._bottomRight.y = this.transform.position.y;
+        return this._bottomRight;
     }
     detectCollision(other) {
         if (!(other.topLeft.x > this.topRight.x ||
@@ -42,25 +55,15 @@ export class RectangleCollider extends Component {
     get onCollided() {
         return this.onCollide.expose();
     }
-    onTransformMoved() {
-        this.topLeft.x = this.transform.position.x - (this.width / 2);
-        this.topLeft.y = this.transform.position.y - this.height;
-        this.topRight.x = this.transform.position.x + (this.width / 2);
-        this.topRight.y = this.transform.position.y - this.height;
-        this.bottomLeft.x = this.transform.position.x - (this.width / 2);
-        this.bottomLeft.y = this.transform.position.y;
-        this.bottomRight.x = this.transform.position.x + (this.width / 2);
-        this.bottomRight.y = this.transform.position.y;
-    }
-    drawCollider() {
-        this.canvasContext.beginPath();
-        this.canvasContext.moveTo(this.topLeft.x, this.topLeft.y);
-        this.canvasContext.lineTo(this.bottomLeft.x, this.bottomLeft.y);
-        this.canvasContext.lineTo(this.bottomRight.x, this.bottomRight.y);
-        this.canvasContext.lineTo(this.topRight.x, this.topRight.y);
-        this.canvasContext.lineTo(this.topLeft.x, this.topLeft.y);
-        this.canvasContext.strokeStyle = '#2fff0f';
-        this.canvasContext.stroke();
+    renderGizmo(context) {
+        context.beginPath();
+        context.moveTo(this.topLeft.x, this.topLeft.y);
+        context.lineTo(this.bottomLeft.x, this.bottomLeft.y);
+        context.lineTo(this.bottomRight.x, this.bottomRight.y);
+        context.lineTo(this.topRight.x, this.topRight.y);
+        context.lineTo(this.topLeft.x, this.topLeft.y);
+        context.strokeStyle = '#2fff0f';
+        context.stroke();
     }
 }
 //# sourceMappingURL=RectangleCollider.js.map

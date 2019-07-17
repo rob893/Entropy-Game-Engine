@@ -1,4 +1,5 @@
 import { Component } from "../../GameEngine/Components/Component";
+import { GameEngine } from "../../GameEngine/Core/GameEngine";
 export class Motor extends Component {
     constructor(gameObject) {
         super(gameObject);
@@ -8,7 +9,7 @@ export class Motor extends Component {
         this.transform = gameObject.getTransform();
     }
     start() {
-        this.gameCanvas = this.gameObject.getGameCanvas();
+        this.gameCanvas = GameEngine.instance.getGameCanvas();
     }
     update() {
         this.move();

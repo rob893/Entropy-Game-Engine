@@ -8,7 +8,7 @@ import { AudioSource } from "../../GameEngine/Components/AudioSource";
 
 export class GameManager extends Component {
 
-    private static instance: GameManager;
+    private static _instance: GameManager;
 
     private player: Player;
     private playerRenderer: RectangleRenderer;
@@ -25,22 +25,22 @@ export class GameManager extends Component {
     }
 
     public start(): void {
-        this.player = GameEngine.Instance.getGameObjectById("player");
+        this.player = GameEngine.instance.getGameObjectById("player");
         this.audioSource = this.gameObject.getComponent(AudioSource);
         this.audioSource.loop = true;
     }
 
-    public static get Instance(): GameManager {
-        if(this.instance === null || this.instance === undefined) {
-            throw new Error("GameManager has not been created yet. Use the createInstance method first.");
+    public static get instance(): GameManager {
+        if(this._instance === null || this._instance === undefined) {
+            throw new Error("GameManager has not been created yet. Use the createinstance method first.");
         }
 
-        return this.instance;
+        return this._instance;
     }
 
-    public static createInstance(gameObject: GameObject): GameManager {
-        if(this.instance === null || this.instance === undefined) {
-            this.instance = new GameManager(gameObject);
+    public static createinstance(gameObject: GameObject): GameManager {
+        if(this._instance === null || this._instance === undefined) {
+            this._instance = new GameManager(gameObject);
             return this.instance;
         }
         
@@ -57,14 +57,14 @@ export class GameManager extends Component {
     }
 
     private togglePause(): void {
-        GameEngine.Instance.togglePause();
+        GameEngine.instance.togglePause();
     }
 
     private printGameData(): void {
-        GameEngine.Instance.printGameData();
+        GameEngine.instance.printGameData();
     }
 
     private testInstantiate(): void {
-        GameEngine.Instance.instantiate(new Ball("ball2"));
+        GameEngine.instance.instantiate(new Ball("ball2"));
     }
 }

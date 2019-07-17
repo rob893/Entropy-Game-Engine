@@ -6,8 +6,8 @@ export class Physics {
         this.colliders = [];
         this.gravity = 1;
     }
-    static get Instance() {
-        return this.instance || (this.instance = new Physics());
+    static get instance() {
+        return this._instance || (this._instance = new Physics());
     }
     addRigidbody(rb) {
         this.rigidbodies.push(rb);
@@ -31,7 +31,7 @@ export class Physics {
     static raycastAll(origin, direction, distance) {
         let results = [];
         let terminalPoint = Vector2.add(origin, direction.multiplyScalar(distance));
-        for (let collider of Physics.Instance.colliders) {
+        for (let collider of Physics.instance.colliders) {
             if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
                 results.push(collider);
             }

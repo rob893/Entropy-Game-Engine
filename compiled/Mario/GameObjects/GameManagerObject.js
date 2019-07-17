@@ -7,7 +7,7 @@ export class GameManagerObject extends GameObject {
     constructor(id) {
         super(id, 0, 0);
         let gameManagerComponents = [];
-        let gameManager = GameManager.createInstance(this);
+        let gameManager = GameManager.createinstance(this);
         gameManagerComponents.push(gameManager);
         gameManagerComponents.push(new FPSCounter(this));
         gameManagerComponents.push(new AudioSource(this, MarioTheme));

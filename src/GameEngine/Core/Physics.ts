@@ -5,7 +5,7 @@ import { Geometry } from "./Geometry";
 
 export class Physics {
 
-    private static instance: Physics;
+    private static _instance: Physics;
 
     public gravity: number;
 
@@ -19,8 +19,8 @@ export class Physics {
         this.gravity = 1;
     }
 
-    public static get Instance(): Physics {
-        return this.instance || (this.instance = new Physics());
+    public static get instance(): Physics {
+        return this._instance || (this._instance = new Physics());
     }
 
     // public updatePhysics(): void {
@@ -59,7 +59,7 @@ export class Physics {
         let results: RectangleCollider[] = [];
         let terminalPoint = Vector2.add(origin, direction.multiplyScalar(distance));
 
-        for (let collider of Physics.Instance.colliders) {
+        for (let collider of Physics.instance.colliders) {
             if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
                 results.push(collider);
             }

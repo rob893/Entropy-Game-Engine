@@ -1,20 +1,18 @@
-import { IBackground } from "./Interfaces/IBackground";
+import { IRenderable } from "./Interfaces/IRenderable";
 
-export class ImageBackground implements IBackground {
+export class ImageBackground implements IRenderable {
     
     private gameCanvas: HTMLCanvasElement;
-    private canvasContext: CanvasRenderingContext2D;
     private image: HTMLImageElement;
 
 
     public constructor(gameCanvas: HTMLCanvasElement, imageSrc: string) {
         this.image = new Image(gameCanvas.width, gameCanvas.height);
         this.image.src = imageSrc;
-        this.canvasContext = gameCanvas.getContext("2d");
         this.gameCanvas = gameCanvas;
     }
     
-    public render(): void {
-        this.canvasContext.drawImage(this.image, 0, 0, this.gameCanvas.width, this.gameCanvas.height);
+    public render(context: CanvasRenderingContext2D): void {
+        context.drawImage(this.image, 0, 0, this.gameCanvas.width, this.gameCanvas.height);
     }
 }

@@ -7,8 +7,6 @@ export abstract class GameObject {
     public id: string;
 
     protected transform: Transform;
-    protected gameCanvas: HTMLCanvasElement;
-    protected canvasContext: CanvasRenderingContext2D;
     protected components: Component[] = [];
     protected componentMap: Map<string, Component> = new Map<string, Component>();
     
@@ -19,9 +17,6 @@ export abstract class GameObject {
     }
 
     public start(): void {
-        this.gameCanvas = GameEngine.Instance.getGameCanvas();
-        this.canvasContext = this.gameCanvas.getContext("2d");
-
         for(let i: number = 0; i < this.components.length; i++) {
             this.components[i].start();
         }
@@ -35,10 +30,6 @@ export abstract class GameObject {
 
     public getTransform(): Transform {
         return this.transform;
-    }
-
-    public getGameCanvas(): HTMLCanvasElement {
-        return this.gameCanvas;
     }
 
     public getComponent<T extends Component>(component: new (...args: any[]) => T): T {

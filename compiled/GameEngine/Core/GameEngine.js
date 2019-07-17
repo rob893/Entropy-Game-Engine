@@ -1,5 +1,6 @@
 import { Physics } from "./Physics";
 import { Time } from "./Time";
+import { RenderingEngine } from "./RenderingEngine";
 export class GameEngine {
     constructor() {
         this.gameObjects = [];
@@ -8,15 +9,17 @@ export class GameEngine {
         this.gameInitialized = false;
         this.paused = false;
         this.gameInitialized = false;
-        this.physicsEngine = Physics.Instance;
+        this.physicsEngine = Physics.instance;
+        this.renderingEngine = RenderingEngine.instance;
     }
-    static get Instance() {
-        return this.instance || (this.instance = new GameEngine());
+    static get instance() {
+        return this._instance || (this._instance = new GameEngine());
     }
     initializeGame(gameCanvas, gameObjects, background) {
-        this.background = background;
-        this.setGameCanvas(gameCanvas);
+        this.gameCanvas = gameCanvas;
         this.setGameObjects(gameObjects);
+        this.renderingEngine.background = background;
+        this.renderingEngine.canvasContext = gameCanvas.getContext('2d');
         this.gameInitialized = true;
     }
     startGame() {
@@ -53,9 +56,6 @@ export class GameEngine {
     getGameCanvas() {
         return this.gameCanvas;
     }
-    getGameCanvasContext() {
-        return this.canvasContext;
-    }
     printGameData() {
         console.log(this);
         console.log("Time since game start " + Time.TotalTime + "s");
@@ -65,10 +65,6 @@ export class GameEngine {
     }
     togglePause() {
         this.paused = !this.paused;
-    }
-    setGameCanvas(gameCanvas) {
-        this.gameCanvas = gameCanvas;
-        this.canvasContext = this.gameCanvas.getContext("2d");
     }
     setGameObjects(gameObjects) {
         this.gameObjects = gameObjects;
@@ -89,13 +85,10 @@ export class GameEngine {
             return;
         }
         Time.updateTime();
-        this.renderBackground();
         for (let i = 0; i < this.gameObjects.length; i++) {
             this.gameObjects[i].update();
         }
-    }
-    renderBackground() {
-        this.background.render();
+        this.renderingEngine.renderScene();
     }
     gameLoop() {
         this.update();

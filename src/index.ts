@@ -7,9 +7,12 @@ import { Computer } from "./Mario/GameObjects/Computer";
 import { GameObject } from "./GameEngine/Core/GameObject";
 import Background from "./assets/images/background.png";
 import { Trump } from "./Mario/GameObjects/Trump";
+import { RenderingEngine } from "./GameEngine/Core/RenderingEngine";
 
 
-let gameEngine: GameEngine = GameEngine.Instance;
+let gameEngine: GameEngine = GameEngine.instance;
+
+RenderingEngine.instance.renderGizmos = true;
 
 let gameCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("game-canvas");
 

@@ -1,5 +1,4 @@
 import { Transform } from "../Components/Transform";
-import { GameEngine } from "./GameEngine";
 export class GameObject {
     constructor(id, x = 0, y = 0) {
         this.components = [];
@@ -8,8 +7,6 @@ export class GameObject {
         this.transform = new Transform(this, x, y);
     }
     start() {
-        this.gameCanvas = GameEngine.Instance.getGameCanvas();
-        this.canvasContext = this.gameCanvas.getContext("2d");
         for (let i = 0; i < this.components.length; i++) {
             this.components[i].start();
         }
@@ -21,9 +18,6 @@ export class GameObject {
     }
     getTransform() {
         return this.transform;
-    }
-    getGameCanvas() {
-        return this.gameCanvas;
     }
     getComponent(component) {
         let componentType = component.name;

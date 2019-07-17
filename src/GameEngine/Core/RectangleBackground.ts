@@ -1,21 +1,19 @@
-import { IBackground } from "./Interfaces/IBackground";
+import { IRenderable } from "./Interfaces/IRenderable";
 
-export class RectangleBackground implements IBackground {
+export class RectangleBackground implements IRenderable {
     
     private gameCanvas: HTMLCanvasElement;
-    private canvasContext: CanvasRenderingContext2D;
     private color: string;
 
 
     public constructor(gameCanvas: HTMLCanvasElement, color: string) {
         this.color = color;
-        this.canvasContext = gameCanvas.getContext("2d");
         this.gameCanvas = gameCanvas;
     }
     
-    public render(): void {
-        this.canvasContext.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
-        this.canvasContext.fillStyle = this.color;
-        this.canvasContext.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+    public render(context: CanvasRenderingContext2D): void {
+        context.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+        context.fillStyle = this.color;
+        context.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
     }
 }

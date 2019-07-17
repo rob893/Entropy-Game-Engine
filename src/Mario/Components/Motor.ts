@@ -1,6 +1,7 @@
 import { Component } from "../../GameEngine/Components/Component";
 import { Transform } from "../../GameEngine/Components/Transform";
 import { GameObject } from "../../GameEngine/Core/GameObject";
+import { GameEngine } from "../../GameEngine/Core/GameEngine";
 
 export abstract class Motor extends Component {
 
@@ -17,7 +18,7 @@ export abstract class Motor extends Component {
     }
 
     public start(): void {
-        this.gameCanvas = this.gameObject.getGameCanvas();
+        this.gameCanvas = GameEngine.instance.getGameCanvas();
     }
 
     public update(): void {

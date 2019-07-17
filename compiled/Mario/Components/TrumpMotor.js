@@ -22,7 +22,7 @@ export class TrumpMotor extends Motor {
         this.animator = this.gameObject.getComponent(Animator);
         this.audioSource = this.gameObject.getComponent(AudioSource);
         this.audioSource.setClip(YouSuckSound);
-        this.player = GameEngine.Instance.getGameObjectById('player');
+        this.player = GameEngine.instance.getGameObjectById('player');
         this.playerTransform = this.player.getTransform();
     }
     move() {

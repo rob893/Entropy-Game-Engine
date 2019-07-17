@@ -1,16 +1,16 @@
 import { Physics } from "./Physics";
 import { GameObject } from "./GameObject";
 import { Time } from "./Time";
-import { IBackground } from "./Interfaces/IBackground";
+import { RenderingEngine } from "./RenderingEngine";
+import { IRenderable } from "./Interfaces/IRenderable";
 
 export class GameEngine {
 
-    private static instance: GameEngine;
+    private static _instance: GameEngine;
 
     private gameCanvas: HTMLCanvasElement;
-    private canvasContext: CanvasRenderingContext2D;
-    private background: IBackground;
     private physicsEngine: Physics;
+    private renderingEngine: RenderingEngine;
     private gameObjects: GameObject[] = [];
     private gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private gameObjectNumMap: Map<string, number> = new Map<string, number>();
@@ -20,17 +20,19 @@ export class GameEngine {
 
     private constructor() {
         this.gameInitialized = false;
-        this.physicsEngine = Physics.Instance;
+        this.physicsEngine = Physics.instance;
+        this.renderingEngine = RenderingEngine.instance;
     }
 
-    public static get Instance(): GameEngine {
-        return this.instance || (this.instance = new GameEngine());
+    public static get instance(): GameEngine {
+        return this._instance || (this._instance = new GameEngine());
     }
 
-    public initializeGame(gameCanvas: HTMLCanvasElement, gameObjects: GameObject[], background: IBackground): void {
-        this.background = background;
-        this.setGameCanvas(gameCanvas);
+    public initializeGame(gameCanvas: HTMLCanvasElement, gameObjects: GameObject[], background: IRenderable): void {
+        this.gameCanvas = gameCanvas;
         this.setGameObjects(gameObjects);
+        this.renderingEngine.background = background;
+        this.renderingEngine.canvasContext = gameCanvas.getContext('2d');
          
         this.gameInitialized = true;
     }
@@ -80,10 +82,6 @@ export class GameEngine {
         return this.gameCanvas;
     }
 
-    public getGameCanvasContext(): CanvasRenderingContext2D {
-        return this.canvasContext;
-    }
-
     public printGameData(): void {
         console.log(this);
         console.log("Time since game start " + Time.TotalTime + "s");
@@ -95,11 +93,6 @@ export class GameEngine {
 
     public togglePause(): void {
         this.paused = !this.paused;
-    }
-
-    private setGameCanvas(gameCanvas: HTMLCanvasElement): void {
-        this.gameCanvas = gameCanvas;
-        this.canvasContext = this.gameCanvas.getContext("2d");
     }
 
     private setGameObjects(gameObjects: GameObject[]): void {
@@ -126,16 +119,13 @@ export class GameEngine {
         }
 
         Time.updateTime();
-        this.renderBackground();
         //this.physicsEngine.updatePhysics();
         
         for(let i: number = 0; i < this.gameObjects.length; i++){
             this.gameObjects[i].update();
         }
-    }
 
-    private renderBackground(): void {
-        this.background.render();
+        this.renderingEngine.renderScene();
     }
 
     private gameLoop(): void { 
