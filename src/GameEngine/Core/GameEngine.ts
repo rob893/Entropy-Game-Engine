@@ -2,7 +2,7 @@ import { Physics } from "./Physics";
 import { GameObject } from "./GameObject";
 import { Time } from "./Time";
 import { RenderingEngine } from "./RenderingEngine";
-import { IRenderable } from "./Interfaces/IRenderable";
+import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
 
 export class GameEngine {
 
@@ -28,7 +28,7 @@ export class GameEngine {
         return this._instance || (this._instance = new GameEngine());
     }
 
-    public initializeGame(gameCanvas: HTMLCanvasElement, gameObjects: GameObject[], background: IRenderable): void {
+    public initializeGame(gameCanvas: HTMLCanvasElement, gameObjects: GameObject[], background: IRenderableBackground): void {
         this.gameCanvas = gameCanvas;
         this.setGameObjects(gameObjects);
         this.renderingEngine.background = background;
@@ -121,8 +121,10 @@ export class GameEngine {
         Time.updateTime();
         //this.physicsEngine.updatePhysics();
         
-        for(let i: number = 0; i < this.gameObjects.length; i++){
-            this.gameObjects[i].update();
+        for (let gameObject of this.gameObjects) {
+            if (gameObject.enabled) {
+                gameObject.update();
+            }
         }
 
         this.renderingEngine.renderScene();

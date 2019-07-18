@@ -1,6 +1,6 @@
-import { IRenderable } from "./Interfaces/IRenderable";
+import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
 
-export class RectangleBackground implements IRenderable {
+export class RectangleBackground implements IRenderableBackground {
     
     private gameCanvas: HTMLCanvasElement;
     private color: string;
@@ -11,7 +11,7 @@ export class RectangleBackground implements IRenderable {
         this.gameCanvas = gameCanvas;
     }
     
-    public render(context: CanvasRenderingContext2D): void {
+    public renderBackground(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
         context.fillStyle = this.color;
         context.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);

@@ -4,7 +4,7 @@ export class ImageBackground {
         this.image.src = imageSrc;
         this.gameCanvas = gameCanvas;
     }
-    render(context) {
+    renderBackground(context) {
         context.drawImage(this.image, 0, 0, this.gameCanvas.width, this.gameCanvas.height);
     }
 }

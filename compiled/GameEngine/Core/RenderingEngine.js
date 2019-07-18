@@ -27,12 +27,24 @@ export class RenderingEngine {
         this.renderableGUIElements.push(guiElement);
     }
     renderScene() {
-        this._background.render(this._canvasContext);
-        this.renderableObjects.forEach(o => o.render(this._canvasContext));
-        if (this.renderGizmos) {
-            this.renderableGizmos.forEach(g => g.renderGizmo(this._canvasContext));
+        this._background.renderBackground(this._canvasContext);
+        for (let object of this.renderableObjects) {
+            if (object.enabled) {
+                object.render(this._canvasContext);
+            }
         }
-        this.renderableGUIElements.forEach(gui => gui.renderGUI(this._canvasContext));
+        if (this.renderGizmos) {
+            for (let gizmo of this.renderableGizmos) {
+                if (gizmo.enabled) {
+                    gizmo.renderGizmo(this._canvasContext);
+                }
+            }
+        }
+        for (let guiElement of this.renderableGUIElements) {
+            if (guiElement.enabled) {
+                guiElement.renderGUI(this._canvasContext);
+            }
+        }
     }
 }
 //# sourceMappingURL=RenderingEngine.js.map

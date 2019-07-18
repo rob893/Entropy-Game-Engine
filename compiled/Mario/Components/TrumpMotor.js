@@ -7,12 +7,15 @@ import TrumpRun from "../../assets/images/trump_run.png";
 import TrumpIdle from "../../assets/images/trump_idle.png";
 import YouSuckSound from "../../assets/sounds/suck.mp3";
 import { AudioSource } from "../../GameEngine/Components/AudioSource";
+import { PlayerHealth } from "./PlayerHealth";
+import { Time } from "../../GameEngine/Core/Time";
 export class TrumpMotor extends Motor {
     constructor(gameObject) {
         super(gameObject);
         this.isMovingLeft = false;
         this.isMovingRight = false;
         this.isIdle = true;
+        this.damageTimer = 0;
         this.speed = 2;
         this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, [2]);
         this.runLeftAnimation = new Animation(TrumpRun, 6, 4, 0.075, [4]);
@@ -24,6 +27,7 @@ export class TrumpMotor extends Motor {
         this.audioSource.setClip(YouSuckSound);
         this.player = GameEngine.instance.getGameObjectById('player');
         this.playerTransform = this.player.getTransform();
+        this.playerHealth = this.player.getComponent(PlayerHealth);
     }
     move() {
         let direction = Vector2.direction(this.transform.position, this.playerTransform.position);
@@ -47,9 +51,17 @@ export class TrumpMotor extends Motor {
             this.animator.setAnimation(this.idleAnimation);
             this.audioSource.play();
         }
+        this.damageTimer += Time.DeltaTime;
+        if (this.damageTimer > 1 && Vector2.distance(this.transform.position, this.playerTransform.position) < 15) {
+            this.damagePlayer();
+            this.damageTimer = 0;
+        }
         this.transform.translate(direction.multiplyScalar(this.speed));
     }
     handleOutOfBounds() {
+    }
+    damagePlayer() {
+        this.playerHealth.takeDamage(15);
     }
 }
 //# sourceMappingURL=TrumpMotor.js.map

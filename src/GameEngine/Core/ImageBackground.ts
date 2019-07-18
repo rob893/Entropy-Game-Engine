@@ -1,6 +1,6 @@
-import { IRenderable } from "./Interfaces/IRenderable";
+import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
 
-export class ImageBackground implements IRenderable {
+export class ImageBackground implements IRenderableBackground {
     
     private gameCanvas: HTMLCanvasElement;
     private image: HTMLImageElement;
@@ -12,7 +12,7 @@ export class ImageBackground implements IRenderable {
         this.gameCanvas = gameCanvas;
     }
     
-    public render(context: CanvasRenderingContext2D): void {
+    public renderBackground(context: CanvasRenderingContext2D): void {
         context.drawImage(this.image, 0, 0, this.gameCanvas.width, this.gameCanvas.height);
     }
 }

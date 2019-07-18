@@ -4,12 +4,40 @@ export abstract class Component {
 
     public readonly gameObject: GameObject;
 
+    private isEnabled: boolean;
 
-    public constructor(gameObject: GameObject) {
+
+    public constructor(gameObject: GameObject, enabled: boolean = true) {
         this.gameObject = gameObject;
+        this.enabled = enabled;
     }
 
-    public start(): void {};
+    public set enabled(enabled: boolean) {
+        if (enabled === this.isEnabled) {
+            return;
+        }
 
-    public update(): void {};
+        this.isEnabled = enabled;
+
+        if (enabled) {
+            this.onEnabled();
+        }
+        else {
+            this.onDisable();
+        }
+    }
+
+    public get enabled(): boolean {
+        return this.isEnabled;
+    }
+
+    public onEnabled(): void {}
+
+    public start(): void {}
+
+    public update(): void {}
+
+    public onDisable(): void {}
+
+    public onDestroy(): void {}
 }

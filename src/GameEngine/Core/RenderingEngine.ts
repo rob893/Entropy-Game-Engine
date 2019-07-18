@@ -1,6 +1,7 @@
 import { IRenderable } from "./Interfaces/IRenderable";
 import { IRenderableGizmo } from "./Interfaces/IRenderableGizmo";
 import { IRenderableGUI } from "./Interfaces/IRenderableGUI";
+import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
 
 export class RenderingEngine {
 
@@ -8,7 +9,7 @@ export class RenderingEngine {
 
     public renderGizmos: boolean;
 
-    private _background: IRenderable;
+    private _background: IRenderableBackground;
     private renderableObjects: IRenderable[];
     private renderableGizmos: IRenderableGizmo[];
     private renderableGUIElements: IRenderableGUI[];
@@ -26,7 +27,7 @@ export class RenderingEngine {
         return this._instance || (this._instance = new RenderingEngine());
     }
 
-    public set background(background: IRenderable) {
+    public set background(background: IRenderableBackground) {
         this._background = background;
     }
 
@@ -51,13 +52,26 @@ export class RenderingEngine {
     }
 
     public renderScene(): void {
-        this._background.render(this._canvasContext);
-        this.renderableObjects.forEach(o => o.render(this._canvasContext));
+        this._background.renderBackground(this._canvasContext);
+
+        for (let object of this.renderableObjects) {
+            if (object.enabled) {
+                object.render(this._canvasContext);
+            }
+        }
 
         if (this.renderGizmos) {
-            this.renderableGizmos.forEach(g => g.renderGizmo(this._canvasContext));
+            for (let gizmo of this.renderableGizmos) {
+                if (gizmo.enabled) {
+                    gizmo.renderGizmo(this._canvasContext);
+                }
+            }
         }
         
-        this.renderableGUIElements.forEach(gui => gui.renderGUI(this._canvasContext));
+        for (let guiElement of this.renderableGUIElements) {
+            if (guiElement.enabled) {
+                guiElement.renderGUI(this._canvasContext);
+            }
+        }
     }
 }

@@ -84,7 +84,7 @@ export class PlayerMotor extends Motor {
         if (this.jumping) {
             return;
         }
-
+        this.enabled = false;
         this.jumping = true;
         this.rigidBody.isKinomatic = false;
         this.rigidBody.resetForce()

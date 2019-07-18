@@ -85,8 +85,10 @@ export class GameEngine {
             return;
         }
         Time.updateTime();
-        for (let i = 0; i < this.gameObjects.length; i++) {
-            this.gameObjects[i].update();
+        for (let gameObject of this.gameObjects) {
+            if (gameObject.enabled) {
+                gameObject.update();
+            }
         }
         this.renderingEngine.renderScene();
     }
