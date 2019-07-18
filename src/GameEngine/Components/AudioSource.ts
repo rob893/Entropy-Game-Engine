@@ -53,13 +53,13 @@ export class AudioSource extends Component {
         }
     }
 
-    public play(): void {
+    public async play(): Promise<void> {
         if (!this.ready) {
             setTimeout(() => this.play(), 250);
             return;
         }
 
-        this.audioClip.play();
+        await this.audioClip.play();
     }
 
     public pause(): void {

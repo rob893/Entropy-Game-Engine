@@ -25,6 +25,7 @@ export class FPSCounter extends Component implements IRenderableGUI {
             this.numFrames = 0;
         }
 
+        context.fillStyle = 'white';
         context.fillText("FPS: " + this.FPS.toFixed(2), 0, 20);
     }
 }

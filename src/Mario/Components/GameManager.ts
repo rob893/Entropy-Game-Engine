@@ -5,14 +5,22 @@ import { GameObject } from "../../GameEngine/Core/GameObject";
 import { GameEngine } from "../../GameEngine/Core/GameEngine";
 import { Ball } from "../GameObjects/Ball";
 import { AudioSource } from "../../GameEngine/Components/AudioSource";
+import { IRenderableGUI } from "../../GameEngine/Core/Interfaces/IRenderableGUI";
+import { RenderingEngine } from "../../GameEngine/Core/RenderingEngine";
+import { Time } from "../../GameEngine/Core/Time";
 
-export class GameManager extends Component {
+export class GameManager extends Component implements IRenderableGUI {
 
     private static _instance: GameManager;
 
     private player: Player;
     private playerRenderer: RectangleRenderer;
     private audioSource: AudioSource;
+    private sceneMessage: string = '';
+    private messageColor: string = '';
+    private messageTimer: number = 0;
+    private messageLength: number = 0;
+    private gameOver: boolean = false;
 
 
     private constructor(gameObject: GameObject) {
@@ -25,6 +33,7 @@ export class GameManager extends Component {
     }
 
     public start(): void {
+        RenderingEngine.instance.addRenderableGUIElement(this);
         this.player = GameEngine.instance.getGameObjectById("player");
         this.audioSource = this.gameObject.getComponent(AudioSource);
         this.audioSource.loop = true;
@@ -45,6 +54,42 @@ export class GameManager extends Component {
         }
         
         throw new Error("More than one GameManager cannot be created!");
+    }
+
+    public endGame() {
+        this.togglePause();
+        this.gameOver = true;
+    }
+
+    public showMessage(message: string, lengthInSeconds: number, color: string): void {
+        this.sceneMessage = message;
+        this.messageLength = lengthInSeconds;
+        this.messageColor = color;
+    }
+
+    public renderGUI(context: CanvasRenderingContext2D): void {
+        this.renderGameOver(context);
+        this.renderMessage(context);
+    }
+
+    private renderGameOver(context: CanvasRenderingContext2D): void {
+        if (this.gameOver) {
+            context.fillText("Game Over! YOU SUCK", 50, 50);
+        }
+    }
+
+    private renderMessage(context: CanvasRenderingContext2D): void {
+        if (this.sceneMessage !== '') {
+            this.messageTimer += Time.DeltaTime;
+            context.fillStyle = this.messageColor;
+            context.fillText(this.sceneMessage, 250, 250);
+
+            if (this.messageTimer > this.messageLength) {
+                this.sceneMessage = '';
+                this.messageTimer = 0;
+                this.messageLength = 0;
+            }
+        }
     }
 
     private toggleMusic(): void {

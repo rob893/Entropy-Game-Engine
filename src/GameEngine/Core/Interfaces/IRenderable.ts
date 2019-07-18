@@ -1,5 +1,4 @@
-import { Component } from "../../Components/Component";
-
-export interface IRenderable extends Component {
+export interface IRenderable {
     render(context: CanvasRenderingContext2D): void;
+    enabled: boolean;
 }

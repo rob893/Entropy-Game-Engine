@@ -35,14 +35,13 @@ export abstract class GameObject {
             return;
         }
 
-        if (enabled) {
-            this.components.forEach(c => c.onEnabled());
-        }
-        else {
-            this.components.forEach(c => c.onDisable());
-        }
-
         this.isEnabled = enabled;
+
+        for (let component of this.components) {
+            if (component.enabled) {
+                enabled ? component.onEnabled() : component.onDisable();
+            }
+        }
     }
 
     public get enabled(): boolean {

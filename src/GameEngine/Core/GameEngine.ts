@@ -85,10 +85,9 @@ export class GameEngine {
     public printGameData(): void {
         console.log(this);
         console.log("Time since game start " + Time.TotalTime + "s");
-
-        for(let i: number = 0; i < this.gameObjects.length; i++) {
-            console.log(this.gameObjects[i]);
-        }
+        console.log(this.renderingEngine);
+        console.log(this.physicsEngine);
+        this.gameObjects.forEach(go => console.log(go));
     }
 
     public togglePause(): void {

@@ -1,6 +1,7 @@
 import { Component } from "../../GameEngine/Components/Component";
 import { IDamageable } from "../Interfaces/IDamageable";
 import { GameObject } from "../../GameEngine/Core/GameObject";
+import { GameManager } from "./GameManager";
 
 export class PlayerHealth extends Component implements IDamageable {
 
@@ -26,6 +27,8 @@ export class PlayerHealth extends Component implements IDamageable {
     public takeDamage(amount: number): void {
         this._health -= amount;
 
+        GameManager.instance.showMessage('You were hit for ' + amount + ' damage!', 1, 'red');
+
         if (this._health <= 0) {
             this.die();
         }
@@ -33,6 +36,7 @@ export class PlayerHealth extends Component implements IDamageable {
 
     public die(): void {
         this._isDead = true;
+        GameManager.instance.endGame();
         console.log('You are dead!');
     }
 }

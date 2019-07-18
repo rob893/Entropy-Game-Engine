@@ -28,6 +28,10 @@ export abstract class Component {
     }
 
     public get enabled(): boolean {
+        if (!this.gameObject.enabled) {
+            return false;
+        }
+
         return this.isEnabled;
     }
 
