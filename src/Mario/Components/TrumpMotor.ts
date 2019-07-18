@@ -9,11 +9,15 @@ import TrumpRun from "../../assets/images/trump_run.png";
 import TrumpIdle from "../../assets/images/trump_idle.png";
 import YouSuckSound from "../../assets/sounds/suck.mp3";
 import { AudioSource } from "../../GameEngine/Components/AudioSource";
+import { IDamageable } from "../Interfaces/IDamageable";
+import { PlayerHealth } from "./PlayerHealth";
+import { Time } from "../../GameEngine/Core/Time";
 
 export class TrumpMotor extends Motor {
     
     private player: GameObject;
     private playerTransform: Transform;
+    private playerHealth: IDamageable;
     private idleAnimation: Animation;
     private runRightAnimation: Animation;
     private runLeftAnimation: Animation;
@@ -22,6 +26,7 @@ export class TrumpMotor extends Motor {
     private isMovingLeft: boolean = false;
     private isMovingRight: boolean = false;
     private isIdle: boolean = true;
+    private damageTimer: number = 0;
 
 
     public constructor(gameObject: GameObject) {
@@ -38,6 +43,7 @@ export class TrumpMotor extends Motor {
         this.audioSource.setClip(YouSuckSound);
         this.player = GameEngine.instance.getGameObjectById('player');
         this.playerTransform = this.player.getTransform();
+        this.playerHealth = this.player.getComponent(PlayerHealth);
     }
 
     protected move(): void {
@@ -63,11 +69,22 @@ export class TrumpMotor extends Motor {
             this.animator.setAnimation(this.idleAnimation);
             this.audioSource.play();
         }
+        
+        this.damageTimer += Time.DeltaTime;
+
+        if (this.damageTimer > 1 && Vector2.distance(this.transform.position, this.playerTransform.position) < 15) {
+            this.damagePlayer();
+            this.damageTimer = 0;
+        }
 
         this.transform.translate(direction.multiplyScalar(this.speed));
     }
 
     protected handleOutOfBounds(): void {
         
+    }
+
+    private damagePlayer(): void {
+        this.playerHealth.takeDamage(15);
     }
 }
