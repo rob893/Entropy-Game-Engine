@@ -16,7 +16,6 @@ export class Player extends GameObject {
         let playerComponents: Component[] = [];
         
         playerComponents.push(new RectangleCollider(this, 50, 50));
-        playerComponents.push(new RectangleCollider(this, 10, 10));
         playerComponents.push(new PlayerMotor(this));
         playerComponents.push(new Rigidbody(this));
         playerComponents.push(new PlayerHealth(this));

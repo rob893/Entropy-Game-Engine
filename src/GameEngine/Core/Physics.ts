@@ -23,15 +23,18 @@ export class Physics {
         return this._instance || (this._instance = new Physics());
     }
 
-    // public updatePhysics(): void {
-    //     for(let i: number = 0, l: number = this.rigidbodies.length; i < l; i++) {
-    //         this.rigidbodies[i].addGravity(this.gravity);
-    //     }
-    // }
+    public updatePhysics(): void {
+        for (let collider of this.colliders) {
+            for (let otherCollider of this.colliders) {
+                if (!(collider === otherCollider)) {
+                    collider.detectCollision(otherCollider);
+                }
+            }
+        }
+    }
 
     public addRigidbody(rb: Rigidbody): void {
         this.rigidbodies.push(rb);
-        //this.colliders.push(rb.gameObject.getComponent(RectangleCollider));
     }
 
     public addCollider(collider: RectangleCollider): void {

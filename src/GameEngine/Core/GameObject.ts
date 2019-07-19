@@ -4,6 +4,7 @@ import { Component } from "../Components/Component";
 export abstract class GameObject {
     
     public id: string;
+    public tag: string;
 
     protected transform: Transform;
     protected components: Component[] = [];
@@ -12,10 +13,11 @@ export abstract class GameObject {
     private isEnabled: boolean;
     
 
-    public constructor(id: string, x: number = 0, y: number = 0) {
+    public constructor(id: string, x: number = 0, y: number = 0, tag: string = '') {
         this.id = id;
         this.transform = new Transform(this, x, y);
         this.isEnabled = true;
+        this.tag = tag;
     }
 
     public start(): void {

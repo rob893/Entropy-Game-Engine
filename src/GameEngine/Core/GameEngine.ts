@@ -3,6 +3,7 @@ import { GameObject } from "./GameObject";
 import { Time } from "./Time";
 import { RenderingEngine } from "./RenderingEngine";
 import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
+import { Keys } from "./Helpers/Keys";
 
 export class GameEngine {
 
@@ -13,6 +14,7 @@ export class GameEngine {
     private renderingEngine: RenderingEngine;
     private gameObjects: GameObject[] = [];
     private gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
+    private tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
     private gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private gameInitialized: boolean = false;
     private paused: boolean = false;
@@ -22,6 +24,12 @@ export class GameEngine {
         this.gameInitialized = false;
         this.physicsEngine = Physics.instance;
         this.renderingEngine = RenderingEngine.instance;
+
+        document.addEventListener('keydown', (event) => {
+            if (event.keyCode === Keys.UP) {
+                this.gameCanvas.requestFullscreen();
+            }
+        });
     }
 
     public static get instance(): GameEngine {
@@ -46,9 +54,7 @@ export class GameEngine {
         Time.start();
         this.paused = false;
 
-        for(let i: number = 0; i < this.gameObjects.length; i++) {
-            this.gameObjects[i].start();
-        }
+        this.gameObjects.forEach(go => go.start());
 
         requestAnimationFrame(() => this.gameLoop());
     }
@@ -61,6 +67,13 @@ export class GameEngine {
         }
         else {
             this.gameObjectNumMap.set(newGameObject.id, 1);
+        }
+
+        if (this.tagMap.has(newGameObject.tag)) {
+            this.tagMap.get(newGameObject.tag).push(newGameObject);
+        }
+        else {
+            this.tagMap.set(newGameObject.tag, [newGameObject]);
         }
         
         this.gameObjectMap.set(newGameObject.id, newGameObject);
@@ -76,6 +89,22 @@ export class GameEngine {
         }
 
         return this.gameObjectMap.get(id);
+    }
+
+    public getGameObjectWithTag(tag: string): GameObject {
+        if (!this.tagMap.has(tag)) {
+            throw new Error("No GameObject with tag of " + tag + " exists!");
+        }
+
+        return this.tagMap.get(tag)[0];
+    }
+
+    public getGameObjectsWithTag(tag: string): GameObject[] {
+        if (!this.tagMap.has(tag)) {
+            throw new Error("No GameObject with tag of " + tag + " exists!");
+        }
+
+        return this.tagMap.get(tag);
     }
 
     public getGameCanvas(): HTMLCanvasElement {
@@ -109,6 +138,13 @@ export class GameEngine {
             }
 
             this.gameObjectMap.set(gameObject.id, gameObject);
+
+            if (this.tagMap.has(gameObject.tag)) {
+                this.tagMap.get(gameObject.tag).push(gameObject);
+            }
+            else {
+                this.tagMap.set(gameObject.tag, [gameObject]);
+            }
         }
     }
 
@@ -118,7 +154,7 @@ export class GameEngine {
         }
 
         Time.updateTime();
-        //this.physicsEngine.updatePhysics();
+        this.physicsEngine.updatePhysics();
         
         for (let gameObject of this.gameObjects) {
             if (gameObject.enabled) {

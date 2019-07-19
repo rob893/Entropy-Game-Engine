@@ -36,8 +36,15 @@ export class BallMotor extends Motor {
     private handleCollision(other: RectangleCollider): void {
         if (this.ready) {
             this.ready = false;
-            this.xVelocity *= -1;
             this.speed += 0.125;
+            //let direction = Vector2.direction(other.gameObject.getTransform().position, this.transform.position);
+            //console.log(direction);
+            let direction = new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(-1);
+            // let x = 2 * Vector2.dot(other.gameObject.getTransform().position, this.transform.position);
+            // let n = new Vector2(this.xVelocity, this.yVelocity).normalized.multiplyScalar(x);
+            // direction.add(n);
+            this.xVelocity = direction.x;
+            this.yVelocity = direction.y;
 
             setTimeout(() => {
                 this.ready = true;

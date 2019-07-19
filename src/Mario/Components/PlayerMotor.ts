@@ -37,6 +37,7 @@ export class PlayerMotor extends Motor {
         super.start();
 
         this.collider = this.gameObject.getComponent(RectangleCollider);
+        this.collider.onCollided.add((other) => this.handleCollision(other))
 
         this.rigidBody = this.gameObject.getComponent<Rigidbody>(Rigidbody);
         this.animator = this.gameObject.getComponent<Animator>(Animator);
@@ -44,6 +45,13 @@ export class PlayerMotor extends Motor {
 
     public get isMoving(): boolean { 
         return this.xVelocity !== 0 || this.yVelocity !== 0;
+    }
+
+    private handleCollision(other: RectangleCollider) {
+        if (other.gameObject.tag === 'ground') {
+            this.transform.position.y -= 1;
+            this.rigidBody.isKinomatic = true;
+        }
     }
 
     protected handleOutOfBounds(): void {

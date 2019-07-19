@@ -15,11 +15,11 @@ export class Trump extends GameObject {
         let components: Component[] = [];
         
         components.push(new RectangleCollider(this, 75, 75));
-        components.push(new TrumpMotor(this));
+        //components.push(new TrumpMotor(this));
 
         let initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
         components.push(new Animator(this, 75, 75, initialAnimation));
-        components.push(new AudioSource(this));
+        //components.push(new AudioSource(this));
 
         this.setComponents(components);
     }
