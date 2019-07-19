@@ -44,7 +44,7 @@ export class BallMotor extends Motor {
 
             setTimeout(() => {
                 this.ready = true;
-            }, 250);
+            }, 15);
         }
     }
 

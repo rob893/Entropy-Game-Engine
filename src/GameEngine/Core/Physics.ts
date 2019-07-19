@@ -33,20 +33,8 @@ export class Physics {
             }
 
             for (let other of this.getPossibleCollisions(collider)) {
-                if (collider === other) {
-                    continue;
-                }
-
-                if (collider.detectCollision(other)) {
-                    console.log(collider.gameObject.id + ' has collided with ' + other.gameObject.id);
-                }
+                collider.detectCollision(other);
             }
-
-            // for (let otherCollider of this.colliders) {
-            //     if (!(collider === otherCollider)) {
-            //         collider.detectCollision(otherCollider);
-            //     }
-            // }
         }
     }
 
@@ -59,7 +47,7 @@ export class Physics {
                 this.spatialMap.set(this.getMapKey(new Vector2(i, j)), new Set());
             }
         }
-
+        //debugger;
         for (let collider of this.colliders) {
             this.addColliderToSpatialMap(collider);
         }
@@ -93,54 +81,43 @@ export class Physics {
         let trKey = this.getMapKey(collider.topRight);
         let blKey = this.getMapKey(collider.bottomLeft);
         let brKey = this.getMapKey(collider.bottomRight);
-
-        let newKeys = [tlKey];
-
-        if (this.spatialMap.has(tlKey)) {
-            this.spatialMap.get(tlKey).add(collider);
-        }
-        else {
-            this.spatialMap.set(tlKey, new Set([collider]));
-        }
-
-        // If all 4 points are in the same cell, return.
+        
+        // If all 4 points are in the same cell.
         if (tlKey === brKey) {
-            collider.setSpacialMapKeys(newKeys)
+            if (this.spatialMap.has(tlKey)) {
+                this.spatialMap.get(tlKey).add(collider);
+            }
+            else {
+                this.spatialMap.set(tlKey, new Set([collider]));
+            }
+            collider.setSpacialMapKeys([tlKey]);
+
             return;
         }
 
-        newKeys.push(brKey);
+        let newKeys = new Set<string>();
 
-        if (this.spatialMap.has(brKey)) {
-            this.spatialMap.get(brKey).add(collider);
-        }
-        else {
-            this.spatialMap.set(brKey, new Set([collider]));
-        }
+        let tlx = Number(tlKey.split(',')[0]);
+        let tly = Number(tlKey.split(',')[1]);
+        let xDiff = Number(trKey.split(',')[0]) - tlx;
+        let yDiff = Number(blKey.split(',')[1]) - tly;
 
-        if (tlKey !== blKey) {
-            newKeys.push(blKey);
+        for (let x = tlx; x <= xDiff + tlx; x += this.cellSize) {
+            for (let y = tly; y <= yDiff + tly; y += this.cellSize) {
+                let key = x + ',' + y;
+                
+                if (this.spatialMap.has(key)) {
+                    this.spatialMap.get(key).add(collider);
+                }
+                else {
+                    this.spatialMap.set(key, new Set([collider]));
+                }
 
-            if (this.spatialMap.has(blKey)) {
-                this.spatialMap.get(blKey).add(collider);
-            }
-            else {
-                this.spatialMap.set(blKey, new Set([collider]));
-            }
-        }
-
-        if (tlKey !== trKey) {
-            newKeys.push(trKey);
-
-            if (this.spatialMap.has(trKey)) {
-                this.spatialMap.get(trKey).add(collider);
-            }
-            else {
-                this.spatialMap.set(trKey, new Set([collider]));
+                newKeys.add(key);
             }
         }
-
-        collider.setSpacialMapKeys(newKeys);
+      
+        collider.setSpacialMapKeys(Array.from(newKeys));
     }
 
     private getPossibleCollisions(collider: RectangleCollider): Set<RectangleCollider> {
