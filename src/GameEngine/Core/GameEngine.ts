@@ -41,6 +41,8 @@ export class GameEngine {
         this.setGameObjects(gameObjects);
         this.renderingEngine.background = background;
         this.renderingEngine.canvasContext = gameCanvas.getContext('2d');
+
+        this.physicsEngine.buildSpatialMapCells(100, gameCanvas.width, gameCanvas.height);
          
         this.gameInitialized = true;
     }

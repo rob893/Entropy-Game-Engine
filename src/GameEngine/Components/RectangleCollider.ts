@@ -15,6 +15,8 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
     public readonly transform: Transform;
 
     private readonly onCollide = new LiteEvent<RectangleCollider>();
+    private physicsEngine: Physics;
+    private spatialMapKeys: string[] = [];
     private _topLeft: Vector2;
     private _topRight: Vector2;
     private _bottomLeft: Vector2;
@@ -27,8 +29,11 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
         this.width = width;
         this.height = height;
 
+        this.physicsEngine = Physics.instance;
+
         this.transform = gameObject.getTransform();
         let transform: Transform = this.transform;
+        transform.onMoved.add(() => this.physicsEngine.updateColliderSpatialMapping(this, this.spatialMapKeys));
 
         this._topLeft = new Vector2(transform.position.x - (width / 2), transform.position.y - height);
         this._topRight = new Vector2(transform.position.x + (width / 2), transform.position.y - height);
@@ -37,6 +42,10 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
 
         Physics.instance.addCollider(this);
         RenderingEngine.instance.addRenderableGizmo(this);
+    }
+
+    public get mappingKeys(): string[] {
+        return this.spatialMapKeys;
     }
 
     public get topLeft(): Vector2 {
@@ -65,6 +74,10 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
         this._bottomRight.y = this.transform.position.y;
 
         return this._bottomRight;
+    }
+
+    public setSpacialMapKeys(keys: string[]): void {
+        this.spatialMapKeys = keys;
     }
 
     public detectCollision(other: RectangleCollider): boolean {

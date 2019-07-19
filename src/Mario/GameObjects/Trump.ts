@@ -14,7 +14,7 @@ export class Trump extends GameObject {
 
         let components: Component[] = [];
         
-        components.push(new RectangleCollider(this, 75, 75));
+        components.push(new RectangleCollider(this, 60, 60));
         //components.push(new TrumpMotor(this));
 
         let initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
