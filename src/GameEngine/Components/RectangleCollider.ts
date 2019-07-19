@@ -12,7 +12,6 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
 
     public width: number;
     public height: number;
-    public visualize: boolean = true;
     public readonly transform: Transform;
 
     private readonly onCollide = new LiteEvent<RectangleCollider>();
