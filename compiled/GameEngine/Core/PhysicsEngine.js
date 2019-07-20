@@ -1,12 +1,13 @@
-import { Vector2 } from "./Vector2";
-import { Geometry } from "./Geometry";
-import { SpatialHashDetector } from "./SpatialHashDetector";
+import { SpatialHashCollisionDetector } from "./SpatialHashCollisionDetector";
+import { CollisionResolver } from "./CollisionResolver";
 export class PhysicsEngine {
-    constructor(gameCanvas) {
+    constructor(gameCanvas, collisionDetector, collisionResolver) {
         this.gameCanvas = gameCanvas;
         this.rigidbodies = [];
         this.gravity = 665;
-        this.collisionDetector = new SpatialHashDetector(gameCanvas.width, gameCanvas.height, 100);
+        this.collisionDetector = collisionDetector;
+        this.collisionResolver = collisionResolver;
+        this.collisionDetector.onCollisionDetected.add((colliderA, colliderB) => this.resolveCollisions(colliderA, colliderB));
     }
     static get instance() {
         if (this._instance === null || this._instance === undefined) {
@@ -15,7 +16,9 @@ export class PhysicsEngine {
         return this._instance;
     }
     static buildPhysicsEngine(gameCanvas) {
-        this._instance = new PhysicsEngine(gameCanvas);
+        let collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, 100);
+        let collisionResolver = new CollisionResolver();
+        this._instance = new PhysicsEngine(gameCanvas, collisionDetector, collisionResolver);
         return this._instance;
     }
     get colliders() {
@@ -30,32 +33,8 @@ export class PhysicsEngine {
     addCollider(collider) {
         this.collisionDetector.addCollider(collider);
     }
-    static raycast(origin, direction, distance) {
-        let result = null;
-        let hitColliders = PhysicsEngine.raycastAll(origin, direction, distance);
-        let closestColliderDistance = -10;
-        for (let collider of hitColliders) {
-            let colliderDistance = Vector2.distance(origin, collider.transform.position);
-            if (colliderDistance > closestColliderDistance) {
-                result = collider;
-                closestColliderDistance = colliderDistance;
-            }
-        }
-        return result;
-    }
-    static raycastAll(origin, direction, distance) {
-        let results = [];
-        let terminalPoint = Vector2.add(origin, direction.multiplyScalar(distance));
-        for (let collider of PhysicsEngine.instance.colliders) {
-            if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
-                results.push(collider);
-            }
-        }
-        return results;
-    }
-    static sphereCast() { }
-    static overlapSphere() {
-        return [];
+    resolveCollisions(colliderA, colliderB) {
+        this.collisionResolver.resolveCollisions(colliderA, colliderB);
     }
 }
 //# sourceMappingURL=PhysicsEngine.js.map

@@ -9,7 +9,7 @@ import Background from "./assets/images/background.png";
 import { Trump } from "./Mario/GameObjects/Trump";
 import { RenderingEngine } from "./GameEngine/Core/RenderingEngine";
 import { Ground } from "./Mario/GameObjects/Ground";
-import { Colors } from "./GameEngine/Core/Helpers/Colors";
+import { Color } from "./GameEngine/Core/Enums/Color";
 
 let gameCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("game-canvas");
 
@@ -25,8 +25,8 @@ let player: Player = new Player("player");
 let ball: Ball = new Ball("ball");
 let computer: Computer = new Computer("computer");
 let trump: Trump = new Trump("trump");
-let ground = new Ground(350, 400, 700, 55, Colors.BROWN);
-let ground2 = new Ground(400, 270, 100, 10, Colors.BROWN);
+let ground = new Ground(350, 400, 700, 55, Color.Brown);
+let ground2 = new Ground(400, 270, 100, 10, Color.Brown);
 
 let gameObjects: GameObject[] = [gameManager, player, computer, ball, trump, ground, ground2];
 

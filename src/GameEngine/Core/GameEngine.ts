@@ -3,7 +3,7 @@ import { GameObject } from "./GameObject";
 import { Time } from "./Time";
 import { RenderingEngine } from "./RenderingEngine";
 import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
-import { Keys } from "./Helpers/Keys";
+import { Key } from "./Enums/Key";
 
 export class GameEngine {
 
@@ -27,7 +27,7 @@ export class GameEngine {
         this.renderingEngine = renderingEngine;
 
         document.addEventListener('keydown', (event) => {
-            if (event.keyCode === Keys.UP) {
+            if (event.keyCode === Key.UpArrow) {
                 this.gameCanvas.requestFullscreen();
             }
         });

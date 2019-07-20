@@ -1,13 +1,13 @@
 import { ICollisionDetector } from "./Interfaces/ICollisionDetector";
 import { ILiteEvent } from "./Interfaces/ILiteEvent";
 import { RectangleCollider } from "../Components/RectangleCollider";
-import { LiteEvent } from "./Helpers/LiteEvent";
+import { LiteEvent } from "./LiteEvent";
 
 export class SimpleCollisionDetector implements ICollisionDetector {
     
     private readonly _colliders: RectangleCollider[];
     private readonly _onCollisionDetected: LiteEvent<RectangleCollider> = new LiteEvent<RectangleCollider>();
-    
+
     
     public constructor() {
         this._colliders = [];

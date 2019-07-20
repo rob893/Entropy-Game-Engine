@@ -1,13 +1,13 @@
 import { Motor } from "./Motor";
 import { Vector2 } from "../../GameEngine/Core/Vector2";
-import { Keys } from "../../GameEngine/Core/Helpers/Keys";
+import { Key } from "../../GameEngine/Core/Enums/Key";
 import { Rigidbody } from "../../GameEngine/Components/Rigidbody";
 import MovingRightSprite from "../../assets/images/mario.png";
 import MovingLeftSprite from "../../assets/images/marioLeft.png";
 import { Animator } from "../../GameEngine/Components/Animator";
 import { Animation } from "../../GameEngine/Core/Animation";
-import { PhysicsEngine } from "../../GameEngine/Core/PhysicsEngine";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
+import { Physics } from "../../GameEngine/Core/Physics";
 export class PlayerMotor extends Motor {
     constructor(gameObject) {
         super(gameObject);
@@ -76,28 +76,28 @@ export class PlayerMotor extends Motor {
         this.rigidBody.addForce(Vector2.up.multiplyScalar(400));
     }
     onClick(event) {
-        let hit = PhysicsEngine.raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1), Vector2.right, 5000);
+        let hit = Physics.raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1), Vector2.right, 5000);
     }
     onKeyDown(event) {
-        if (event.keyCode == Keys.RIGHT || event.keyCode == Keys.D) {
+        if (event.keyCode == Key.RightArrow || event.keyCode == Key.D) {
             this.movingRight = true;
             this.movingLeft = false;
             this.animator.setAnimation(this.moveRightAnimation);
         }
-        else if (event.keyCode == Keys.LEFT || event.keyCode == Keys.A) {
+        else if (event.keyCode == Key.LeftArrow || event.keyCode == Key.A) {
             this.movingRight = false;
             this.movingLeft = true;
             this.animator.setAnimation(this.moveLeftAnimation);
         }
-        if (event.keyCode == Keys.SPACE) {
+        if (event.keyCode == Key.Space) {
             this.jump();
         }
     }
     onKeyUp(event) {
-        if (event.keyCode == Keys.RIGHT || event.keyCode == Keys.D) {
+        if (event.keyCode == Key.RightArrow || event.keyCode == Key.D) {
             this.movingRight = false;
         }
-        else if (event.keyCode == Keys.LEFT || event.keyCode == Keys.A) {
+        else if (event.keyCode == Key.LeftArrow || event.keyCode == Key.A) {
             this.movingLeft = false;
         }
     }

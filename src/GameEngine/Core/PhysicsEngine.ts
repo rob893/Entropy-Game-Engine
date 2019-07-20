@@ -5,6 +5,8 @@ import { Geometry } from "./Geometry";
 import { ICollisionDetector } from "./Interfaces/ICollisionDetector";
 import { SpatialHashCollisionDetector } from "./SpatialHashCollisionDetector";
 import { SimpleCollisionDetector } from "./SimpleCollisionDetector";
+import { ICollisionResolver } from "./Interfaces/ICollisionResolver";
+import { CollisionResolver } from "./CollisionResolver";
 
 export class PhysicsEngine {
 
@@ -15,14 +17,16 @@ export class PhysicsEngine {
     private readonly rigidbodies: Rigidbody[];
     private readonly gameCanvas: HTMLCanvasElement;
     private readonly collisionDetector: ICollisionDetector;
+    private readonly collisionResolver: ICollisionResolver;
 
 
-    private constructor(gameCanvas: HTMLCanvasElement) {
+    private constructor(gameCanvas: HTMLCanvasElement, collisionDetector: ICollisionDetector, collisionResolver: ICollisionResolver) {
         this.gameCanvas = gameCanvas;
         this.rigidbodies = [];
         this.gravity = 665;
-        this.collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, 100);
-        //this.collisionDetector.onCollisionDetected.add((a, b) => this.test(a, b));
+        this.collisionDetector = collisionDetector;
+        this.collisionResolver = collisionResolver;
+        this.collisionDetector.onCollisionDetected.add((colliderA, colliderB) => this.resolveCollisions(colliderA, colliderB));
     }
 
     public static get instance(): PhysicsEngine {
@@ -34,13 +38,12 @@ export class PhysicsEngine {
     }
 
     public static buildPhysicsEngine(gameCanvas: HTMLCanvasElement) : PhysicsEngine {
-        this._instance = new PhysicsEngine(gameCanvas);
+        let collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, 100);
+        let collisionResolver = new CollisionResolver();
+
+        this._instance = new PhysicsEngine(gameCanvas, collisionDetector, collisionResolver);
         
         return this._instance;
-    }
-
-    private test(a: RectangleCollider, b: RectangleCollider): void {
-        //console.log(a.gameObject.id + ' collided with ' + b.gameObject.id);
     }
 
     public get colliders(): RectangleCollider[] {
@@ -59,39 +62,7 @@ export class PhysicsEngine {
         this.collisionDetector.addCollider(collider);
     }
 
-    public static raycast(origin: Vector2, direction: Vector2, distance: number): RectangleCollider | null {
-        let result: RectangleCollider = null;
-        let hitColliders = PhysicsEngine.raycastAll(origin, direction, distance);
-        let closestColliderDistance = -10;
-
-        for (let collider of hitColliders) {
-            let colliderDistance = Vector2.distance(origin, collider.transform.position);
-
-            if (colliderDistance > closestColliderDistance) {
-                result = collider;
-                closestColliderDistance = colliderDistance;
-            }
-        }
-        
-        return result;
-    }
-
-    public static raycastAll(origin: Vector2, direction: Vector2, distance: number): RectangleCollider[] {
-        let results: RectangleCollider[] = [];
-        let terminalPoint = Vector2.add(origin, direction.multiplyScalar(distance));
-
-        for (let collider of PhysicsEngine.instance.colliders) {
-            if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
-                results.push(collider);
-            }
-        }
-
-        return results;
-    }
-
-    public static sphereCast() {}
-
-    public static overlapSphere(): RectangleCollider[] { 
-        return [];
+    private resolveCollisions(colliderA: RectangleCollider, colliderB: RectangleCollider): void {
+        this.collisionResolver.resolveCollisions(colliderA, colliderB);
     }
 }

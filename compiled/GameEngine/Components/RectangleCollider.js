@@ -1,12 +1,13 @@
 import { Vector2 } from "../Core/Vector2";
 import { Component } from "./Component";
-import { LiteEvent } from "../Core/Helpers/LiteEvent";
+import { LiteEvent } from "../Core/LiteEvent";
 import { PhysicsEngine } from "../Core/PhysicsEngine";
 import { RenderingEngine } from "../Core/RenderingEngine";
+import { Rigidbody } from "./Rigidbody";
 export class RectangleCollider extends Component {
     constructor(gameObject, width, height) {
         super(gameObject);
-        this.onCollide = new LiteEvent();
+        this._onCollided = new LiteEvent();
         this.width = width;
         this.height = height;
         let transform = this.transform;
@@ -14,6 +15,7 @@ export class RectangleCollider extends Component {
         this._topRight = new Vector2(transform.position.x + (width / 2), transform.position.y - height);
         this._bottomLeft = new Vector2(transform.position.x - (width / 2), transform.position.y);
         this._bottomRight = new Vector2(transform.position.x + (width / 2), transform.position.y);
+        this._attachedRigidbody = this.gameObject.hasComponent(Rigidbody) ? this.gameObject.getComponent(Rigidbody) : null;
         PhysicsEngine.instance.addCollider(this);
         RenderingEngine.instance.addRenderableGizmo(this);
     }
@@ -37,21 +39,24 @@ export class RectangleCollider extends Component {
         this._bottomRight.y = this.transform.position.y;
         return this._bottomRight;
     }
+    get center() {
+        return new Vector2(this.topLeft.x + (this.width / 2), this.topLeft.y + (this.height / 2));
+    }
+    get attachedRigidbody() {
+        return this._attachedRigidbody;
+    }
     detectCollision(other) {
         if (!(other.topLeft.x > this.topRight.x ||
             other.topRight.x < this.topLeft.x ||
             other.topLeft.y > this.bottomLeft.y ||
             other.bottomLeft.y < this.topLeft.y)) {
-            this.onCollide.trigger(other);
+            this._onCollided.trigger(other);
             return true;
         }
         return false;
     }
-    get center() {
-        return new Vector2(this.topLeft.x + (this.width / 2), this.topLeft.y + (this.height / 2));
-    }
     get onCollided() {
-        return this.onCollide.expose();
+        return this._onCollided.expose();
     }
     renderGizmo(context) {
         context.beginPath();
