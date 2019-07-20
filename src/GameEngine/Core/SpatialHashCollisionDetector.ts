@@ -4,10 +4,10 @@ import { ILiteEvent } from "./Interfaces/ILiteEvent";
 import { LiteEvent } from "./Helpers/LiteEvent";
 import { Vector2 } from "./Vector2";
 
-export class SpatialHashDetector implements ICollisionDetector {
+export class SpatialHashCollisionDetector implements ICollisionDetector {
     
     private readonly _colliders: RectangleCollider[];
-    private readonly onCollided: LiteEvent<RectangleCollider> = new LiteEvent<RectangleCollider>();
+    private readonly _onCollisionDetected: LiteEvent<RectangleCollider> = new LiteEvent<RectangleCollider>();
     private readonly colliderSpacialMapKeys: Map<RectangleCollider, Set<string>> = new Map<RectangleCollider, Set<string>>();
     private readonly spatialMap: Map<string, Set<RectangleCollider>> = new Map<string, Set<RectangleCollider>>();
     private readonly cellSize: number;
@@ -24,6 +24,14 @@ export class SpatialHashDetector implements ICollisionDetector {
         this.buildSpatialMapCells();
     }
 
+    public get colliders(): RectangleCollider[] {
+        return this._colliders;
+    }
+
+    public get onCollisionDetected(): ILiteEvent<RectangleCollider> {
+        return this._onCollisionDetected.expose();
+    }
+
     public detectCollisions(): void {
         for (let collider of this._colliders) {
             if (!collider.enabled) {
@@ -32,18 +40,10 @@ export class SpatialHashDetector implements ICollisionDetector {
 
             for (let other of this.getPossibleCollisions(collider)) {
                 if (collider.detectCollision(other)) {
-                    this.onCollided.trigger(collider, other);
+                    this._onCollisionDetected.trigger(collider, other);
                 }
             }
         }
-    }
-
-    public get colliders(): RectangleCollider[] {
-        return this._colliders;
-    }
-
-    public onCollisionDetected(): ILiteEvent<RectangleCollider> {
-        return this.onCollided.expose();
     }
 
     public addCollider(collider: RectangleCollider): void {

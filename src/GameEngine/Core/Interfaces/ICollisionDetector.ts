@@ -2,9 +2,9 @@ import { ILiteEvent } from "./ILiteEvent";
 import { RectangleCollider } from "../../Components/RectangleCollider";
 
 export interface ICollisionDetector {
+    readonly onCollisionDetected: ILiteEvent<RectangleCollider>;
+    readonly colliders: RectangleCollider[];
     detectCollisions(): void;
-    onCollisionDetected(): ILiteEvent<RectangleCollider>;
     addCollider(collider: RectangleCollider): void;
     addColliders(colliders: RectangleCollider[]): void;
-    colliders: RectangleCollider[];
 }

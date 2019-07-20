@@ -6,7 +6,8 @@ import { LiteEvent } from "./Helpers/LiteEvent";
 export class SimpleCollisionDetector implements ICollisionDetector {
     
     private readonly _colliders: RectangleCollider[];
-    private readonly onCollided: LiteEvent<RectangleCollider> = new LiteEvent<RectangleCollider>();
+    private readonly _onCollisionDetected: LiteEvent<RectangleCollider> = new LiteEvent<RectangleCollider>();
+    
     
     public constructor() {
         this._colliders = [];
@@ -14,6 +15,10 @@ export class SimpleCollisionDetector implements ICollisionDetector {
 
     public get colliders(): RectangleCollider[] {
         return this._colliders;
+    }
+
+    public get onCollisionDetected(): ILiteEvent<RectangleCollider> {
+        return this._onCollisionDetected.expose();
     }
 
     public detectCollisions(): void {
@@ -24,15 +29,11 @@ export class SimpleCollisionDetector implements ICollisionDetector {
 
             for (let j = 0; j < l; j++) {
                 if (this._colliders[i] !== this._colliders[j] && this._colliders[i].detectCollision(this._colliders[j])) {
-                    this.onCollided.trigger(this._colliders[i], this._colliders[j]);
+                    this._onCollisionDetected.trigger(this._colliders[i], this._colliders[j]);
                 }
             }
         }
     }    
-    
-    public onCollisionDetected(): ILiteEvent<RectangleCollider> {
-        return this.onCollided.expose();
-    }
 
     public addCollider(collider: RectangleCollider): void {
         this._colliders.push(collider);

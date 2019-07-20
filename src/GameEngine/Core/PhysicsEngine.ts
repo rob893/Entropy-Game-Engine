@@ -3,7 +3,8 @@ import { RectangleCollider } from "../Components/RectangleCollider";
 import { Vector2 } from "./Vector2";
 import { Geometry } from "./Geometry";
 import { ICollisionDetector } from "./Interfaces/ICollisionDetector";
-import { SpatialHashDetector } from "./SpatialHashDetector";
+import { SpatialHashCollisionDetector } from "./SpatialHashCollisionDetector";
+import { SimpleCollisionDetector } from "./SimpleCollisionDetector";
 
 export class PhysicsEngine {
 
@@ -20,8 +21,8 @@ export class PhysicsEngine {
         this.gameCanvas = gameCanvas;
         this.rigidbodies = [];
         this.gravity = 665;
-        this.collisionDetector = new SpatialHashDetector(gameCanvas.width, gameCanvas.height, 100);
-        //this.collisionDetector.onCollisionDetected
+        this.collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, 100);
+        //this.collisionDetector.onCollisionDetected.add((a, b) => this.test(a, b));
     }
 
     public static get instance(): PhysicsEngine {
@@ -39,7 +40,7 @@ export class PhysicsEngine {
     }
 
     private test(a: RectangleCollider, b: RectangleCollider): void {
-        console.log(a.gameObject.id + ' collided with ' + b.gameObject.id);
+        //console.log(a.gameObject.id + ' collided with ' + b.gameObject.id);
     }
 
     public get colliders(): RectangleCollider[] {
