@@ -2,7 +2,7 @@ import { Component } from "./Component";
 import { Vector2 } from "../Core/Vector2";
 import { Transform } from "./Transform";
 import { GameObject } from "../Core/GameObject";
-import { Physics } from "../Core/Physics";
+import { PhysicsEngine } from "../Core/PhysicsEngine";
 import { Time } from "../Core/Time";
 
 export class Rigidbody extends Component {
@@ -14,18 +14,16 @@ export class Rigidbody extends Component {
     private acceleration: Vector2;
     
     private force: Vector2;
-    private transform: Transform;
 
 
     public constructor(gameObject: GameObject, mass: number = 70) {
         super(gameObject);
 
-        this.transform = gameObject.getTransform();
         this.mass = mass;
         this.velocity = new Vector2(0, 0);
         this.acceleration = new Vector2(0, 0);
         this.force = Vector2.zero;
-        Physics.instance.addRigidbody(this);
+        PhysicsEngine.instance.addRigidbody(this);
     }
 
     public update(): void {

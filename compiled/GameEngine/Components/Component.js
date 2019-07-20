@@ -16,7 +16,13 @@ export class Component {
         }
     }
     get enabled() {
+        if (!this.gameObject.enabled) {
+            return false;
+        }
         return this.isEnabled;
+    }
+    get transform() {
+        return this.gameObject.transform;
     }
     onEnabled() { }
     start() { }

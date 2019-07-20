@@ -8,9 +8,6 @@ export class Animator extends Component {
         this.animation = initialAnimation;
         RenderingEngine.instance.addRenderableObject(this);
     }
-    start() {
-        this.transform = this.gameObject.getTransform();
-    }
     setAnimation(animation) {
         this.animation = animation;
     }

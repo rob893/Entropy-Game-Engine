@@ -1,4 +1,4 @@
-import { Physics } from "./Physics";
+import { PhysicsEngine } from "./PhysicsEngine";
 import { GameObject } from "./GameObject";
 import { Time } from "./Time";
 import { RenderingEngine } from "./RenderingEngine";
@@ -10,7 +10,7 @@ export class GameEngine {
     private static _instance: GameEngine;
 
     private gameCanvas: HTMLCanvasElement;
-    private physicsEngine: Physics;
+    private physicsEngine: PhysicsEngine;
     private renderingEngine: RenderingEngine;
     private gameObjects: GameObject[] = [];
     private gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
@@ -20,10 +20,11 @@ export class GameEngine {
     private paused: boolean = false;
 
 
-    private constructor() {
+    private constructor(gameCanvas: HTMLCanvasElement, physicsEngine: PhysicsEngine, renderingEngine: RenderingEngine) {
         this.gameInitialized = false;
-        this.physicsEngine = Physics.instance;
-        this.renderingEngine = RenderingEngine.instance;
+        this.gameCanvas = gameCanvas;
+        this.physicsEngine = physicsEngine;
+        this.renderingEngine = renderingEngine;
 
         document.addEventListener('keydown', (event) => {
             if (event.keyCode === Keys.UP) {
@@ -33,17 +34,25 @@ export class GameEngine {
     }
 
     public static get instance(): GameEngine {
-        return this._instance || (this._instance = new GameEngine());
+        if (this._instance === null || this._instance === undefined) {
+            throw new Error('The instance has not been built yet. Call the buildGameEngine() function first.');
+        }
+
+        return this._instance;
     }
 
-    public initializeGame(gameCanvas: HTMLCanvasElement, gameObjects: GameObject[], background: IRenderableBackground): void {
-        this.gameCanvas = gameCanvas;
+    public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
+        let physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
+        let renderingEngine = RenderingEngine.buildRenderingEngine(gameCanvas.getContext('2d'));
+        
+        this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
+        
+        return this._instance;
+    }
+
+    public initializeGame(gameObjects: GameObject[], background: IRenderableBackground): void {
         this.setGameObjects(gameObjects);
         this.renderingEngine.background = background;
-        this.renderingEngine.canvasContext = gameCanvas.getContext('2d');
-
-        this.physicsEngine.buildSpatialMapCells(100, gameCanvas.width, gameCanvas.height);
-         
         this.gameInitialized = true;
     }
 

@@ -1,18 +1,23 @@
 export class RenderingEngine {
-    constructor() {
+    constructor(context) {
+        this._canvasContext = context;
         this.renderableObjects = [];
         this.renderableGizmos = [];
         this.renderableGUIElements = [];
         this.renderGizmos = false;
     }
     static get instance() {
-        return this._instance || (this._instance = new RenderingEngine());
+        if (this._instance === null || this._instance === undefined) {
+            throw new Error('The instance has not been created yet. Call the buildRenderingEngine() function first.');
+        }
+        return this._instance;
+    }
+    static buildRenderingEngine(context) {
+        this._instance = new RenderingEngine(context);
+        return this._instance;
     }
     set background(background) {
         this._background = background;
-    }
-    set canvasContext(context) {
-        this._canvasContext = context;
     }
     get canvasContext() {
         return this._canvasContext;

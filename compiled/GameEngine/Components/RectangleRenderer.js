@@ -5,7 +5,6 @@ export class RectangleRenderer extends Component {
         super(gameObject);
         this.renderWidth = renderWidth;
         this.renderHeight = renderHeight;
-        this.transform = gameObject.getTransform();
         this.color = color;
         RenderingEngine.instance.addRenderableObject(this);
     }

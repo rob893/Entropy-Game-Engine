@@ -6,16 +6,16 @@ export abstract class GameObject {
     public id: string;
     public tag: string;
 
-    protected transform: Transform;
-    protected components: Component[] = [];
-    protected componentMap: Map<string, Component[]> = new Map<string, Component[]>();
+    protected readonly _transform: Transform;
+    protected readonly components: Component[] = [];
+    protected readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
 
     private isEnabled: boolean;
     
 
     public constructor(id: string, x: number = 0, y: number = 0, tag: string = '') {
         this.id = id;
-        this.transform = new Transform(this, x, y);
+        this._transform = new Transform(this, x, y);
         this.isEnabled = true;
         this.tag = tag;
     }
@@ -50,8 +50,8 @@ export abstract class GameObject {
         return this.isEnabled;
     }
 
-    public getTransform(): Transform {
-        return this.transform;
+    public get transform(): Transform {
+        return this._transform;
     }
 
     public hasComponent<T extends Component>(component: new (...args: any[]) => T): boolean {
@@ -103,9 +103,9 @@ export abstract class GameObject {
     }
 
     protected setComponents(components: Component[]): void {
-        this.components = components;
-
         for (let component of components) {
+            this.components.push(component);
+            
             if (this.componentMap.has(component.constructor.name)) {
                 this.componentMap.get(component.constructor.name).push(component);
             }

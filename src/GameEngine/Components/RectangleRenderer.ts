@@ -6,7 +6,6 @@ import { RenderingEngine } from "../Core/RenderingEngine";
 
 export class RectangleRenderer extends Component implements IRenderable {
 
-    private transform: Transform;
     private renderWidth: number;
     private renderHeight: number;
     private color: string;
@@ -16,7 +15,6 @@ export class RectangleRenderer extends Component implements IRenderable {
 
         this.renderWidth = renderWidth;
         this.renderHeight = renderHeight;
-        this.transform = gameObject.getTransform();
         this.color = color
 
         RenderingEngine.instance.addRenderableObject(this);

@@ -1,25 +1,40 @@
-import { Physics } from "./Physics";
+import { PhysicsEngine } from "./PhysicsEngine";
 import { Time } from "./Time";
 import { RenderingEngine } from "./RenderingEngine";
+import { Keys } from "./Helpers/Keys";
 export class GameEngine {
-    constructor() {
+    constructor(gameCanvas, physicsEngine, renderingEngine) {
         this.gameObjects = [];
         this.gameObjectMap = new Map();
+        this.tagMap = new Map();
         this.gameObjectNumMap = new Map();
         this.gameInitialized = false;
         this.paused = false;
         this.gameInitialized = false;
-        this.physicsEngine = Physics.instance;
-        this.renderingEngine = RenderingEngine.instance;
+        this.gameCanvas = gameCanvas;
+        this.physicsEngine = physicsEngine;
+        this.renderingEngine = renderingEngine;
+        document.addEventListener('keydown', (event) => {
+            if (event.keyCode === Keys.UP) {
+                this.gameCanvas.requestFullscreen();
+            }
+        });
     }
     static get instance() {
-        return this._instance || (this._instance = new GameEngine());
+        if (this._instance === null || this._instance === undefined) {
+            throw new Error('The instance has not been built yet. Call the buildGameEngine() function first.');
+        }
+        return this._instance;
     }
-    initializeGame(gameCanvas, gameObjects, background) {
-        this.gameCanvas = gameCanvas;
+    static buildGameEngine(gameCanvas) {
+        let physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
+        let renderingEngine = RenderingEngine.buildRenderingEngine(gameCanvas.getContext('2d'));
+        this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
+        return this._instance;
+    }
+    initializeGame(gameObjects, background) {
         this.setGameObjects(gameObjects);
         this.renderingEngine.background = background;
-        this.renderingEngine.canvasContext = gameCanvas.getContext('2d');
         this.gameInitialized = true;
     }
     startGame() {
@@ -28,9 +43,7 @@ export class GameEngine {
         }
         Time.start();
         this.paused = false;
-        for (let i = 0; i < this.gameObjects.length; i++) {
-            this.gameObjects[i].start();
-        }
+        this.gameObjects.forEach(go => go.start());
         requestAnimationFrame(() => this.gameLoop());
     }
     instantiate(newGameObject) {
@@ -41,6 +54,12 @@ export class GameEngine {
         }
         else {
             this.gameObjectNumMap.set(newGameObject.id, 1);
+        }
+        if (this.tagMap.has(newGameObject.tag)) {
+            this.tagMap.get(newGameObject.tag).push(newGameObject);
+        }
+        else {
+            this.tagMap.set(newGameObject.tag, [newGameObject]);
         }
         this.gameObjectMap.set(newGameObject.id, newGameObject);
         this.gameObjects.push(newGameObject);
@@ -53,15 +72,27 @@ export class GameEngine {
         }
         return this.gameObjectMap.get(id);
     }
+    getGameObjectWithTag(tag) {
+        if (!this.tagMap.has(tag)) {
+            throw new Error("No GameObject with tag of " + tag + " exists!");
+        }
+        return this.tagMap.get(tag)[0];
+    }
+    getGameObjectsWithTag(tag) {
+        if (!this.tagMap.has(tag)) {
+            throw new Error("No GameObject with tag of " + tag + " exists!");
+        }
+        return this.tagMap.get(tag);
+    }
     getGameCanvas() {
         return this.gameCanvas;
     }
     printGameData() {
         console.log(this);
         console.log("Time since game start " + Time.TotalTime + "s");
-        for (let i = 0; i < this.gameObjects.length; i++) {
-            console.log(this.gameObjects[i]);
-        }
+        console.log(this.renderingEngine);
+        console.log(this.physicsEngine);
+        this.gameObjects.forEach(go => console.log(go));
     }
     togglePause() {
         this.paused = !this.paused;
@@ -78,6 +109,12 @@ export class GameEngine {
                 this.gameObjectNumMap.set(gameObject.id, 1);
             }
             this.gameObjectMap.set(gameObject.id, gameObject);
+            if (this.tagMap.has(gameObject.tag)) {
+                this.tagMap.get(gameObject.tag).push(gameObject);
+            }
+            else {
+                this.tagMap.set(gameObject.tag, [gameObject]);
+            }
         }
     }
     update() {
@@ -85,6 +122,7 @@ export class GameEngine {
             return;
         }
         Time.updateTime();
+        this.physicsEngine.updatePhysics();
         for (let gameObject of this.gameObjects) {
             if (gameObject.enabled) {
                 gameObject.update();

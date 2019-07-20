@@ -1,22 +1,20 @@
 import { Vector2 } from "../Core/Vector2";
 import { Component } from "./Component";
 import { LiteEvent } from "../Core/Helpers/LiteEvent";
-import { Physics } from "../Core/Physics";
+import { PhysicsEngine } from "../Core/PhysicsEngine";
 import { RenderingEngine } from "../Core/RenderingEngine";
 export class RectangleCollider extends Component {
     constructor(gameObject, width, height) {
         super(gameObject);
-        this.visualize = true;
         this.onCollide = new LiteEvent();
         this.width = width;
         this.height = height;
-        this.transform = gameObject.getTransform();
         let transform = this.transform;
         this._topLeft = new Vector2(transform.position.x - (width / 2), transform.position.y - height);
         this._topRight = new Vector2(transform.position.x + (width / 2), transform.position.y - height);
         this._bottomLeft = new Vector2(transform.position.x - (width / 2), transform.position.y);
         this._bottomRight = new Vector2(transform.position.x + (width / 2), transform.position.y);
-        Physics.instance.addCollider(this);
+        PhysicsEngine.instance.addCollider(this);
         RenderingEngine.instance.addRenderableGizmo(this);
     }
     get topLeft() {

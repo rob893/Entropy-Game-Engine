@@ -20,6 +20,7 @@ export class FPSCounter extends Component {
             this.timer = 0;
             this.numFrames = 0;
         }
+        context.fillStyle = 'white';
         context.fillText("FPS: " + this.FPS.toFixed(2), 0, 20);
     }
 }

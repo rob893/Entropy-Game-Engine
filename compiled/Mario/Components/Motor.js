@@ -1,12 +1,11 @@
 import { Component } from "../../GameEngine/Components/Component";
 import { GameEngine } from "../../GameEngine/Core/GameEngine";
 export class Motor extends Component {
-    constructor(gameObject) {
-        super(gameObject);
+    constructor() {
+        super(...arguments);
         this.xVelocity = 0;
         this.yVelocity = 0;
         this.speed = 5;
-        this.transform = gameObject.getTransform();
     }
     start() {
         this.gameCanvas = GameEngine.instance.getGameCanvas();

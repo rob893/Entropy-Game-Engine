@@ -1,11 +1,12 @@
 import { Transform } from "../Components/Transform";
 export class GameObject {
-    constructor(id, x = 0, y = 0) {
+    constructor(id, x = 0, y = 0, tag = '') {
         this.components = [];
         this.componentMap = new Map();
-        this.isEnabled = false;
         this.id = id;
-        this.transform = new Transform(this, x, y);
+        this._transform = new Transform(this, x, y);
+        this.isEnabled = true;
+        this.tag = tag;
     }
     start() {
         this.components.forEach(c => c.start());
@@ -21,19 +22,18 @@ export class GameObject {
         if (enabled === this.isEnabled) {
             return;
         }
-        if (enabled) {
-            this.components.forEach(c => c.onEnabled());
-        }
-        else {
-            this.components.forEach(c => c.onDisable());
-        }
         this.isEnabled = enabled;
+        for (let component of this.components) {
+            if (component.enabled) {
+                enabled ? component.onEnabled() : component.onDisable();
+            }
+        }
     }
     get enabled() {
         return this.isEnabled;
     }
-    getTransform() {
-        return this.transform;
+    get transform() {
+        return this._transform;
     }
     hasComponent(component) {
         return this.componentMap.has(component.name);
@@ -43,13 +43,22 @@ export class GameObject {
         if (!this.componentMap.has(componentType)) {
             throw new Error(componentType + " not found on the GameObject with id of " + this.id + "!");
         }
+        return this.componentMap.get(componentType)[0];
+    }
+    getComponents(component) {
+        let componentType = component.name;
+        if (!this.componentMap.has(componentType)) {
+            throw new Error(componentType + " not found on the GameObject with id of " + this.id + "!");
+        }
         return this.componentMap.get(componentType);
     }
     addComponent(newComponent) {
         if (this.componentMap.has(newComponent.constructor.name)) {
-            throw new Error("There is already a component of type " + newComponent.constructor.name + " on this object!");
+            this.componentMap.get(newComponent.constructor.name).push(newComponent);
         }
-        this.componentMap.set(newComponent.constructor.name, newComponent);
+        else {
+            this.componentMap.set(newComponent.constructor.name, [newComponent]);
+        }
         newComponent.enabled = true;
         newComponent.start();
         return newComponent;
@@ -63,12 +72,14 @@ export class GameObject {
         component.onDestroy();
     }
     setComponents(components) {
-        this.components = components;
         for (let component of components) {
+            this.components.push(component);
             if (this.componentMap.has(component.constructor.name)) {
-                throw new Error("There is already a component of type " + component.constructor.name + " on this object!");
+                this.componentMap.get(component.constructor.name).push(component);
             }
-            this.componentMap.set(component.constructor.name, component);
+            else {
+                this.componentMap.set(component.constructor.name, [component]);
+            }
         }
     }
 }

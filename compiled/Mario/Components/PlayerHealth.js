@@ -1,4 +1,5 @@
 import { Component } from "../../GameEngine/Components/Component";
+import { GameManager } from "./GameManager";
 export class PlayerHealth extends Component {
     constructor(gameObject, health = 100) {
         super(gameObject);
@@ -13,12 +14,14 @@ export class PlayerHealth extends Component {
     }
     takeDamage(amount) {
         this._health -= amount;
+        GameManager.instance.showMessage('You were hit for ' + amount + ' damage!', 1, 'red');
         if (this._health <= 0) {
             this.die();
         }
     }
     die() {
         this._isDead = true;
+        GameManager.instance.endGame();
         console.log('You are dead!');
     }
 }

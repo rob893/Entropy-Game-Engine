@@ -6,7 +6,7 @@ import MovingRightSprite from "../../assets/images/mario.png";
 import MovingLeftSprite from "../../assets/images/marioLeft.png";
 import { Animator } from "../../GameEngine/Components/Animator";
 import { Animation } from "../../GameEngine/Core/Animation";
-import { Physics } from "../../GameEngine/Core/Physics";
+import { PhysicsEngine } from "../../GameEngine/Core/PhysicsEngine";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
 export class PlayerMotor extends Motor {
     constructor(gameObject) {
@@ -23,11 +23,18 @@ export class PlayerMotor extends Motor {
     start() {
         super.start();
         this.collider = this.gameObject.getComponent(RectangleCollider);
+        this.collider.onCollided.add((other) => this.handleCollision(other));
         this.rigidBody = this.gameObject.getComponent(Rigidbody);
         this.animator = this.gameObject.getComponent(Animator);
     }
     get isMoving() {
         return this.xVelocity !== 0 || this.yVelocity !== 0;
+    }
+    handleCollision(other) {
+        if (other.gameObject.tag === 'ground') {
+            this.transform.position.y -= 1;
+            this.rigidBody.isKinomatic = true;
+        }
     }
     handleOutOfBounds() {
         if (this.transform.position.y <= 0) {
@@ -63,14 +70,13 @@ export class PlayerMotor extends Motor {
         if (this.jumping) {
             return;
         }
-        this.enabled = false;
         this.jumping = true;
         this.rigidBody.isKinomatic = false;
         this.rigidBody.resetForce();
         this.rigidBody.addForce(Vector2.up.multiplyScalar(400));
     }
     onClick(event) {
-        let hit = Physics.raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1), Vector2.right, 5000);
+        let hit = PhysicsEngine.raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1), Vector2.right, 5000);
     }
     onKeyDown(event) {
         if (event.keyCode == Keys.RIGHT || event.keyCode == Keys.D) {

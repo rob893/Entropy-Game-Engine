@@ -7,7 +7,7 @@ import MovingRightSprite from "../../assets/images/mario.png"
 import MovingLeftSprite from "../../assets/images/marioLeft.png"
 import { Animator } from "../../GameEngine/Components/Animator";
 import { Animation } from "../../GameEngine/Core/Animation";
-import { Physics } from "../../GameEngine/Core/Physics";
+import { PhysicsEngine } from "../../GameEngine/Core/PhysicsEngine";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
 
 
@@ -100,7 +100,7 @@ export class PlayerMotor extends Motor {
     }
 
     private onClick(event: MouseEvent): void {
-        let hit = Physics.raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1), Vector2.right, 5000);
+        let hit = PhysicsEngine.raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1), Vector2.right, 5000);
     }
 
     private onKeyDown(event: KeyboardEvent): void {

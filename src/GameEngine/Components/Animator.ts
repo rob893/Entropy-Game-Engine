@@ -7,7 +7,6 @@ import { RenderingEngine } from "../Core/RenderingEngine";
 
 export class Animator extends Component implements IRenderable {
 
-    private transform: Transform;
     private animation: Animation;
     private renderHeight: number;
     private renderWidth: number;
@@ -21,10 +20,6 @@ export class Animator extends Component implements IRenderable {
         this.animation = initialAnimation;
 
         RenderingEngine.instance.addRenderableObject(this);
-    }
-
-    public start(): void {
-        this.transform = this.gameObject.getTransform();
     }
 
     public setAnimation(animation: Animation): void {

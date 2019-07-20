@@ -11,12 +11,11 @@ import { RenderingEngine } from "./GameEngine/Core/RenderingEngine";
 import { Ground } from "./Mario/GameObjects/Ground";
 import { Colors } from "./GameEngine/Core/Helpers/Colors";
 
+let gameCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("game-canvas");
 
-let gameEngine: GameEngine = GameEngine.instance;
+let gameEngine: GameEngine = GameEngine.buildGameEngine(gameCanvas);
 
 RenderingEngine.instance.renderGizmos = true;
-
-let gameCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("game-canvas");
 
 let background: ImageBackground = new ImageBackground(gameCanvas, Background);
 
@@ -31,6 +30,6 @@ let ground2 = new Ground(400, 270, 100, 10, Colors.BROWN);
 
 let gameObjects: GameObject[] = [gameManager, player, computer, ball, trump, ground, ground2];
 
-gameEngine.initializeGame(gameCanvas, gameObjects, background);
+gameEngine.initializeGame(gameObjects, background);
 
 gameEngine.startGame();

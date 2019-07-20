@@ -3,7 +3,7 @@ import { Component } from "./Component";
 import { Transform } from "./Transform";
 import { LiteEvent } from "../Core/Helpers/LiteEvent";
 import { GameObject } from "../Core/GameObject";
-import { Physics } from "../Core/Physics";
+import { PhysicsEngine } from "../Core/PhysicsEngine";
 import { ILiteEvent } from "../Core/Interfaces/ILiteEvent";
 import { RenderingEngine } from "../Core/RenderingEngine";
 import { IRenderableGizmo } from "../Core/Interfaces/IRenderableGizmo";
@@ -12,11 +12,8 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
 
     public width: number;
     public height: number;
-    public readonly transform: Transform;
 
     private readonly onCollide = new LiteEvent<RectangleCollider>();
-    private physicsEngine: Physics;
-    private spatialMapKeys: Set<string> = new Set<string>();
     private _topLeft: Vector2;
     private _topRight: Vector2;
     private _bottomLeft: Vector2;
@@ -29,23 +26,15 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
         this.width = width;
         this.height = height;
 
-        this.physicsEngine = Physics.instance;
-
-        this.transform = gameObject.getTransform();
         let transform: Transform = this.transform;
-        transform.onMoved.add(() => this.physicsEngine.updateColliderSpatialMapping(this, this.spatialMapKeys));
 
         this._topLeft = new Vector2(transform.position.x - (width / 2), transform.position.y - height);
         this._topRight = new Vector2(transform.position.x + (width / 2), transform.position.y - height);
         this._bottomLeft = new Vector2(transform.position.x - (width / 2), transform.position.y);
         this._bottomRight = new Vector2(transform.position.x + (width / 2), transform.position.y);
 
-        Physics.instance.addCollider(this);
+        PhysicsEngine.instance.addCollider(this);
         RenderingEngine.instance.addRenderableGizmo(this);
-    }
-
-    public get mappingKeys(): Set<string> {
-        return this.spatialMapKeys;
     }
 
     public get topLeft(): Vector2 {

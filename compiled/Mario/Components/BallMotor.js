@@ -1,6 +1,5 @@
 import { Motor } from "./Motor";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
-import { GameEngine } from "../../GameEngine/Core/GameEngine";
 import { Vector2 } from "../../GameEngine/Core/Vector2";
 export class BallMotor extends Motor {
     constructor(gameObject) {
@@ -11,22 +10,18 @@ export class BallMotor extends Motor {
     start() {
         super.start();
         this.collider = this.gameObject.getComponent(RectangleCollider);
-        this.playerCollider = GameEngine.instance.getGameObjectById("player").getComponent(RectangleCollider);
-        this.computerCollider = GameEngine.instance.getGameObjectById("computer").getComponent(RectangleCollider);
         this.collider.onCollided.add((other) => this.handleCollision(other));
-    }
-    update() {
-        super.update();
-        this.detectCollisions();
     }
     handleCollision(other) {
         if (this.ready) {
             this.ready = false;
-            this.xVelocity *= -1;
             this.speed += 0.125;
+            let direction = Vector2.direction(other.transform.position, this.transform.position);
+            this.xVelocity = direction.x;
+            this.yVelocity = direction.y;
             setTimeout(() => {
                 this.ready = true;
-            }, 250);
+            }, 15);
         }
     }
     handleOutOfBounds() {
@@ -51,10 +46,6 @@ export class BallMotor extends Motor {
         this.xVelocity = Math.random() < 0.5 ? -1 : 1;
         this.yVelocity = Math.random() < 0.5 ? -1 : 1;
         this.speed = 3;
-    }
-    detectCollisions() {
-        this.collider.detectCollision(this.playerCollider);
-        this.collider.detectCollision(this.computerCollider);
     }
 }
 //# sourceMappingURL=BallMotor.js.map

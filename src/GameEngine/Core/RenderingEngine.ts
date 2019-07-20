@@ -13,10 +13,11 @@ export class RenderingEngine {
     private renderableObjects: IRenderable[];
     private renderableGizmos: IRenderableGizmo[];
     private renderableGUIElements: IRenderableGUI[];
-    private _canvasContext: CanvasRenderingContext2D;
+    private readonly _canvasContext: CanvasRenderingContext2D;
     
 
-    public constructor() {
+    public constructor(context: CanvasRenderingContext2D) {
+        this._canvasContext = context;
         this.renderableObjects = [];
         this.renderableGizmos = [];
         this.renderableGUIElements = [];
@@ -24,15 +25,21 @@ export class RenderingEngine {
     }
 
     public static get instance(): RenderingEngine {
-        return this._instance || (this._instance = new RenderingEngine());
+        if (this._instance === null || this._instance === undefined) {
+            throw new Error('The instance has not been created yet. Call the buildRenderingEngine() function first.');
+        }
+
+        return this._instance;
+    }
+
+    public static buildRenderingEngine(context: CanvasRenderingContext2D): RenderingEngine {
+        this._instance = new RenderingEngine(context);
+
+        return this._instance;
     }
 
     public set background(background: IRenderableBackground) {
         this._background = background;
-    }
-
-    public set canvasContext(context: CanvasRenderingContext2D) {
-        this._canvasContext = context;
     }
 
     public get canvasContext(): CanvasRenderingContext2D {

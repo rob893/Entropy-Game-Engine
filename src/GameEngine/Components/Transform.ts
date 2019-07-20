@@ -10,7 +10,7 @@ export class Transform extends Component {
     public readonly position: Vector2;
     //Rotation in radians
     public rotation: number;
-    public scale: Vector2;
+    public readonly scale: Vector2;
 
     private readonly onMove = new LiteEvent<void>();
 

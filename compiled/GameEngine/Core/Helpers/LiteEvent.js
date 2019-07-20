@@ -8,8 +8,8 @@ export class LiteEvent {
     remove(handler) {
         this.handlers = this.handlers.filter(h => h !== handler);
     }
-    trigger(data) {
-        this.handlers.slice(0).forEach(h => h(data));
+    trigger(data, moreData) {
+        this.handlers.slice(0).forEach(h => h(data, moreData));
     }
     expose() {
         return this;

@@ -26,7 +26,7 @@ export class TrumpMotor extends Motor {
         this.audioSource = this.gameObject.getComponent(AudioSource);
         this.audioSource.setClip(YouSuckSound);
         this.player = GameEngine.instance.getGameObjectById('player');
-        this.playerTransform = this.player.getTransform();
+        this.playerTransform = this.player.transform;
         this.playerHealth = this.player.getComponent(PlayerHealth);
     }
     move() {
@@ -49,12 +49,12 @@ export class TrumpMotor extends Motor {
             this.isMovingRight = false;
             this.isIdle = true;
             this.animator.setAnimation(this.idleAnimation);
-            this.audioSource.play();
         }
         this.damageTimer += Time.DeltaTime;
-        if (this.damageTimer > 1 && Vector2.distance(this.transform.position, this.playerTransform.position) < 15) {
+        if (this.damageTimer > 1.5 && Vector2.distance(this.transform.position, this.playerTransform.position) < 15) {
             this.damagePlayer();
             this.damageTimer = 0;
+            this.audioSource.play();
         }
         this.transform.translate(direction.multiplyScalar(this.speed));
     }

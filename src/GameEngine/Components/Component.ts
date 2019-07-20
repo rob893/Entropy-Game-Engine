@@ -1,4 +1,5 @@
 import { GameObject } from "../Core/GameObject";
+import { Transform } from "./Transform";
 
 export abstract class Component {
 
@@ -33,6 +34,10 @@ export abstract class Component {
         }
 
         return this.isEnabled;
+    }
+
+    public get transform(): Transform {
+        return this.gameObject.transform;
     }
 
     public onEnabled(): void {}
