@@ -16,7 +16,7 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
 
     private readonly onCollide = new LiteEvent<RectangleCollider>();
     private physicsEngine: Physics;
-    private spatialMapKeys: string[] = [];
+    private spatialMapKeys: Set<string> = new Set<string>();
     private _topLeft: Vector2;
     private _topRight: Vector2;
     private _bottomLeft: Vector2;
@@ -44,7 +44,7 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
         RenderingEngine.instance.addRenderableGizmo(this);
     }
 
-    public get mappingKeys(): string[] {
+    public get mappingKeys(): Set<string> {
         return this.spatialMapKeys;
     }
 
@@ -74,10 +74,6 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
         this._bottomRight.y = this.transform.position.y;
 
         return this._bottomRight;
-    }
-
-    public setSpacialMapKeys(keys: string[]): void {
-        this.spatialMapKeys = keys;
     }
 
     public detectCollision(other: RectangleCollider): boolean {

@@ -11,6 +11,7 @@ export class Physics {
 
     private rigidbodies: Rigidbody[];
     private colliders: RectangleCollider[];
+    private colliderSpacialMapKeys: Map<RectangleCollider, Set<string>> = new Map<RectangleCollider, Set<string>>();
     private spatialMap: Map<string, Set<RectangleCollider>> = new Map<string, Set<RectangleCollider>>();
     private cellSize: number;
 
@@ -47,7 +48,7 @@ export class Physics {
                 this.spatialMap.set(this.getMapKey(new Vector2(i, j)), new Set());
             }
         }
-        //debugger;
+        
         for (let collider of this.colliders) {
             this.addColliderToSpatialMap(collider);
         }
@@ -67,10 +68,9 @@ export class Physics {
         this.addColliderToSpatialMap(collider);
     }
 
-    public updateColliderSpatialMapping(collider: RectangleCollider, previousKeys: string[]): void {
+    public updateColliderSpatialMapping(collider: RectangleCollider, previousKeys: Set<string>): void {
         for (let key of previousKeys) {
-            let cellSet = this.spatialMap.get(key);
-            cellSet.delete(collider);
+            this.spatialMap.get(key).delete(collider);
         }
 
         this.addColliderToSpatialMap(collider);
@@ -81,6 +81,27 @@ export class Physics {
         let trKey = this.getMapKey(collider.topRight);
         let blKey = this.getMapKey(collider.bottomLeft);
         let brKey = this.getMapKey(collider.bottomRight);
+
+        let previousKeys = collider.mappingKeys;
+
+        // let movedCells = previousKeys.size === 0 ? true : false;
+
+        // for (let key of previousKeys) {
+        //     if (key !== tlKey && key !== trKey && key !== blKey && key !== brKey) {
+        //         movedCells = true;
+        //         break;
+        //     }
+        // }
+
+        // if (!movedCells) {
+        //     return;
+        // }
+        // console.log('moved cells');
+        // for (let key of previousKeys) {
+        //     this.spatialMap.get(key).delete(collider);
+        // }
+
+        previousKeys.clear();
         
         // If all 4 points are in the same cell.
         if (tlKey === brKey) {
@@ -90,12 +111,10 @@ export class Physics {
             else {
                 this.spatialMap.set(tlKey, new Set([collider]));
             }
-            collider.setSpacialMapKeys([tlKey]);
+            previousKeys.add(tlKey);
 
             return;
         }
-
-        let newKeys = new Set<string>();
 
         let tlx = Number(tlKey.split(',')[0]);
         let tly = Number(tlKey.split(',')[1]);
@@ -112,12 +131,9 @@ export class Physics {
                 else {
                     this.spatialMap.set(key, new Set([collider]));
                 }
-
-                newKeys.add(key);
+                previousKeys.add(key);
             }
         }
-      
-        collider.setSpacialMapKeys(Array.from(newKeys));
     }
 
     private getPossibleCollisions(collider: RectangleCollider): Set<RectangleCollider> {
