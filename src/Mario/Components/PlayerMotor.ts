@@ -49,10 +49,10 @@ export class PlayerMotor extends Motor {
     }
 
     private handleCollision(other: RectangleCollider) {
-        if (other.gameObject.tag === 'ground') {
-            this.transform.position.y -= 1;
-            this.rigidBody.isKinomatic = true;
-        }
+        // if (other.gameObject.tag === 'ground') {
+        //     this.transform.position.y -= 1;
+        //     this.rigidBody.isKinomatic = true;
+        // }
     }
 
     protected handleOutOfBounds(): void {
@@ -60,7 +60,7 @@ export class PlayerMotor extends Motor {
             this.transform.position.y = 1;
         }
         else if (this.transform.position.y >= this.gameCanvas.height - 55) {
-            this.rigidBody.isKinomatic = true;
+            //this.rigidBody.isKinomatic = true;
             this.jumping = false;
             this.transform.position.y = this.gameCanvas.height - 56;
         }
@@ -95,7 +95,7 @@ export class PlayerMotor extends Motor {
         }
         
         this.jumping = true;
-        this.rigidBody.isKinomatic = false;
+        //this.rigidBody.isKinomatic = false;
         this.rigidBody.resetForce()
         this.rigidBody.addForce(Vector2.up.multiplyScalar(400));
     }

@@ -19,7 +19,7 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
     private readonly _topRight: Vector2;
     private readonly _bottomLeft: Vector2;
     private readonly _bottomRight: Vector2;
-    private readonly _attachedRigidbody: Rigidbody|null;
+    private _attachedRigidbody: Rigidbody|null;
 
 
     public constructor(gameObject: GameObject, width: number, height: number) {
@@ -35,10 +35,12 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
         this._bottomLeft = new Vector2(transform.position.x - (width / 2), transform.position.y);
         this._bottomRight = new Vector2(transform.position.x + (width / 2), transform.position.y);
 
-        this._attachedRigidbody = this.gameObject.hasComponent(Rigidbody) ? this.gameObject.getComponent(Rigidbody) : null;
-
         PhysicsEngine.instance.addCollider(this);
         RenderingEngine.instance.addRenderableGizmo(this);
+    }
+
+    public start(): void {
+        this._attachedRigidbody = this.gameObject.hasComponent(Rigidbody) ? this.gameObject.getComponent(Rigidbody) : null;
     }
 
     public get topLeft(): Vector2 {

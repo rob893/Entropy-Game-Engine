@@ -52,6 +52,7 @@ export class PhysicsEngine {
 
     public updatePhysics(): void {
         this.collisionDetector.detectCollisions();
+        this.rigidbodies.forEach(rb => rb.updatePhysics());
     }
 
     public addRigidbody(rb: Rigidbody): void {

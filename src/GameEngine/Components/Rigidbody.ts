@@ -26,7 +26,7 @@ export class Rigidbody extends Component {
         PhysicsEngine.instance.addRigidbody(this);
     }
 
-    public update(): void {
+    public updatePhysics(): void {
         if (this.isKinomatic) {
             return;
         }
