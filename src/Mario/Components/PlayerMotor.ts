@@ -49,21 +49,25 @@ export class PlayerMotor extends Motor {
     }
 
     private handleCollision(other: RectangleCollider) {
-        // if (other.gameObject.tag === 'ground') {
-        //     this.transform.position.y -= 1;
-        //     this.rigidBody.isKinomatic = true;
-        // }
+        if (other.gameObject.tag === 'ground') {
+            while (this.transform.position.y >= other.topLeft.y) {
+                this.transform.position.y -= 1;
+            }
+            this.rigidBody.resetForce();
+            //this.rigidBody.isKinomatic = true;
+            this.jumping = false;
+        }
     }
 
     protected handleOutOfBounds(): void {
-        if (this.transform.position.y <= 0) {
-            this.transform.position.y = 1;
-        }
-        else if (this.transform.position.y >= this.gameCanvas.height - 55) {
-            //this.rigidBody.isKinomatic = true;
-            this.jumping = false;
-            this.transform.position.y = this.gameCanvas.height - 56;
-        }
+        // if (this.transform.position.y <= 0) {
+        //     this.transform.position.y = 1;
+        // }
+        // else if (this.transform.position.y >= this.gameCanvas.height - 55) {
+        //     //this.rigidBody.isKinomatic = true;
+        //     this.jumping = false;
+        //     this.transform.position.y = this.gameCanvas.height - 56;
+        // }
 
         if (this.transform.position.x - (this.collider.width / 2) <= 0) {
             this.transform.position.x = (this.collider.width / 2) + 1;
