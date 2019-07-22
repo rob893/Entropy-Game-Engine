@@ -2,6 +2,10 @@ import { IRenderable } from "./Interfaces/IRenderable";
 import { IRenderableGizmo } from "./Interfaces/IRenderableGizmo";
 import { IRenderableGUI } from "./Interfaces/IRenderableGUI";
 import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
+import { FloorTile } from "./FloorTile";
+import { Sprite } from "./Sprite";
+import { Vector2 } from "./Vector2";
+import FloorTileImage from "../../assets/images/DungeonTileset.png";
 
 export class RenderingEngine {
 
@@ -10,6 +14,7 @@ export class RenderingEngine {
     public renderGizmos: boolean;
 
     private _background: IRenderableBackground;
+    private backgroundObjects: IRenderableBackground[];
     private renderableObjects: IRenderable[];
     private renderableGizmos: IRenderableGizmo[];
     private renderableGUIElements: IRenderableGUI[];
@@ -18,10 +23,17 @@ export class RenderingEngine {
 
     public constructor(context: CanvasRenderingContext2D) {
         this._canvasContext = context;
+        this.backgroundObjects = [];
         this.renderableObjects = [];
         this.renderableGizmos = [];
         this.renderableGUIElements = [];
         this.renderGizmos = false;
+
+        for (let x = 0; x < 700; x += 20) {
+            for (let y = 0; y < 400; y += 20) {
+                this.backgroundObjects.push(new FloorTile(new Sprite(FloorTileImage, 16, 64, 16, 16), 20, new Vector2(x, y)));
+            }
+        }
     }
 
     public static get instance(): RenderingEngine {
@@ -60,6 +72,10 @@ export class RenderingEngine {
 
     public renderScene(): void {
         this._background.renderBackground(this._canvasContext);
+
+        // for (let object of this.backgroundObjects) {
+        //     object.renderBackground(this._canvasContext);
+        // }
 
         for (let object of this.renderableObjects) {
             if (object.enabled) {
