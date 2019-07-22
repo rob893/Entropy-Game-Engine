@@ -6,6 +6,7 @@ import { FloorTile } from "./FloorTile";
 import { Sprite } from "./Sprite";
 import { Vector2 } from "./Vector2";
 import FloorTileImage from "../../assets/images/DungeonTileset.png";
+import { LevelBuilder } from "./LevelBuilder";
 
 export class RenderingEngine {
 
@@ -19,6 +20,8 @@ export class RenderingEngine {
     private renderableGizmos: IRenderableGizmo[];
     private renderableGUIElements: IRenderableGUI[];
     private readonly _canvasContext: CanvasRenderingContext2D;
+    private test: HTMLImageElement;
+    private ready = false;
     
 
     public constructor(context: CanvasRenderingContext2D) {
@@ -29,11 +32,18 @@ export class RenderingEngine {
         this.renderableGUIElements = [];
         this.renderGizmos = false;
 
-        for (let x = 0; x < 700; x += 20) {
-            for (let y = 0; y < 400; y += 20) {
-                this.backgroundObjects.push(new FloorTile(new Sprite(FloorTileImage, 16, 64, 16, 16), 20, new Vector2(x, y)));
-            }
-        }
+        // for (let x = 0; x < 700; x += 20) {
+        //     for (let y = 0; y < 400; y += 20) {
+        //         this.backgroundObjects.push(new FloorTile(new Sprite(FloorTileImage, 16, 64, 16, 16), 20, new Vector2(x, y)));
+        //     }
+        // }
+        this.setThing();
+    }
+
+    private async setThing() {
+        this.test = await LevelBuilder.combineImages(FloorTileImage, 16, 64, 20, 0);
+        this.ready = true;
+
     }
 
     public static get instance(): RenderingEngine {
@@ -73,6 +83,10 @@ export class RenderingEngine {
     public renderScene(): void {
         this._background.renderBackground(this._canvasContext);
 
+        if (this.ready) {
+            this._canvasContext.drawImage(this.test, 0, 0);
+        }
+        
         // for (let object of this.backgroundObjects) {
         //     object.renderBackground(this._canvasContext);
         // }
