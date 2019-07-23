@@ -41,7 +41,7 @@ export class RenderingEngine {
     }
 
     private async setThing() {
-        this.test = await LevelBuilder.combineImages(FloorTileImage, 16, 64, 20, 0);
+        this.test = await LevelBuilder.combineImages(FloorTileImage, 16, 64, 16, 16, 50, 50);
         this.ready = true;
 
     }
