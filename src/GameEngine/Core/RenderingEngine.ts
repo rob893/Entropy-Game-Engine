@@ -45,7 +45,7 @@ export class RenderingEngine {
         const builder = new LevelBuilder();
         await builder.using(FloorTileImage);
         this.test = await builder.addFloor({ sliceX: 16, sliceY: 64, sliceWidth: 16, sliceHeight: 16 })
-            .addWall({ sliceX: 16, sliceY: 112, sliceWidth: 16, sliceHeight: 16 }).buildMap();
+            .addWall({ sliceX: 8, sliceY: 118, sliceWidth: 12, sliceHeight: 32 }).buildMap();
         this.ready = true;
 
     }

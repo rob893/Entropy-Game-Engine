@@ -67,14 +67,14 @@ export class LevelBuilder {
             for (let x = 0; x < this.canvas.width; x += i) {
                 for (let y = 0; y < this.canvas.height; y += j) {
                     if (x === 0 || x === this.canvas.width) {
-                        this.context.drawImage(this.currentSpriteSheet, wall.sliceX, wall.sliceY, wall.sliceWidth, wall.sliceHeight, x, y, wall.sliceWidth, wall.sliceHeight);
-                        i += wall.sliceWidth;
-                        j += wall.sliceHeight;
+                        this.context.drawImage(this.currentSpriteSheet, wall.sliceX, wall.sliceY, wall.sliceWidth, wall.sliceHeight, x, y, wall.sliceWidth * 2, wall.sliceHeight * 2);
+                        i = wall.sliceWidth * 2;
+                        j = wall.sliceHeight * 2;
                     }
                     else {
-                        this.context.drawImage(this.currentSpriteSheet, floor.sliceX, floor.sliceY, floor.sliceWidth, floor.sliceHeight, x, y, floor.sliceWidth, floor.sliceHeight);
-                        i += floor.sliceWidth;
-                        j += floor.sliceHeight;
+                        this.context.drawImage(this.currentSpriteSheet, floor.sliceX, floor.sliceY, floor.sliceWidth, floor.sliceHeight, x, y, floor.sliceWidth * 2, floor.sliceHeight * 2);
+                        i = floor.sliceWidth * 2;
+                        j = floor.sliceHeight * 2;
                     } 
                 }
             }
