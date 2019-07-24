@@ -7,6 +7,7 @@ import { Sprite } from "./Sprite";
 import { Vector2 } from "./Vector2";
 import FloorTileImage from "../../assets/images/DungeonTileset.png";
 import { LevelBuilder } from "./LevelBuilder";
+import { LevelSpec } from "./LevelSpec";
 
 export class RenderingEngine {
 
@@ -44,10 +45,7 @@ export class RenderingEngine {
         //this.test = await LevelBuilder.combineImages(FloorTileImage, 16, 64, 16, 16, 50, 50);
         const builder = new LevelBuilder();
         await builder.using(FloorTileImage);
-        this.test = await builder.addFloor({ sliceX: 16, sliceY: 64, sliceWidth: 16, sliceHeight: 16 })
-            .addWall({ sliceX: 0, sliceY: 128, sliceWidth: 16, sliceHeight: 16 })
-            .addTopWall({ sliceX: 16, sliceY: 0, sliceWidth: 16, sliceHeight: 16  })
-            .buildMap(4);
+        this.test = await builder.buildMap(LevelSpec.getSpec(), 4);
         this.ready = true;
 
     }
