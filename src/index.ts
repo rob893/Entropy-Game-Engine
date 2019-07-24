@@ -10,6 +10,7 @@ import { Trump } from "./Mario/GameObjects/Trump";
 import { RenderingEngine } from "./GameEngine/Core/RenderingEngine";
 import { Ground } from "./Mario/GameObjects/Ground";
 import { Color } from "./GameEngine/Core/Enums/Color";
+import { RectangleBackground } from "./GameEngine/Core/RectangleBackground";
 
 let gameCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("game-canvas");
 
@@ -17,18 +18,18 @@ let gameEngine: GameEngine = GameEngine.buildGameEngine(gameCanvas);
 
 RenderingEngine.instance.renderGizmos = true;
 
-let background: ImageBackground = new ImageBackground(gameCanvas, Background);
+let background = new RectangleBackground(gameCanvas, Color.Black); //new ImageBackground(gameCanvas, Background);
 
 let gameManager: GameManagerObject = new GameManagerObject("GameManager");
 
-let player: Player = new Player("player");
-let ball: Ball = new Ball("ball");
-let computer: Computer = new Computer("computer");
-let trump: Trump = new Trump("trump");
-let ground = new Ground(350, 400, 700, 55, Color.Brown);
-let ground2 = new Ground(400, 270, 100, 10, Color.Brown);
+//let player: Player = new Player("player");
+//let ball: Ball = new Ball("ball");
+//let computer: Computer = new Computer("computer");
+//let trump: Trump = new Trump("trump");
+//let ground = new Ground(350, 400, 700, 55, Color.Brown);
+//let ground2 = new Ground(400, 270, 100, 10, Color.Brown);
 
-let gameObjects: GameObject[] = [gameManager, player, computer, ball, trump, ground, ground2];
+let gameObjects: GameObject[] = [];//[gameManager, player, computer, ball, trump, ground, ground2];
 
 gameEngine.initializeGame(gameObjects, background);
 
