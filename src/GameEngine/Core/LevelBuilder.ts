@@ -1,5 +1,6 @@
 import { ISpriteData } from "./Interfaces/ISpriteData";
 import { LevelSpec } from "./LevelSpec";
+import { IMapCell } from "./Interfaces/IMapCell";
 
 export class LevelBuilder {
 
@@ -68,21 +69,22 @@ export class LevelBuilder {
         return this;
     }
 
-    public async buildMap(roomSpec: ISpriteData[][],  scale: number = 1): Promise<HTMLImageElement> {
+    public async buildMap(roomSpec: IMapCell[][],  scale: number = 1): Promise<HTMLImageElement> {
         return new Promise(resolve => {
-            const spriteSheetMap = this.builderMap.get(this.currentSpriteSheet);
 
             let x = 0;
             let y = 0;
             for (let i = 0; i < roomSpec.length; i++) {
                 for (let j = 0; j < roomSpec[i].length; j++) {
-                    let c = roomSpec[i][j];
+                    let p = roomSpec[i][j];
 
-                    if (c === null) {
+                    if (p === null) {
                         x = j === roomSpec[i].length - 1 ? 0 : x + 16 * scale;
                         y = j === roomSpec[i].length - 1 ? y + 16 * scale : y;
                         continue;
                     }
+                    
+                    let c = p.spriteData;
 
                     this.context.drawImage(this.currentSpriteSheet, c.sliceX, c.sliceY, c.sliceWidth, c.sliceHeight, x, y, c.sliceWidth * scale, c.sliceHeight * scale);
                     x = j === roomSpec[i].length - 1 ? 0 : x + (c.sliceWidth * scale);
