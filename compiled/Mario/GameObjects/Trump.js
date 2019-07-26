@@ -1,7 +1,7 @@
 import { GameObject } from "../../GameEngine/Core/GameObject";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
 import TrumpIdleSprite from "../../assets/images/trump_idle.png";
-import { Animation } from "../../GameEngine/Core/Animation";
+import { Animation } from "../../GameEngine/Core/Helpers/Animation";
 import { Animator } from "../../GameEngine/Components/Animator";
 export class Trump extends GameObject {
     constructor(id) {

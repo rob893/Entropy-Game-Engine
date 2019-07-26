@@ -1,4 +1,4 @@
-import { ILiteEvent } from "./Interfaces/ILiteEvent";
+import { ILiteEvent } from "../Interfaces/ILiteEvent";
 
 export class LiteEvent<T> implements ILiteEvent<T> {
 

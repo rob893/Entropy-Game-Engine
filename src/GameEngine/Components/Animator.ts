@@ -1,7 +1,7 @@
 import { Transform } from "./Transform";
 import { Component } from "./Component";
 import { GameObject } from "../Core/GameObject";
-import { Animation } from "../Core/Animation";
+import { Animation } from "../Core/Helpers/Animation";
 import { IRenderable } from "../Core/Interfaces/IRenderable";
 import { RenderingEngine } from "../Core/RenderingEngine";
 

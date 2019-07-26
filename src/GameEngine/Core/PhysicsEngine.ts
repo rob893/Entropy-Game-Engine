@@ -1,12 +1,12 @@
 import { Rigidbody } from "../Components/Rigidbody";
 import { RectangleCollider } from "../Components/RectangleCollider";
-import { Vector2 } from "./Vector2";
-import { Geometry } from "./Geometry";
+import { Vector2 } from "./Helpers/Vector2";
+import { Geometry } from "./Helpers/Geometry";
 import { ICollisionDetector } from "./Interfaces/ICollisionDetector";
-import { SpatialHashCollisionDetector } from "./SpatialHashCollisionDetector";
-import { SimpleCollisionDetector } from "./SimpleCollisionDetector";
+import { SpatialHashCollisionDetector } from "./Physics/SpatialHashCollisionDetector";
+import { SimpleCollisionDetector } from "./Physics/SimpleCollisionDetector";
 import { ICollisionResolver } from "./Interfaces/ICollisionResolver";
-import { CollisionResolver } from "./CollisionResolver";
+import { CollisionResolver } from "./Physics/CollisionResolver";
 
 export class PhysicsEngine {
 

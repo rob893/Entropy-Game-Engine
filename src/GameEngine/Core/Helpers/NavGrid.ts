@@ -1,11 +1,12 @@
-import { IWeightedGraph } from "./Interfaces/IWeightedGraph";
+import { IWeightedGraph } from "../Interfaces/IWeightedGraph";
 import { Vector2 } from "./Vector2";
+import { IMapCell } from "../Interfaces/IMapCell";
 
 export class NavGrid implements IWeightedGraph {
     
-    public readonly unpassableCells: Set<string> = new Set<string>();
-    public readonly cellWeights: Map<string, number> = new Map<string, number>(); 
-    
+    private readonly cells: Set<string> = new Set<string>();
+    private readonly unpassableCells: Set<string> = new Set<string>();
+    private readonly cellWeights: Map<string, number> = new Map<string, number>(); 
     private readonly directions: Vector2[];
     private readonly cellSize: number;
 
@@ -24,7 +25,7 @@ export class NavGrid implements IWeightedGraph {
         for (let direction of this.directions) {
             const key = this.getMapKey(id.x + direction.x, id.y + direction.y);
 
-            if (!this.unpassableCells.has(key)) {
+            if (!this.unpassableCells.has(key) && this.cells.has(key)) {
                 yield key;
             }
         }
@@ -32,6 +33,22 @@ export class NavGrid implements IWeightedGraph {
     
     public cost(a: Vector2, b: Vector2): number {
         return 0;
+    }
+
+    public addCell(cell: IMapCell, x: number, y: number): void {
+        const key = this.getMapKey(x, y);
+        if (this.cells.has(key)) {
+            console.error('WARNING! ' + key + ' alread in cells set!');
+        }
+        
+        this.cells.add(key);
+        
+        if (!cell.passable) {
+            this.unpassableCells.add(key);
+        }
+        else {
+            this.cellWeights.set(key, cell.terrainWeight);
+        }
     }
 
     private getMapKey(position: Vector2): string;

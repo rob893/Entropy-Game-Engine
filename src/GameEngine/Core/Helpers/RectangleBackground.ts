@@ -1,4 +1,4 @@
-import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
+import { IRenderableBackground } from "../Interfaces/IRenderableBackground";
 
 export class RectangleBackground implements IRenderableBackground {
     

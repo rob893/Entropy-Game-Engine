@@ -5,7 +5,7 @@ import { PlayerMotor } from "../Components/PlayerMotor";
 import { Rigidbody } from "../../GameEngine/Components/Rigidbody";
 import { Animator } from "../../GameEngine/Components/Animator";
 import MarioSprite from "../../assets/images/mario.png";
-import { Animation } from "../../GameEngine/Core/Animation";
+import { Animation } from "../../GameEngine/Core/Helpers/Animation";
 import { PlayerHealth } from "../Components/PlayerHealth";
 
 export class Player extends GameObject {

@@ -1,5 +1,5 @@
-import { SpatialHashCollisionDetector } from "./SpatialHashCollisionDetector";
-import { CollisionResolver } from "./CollisionResolver";
+import { SpatialHashCollisionDetector } from "./Physics/SpatialHashCollisionDetector";
+import { CollisionResolver } from "./Physics/CollisionResolver";
 export class PhysicsEngine {
     constructor(gameCanvas, collisionDetector, collisionResolver) {
         this.gameCanvas = gameCanvas;
@@ -26,6 +26,7 @@ export class PhysicsEngine {
     }
     updatePhysics() {
         this.collisionDetector.detectCollisions();
+        this.rigidbodies.forEach(rb => rb.updatePhysics());
     }
     addRigidbody(rb) {
         this.rigidbodies.push(rb);

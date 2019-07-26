@@ -1,15 +1,15 @@
 import { Motor } from "./Motor";
 import { GameObject } from "../../GameEngine/Core/GameObject";
-import { Vector2 } from "../../GameEngine/Core/Vector2";
+import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
 import { Key } from "../../GameEngine/Core/Enums/Key";
 import { Rigidbody } from "../../GameEngine/Components/Rigidbody";
 import MovingRightSprite from "../../assets/images/mario.png"
 import MovingLeftSprite from "../../assets/images/marioLeft.png"
 import { Animator } from "../../GameEngine/Components/Animator";
-import { Animation } from "../../GameEngine/Core/Animation";
+import { Animation } from "../../GameEngine/Core/Helpers/Animation";
 import { PhysicsEngine } from "../../GameEngine/Core/PhysicsEngine";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
-import { Physics } from "../../GameEngine/Core/Physics";
+import { Physics } from "../../GameEngine/Core/Physics/Physics";
 
 
 export class PlayerMotor extends Motor {

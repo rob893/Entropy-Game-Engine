@@ -1,6 +1,6 @@
-import { Vector2 } from "../Core/Vector2";
+import { Vector2 } from "../Core/Helpers/Vector2";
 import { Component } from "./Component";
-import { LiteEvent } from "../Core/LiteEvent";
+import { LiteEvent } from "../Core/Helpers/LiteEvent";
 import { PhysicsEngine } from "../Core/PhysicsEngine";
 import { RenderingEngine } from "../Core/RenderingEngine";
 import { Rigidbody } from "./Rigidbody";
@@ -15,9 +15,11 @@ export class RectangleCollider extends Component {
         this._topRight = new Vector2(transform.position.x + (width / 2), transform.position.y - height);
         this._bottomLeft = new Vector2(transform.position.x - (width / 2), transform.position.y);
         this._bottomRight = new Vector2(transform.position.x + (width / 2), transform.position.y);
-        this._attachedRigidbody = this.gameObject.hasComponent(Rigidbody) ? this.gameObject.getComponent(Rigidbody) : null;
         PhysicsEngine.instance.addCollider(this);
         RenderingEngine.instance.addRenderableGizmo(this);
+    }
+    start() {
+        this._attachedRigidbody = this.gameObject.hasComponent(Rigidbody) ? this.gameObject.getComponent(Rigidbody) : null;
     }
     get topLeft() {
         this._topLeft.x = this.transform.position.x - (this.width / 2);

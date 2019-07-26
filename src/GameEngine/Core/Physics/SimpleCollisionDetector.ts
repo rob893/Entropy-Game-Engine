@@ -1,7 +1,7 @@
-import { ICollisionDetector } from "./Interfaces/ICollisionDetector";
-import { ILiteEvent } from "./Interfaces/ILiteEvent";
-import { RectangleCollider } from "../Components/RectangleCollider";
-import { LiteEvent } from "./LiteEvent";
+import { ICollisionDetector } from "../Interfaces/ICollisionDetector";
+import { ILiteEvent } from "../Interfaces/ILiteEvent";
+import { RectangleCollider } from "../../Components/RectangleCollider";
+import { LiteEvent } from "../Helpers/LiteEvent";
 
 export class SimpleCollisionDetector implements ICollisionDetector {
     

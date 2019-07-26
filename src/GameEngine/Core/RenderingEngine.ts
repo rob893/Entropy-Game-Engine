@@ -3,8 +3,8 @@ import { IRenderableGizmo } from "./Interfaces/IRenderableGizmo";
 import { IRenderableGUI } from "./Interfaces/IRenderableGUI";
 import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
 import FloorTileImage from "../../assets/images/DungeonTileset.png";
-import { LevelBuilder } from "./LevelBuilder";
-import { LevelSpec } from "./LevelSpec";
+import { LevelBuilder } from "./Helpers/LevelBuilder";
+import { LevelSpec } from "./Helpers/LevelSpec";
 
 export class RenderingEngine {
 

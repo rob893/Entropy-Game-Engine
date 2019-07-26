@@ -1,9 +1,9 @@
 import { Motor } from "./Motor";
 import { GameObject } from "../../GameEngine/Core/GameObject";
 import { GameEngine } from "../../GameEngine/Core/GameEngine";
-import { Vector2 } from "../../GameEngine/Core/Vector2";
+import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
 import { Transform } from "../../GameEngine/Components/Transform";
-import { Animation } from "../../GameEngine/Core/Animation";
+import { Animation } from "../../GameEngine/Core/Helpers/Animation";
 import { Animator } from "../../GameEngine/Components/Animator";
 import TrumpRun from "../../assets/images/trump_run.png";
 import TrumpIdle from "../../assets/images/trump_idle.png";

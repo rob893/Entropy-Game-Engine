@@ -1,7 +1,7 @@
 import { Motor } from "./Motor";
 import { GameEngine } from "../../GameEngine/Core/GameEngine";
 import { Time } from "../../GameEngine/Core/Time";
-import { Vector2 } from "../../GameEngine/Core/Vector2";
+import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
 export class ComputerMotor extends Motor {
     constructor(gameObject) {

@@ -1,5 +1,5 @@
-import { ISpriteData } from "./Interfaces/ISpriteData";
-import { IMapCell } from "./Interfaces/IMapCell";
+import { ISpriteData } from "../Interfaces/ISpriteData";
+import { IMapCell } from "../Interfaces/IMapCell";
 
 export abstract class LevelSpec {
     static readonly topWall: ISpriteData = { sliceX: 16, sliceY: 0, sliceWidth: 16, sliceHeight: 16  };

@@ -2,7 +2,7 @@ import { GameObject } from "../../GameEngine/Core/GameObject";
 import { Component } from "../../GameEngine/Components/Component";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
 import TrumpIdleSprite from "../../assets/images/trump_idle.png";
-import { Animation } from "../../GameEngine/Core/Animation";
+import { Animation } from "../../GameEngine/Core/Helpers/Animation";
 import { Animator } from "../../GameEngine/Components/Animator";
 import { TrumpMotor } from "../Components/TrumpMotor";
 import { AudioSource } from "../../GameEngine/Components/AudioSource";

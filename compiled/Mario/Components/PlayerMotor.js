@@ -1,13 +1,13 @@
 import { Motor } from "./Motor";
-import { Vector2 } from "../../GameEngine/Core/Vector2";
+import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
 import { Key } from "../../GameEngine/Core/Enums/Key";
 import { Rigidbody } from "../../GameEngine/Components/Rigidbody";
 import MovingRightSprite from "../../assets/images/mario.png";
 import MovingLeftSprite from "../../assets/images/marioLeft.png";
 import { Animator } from "../../GameEngine/Components/Animator";
-import { Animation } from "../../GameEngine/Core/Animation";
+import { Animation } from "../../GameEngine/Core/Helpers/Animation";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
-import { Physics } from "../../GameEngine/Core/Physics";
+import { Physics } from "../../GameEngine/Core/Physics/Physics";
 export class PlayerMotor extends Motor {
     constructor(gameObject) {
         super(gameObject);
@@ -32,19 +32,14 @@ export class PlayerMotor extends Motor {
     }
     handleCollision(other) {
         if (other.gameObject.tag === 'ground') {
-            this.transform.position.y -= 1;
-            this.rigidBody.isKinomatic = true;
+            while (this.transform.position.y >= other.topLeft.y) {
+                this.transform.position.y -= 1;
+            }
+            this.rigidBody.resetForce();
+            this.jumping = false;
         }
     }
     handleOutOfBounds() {
-        if (this.transform.position.y <= 0) {
-            this.transform.position.y = 1;
-        }
-        else if (this.transform.position.y >= this.gameCanvas.height - 55) {
-            this.rigidBody.isKinomatic = true;
-            this.jumping = false;
-            this.transform.position.y = this.gameCanvas.height - 56;
-        }
         if (this.transform.position.x - (this.collider.width / 2) <= 0) {
             this.transform.position.x = (this.collider.width / 2) + 1;
         }
@@ -71,7 +66,6 @@ export class PlayerMotor extends Motor {
             return;
         }
         this.jumping = true;
-        this.rigidBody.isKinomatic = false;
         this.rigidBody.resetForce();
         this.rigidBody.addForce(Vector2.up.multiplyScalar(400));
     }

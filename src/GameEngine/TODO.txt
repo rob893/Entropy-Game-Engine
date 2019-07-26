@@ -1,0 +1,5 @@
+- Implement A* for path finding.
+- Implement priority q with red black tree or binary heap instead of array
+- Level builder should produce a 'level' object which consists of the nav mesh/grid, the actual image of the map, and the colliders for the unpassable areas
+- Make ILevelSpec interface with getSpec() and cellSize prop.
+- Refactor levelspec and IMapCell?

@@ -1,5 +1,5 @@
 import { Component } from "./Component";
-import { Vector2 } from "../Core/Vector2";
+import { Vector2 } from "../Core/Helpers/Vector2";
 import { PhysicsEngine } from "../Core/PhysicsEngine";
 import { Time } from "../Core/Time";
 export class Rigidbody extends Component {
@@ -12,7 +12,7 @@ export class Rigidbody extends Component {
         this.force = Vector2.zero;
         PhysicsEngine.instance.addRigidbody(this);
     }
-    update() {
+    updatePhysics() {
         if (this.isKinomatic) {
             return;
         }

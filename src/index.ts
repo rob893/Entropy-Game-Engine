@@ -1,5 +1,5 @@
 import { GameEngine } from "./GameEngine/Core/GameEngine";
-import { ImageBackground } from "./GameEngine/Core/ImageBackground";
+import { ImageBackground } from "./GameEngine/Core/Helpers/ImageBackground";
 import { GameManagerObject } from "./Mario/GameObjects/GameManagerObject";
 import { Player } from "./Mario/GameObjects/Player";
 import { Ball } from "./Mario/GameObjects/Ball";
@@ -10,7 +10,7 @@ import { Trump } from "./Mario/GameObjects/Trump";
 import { RenderingEngine } from "./GameEngine/Core/RenderingEngine";
 import { Ground } from "./Mario/GameObjects/Ground";
 import { Color } from "./GameEngine/Core/Enums/Color";
-import { RectangleBackground } from "./GameEngine/Core/RectangleBackground";
+import { RectangleBackground } from "./GameEngine/Core/Helpers/RectangleBackground";
 
 let gameCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("game-canvas");
 

@@ -1,5 +1,5 @@
 import { Component } from "./Component";
-import { Vector2 } from "../Core/Vector2";
+import { Vector2 } from "../Core/Helpers/Vector2";
 import { Transform } from "./Transform";
 import { GameObject } from "../Core/GameObject";
 import { PhysicsEngine } from "../Core/PhysicsEngine";
