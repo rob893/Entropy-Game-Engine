@@ -13,26 +13,67 @@ test('Tests the binary heap static is binary heap functions', () => {
 });
    
 test('Test creation of and various functions of a min binary heap', () => {
-    const heap = BinaryHeap.from([2345, 456232, 24, 'asdf']);
+    const heap = BinaryHeap.from<number>([2345, 456232, 24, -60, 0]);
 
     expect(heap).toBeInstanceOf(BinaryHeap);
     expect(BinaryHeap.isBinaryHeap(heap)).toBe(true);
     expect(BinaryHeap.isMaxBinaryHeap(heap)).toBe(false);
     expect(BinaryHeap.isMinBinaryHeap(heap)).toBe(true);
-    expect(heap.count).toBe(4);
+    expect(heap.count).toBe(5);
     expect(heap.isEmpty).toBe(false);
-    expect(heap.remove()).toBe(24);
-    expect(heap.peek()).toBe(2345);
-    expect(heap.contains(24)).toBe(false);
+    expect(heap.remove()).toBe(-60);
+    expect(heap.peek()).toBe(0);
+    expect(heap.contains(-60)).toBe(false);
     expect(heap.contains(456232)).toBe(true);
-    expect(heap.remove()).toBe(2345);
-    expect(heap.count).toBe(2);
+    expect(heap.remove()).toBe(0);
+    expect(heap.count).toBe(3);
+    expect(heap.poll()).toBe(24)
     expect(BinaryHeap.isMinBinaryHeap(heap)).toBe(true);
+    expect(BinaryHeap.isMaxBinaryHeap(heap)).toBe(false);
 
     for (let i = 0; i < 100; i++) {
         heap.add(Math.random());
     }
 
     expect(BinaryHeap.isMinBinaryHeap(heap)).toBe(true);
+
+    heap.clear();
+
+    expect(heap.count).toBe(0);
+    expect(heap.poll()).toBe(null);
+    expect(BinaryHeap.isBinaryHeap(heap)).toBe(true);
+});
+
+test('Test creation of and various functions of a max binary heap', () => {
+    const heap = BinaryHeap.from<number>([2345, 456232, 24, -60, 0], false);
+
+    expect(heap).toBeInstanceOf(BinaryHeap);
+    expect(BinaryHeap.isBinaryHeap(heap)).toBe(true);
+    expect(BinaryHeap.isMaxBinaryHeap(heap)).toBe(true);
+    expect(BinaryHeap.isMinBinaryHeap(heap)).toBe(false);
+    expect(heap.count).toBe(5);
+    expect(heap.isEmpty).toBe(false);
+    expect(heap.remove()).toBe(456232);
+    expect(heap.peek()).toBe(2345);
+    expect(heap.contains(456232)).toBe(false);
+    expect(heap.contains(2345)).toBe(true);
+    expect(heap.remove()).toBe(2345);
+    expect(heap.count).toBe(3);
+    expect(heap.poll()).toBe(24)
+    expect(BinaryHeap.isMinBinaryHeap(heap)).toBe(false);
+    expect(BinaryHeap.isMaxBinaryHeap(heap)).toBe(true);
+
+    for (let i = 0; i < 100; i++) {
+        heap.add(Math.random());
+    }
+
+    expect(BinaryHeap.isMaxBinaryHeap(heap)).toBe(true);
+    expect(BinaryHeap.isMinBinaryHeap(heap)).toBe(false);
+
+    heap.clear();
+
+    expect(heap.count).toBe(0);
+    expect(heap.poll()).toBe(null);
+    expect(BinaryHeap.isBinaryHeap(heap)).toBe(true);
 });
     

@@ -2,7 +2,7 @@ import { IComparable } from "../Interfaces/IComparable";
 
 export class BinaryHeap<T extends IComparable> {
     
-    private heapArray: T[] = [];
+    private readonly heapArray: T[] = [];
     private readonly minHeap: boolean;
     
     public constructor(minHeap: boolean = true) {
@@ -30,9 +30,13 @@ export class BinaryHeap<T extends IComparable> {
         return result;
     }
 
-    // public removeSpecific(item: T): T {
+    public poll(): T | null {
+        if (this.isEmpty) {
+            return null;
+        }
 
-    // }
+        return this.remove();
+    }
 
     public peek(): T {
         if (this.isEmpty) {
@@ -47,7 +51,7 @@ export class BinaryHeap<T extends IComparable> {
     }
 
     public clear(): void {
-        this.heapArray = [];
+        this.heapArray.length = 0;
     }
 
     public toString(): string {
@@ -156,7 +160,7 @@ export class BinaryHeap<T extends IComparable> {
     } 
 
     public static isBinaryHeap(heap: IComparable[] | BinaryHeap<IComparable>): boolean {
-        return BinaryHeap.isMaxBinaryHeap(heap) !== BinaryHeap.isMinBinaryHeap(heap);
+        return BinaryHeap.isMaxBinaryHeap(heap) || BinaryHeap.isMinBinaryHeap(heap);
     }
 
     public static isMinBinaryHeap(heap: IComparable[] | BinaryHeap<IComparable>): boolean {

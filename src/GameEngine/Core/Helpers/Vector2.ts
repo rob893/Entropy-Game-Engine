@@ -18,7 +18,7 @@ export class Vector2 {
     }
 
     public get normalized(): Vector2 {
-        return this.divide(new Vector2(this.magnitude, this.magnitude));
+        return Vector2.divide(this, new Vector2(this.magnitude, this.magnitude));
     }
 
     /**
