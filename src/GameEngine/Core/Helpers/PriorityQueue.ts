@@ -2,52 +2,28 @@ import { BinaryHeap } from "./BinaryHeap";
 import { IComparable } from "../Interfaces/IComparable";
 
 export class PriorityQueue<T> {
-    //should implement this with a binary heap or AVL tree
-    private readonly elements: QueueItem<T>[];
-    private readonly elementsHeap: BinaryHeap<QueueItem<T>> = new BinaryHeap<QueueItem<T>>()
+    
+    private readonly elementsHeap: BinaryHeap<QueueItem<T>>;
+    
 
-    public constructor() {
-        this.elements = [];
+    public constructor(minPriorityQueue: boolean = true) {
+       this.elementsHeap = new BinaryHeap<QueueItem<T>>(minPriorityQueue);
     }
 
-    public count(): number {
-        return this.elements.length;
+    public get count(): number {
+        return this.elementsHeap.count;
     }
 
-    public empty(): boolean {
-        return this.elements.length === 0;
+    public get isEmpty(): boolean {
+        return this.elementsHeap.isEmpty;
     }
 
     public enqueue(item: T, priority: number): void {
-        this.elements.push(new QueueItem(item, priority));
+        this.elementsHeap.add(new QueueItem<T>(item, priority));
     }
 
-    public dequeueMin(): T {
-        let minIndex = 0;
-
-        for (let i = 0; i < this.elements.length; i++) {
-            if (this.elements[i] < this.elements[minIndex]) {
-                minIndex = i;
-            }
-        }
-
-        this.elements.slice(minIndex, 1);
-
-        return this.elements[minIndex].item;
-    }
-
-    public dequeueMax(): T {
-        let maxIndex = 0;
-
-        for (let i = 0; i < this.elements.length; i++) {
-            if (this.elements[i] > this.elements[maxIndex]) {
-                maxIndex = i;
-            }
-        }
-
-        this.elements.slice(maxIndex, 1);
-
-        return this.elements[maxIndex].item;
+    public dequeue(): T {
+        return this.elementsHeap.remove().item;
     }
 }
 

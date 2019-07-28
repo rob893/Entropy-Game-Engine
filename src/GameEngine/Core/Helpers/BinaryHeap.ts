@@ -54,6 +54,10 @@ export class BinaryHeap<T extends IComparable> {
         return this.heapArray.toString();
     }
 
+    public toArray(): T[] {
+        return this.heapArray;
+    }
+
     private heapifyUp(): void {
         let index = this.count - 1;
 
@@ -84,31 +88,29 @@ export class BinaryHeap<T extends IComparable> {
                     smallerChildIndex = this.getRightChildIndex(index);
                 }
 
-                if (this.heapArray[index] > this.heapArray[smallerChildIndex]) {
-                    this.swap(index, smallerChildIndex);
-                    index = smallerChildIndex;
-                }
-                else {
+                if (this.heapArray[index] < this.heapArray[smallerChildIndex]) {
                     break;
                 }
+
+                this.swap(index, smallerChildIndex);
+                index = smallerChildIndex;
             }
         }
         else {
             while (this.hasLeftChild(index)) {
                 let greaterChildIndex = this.getLeftChildIndex(index);
 
-                //Check if the right child is smaller than left.
+                //Check if the right child is greater than left.
                 if (this.hasRightChild(index) && this.heapArray[this.getRightChildIndex(index)] > this.heapArray[greaterChildIndex]) {
                     greaterChildIndex = this.getRightChildIndex(index);
                 }
 
-                if (this.heapArray[index] < this.heapArray[greaterChildIndex]) {
-                    this.swap(index, greaterChildIndex);
-                    index = greaterChildIndex;
-                }
-                else {
+                if (this.heapArray[index] > this.heapArray[greaterChildIndex]) {
                     break;
                 }
+                
+                this.swap(index, greaterChildIndex);
+                index = greaterChildIndex;
             }
         }
     }
@@ -143,8 +145,8 @@ export class BinaryHeap<T extends IComparable> {
         this.heapArray[index2] = temp;
     }
 
-    public static from(items: Iterable<IComparable>, minHeap: boolean = true): BinaryHeap<IComparable> {
-        const heap = new BinaryHeap(minHeap);
+    public static from<T extends IComparable>(items: Iterable<T>, minHeap: boolean = true): BinaryHeap<T> {
+        const heap = new BinaryHeap<T>(minHeap);
 
         for (let item of items) {
             heap.add(item);

@@ -1,4 +1,4 @@
-import { Vector2 } from '../src/GameEngine/Core/Vector2';
+import { Vector2 } from '../src/GameEngine/Core/Helpers/Vector2';
 import {toBeDeepCloseTo, toMatchCloseTo} from 'jest-matcher-deep-close-to';
 expect.extend({toBeDeepCloseTo, toMatchCloseTo});
 
