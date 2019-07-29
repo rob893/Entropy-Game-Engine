@@ -3,6 +3,7 @@ import { IMapCell } from "../Interfaces/IMapCell";
 import { NavGrid } from "./NavGrid";
 import { Vector2 } from "./Vector2";
 import { Terrain } from "./Terrain";
+import { TerrainSpec } from "./TerrainSpec";
 
 export class TerrainBuilder {
 
@@ -38,29 +39,31 @@ export class TerrainBuilder {
         });
     }
 
-    public async buildTerrain(roomSpec: IMapCell[][],  scale: number = 1): Promise<Terrain> {
+    public async buildTerrain(terrainSpec: TerrainSpec,  scale: number = 1): Promise<Terrain> {
         return new Promise(resolve => {
-            const navGrid = new NavGrid(16 * scale);
+            const terrainGrid = terrainSpec.getSpec();
+            const cellSize = terrainSpec.cellSize;
+            const navGrid = new NavGrid(cellSize * scale);
 
             let x = 0;
             let y = 0;
-            for (let i = 0; i < roomSpec.length; i++) {
-                for (let j = 0; j < roomSpec[i].length; j++) {
-                    const p = roomSpec[i][j];
+            for (let i = 0; i < terrainGrid.length; i++) {
+                for (let j = 0; j < terrainGrid[i].length; j++) {
+                    const gridCell = terrainGrid[i][j];
 
-                    if (p === null) {
-                        x = j === roomSpec[i].length - 1 ? 0 : x + 16 * scale;
-                        y = j === roomSpec[i].length - 1 ? y + 16 * scale : y;
+                    if (gridCell === null) {
+                        x = j === terrainGrid[i].length - 1 ? 0 : x + cellSize * scale;
+                        y = j === terrainGrid[i].length - 1 ? y + cellSize * scale : y;
                         continue;
                     }
 
-                    navGrid.addCell({ passable: p.passable, weight: p.weight, position: new Vector2(x, y) });
+                    navGrid.addCell({ passable: gridCell.passable, weight: gridCell.weight, position: new Vector2(x, y) });
                     
-                    const c = p.spriteData;
+                    const c = gridCell.spriteData;
 
                     this.context.drawImage(this.currentSpriteSheet, c.sliceX, c.sliceY, c.sliceWidth, c.sliceHeight, x, y, c.sliceWidth * scale, c.sliceHeight * scale);
-                    x = j === roomSpec[i].length - 1 ? 0 : x + (c.sliceWidth * scale);
-                    y = j === roomSpec[i].length - 1 ? y + (c.sliceHeight * scale) : y;
+                    x = j === terrainGrid[i].length - 1 ? 0 : x + (c.sliceWidth * scale);
+                    y = j === terrainGrid[i].length - 1 ? y + (c.sliceHeight * scale) : y;
                 }
             }
 

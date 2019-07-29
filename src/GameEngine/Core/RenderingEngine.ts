@@ -42,7 +42,7 @@ export class RenderingEngine {
         //this.test = await LevelBuilder.combineImages(FloorTileImage, 16, 64, 16, 16, 50, 50);
         const builder = new TerrainBuilder();
         await builder.using(FloorTileImage);
-        this.test = await builder.buildTerrain(TerrainSpec.getSpec(), 3);
+        this.test = await builder.buildTerrain(new TerrainSpec(), 3);
         const start = new Date().getMilliseconds();
         this.path = AStarSearch.findPath(this.test.navGrid, new Vector2(200, 300), new Vector2(700, 300));
         console.log(new Date().getMilliseconds() - start);
