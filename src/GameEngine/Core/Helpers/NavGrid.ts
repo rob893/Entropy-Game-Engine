@@ -28,11 +28,7 @@ export class NavGrid<T extends IWeightedGraphCell> implements IWeightedGraph<T> 
     public *neighbors(id: Vector2): Iterable<T> {
         for (let direction of this.directions) {
             const key = this.getMapKey(id.x + direction.x, id.y + direction.y);
-
-            if (!this.unpassableCells.has(key)) {
-                let a = 3;
-            }
-
+            
             if (!this.unpassableCells.has(key) && this.cells.has(key)) {
                 yield this.cells.get(key);
             }
