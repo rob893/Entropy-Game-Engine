@@ -5,63 +5,61 @@ import { IWeightedGraphCell } from "../Interfaces/IWeightedGraphCell";
 
 export class AStarSearch {
 
-    public readonly cameFrom: Map<Vector2, Vector2> = new Map<Vector2, Vector2>();
-    public readonly costSoFar: Map<Vector2, number> = new Map<Vector2, number>();
-    
+    public static findPath(graph: IWeightedGraph<IWeightedGraphCell>, start: Vector2, goal: Vector2): Vector2[] | null {
+        const cameFrom: Map<Vector2, Vector2> = new Map<Vector2, Vector2>();
+        const costSoFar: Map<Vector2, number> = new Map<Vector2, number>();
 
-    public constructor(graph: IWeightedGraph<IWeightedGraphCell>, start: Vector2, goal: Vector2) {
         const frontier = new PriorityQueue<Vector2>();
+        const originalGoal = goal;
 
-        start = this.normalizePosition(start, graph.cellSize);
         goal = this.normalizePosition(goal, graph.cellSize);
 
         frontier.enqueue(start, 0);
 
-        this.cameFrom.set(start, start);
-        this.costSoFar.set(start, 0);
+        cameFrom.set(start, start);
+        costSoFar.set(start, 0);
 
         while (frontier.count > 0) {
             const current = frontier.dequeue();
 
             if (current.equals(goal)) {
-                this.cameFrom.set(goal, goal);
-                break;
+                return this.constructPath(cameFrom, current, start, originalGoal);
             }
 
             for (let next of graph.neighbors(current)) {
-                const newCost = this.costSoFar.get(current) + graph.cost(current, next.position);
+                const newCost = costSoFar.get(current) + graph.cost(current, next.position);
 
-                if (!this.costSoFar.has(next.position) || newCost < this.costSoFar.get(next.position)) {
-                    this.costSoFar.set(next.position, newCost);
+                if (!costSoFar.has(next.position) || newCost < costSoFar.get(next.position)) {
+                    costSoFar.set(next.position, newCost);
                     const priority = newCost + this.heuristic(next.position, goal);
                     frontier.enqueue(next.position, priority);
-                    this.cameFrom.set(next.position, current);
+                    cameFrom.set(next.position, current);
                 }
             }
         }
+
+        return null;
     }
 
-    // public static aStar(graph: IWeightedGraph<IWeightedGraphCell>, start: Vector2, goal: Vector2): Vector2[] {
-    //     const openSet = new PriorityQueue<Vector2>();
-    //     const closedSet = new Set<Vector2>();
-
-    //     openSet.enqueue(start);
-
-    //     const cameFrom = new Map<Vector2, Vector2>();
-    // }
-
-    public getPath(): Vector2[] {
-        return Array.from(this.cameFrom.values());
-    }
-
-    private heuristic(a: Vector2, b: Vector2): number {
-        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
-    }
-
-    private normalizePosition(pos: Vector2, cellSize: number): Vector2 {
+    private static normalizePosition(pos: Vector2, cellSize: number): Vector2 {
         const x = cellSize * Math.round(pos.x / cellSize);
         const y = cellSize * Math.round(pos.y / cellSize);
 
         return new Vector2(x, y);
+    }
+
+    private static heuristic(a: Vector2, b: Vector2): number {
+        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
+
+    private static constructPath(cameFrom: Map<Vector2, Vector2>, current: Vector2, start: Vector2, goal: Vector2): Vector2[] {
+        const path: Vector2[] = [goal, current];
+
+        while (cameFrom.has(current) && current !== start) {
+            current = cameFrom.get(current);
+            path.push(current);
+        }
+
+        return path.reverse();
     }
 }

@@ -24,7 +24,7 @@ export class RenderingEngine {
     private readonly _canvasContext: CanvasRenderingContext2D;
     private test: Terrain;
     private ready = false;
-    private aStar: AStarSearch;
+    private path: Vector2[];
     
 
     public constructor(context: CanvasRenderingContext2D) {
@@ -41,12 +41,12 @@ export class RenderingEngine {
     private async setThing() {
         //this.test = await LevelBuilder.combineImages(FloorTileImage, 16, 64, 16, 16, 50, 50);
         const builder = new LevelBuilder();
+        //const start = new Date().getMilliseconds();
         await builder.using(FloorTileImage);
-        this.test = await builder.buildMap(LevelSpec.getSpec());
-        //console.log(this.test.navGrid.passableCells);
-        let a = new AStarSearch(this.test.navGrid, new Vector2(96, 64), new Vector2(220, 112));
-        this.aStar = a;
-        console.log(a.getPath());
+        //console.log(new Date().getMilliseconds() - start);
+        this.test = await builder.buildTerrain(LevelSpec.getSpec(), 3);
+        this.path = AStarSearch.findPath(this.test.navGrid, new Vector2(200, 300), new Vector2(700, 300));
+        
         this.ready = true;
 
     }
@@ -59,7 +59,7 @@ export class RenderingEngine {
         this.canvasContext.beginPath();
 
         let start = true;
-        for (let nodePos of this.aStar.getPath()) {
+        for (let nodePos of this.path) {
             if (start) {
                 start = false;
                 this.canvasContext.moveTo(nodePos.x, nodePos.y);
@@ -70,7 +70,7 @@ export class RenderingEngine {
             
         }
        
-        this.canvasContext.strokeStyle = Color.Red;
+        this.canvasContext.strokeStyle = Color.Orange;
         this.canvasContext.stroke();
     }
 
