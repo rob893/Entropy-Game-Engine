@@ -1,7 +1,7 @@
 import { ISpriteData } from "../Interfaces/ISpriteData";
 import { IMapCell } from "../Interfaces/IMapCell";
 
-export abstract class LevelSpec {
+export abstract class TerrainSpec {
     static readonly topWall: ISpriteData = { sliceX: 16, sliceY: 0, sliceWidth: 16, sliceHeight: 16  };
     static readonly midWall: ISpriteData = { sliceX: 16, sliceY: 16, sliceWidth: 16, sliceHeight: 16  };
     static readonly rightWall: ISpriteData = { sliceX: 0, sliceY: 128, sliceWidth: 16, sliceHeight: 16  };
@@ -16,17 +16,17 @@ export abstract class LevelSpec {
 
 
     public static getSpec(): IMapCell[][] {
-        const tw: IMapCell = { spriteData: LevelSpec.topWall, passable: false, weight: 0 };
-        const mw: IMapCell = { spriteData: LevelSpec.midWall, passable: false, weight: 0 };
-        const rw: IMapCell = { spriteData: LevelSpec.rightWall, passable: false, weight: 0 };
-        const lw: IMapCell = { spriteData: LevelSpec.leftWall, passable: false, weight: 0 };
-        const bw: IMapCell = { spriteData: LevelSpec.bottomWall, passable: false, weight: 0 };
-        const ft: IMapCell = { spriteData: LevelSpec.floorTile, passable: true, weight: 0 };
-        const rc: IMapCell = { spriteData: LevelSpec.bottomRCornerWall, passable: false, weight: 0 };
-        const tc: IMapCell = { spriteData: LevelSpec.topRCornerWall, passable: false, weight: 0 };
-        const er: IMapCell = { spriteData: LevelSpec.sideWallEndRight, passable: false, weight: 0 };
-        const el: IMapCell = { spriteData: LevelSpec.sideWallEndLeft, passable: false, weight: 0 };
-        const hl: IMapCell = { spriteData: LevelSpec.floorHole, passable: false, weight: 0 };
+        const tw: IMapCell = { spriteData: TerrainSpec.topWall, passable: false, weight: 0 };
+        const mw: IMapCell = { spriteData: TerrainSpec.midWall, passable: false, weight: 0 };
+        const rw: IMapCell = { spriteData: TerrainSpec.rightWall, passable: false, weight: 0 };
+        const lw: IMapCell = { spriteData: TerrainSpec.leftWall, passable: false, weight: 0 };
+        const bw: IMapCell = { spriteData: TerrainSpec.bottomWall, passable: false, weight: 0 };
+        const ft: IMapCell = { spriteData: TerrainSpec.floorTile, passable: true, weight: 0 };
+        const rc: IMapCell = { spriteData: TerrainSpec.bottomRCornerWall, passable: false, weight: 0 };
+        const tc: IMapCell = { spriteData: TerrainSpec.topRCornerWall, passable: false, weight: 0 };
+        const er: IMapCell = { spriteData: TerrainSpec.sideWallEndRight, passable: false, weight: 0 };
+        const el: IMapCell = { spriteData: TerrainSpec.sideWallEndLeft, passable: false, weight: 0 };
+        const hl: IMapCell = { spriteData: TerrainSpec.floorHole, passable: false, weight: 0 };
         let nl = null;
         
         return [
@@ -34,10 +34,10 @@ export abstract class LevelSpec {
             [nl, nl, rw, mw, mw, mw, mw, mw, mw, mw, mw, mw, mw, lw],
             [nl, nl, rw, ft, ft, ft, ft, ft, ft, ft, ft, ft, ft, lw],
             [nl, nl, rw, ft, ft, ft, ft, ft, ft, ft, ft, ft, ft, lw],
-            [nl, nl, rw, ft, ft, ft, hl, ft, ft, ft, hl, ft, ft, lw, mw, mw, mw],
-            [nl, nl, rw, ft, ft, ft, hl, ft, ft, ft, hl, ft, ft, ft, ft, ft, ft],
-            [nl, nl, rw, ft, ft, ft, hl, ft, hl, ft, hl, ft, ft, ft, ft, ft, ft],
-            [nl, nl, rw, ft, ft, ft, hl, ft, hl, ft, ft, ft, ft, ft, ft, ft, ft],
+            [nl, nl, rw, ft, hl, ft, hl, ft, ft, ft, hl, ft, ft, lw, mw, mw, mw],
+            [nl, nl, rw, ft, ft, hl, hl, ft, ft, ft, hl, ft, ft, ft, ft, ft, ft],
+            [nl, nl, rw, ft, ft, hl, hl, ft, hl, ft, hl, ft, ft, ft, ft, ft, ft],
+            [nl, nl, rw, ft, hl, ft, hl, ft, hl, ft, ft, ft, ft, ft, ft, ft, ft],
             [nl, nl, rw, ft, ft, ft, ft, ft, hl, ft, hl, hl, hl, lw, bw, bw, bw],
             [nl, nl, rw, ft, ft, ft, ft, ft, hl, ft, ft, ft, ft, lw],
             [nl, nl, rw, ft, ft, ft, ft, ft, ft, ft, ft, ft, ft, lw],

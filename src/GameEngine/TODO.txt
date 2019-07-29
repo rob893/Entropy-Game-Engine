@@ -1,4 +1,5 @@
-- Implement A* for path finding.
-- Level builder should produce a 'level' object which consists of the nav mesh/grid, the actual image of the map, and the colliders for the unpassable areas
-- Make ILevelSpec interface with getSpec() and cellSize prop.
+- Terrain builder should produce a 'Terrain' object which consists of the nav mesh/grid, the actual image of the map, and the colliders for the unpassable areas
+- Make ITerrainSpec interface with getSpec() and cellSize prop.
 - Refactor levelspec and IMapCell?
+- Use maps in ITerrainSpec to map floor tile/wall/whatever to an array of possible sprites (for more diverse). All stats same except image
+- Use this when building the image to get more randomized flooring

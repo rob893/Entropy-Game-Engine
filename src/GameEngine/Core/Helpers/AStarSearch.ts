@@ -49,11 +49,15 @@ export class AStarSearch {
     }
 
     private static heuristic(a: Vector2, b: Vector2): number {
-        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+        return Vector2.distanceSqrd(a, b);
     }
 
     private static constructPath(cameFrom: Map<Vector2, Vector2>, current: Vector2, start: Vector2, goal: Vector2): Vector2[] {
-        const path: Vector2[] = [goal, current];
+        const path: Vector2[] = [current];
+
+        if (!current.equals(goal)) {
+            path.unshift(goal);
+        }
 
         while (cameFrom.has(current) && current !== start) {
             current = cameFrom.get(current);

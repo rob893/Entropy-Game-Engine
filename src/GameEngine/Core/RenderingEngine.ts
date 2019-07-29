@@ -3,8 +3,8 @@ import { IRenderableGizmo } from "./Interfaces/IRenderableGizmo";
 import { IRenderableGUI } from "./Interfaces/IRenderableGUI";
 import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
 import FloorTileImage from "../../assets/images/DungeonTileset.png";
-import { LevelBuilder } from "./Helpers/LevelBuilder";
-import { LevelSpec } from "./Helpers/LevelSpec";
+import { TerrainBuilder } from "./Helpers/TerrainBuilder";
+import { TerrainSpec } from "./Helpers/TerrainSpec";
 import { Terrain } from "./Helpers/Terrain";
 import { AStarSearch } from "./Helpers/AStarSearch";
 import { Vector2 } from "./Helpers/Vector2";
@@ -40,13 +40,12 @@ export class RenderingEngine {
 
     private async setThing() {
         //this.test = await LevelBuilder.combineImages(FloorTileImage, 16, 64, 16, 16, 50, 50);
-        const builder = new LevelBuilder();
-        //const start = new Date().getMilliseconds();
+        const builder = new TerrainBuilder();
         await builder.using(FloorTileImage);
-        //console.log(new Date().getMilliseconds() - start);
-        this.test = await builder.buildTerrain(LevelSpec.getSpec(), 3);
+        this.test = await builder.buildTerrain(TerrainSpec.getSpec(), 3);
+        const start = new Date().getMilliseconds();
         this.path = AStarSearch.findPath(this.test.navGrid, new Vector2(200, 300), new Vector2(700, 300));
-        
+        console.log(new Date().getMilliseconds() - start);
         this.ready = true;
 
     }

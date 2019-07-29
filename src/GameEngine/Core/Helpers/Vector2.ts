@@ -158,6 +158,13 @@ export class Vector2 {
         return Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
     }
 
+    public static distanceSqrd(point1: Vector2, point2: Vector2): number {
+        let distanceX: number = point1.x - point2.x;
+        let distanceY: number = point1.y - point2.y;
+
+        return (distanceX * distanceX) + (distanceY * distanceY);
+    }
+
     public static angleInRadians(from: Vector2, to: Vector2): number {
         let cos0 = Vector2.dot(from, to) / (from.magnitude * to.magnitude);
 

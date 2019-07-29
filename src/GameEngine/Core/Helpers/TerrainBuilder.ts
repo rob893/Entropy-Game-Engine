@@ -4,7 +4,7 @@ import { NavGrid } from "./NavGrid";
 import { Vector2 } from "./Vector2";
 import { Terrain } from "./Terrain";
 
-export class LevelBuilder {
+export class TerrainBuilder {
 
     private builderMap: Map<HTMLImageElement, Map<string, ISpriteData[]>> = new Map<HTMLImageElement, Map<string, ISpriteData[]>>();
     private spriteSheetSet: Set<string> = new Set<string>();
@@ -20,7 +20,7 @@ export class LevelBuilder {
         this.context = this.canvas.getContext('2d');
     }
 
-    public async using(spriteSheet: string): Promise<LevelBuilder> {
+    public async using(spriteSheet: string): Promise<TerrainBuilder> {
         if (this.spriteSheetSet.has(spriteSheet)) {
             console.warn('This builder is already using this sprite sheet!');
         }
@@ -67,6 +67,7 @@ export class LevelBuilder {
             const image = new Image();
             image.src = this.canvas.toDataURL();
             image.onload = () => {
+                console.log(navGrid);
                 resolve(new Terrain(image, navGrid, []));
             }
         });
