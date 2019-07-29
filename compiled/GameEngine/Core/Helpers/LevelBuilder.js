@@ -6,6 +6,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { NavGrid } from "./NavGrid";
+import { Vector2 } from "./Vector2";
+import { Terrain } from "./Terrain";
 export class LevelBuilder {
     constructor(width = 1024, height = 576) {
         this.builderMap = new Map();
@@ -32,56 +35,31 @@ export class LevelBuilder {
             });
         });
     }
-    addFloor(floorSpriteSpecs) {
-        if (this.builderMap.get(this.currentSpriteSheet).has('floor')) {
-            this.builderMap.get(this.currentSpriteSheet).get('floor').push(floorSpriteSpecs);
-        }
-        else {
-            this.builderMap.get(this.currentSpriteSheet).set('floor', [floorSpriteSpecs]);
-        }
-        return this;
-    }
-    addWall(wallSpriteSpecs) {
-        if (this.builderMap.get(this.currentSpriteSheet).has('wall')) {
-            this.builderMap.get(this.currentSpriteSheet).get('wall').push(wallSpriteSpecs);
-        }
-        else {
-            this.builderMap.get(this.currentSpriteSheet).set('wall', [wallSpriteSpecs]);
-        }
-        return this;
-    }
-    addTopWall(wallSpriteSpecs) {
-        if (this.builderMap.get(this.currentSpriteSheet).has('twall')) {
-            this.builderMap.get(this.currentSpriteSheet).get('twall').push(wallSpriteSpecs);
-        }
-        else {
-            this.builderMap.get(this.currentSpriteSheet).set('twall', [wallSpriteSpecs]);
-        }
-        return this;
-    }
     buildMap(roomSpec, scale = 1) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise(resolve => {
+                const navGrid = new NavGrid(16);
                 let x = 0;
                 let y = 0;
                 for (let i = 0; i < roomSpec.length; i++) {
                     for (let j = 0; j < roomSpec[i].length; j++) {
-                        let p = roomSpec[i][j];
+                        const p = roomSpec[i][j];
                         if (p === null) {
                             x = j === roomSpec[i].length - 1 ? 0 : x + 16 * scale;
                             y = j === roomSpec[i].length - 1 ? y + 16 * scale : y;
                             continue;
                         }
-                        let c = p.spriteData;
+                        navGrid.addCell({ passable: p.passable, weight: p.weight, position: new Vector2(x, y) });
+                        const c = p.spriteData;
                         this.context.drawImage(this.currentSpriteSheet, c.sliceX, c.sliceY, c.sliceWidth, c.sliceHeight, x, y, c.sliceWidth * scale, c.sliceHeight * scale);
                         x = j === roomSpec[i].length - 1 ? 0 : x + (c.sliceWidth * scale);
                         y = j === roomSpec[i].length - 1 ? y + (c.sliceHeight * scale) : y;
                     }
                 }
-                let image = new Image();
+                const image = new Image();
                 image.src = this.canvas.toDataURL();
                 image.onload = () => {
-                    resolve(image);
+                    resolve(new Terrain(image, navGrid, []));
                 };
             });
         });

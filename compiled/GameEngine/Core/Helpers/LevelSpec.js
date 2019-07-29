@@ -1,15 +1,15 @@
 export class LevelSpec {
     static getSpec() {
-        let tw = { spriteData: LevelSpec.topWall, passable: false, terrainWeight: 0 };
-        let mw = { spriteData: LevelSpec.midWall, passable: false, terrainWeight: 0 };
-        let rw = { spriteData: LevelSpec.rightWall, passable: false, terrainWeight: 0 };
-        let lw = { spriteData: LevelSpec.leftWall, passable: false, terrainWeight: 0 };
-        let bw = { spriteData: LevelSpec.bottomWall, passable: false, terrainWeight: 0 };
-        let ft = { spriteData: LevelSpec.floorTile, passable: true, terrainWeight: 0 };
-        const rc = { spriteData: LevelSpec.bottomRCornerWall, passable: false, terrainWeight: 0 };
-        const tc = { spriteData: LevelSpec.topRCornerWall, passable: false, terrainWeight: 0 };
-        const er = { spriteData: LevelSpec.sideWallEndRight, passable: false, terrainWeight: 0 };
-        const el = { spriteData: LevelSpec.sideWallEndLeft, passable: false, terrainWeight: 0 };
+        let tw = { spriteData: LevelSpec.topWall, passable: false, weight: 0 };
+        let mw = { spriteData: LevelSpec.midWall, passable: false, weight: 0 };
+        let rw = { spriteData: LevelSpec.rightWall, passable: false, weight: 0 };
+        let lw = { spriteData: LevelSpec.leftWall, passable: false, weight: 0 };
+        let bw = { spriteData: LevelSpec.bottomWall, passable: false, weight: 0 };
+        let ft = { spriteData: LevelSpec.floorTile, passable: true, weight: 0 };
+        const rc = { spriteData: LevelSpec.bottomRCornerWall, passable: false, weight: 0 };
+        const tc = { spriteData: LevelSpec.topRCornerWall, passable: false, weight: 0 };
+        const er = { spriteData: LevelSpec.sideWallEndRight, passable: false, weight: 0 };
+        const el = { spriteData: LevelSpec.sideWallEndLeft, passable: false, weight: 0 };
         let nl = null;
         return [
             [nl, nl, nl, tw, tw, tw, tw, tw, tw, tw, tw, tw, tw, nl],

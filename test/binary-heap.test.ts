@@ -41,7 +41,18 @@ test('Test creation of and various functions of a min binary heap', () => {
 
     expect(heap.count).toBe(0);
     expect(heap.poll()).toBe(null);
+    expect(() => heap.remove()).toThrowError();
     expect(BinaryHeap.isBinaryHeap(heap)).toBe(true);
+
+    heap.add(5);
+
+    expect(heap.count).toBe(1);
+    expect(heap.isEmpty).toBe(false);
+    expect(BinaryHeap.isBinaryHeap(heap)).toBe(true);
+    expect(heap.remove()).toBe(5);
+    expect(heap.count).toBe(0);
+    expect(heap.isEmpty).toBe(true);
+    expect(() => heap.remove()).toThrowError()
 });
 
 test('Test creation of and various functions of a max binary heap', () => {
@@ -74,6 +85,17 @@ test('Test creation of and various functions of a max binary heap', () => {
 
     expect(heap.count).toBe(0);
     expect(heap.poll()).toBe(null);
+    expect(() => heap.remove()).toThrowError();
     expect(BinaryHeap.isBinaryHeap(heap)).toBe(true);
+
+    heap.add(5);
+
+    expect(heap.count).toBe(1);
+    expect(heap.isEmpty).toBe(false);
+    expect(BinaryHeap.isBinaryHeap(heap)).toBe(true);
+    expect(heap.remove()).toBe(5);
+    expect(heap.count).toBe(0);
+    expect(heap.isEmpty).toBe(true);
+    expect(() => heap.remove()).toThrowError()
 });
     

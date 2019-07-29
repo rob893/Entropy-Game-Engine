@@ -15,16 +15,16 @@ export abstract class LevelSpec {
 
 
     public static getSpec(): IMapCell[][] {
-        let tw: IMapCell = { spriteData: LevelSpec.topWall, passable: false, terrainWeight: 0 };
-        let mw: IMapCell = { spriteData: LevelSpec.midWall, passable: false, terrainWeight: 0 };
-        let rw: IMapCell = { spriteData: LevelSpec.rightWall, passable: false, terrainWeight: 0 };
-        let lw: IMapCell = { spriteData: LevelSpec.leftWall, passable: false, terrainWeight: 0 };
-        let bw: IMapCell = { spriteData: LevelSpec.bottomWall, passable: false, terrainWeight: 0 };
-        let ft: IMapCell = { spriteData: LevelSpec.floorTile, passable: true, terrainWeight: 0 };
-        const rc: IMapCell = { spriteData: LevelSpec.bottomRCornerWall, passable: false, terrainWeight: 0 };
-        const tc: IMapCell = { spriteData: LevelSpec.topRCornerWall, passable: false, terrainWeight: 0 };
-        const er: IMapCell = { spriteData: LevelSpec.sideWallEndRight, passable: false, terrainWeight: 0 };
-        const el: IMapCell = { spriteData: LevelSpec.sideWallEndLeft, passable: false, terrainWeight: 0 };
+        let tw: IMapCell = { spriteData: LevelSpec.topWall, passable: false, weight: 0 };
+        let mw: IMapCell = { spriteData: LevelSpec.midWall, passable: false, weight: 0 };
+        let rw: IMapCell = { spriteData: LevelSpec.rightWall, passable: false, weight: 0 };
+        let lw: IMapCell = { spriteData: LevelSpec.leftWall, passable: false, weight: 0 };
+        let bw: IMapCell = { spriteData: LevelSpec.bottomWall, passable: false, weight: 0 };
+        let ft: IMapCell = { spriteData: LevelSpec.floorTile, passable: true, weight: 0 };
+        const rc: IMapCell = { spriteData: LevelSpec.bottomRCornerWall, passable: false, weight: 0 };
+        const tc: IMapCell = { spriteData: LevelSpec.topRCornerWall, passable: false, weight: 0 };
+        const er: IMapCell = { spriteData: LevelSpec.sideWallEndRight, passable: false, weight: 0 };
+        const el: IMapCell = { spriteData: LevelSpec.sideWallEndLeft, passable: false, weight: 0 };
         let nl = null;
         
         return [

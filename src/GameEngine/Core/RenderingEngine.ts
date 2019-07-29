@@ -5,6 +5,10 @@ import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
 import FloorTileImage from "../../assets/images/DungeonTileset.png";
 import { LevelBuilder } from "./Helpers/LevelBuilder";
 import { LevelSpec } from "./Helpers/LevelSpec";
+import { Terrain } from "./Helpers/Terrain";
+import { AStarSearch } from "./Helpers/AStarSearch";
+import { Vector2 } from "./Helpers/Vector2";
+import { Color } from "./Enums/Color";
 
 export class RenderingEngine {
 
@@ -18,8 +22,9 @@ export class RenderingEngine {
     private renderableGizmos: IRenderableGizmo[];
     private renderableGUIElements: IRenderableGUI[];
     private readonly _canvasContext: CanvasRenderingContext2D;
-    private test: HTMLImageElement;
+    private test: Terrain;
     private ready = false;
+    private aStar: AStarSearch;
     
 
     public constructor(context: CanvasRenderingContext2D) {
@@ -37,9 +42,36 @@ export class RenderingEngine {
         //this.test = await LevelBuilder.combineImages(FloorTileImage, 16, 64, 16, 16, 50, 50);
         const builder = new LevelBuilder();
         await builder.using(FloorTileImage);
-        this.test = await builder.buildMap(LevelSpec.getSpec(), 2);
+        this.test = await builder.buildMap(LevelSpec.getSpec());
+        //console.log(this.test.navGrid.passableCells);
+        let a = new AStarSearch(this.test.navGrid, new Vector2(96, 64), new Vector2(220, 112));
+        this.aStar = a;
+        console.log(a.getPath());
         this.ready = true;
 
+    }
+
+    private renderAstar(): void {
+        if (!this.ready) {
+            return;
+        }
+
+        this.canvasContext.beginPath();
+
+        let start = true;
+        for (let nodePos of this.aStar.getPath()) {
+            if (start) {
+                start = false;
+                this.canvasContext.moveTo(nodePos.x, nodePos.y);
+                continue;
+            }
+
+            this.canvasContext.lineTo(nodePos.x, nodePos.y);
+            
+        }
+       
+        this.canvasContext.strokeStyle = Color.Red;
+        this.canvasContext.stroke();
     }
 
     public static get instance(): RenderingEngine {
@@ -80,7 +112,7 @@ export class RenderingEngine {
         this._background.renderBackground(this._canvasContext);
 
         if (this.ready) {
-            this._canvasContext.drawImage(this.test, 0, 0);
+            this._canvasContext.drawImage(this.test.terrainImage, 0, 0);
         }
         
         // for (let object of this.backgroundObjects) {
@@ -100,7 +132,7 @@ export class RenderingEngine {
                 }
             }
         }
-        
+        this.renderAstar();
         for (let guiElement of this.renderableGUIElements) {
             if (guiElement.enabled) {
                 guiElement.renderGUI(this._canvasContext);

@@ -24,6 +24,10 @@ test('Tests the priority queue', () => {
     for (let i = 0; i < 10; i++) {
         expect(q.dequeue()).not.toBe('asdf');
     }
-
+    
     expect(q.dequeue()).toBe('asdf');
+    expect(q.dequeue()).toBe('hello');
+    expect(q.count).toBe(0);
+    expect(q.isEmpty).toBe(true);
+    expect(() => q.dequeue()).toThrowError();
 });

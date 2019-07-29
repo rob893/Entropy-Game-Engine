@@ -1,7 +1,8 @@
 import { ISpriteData } from "../Interfaces/ISpriteData";
-import { LevelSpec } from "./LevelSpec";
 import { IMapCell } from "../Interfaces/IMapCell";
 import { NavGrid } from "./NavGrid";
+import { Vector2 } from "./Vector2";
+import { Terrain } from "./Terrain";
 
 export class LevelBuilder {
 
@@ -37,7 +38,7 @@ export class LevelBuilder {
         });
     }
 
-    public async buildMap(roomSpec: IMapCell[][],  scale: number = 1): Promise<HTMLImageElement> {
+    public async buildMap(roomSpec: IMapCell[][],  scale: number = 1): Promise<Terrain> {
         return new Promise(resolve => {
             const navGrid = new NavGrid(16);
 
@@ -53,7 +54,7 @@ export class LevelBuilder {
                         continue;
                     }
 
-                    navGrid.addCell(p, x, y);
+                    navGrid.addCell({ passable: p.passable, weight: p.weight, position: new Vector2(x / scale, y / scale) });
                     
                     const c = p.spriteData;
 
@@ -63,12 +64,10 @@ export class LevelBuilder {
                 }
             }
 
-            console.log(navGrid);
-
             const image = new Image();
             image.src = this.canvas.toDataURL();
             image.onload = () => {
-                resolve(image);
+                resolve(new Terrain(image, navGrid, []));
             }
         });
     }

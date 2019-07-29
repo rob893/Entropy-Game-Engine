@@ -1,8 +1,9 @@
+import { IWeightedGraphCell } from "./IWeightedGraphCell";
 import { Vector2 } from "../Helpers/Vector2";
-import { IMapCell } from "./IMapCell";
 
-export interface IWeightedGraph {
+export interface IWeightedGraph<T extends IWeightedGraphCell> {
+    cellSize: number;
     cost(a: Vector2, b: Vector2): number;
-    neighbors(id: Vector2): Iterable<string>;
-    addCell(cell: IMapCell, x: number, y: number): void;
+    neighbors(id: Vector2): Iterable<T>;
+    addCell(cell: T): void;
 }

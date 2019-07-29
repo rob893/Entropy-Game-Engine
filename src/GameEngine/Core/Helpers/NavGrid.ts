@@ -1,14 +1,14 @@
 import { IWeightedGraph } from "../Interfaces/IWeightedGraph";
 import { Vector2 } from "./Vector2";
-import { IMapCell } from "../Interfaces/IMapCell";
+import { IWeightedGraphCell } from "../Interfaces/IWeightedGraphCell";
 
-export class NavGrid implements IWeightedGraph {
+export class NavGrid<T extends IWeightedGraphCell> implements IWeightedGraph<T> {
     
-    private readonly cells: Set<string> = new Set<string>();
+    public readonly cellSize: number;
+    
+    private readonly cells: Map<string, T> = new Map<string, T>();
     private readonly unpassableCells: Set<string> = new Set<string>();
-    private readonly cellWeights: Map<string, number> = new Map<string, number>(); 
     private readonly directions: Vector2[];
-    private readonly cellSize: number;
 
 
     public constructor(cellSize: number) {
@@ -21,33 +21,45 @@ export class NavGrid implements IWeightedGraph {
         ];
     }
 
-    public *neighbors(id: Vector2): Iterable<string> {
+    public get passableCells(): T[] {
+        return Array.from(this.cells.values()).filter(cell => cell.passable);
+    }
+
+    public *neighbors(id: Vector2): Iterable<T> {
         for (let direction of this.directions) {
             const key = this.getMapKey(id.x + direction.x, id.y + direction.y);
 
+            if (!this.unpassableCells.has(key)) {
+                let a = 3;
+            }
+
             if (!this.unpassableCells.has(key) && this.cells.has(key)) {
-                yield key;
+                yield this.cells.get(key);
             }
         }
     }
     
     public cost(a: Vector2, b: Vector2): number {
-        return 0;
+        const key = this.getMapKey(b);
+        
+        if (!this.cells.has(key)) {
+            throw new Error('Cell does not exist');
+        }
+
+        return this.cells.get(key).weight;
     }
 
-    public addCell(cell: IMapCell, x: number, y: number): void {
-        const key = this.getMapKey(x, y);
+    public addCell(cell: T): void {
+        const key = this.getMapKey(cell.position);
+
         if (this.cells.has(key)) {
             console.error('WARNING! ' + key + ' alread in cells set!');
         }
         
-        this.cells.add(key);
+        this.cells.set(key, cell);
         
         if (!cell.passable) {
             this.unpassableCells.add(key);
-        }
-        else {
-            this.cellWeights.set(key, cell.terrainWeight);
         }
     }
 

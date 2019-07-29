@@ -56,7 +56,7 @@ export class RenderingEngine {
     renderScene() {
         this._background.renderBackground(this._canvasContext);
         if (this.ready) {
-            this._canvasContext.drawImage(this.test, 0, 0);
+            this._canvasContext.drawImage(this.test.terrainImage, 0, 0);
         }
         for (let object of this.renderableObjects) {
             if (object.enabled) {

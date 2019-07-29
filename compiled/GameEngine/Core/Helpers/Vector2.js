@@ -12,7 +12,7 @@ export class Vector2 {
         return Math.sqrt(this.sqrMagnitude);
     }
     get normalized() {
-        return this.divide(new Vector2(this.magnitude, this.magnitude));
+        return Vector2.divide(this, new Vector2(this.magnitude, this.magnitude));
     }
     add(rightOperand) {
         this.x += rightOperand.x;
@@ -53,6 +53,17 @@ export class Vector2 {
         this.x = 0;
         this.y = 0;
         return this;
+    }
+    toString() {
+        return this.x + ',' + this.y;
+    }
+    static fromString(xCommaY) {
+        if (xCommaY.split(',').length < 2) {
+            throw new Error(xCommaY + ' is invalid format. It should be x,y (eg: 5,6)');
+        }
+        const x = Number(xCommaY.split(',')[0]);
+        const y = Number(xCommaY.split(',')[1]);
+        return new Vector2(x, y);
     }
     static get up() {
         return new Vector2(0, -1);

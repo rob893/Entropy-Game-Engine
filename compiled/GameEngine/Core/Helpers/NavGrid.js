@@ -1,9 +1,8 @@
 import { Vector2 } from "./Vector2";
 export class NavGrid {
     constructor(cellSize) {
-        this.cells = new Set();
+        this.cells = new Map();
         this.unpassableCells = new Set();
-        this.cellWeights = new Map();
         this.cellSize = cellSize;
         this.directions = [
             Vector2.up.multiplyScalar(cellSize),
@@ -16,21 +15,25 @@ export class NavGrid {
         for (let direction of this.directions) {
             const key = this.getMapKey(id.x + direction.x, id.y + direction.y);
             if (!this.unpassableCells.has(key) && this.cells.has(key)) {
-                yield key;
+                yield this.cells.get(key);
             }
         }
     }
     cost(a, b) {
-        return 0;
+        const key = this.getMapKey(b);
+        if (!this.cells.has(key)) {
+            throw new Error('Cell does not exist');
+        }
+        return this.cells.get(key).weight;
     }
-    addCell(cell, x, y) {
-        const key = this.getMapKey(x, y);
-        this.cells.add(key);
+    addCell(cell) {
+        const key = this.getMapKey(cell.position);
+        if (this.cells.has(key)) {
+            console.error('WARNING! ' + key + ' alread in cells set!');
+        }
+        this.cells.set(key, cell);
         if (!cell.passable) {
             this.unpassableCells.add(key);
-        }
-        else {
-            this.cellWeights.set(key, cell.terrainWeight);
         }
     }
     getMapKey(positionOrX, y) {
