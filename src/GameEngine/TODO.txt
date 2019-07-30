@@ -3,3 +3,4 @@
 - Refactor levelspec and IMapCell?
 - Use maps in ITerrainSpec to map floor tile/wall/whatever to an array of possible sprites (for more diverse). All stats same except image
 - Use this when building the image to get more randomized flooring
+- Make a start path straighter?
