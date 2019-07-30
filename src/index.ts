@@ -11,6 +11,7 @@ import { RenderingEngine } from "./GameEngine/Core/RenderingEngine";
 import { Ground } from "./Mario/GameObjects/Ground";
 import { Color } from "./GameEngine/Core/Enums/Color";
 import { RectangleBackground } from "./GameEngine/Core/Helpers/RectangleBackground";
+import { TerrainSpec } from "./GameEngine/Core/Helpers/TerrainSpec";
 
 let gameCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("game-canvas");
 
@@ -31,6 +32,6 @@ let gameManager: GameManagerObject = new GameManagerObject("GameManager");
 
 let gameObjects: GameObject[] = [];//[gameManager, player, computer, ball, trump, ground, ground2];
 
-gameEngine.initializeGame(gameObjects, background);
-
-gameEngine.startGame();
+gameEngine.initializeGame(gameObjects, background, new TerrainSpec(3)).then(() => {
+    gameEngine.startGame();
+});

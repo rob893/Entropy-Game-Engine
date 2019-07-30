@@ -4,6 +4,9 @@ import { Time } from "./Time";
 import { RenderingEngine } from "./RenderingEngine";
 import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
 import { Key } from "./Enums/Key";
+import { Terrain } from "./Helpers/Terrain";
+import { ITerrainSpec } from "./Interfaces/ITerrainSpec";
+import { TerrainBuilder } from "./Helpers/TerrainBuilder";
 
 export class GameEngine {
 
@@ -12,6 +15,7 @@ export class GameEngine {
     private gameCanvas: HTMLCanvasElement;
     private physicsEngine: PhysicsEngine;
     private renderingEngine: RenderingEngine;
+    private terrainObject: Terrain;
     private gameObjects: GameObject[] = [];
     private gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
@@ -41,6 +45,10 @@ export class GameEngine {
         return this._instance;
     }
 
+    public get terrain(): Terrain {
+        return this.terrainObject;
+    }
+
     public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
         let physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
         let renderingEngine = RenderingEngine.buildRenderingEngine(gameCanvas.getContext('2d'));
@@ -50,9 +58,16 @@ export class GameEngine {
         return this._instance;
     }
 
-    public initializeGame(gameObjects: GameObject[], background: IRenderableBackground): void {
+    public async initializeGame(gameObjects: GameObject[], background: IRenderableBackground, terrainSpec: ITerrainSpec = null): Promise<void> {
         this.setGameObjects(gameObjects);
         this.renderingEngine.background = background;
+
+        if (terrainSpec !== null) {
+            const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
+            const terrain = await terrianBuilder.buildTerrain(terrainSpec);
+            this.renderingEngine.terrain = terrain;
+        }
+
         this.gameInitialized = true;
     }
 

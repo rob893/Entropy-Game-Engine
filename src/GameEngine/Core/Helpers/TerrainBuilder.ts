@@ -1,9 +1,8 @@
 import { ISpriteData } from "../Interfaces/ISpriteData";
-import { IMapCell } from "../Interfaces/IMapCell";
 import { NavGrid } from "./NavGrid";
 import { Vector2 } from "./Vector2";
 import { Terrain } from "./Terrain";
-import { TerrainSpec } from "./TerrainSpec";
+import { ITerrainSpec } from "../Interfaces/ITerrainSpec";
 
 export class TerrainBuilder {
 
@@ -21,26 +20,12 @@ export class TerrainBuilder {
         this.context = this.canvas.getContext('2d');
     }
 
-    public async using(spriteSheet: string): Promise<TerrainBuilder> {
-        if (this.spriteSheetSet.has(spriteSheet)) {
-            console.warn('This builder is already using this sprite sheet!');
-        }
+    public async buildTerrain(terrainSpec: ITerrainSpec): Promise<Terrain> {
+
+        await this.using(terrainSpec.spriteSheetUrl);
 
         return new Promise(resolve => {
-            this.spriteSheetSet.add(spriteSheet);
-        
-            let spriteSheetImg = new Image();
-            spriteSheetImg.src = spriteSheet;
-            spriteSheetImg.onload = () => {
-                this.builderMap.set(spriteSheetImg, new Map<string, ISpriteData[]>());
-                this.currentSpriteSheet = spriteSheetImg;
-                resolve(this);
-            }
-        });
-    }
-
-    public async buildTerrain(terrainSpec: TerrainSpec,  scale: number = 1): Promise<Terrain> {
-        return new Promise(resolve => {
+            const scale = terrainSpec.scale;
             const terrainGrid = terrainSpec.getSpec();
             const cellSize = terrainSpec.cellSize;
             const navGrid = new NavGrid(cellSize * scale);
@@ -72,6 +57,24 @@ export class TerrainBuilder {
             image.onload = () => {
                 console.log(navGrid);
                 resolve(new Terrain(image, navGrid, []));
+            }
+        });
+    }
+
+    private async using(spriteSheet: string): Promise<TerrainBuilder> {
+        if (this.spriteSheetSet.has(spriteSheet)) {
+            console.warn('This builder is already using this sprite sheet!');
+        }
+
+        return new Promise(resolve => {
+            this.spriteSheetSet.add(spriteSheet);
+        
+            let spriteSheetImg = new Image();
+            spriteSheetImg.src = spriteSheet;
+            spriteSheetImg.onload = () => {
+                this.builderMap.set(spriteSheetImg, new Map<string, ISpriteData[]>());
+                this.currentSpriteSheet = spriteSheetImg;
+                resolve(this);
             }
         });
     }
