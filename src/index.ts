@@ -32,6 +32,6 @@ let trump: Trump = new Trump("trump");
 
 let gameObjects: GameObject[] = [trump, gameManager];//[gameManager, player, computer, ball, trump, ground, ground2];
 
-gameEngine.initializeGame(gameObjects, background, new TerrainSpec(3)).then(() => {
+gameEngine.initializeScene(gameObjects, background, new TerrainSpec(3)).then(() => {
     gameEngine.startGame();
 });

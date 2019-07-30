@@ -8,6 +8,7 @@ import { Terrain } from "./Helpers/Terrain";
 import { ITerrainSpec } from "./Interfaces/ITerrainSpec";
 import { TerrainBuilder } from "./Helpers/TerrainBuilder";
 import { Vector2 } from "./Helpers/Vector2";
+import { IScene } from "./Interfaces/IScene";
 
 export class GameEngine {
 
@@ -16,6 +17,8 @@ export class GameEngine {
     private gameCanvas: HTMLCanvasElement;
     private physicsEngine: PhysicsEngine;
     private renderingEngine: RenderingEngine;
+    private scenes: Map<number | string, IScene> = new Map<number | string, IScene>();
+    private loadedScene: IScene;
     private terrainObject: Terrain;
     private gameObjects: GameObject[] = [];
     private gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
@@ -59,9 +62,32 @@ export class GameEngine {
         return this._instance;
     }
 
-    public async initializeGame(gameObjects: GameObject[], background: IRenderableBackground, terrainSpec: ITerrainSpec = null): Promise<void> {
+    public setScenes(scenes: IScene[]): void {
+        for (let scene of scenes) {
+            if (this.scenes.has(scene.loadOrder) || this.scenes.has(scene.name)) {
+                console.error('Duplicate scene load orders or name detected ' + scene.loadOrder + ' ' + scene.name);
+            }
+
+            this.scenes.set(scene.loadOrder, scene);
+            this.scenes.set(scene.name, scene);
+        }
+    }
+
+    public async loadScene(loadOrderOrName: number | string): Promise<void> {
+        if (!this.scenes.has(loadOrderOrName)) {
+            throw new Error('Scene ' + loadOrderOrName + ' not found.');
+        }
+
+        const scene = this.scenes.get(loadOrderOrName);
+
+        await this.initializeScene(scene.startingGameObjects, scene.skybox, scene.terrainSpec);
+
+        this.startGame();
+    }
+
+    private async initializeScene(gameObjects: GameObject[], skybox: IRenderableBackground, terrainSpec: ITerrainSpec = null): Promise<void> {
         this.setGameObjects(gameObjects);
-        this.renderingEngine.background = background;
+        this.renderingEngine.background = skybox;
 
         if (terrainSpec !== null) {
             const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
@@ -73,7 +99,7 @@ export class GameEngine {
         this.gameInitialized = true;
     }
 
-    public startGame(): void {
+    private startGame(): void {
 
         if(!this.gameInitialized) {
             throw new Error("The game is not initialized yet!");

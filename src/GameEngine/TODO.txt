@@ -4,3 +4,7 @@
 - Use maps in ITerrainSpec to map floor tile/wall/whatever to an array of possible sprites (for more diverse). All stats same except image
 - Use this when building the image to get more randomized flooring
 - Make a start path straighter? 
+- Look into having an array for function calls for rendering engine and stuff (loop though and call each function) 
+    and being able to dynamically inject and remove function calls from update.
+- Do something similar for general update?
+- Finish scene idea.
