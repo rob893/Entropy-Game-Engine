@@ -55,10 +55,17 @@ export class Vector2 {
     }
 
     public equals(rightOperand: Vector2): boolean {
-        let equalX = this.x === rightOperand.x;
-        let equalY = this.y === rightOperand.y;
+        const equalX = this.x === rightOperand.x;
+        const equalY = this.y === rightOperand.y;
 
         return equalX && equalY;
+    }
+
+    public isCloseTo(rightOperand: Vector2, leniency: number = 1): boolean {
+        const closeX = Math.abs(this.x - rightOperand.x) <= leniency;
+        const closeY = Math.abs(this.y - rightOperand.y) <= leniency;
+
+        return closeX && closeY;
     }
 
     public multiplyScalar(rightOperand: number): Vector2 {

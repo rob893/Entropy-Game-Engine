@@ -7,6 +7,7 @@ import { Key } from "./Enums/Key";
 import { Terrain } from "./Helpers/Terrain";
 import { ITerrainSpec } from "./Interfaces/ITerrainSpec";
 import { TerrainBuilder } from "./Helpers/TerrainBuilder";
+import { Vector2 } from "./Helpers/Vector2";
 
 export class GameEngine {
 
@@ -65,6 +66,7 @@ export class GameEngine {
         if (terrainSpec !== null) {
             const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
             const terrain = await terrianBuilder.buildTerrain(terrainSpec);
+            this.terrainObject = terrain;
             this.renderingEngine.terrain = terrain;
         }
 
@@ -107,6 +109,14 @@ export class GameEngine {
         newGameObject.start();
         
         return newGameObject;
+    }
+
+    public getCursorPosition(event: MouseEvent): Vector2 {
+        const rect = this.gameCanvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        return new Vector2(x, y);
     }
 
     public getGameObjectById(id: string): GameObject {

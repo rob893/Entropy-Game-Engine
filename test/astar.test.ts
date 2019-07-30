@@ -36,6 +36,9 @@ test('Test the a star path finding', () => {
     path = AStarSearch.findPath(graph, new Vector2(0, 4), new Vector2(4, 4));
 
     expect(path).toBe(null);
+
     path = AStarSearch.findPath(graph, new Vector2(0, 4), new Vector2(6, 4));
+
+    expect(path).not.toBe(null);
     console.log(path);
 });

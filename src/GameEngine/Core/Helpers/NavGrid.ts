@@ -59,6 +59,16 @@ export class NavGrid<T extends IWeightedGraphCell> implements IWeightedGraph<T> 
         }
     }
 
+    public isUnpassable(position: Vector2): boolean {
+        const key = this.getMapKey(position);
+
+        if (this.unpassableCells.has(key)) {
+            return true;
+        }
+        
+        return false;
+    }
+
     private getMapKey(position: Vector2): string;
     private getMapKey(x: number, y: number): string;
 

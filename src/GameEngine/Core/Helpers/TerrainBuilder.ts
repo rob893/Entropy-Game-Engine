@@ -55,7 +55,6 @@ export class TerrainBuilder {
             const image = new Image();
             image.src = this.canvas.toDataURL();
             image.onload = () => {
-                console.log(navGrid);
                 resolve(new Terrain(image, navGrid, []));
             }
         });

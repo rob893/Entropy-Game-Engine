@@ -6,12 +6,18 @@ import { IWeightedGraphCell } from "../Interfaces/IWeightedGraphCell";
 export class AStarSearch {
 
     public static findPath(graph: IWeightedGraph<IWeightedGraphCell>, start: Vector2, goal: Vector2): Vector2[] | null {
+        if (graph.isUnpassable(goal)) {
+            return null;
+        }
+        
         const cameFrom: Map<Vector2, Vector2> = new Map<Vector2, Vector2>();
         const costSoFar: Map<Vector2, number> = new Map<Vector2, number>();
 
         const frontier = new PriorityQueue<Vector2>();
         const originalGoal = goal;
 
+        //So that the algorithm does not reference the passed in start vector.
+        start = new Vector2(start.x, start.y);
         goal = this.normalizePosition(goal, graph.cellSize);
 
         frontier.enqueue(start, 0);

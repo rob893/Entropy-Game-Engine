@@ -26,11 +26,11 @@ let gameManager: GameManagerObject = new GameManagerObject("GameManager");
 //let player: Player = new Player("player");
 //let ball: Ball = new Ball("ball");
 //let computer: Computer = new Computer("computer");
-//let trump: Trump = new Trump("trump");
+let trump: Trump = new Trump("trump");
 //let ground = new Ground(350, 400, 700, 55, Color.Brown);
 //let ground2 = new Ground(400, 270, 100, 10, Color.Brown);
 
-let gameObjects: GameObject[] = [];//[gameManager, player, computer, ball, trump, ground, ground2];
+let gameObjects: GameObject[] = [trump, gameManager];//[gameManager, player, computer, ball, trump, ground, ground2];
 
 gameEngine.initializeGame(gameObjects, background, new TerrainSpec(3)).then(() => {
     gameEngine.startGame();
