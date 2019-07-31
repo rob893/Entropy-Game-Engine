@@ -1,0 +1,1 @@
+//# sourceMappingURL=ISpriteData.js.map
