@@ -1,31 +1,54 @@
 import { Vector2 } from "./Vector2";
 import { PriorityQueue } from "./PriorityQueue";
 export class AStarSearch {
-    constructor(graph, start, goal) {
-        this.cameFrom = new Map();
-        this.costSoFar = new Map();
+    static findPath(graph, start, goal) {
+        if (graph.isUnpassable(goal)) {
+            return null;
+        }
+        const cameFrom = new Map();
+        const costSoFar = new Map();
         const frontier = new PriorityQueue();
+        const originalGoal = new Vector2(goal.x, goal.y);
+        start = new Vector2(start.x, start.y);
+        goal = this.normalizePosition(goal, graph.cellSize);
         frontier.enqueue(start, 0);
-        this.cameFrom.set(start.toString(), start.toString());
-        this.costSoFar.set(start.toString(), 0);
+        cameFrom.set(start, start);
+        costSoFar.set(start, 0);
         while (frontier.count > 0) {
             const current = frontier.dequeue();
             if (current.equals(goal)) {
-                break;
+                return this.constructPath(cameFrom, current, start, originalGoal);
             }
-            for (let next in graph.neighbors(current)) {
-                const newCost = this.costSoFar.get(current.toString()) + graph.cost(current, Vector2.fromString(next));
-                if (!this.costSoFar.has(next) || newCost < this.costSoFar.get(next)) {
-                    this.costSoFar.set(next, newCost);
-                    const priority = newCost + this.heuristic(Vector2.fromString(next), goal);
-                    frontier.enqueue(Vector2.fromString(next), priority);
-                    this.cameFrom.set(next, current.toString());
+            for (let next of graph.neighbors(current)) {
+                const newCost = costSoFar.get(current) + graph.cost(current, next.position);
+                if (!costSoFar.has(next.position) || newCost < costSoFar.get(next.position)) {
+                    costSoFar.set(next.position, newCost);
+                    const priority = newCost + this.heuristic(next.position, goal);
+                    frontier.enqueue(next.position, priority);
+                    cameFrom.set(next.position, current);
                 }
             }
         }
+        return null;
     }
-    heuristic(a, b) {
-        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    static normalizePosition(pos, cellSize) {
+        const x = cellSize * Math.round(pos.x / cellSize);
+        const y = cellSize * Math.round(pos.y / cellSize);
+        return new Vector2(x, y);
+    }
+    static heuristic(a, b) {
+        return Vector2.distanceSqrd(a, b);
+    }
+    static constructPath(cameFrom, current, start, goal) {
+        const path = [current];
+        if (!current.equals(goal)) {
+            path.unshift(goal);
+        }
+        while (cameFrom.has(current) && current !== start) {
+            current = cameFrom.get(current);
+            path.push(current);
+        }
+        return path.reverse();
     }
 }
 //# sourceMappingURL=AStarSearch.js.map

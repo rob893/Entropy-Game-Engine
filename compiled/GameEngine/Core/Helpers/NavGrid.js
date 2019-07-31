@@ -11,6 +11,9 @@ export class NavGrid {
             Vector2.left.multiplyScalar(cellSize)
         ];
     }
+    get passableCells() {
+        return Array.from(this.cells.values()).filter(cell => cell.passable);
+    }
     *neighbors(id) {
         for (let direction of this.directions) {
             const key = this.getMapKey(id.x + direction.x, id.y + direction.y);
@@ -35,6 +38,13 @@ export class NavGrid {
         if (!cell.passable) {
             this.unpassableCells.add(key);
         }
+    }
+    isUnpassable(position) {
+        const key = this.getMapKey(position);
+        if (this.unpassableCells.has(key)) {
+            return true;
+        }
+        return false;
     }
     getMapKey(positionOrX, y) {
         if (typeof positionOrX === 'number') {

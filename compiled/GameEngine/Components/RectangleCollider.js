@@ -4,6 +4,7 @@ import { LiteEvent } from "../Core/Helpers/LiteEvent";
 import { PhysicsEngine } from "../Core/PhysicsEngine";
 import { RenderingEngine } from "../Core/RenderingEngine";
 import { Rigidbody } from "./Rigidbody";
+import { Color } from "../Core/Enums/Color";
 export class RectangleCollider extends Component {
     constructor(gameObject, width, height) {
         super(gameObject);
@@ -67,7 +68,7 @@ export class RectangleCollider extends Component {
         context.lineTo(this.bottomRight.x, this.bottomRight.y);
         context.lineTo(this.topRight.x, this.topRight.y);
         context.lineTo(this.topLeft.x, this.topLeft.y);
-        context.strokeStyle = '#2fff0f';
+        context.strokeStyle = Color.LightGreen;
         context.stroke();
     }
 }

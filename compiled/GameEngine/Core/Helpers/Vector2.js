@@ -35,9 +35,14 @@ export class Vector2 {
         return this;
     }
     equals(rightOperand) {
-        let equalX = this.x === rightOperand.x;
-        let equalY = this.y === rightOperand.y;
+        const equalX = this.x === rightOperand.x;
+        const equalY = this.y === rightOperand.y;
         return equalX && equalY;
+    }
+    isCloseTo(rightOperand, leniency = 1) {
+        const closeX = Math.abs(this.x - rightOperand.x) <= leniency;
+        const closeY = Math.abs(this.y - rightOperand.y) <= leniency;
+        return closeX && closeY;
     }
     multiplyScalar(rightOperand) {
         this.x *= rightOperand;
@@ -105,6 +110,11 @@ export class Vector2 {
         let distanceX = point1.x - point2.x;
         let distanceY = point1.y - point2.y;
         return Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+    }
+    static distanceSqrd(point1, point2) {
+        let distanceX = point1.x - point2.x;
+        let distanceY = point1.y - point2.y;
+        return (distanceX * distanceX) + (distanceY * distanceY);
     }
     static angleInRadians(from, to) {
         let cos0 = Vector2.dot(from, to) / (from.magnitude * to.magnitude);

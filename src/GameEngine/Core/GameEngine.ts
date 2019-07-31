@@ -80,7 +80,7 @@ export class GameEngine {
 
         const scene = this.scenes.get(loadOrderOrName);
 
-        await this.initializeScene(scene.startingGameObjects, scene.skybox, scene.terrainSpec);
+        await this.initializeScene(scene.getStartingGameObjects(), scene.getSkybox(this.gameCanvas), scene.terrainSpec);
 
         this.startGame();
     }

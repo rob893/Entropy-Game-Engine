@@ -1,10 +1,10 @@
-import { ISpriteData } from "../Interfaces/ISpriteData";
-import { ITerrainCell } from "../Interfaces/ITerrainCell";
-import { ITerrainSpec } from "../Interfaces/ITerrainSpec";
-import SpriteSheet from "../../../assets/images/DungeonTileset.png";
+import { ISpriteData } from "../../GameEngine/Core/Interfaces/ISpriteData";
+import { ITerrainCell } from "../../GameEngine/Core/Interfaces/ITerrainCell";
+import { ITerrainSpec } from "../../GameEngine/Core/Interfaces/ITerrainSpec";
+import SpriteSheet from "../Assets/Images/DungeonTileset.png";
 
 
-export class TerrainSpec implements ITerrainSpec {
+export class Scene1TerrainSpec implements ITerrainSpec {
     
     public readonly cellSize: number = 16;
     public readonly scale: number = 1;

@@ -1,37 +1,17 @@
 import { GameEngine } from "./GameEngine/Core/GameEngine";
-import { ImageBackground } from "./GameEngine/Core/Helpers/ImageBackground";
-import { GameManagerObject } from "./Mario/GameObjects/GameManagerObject";
-import { Player } from "./Mario/GameObjects/Player";
-import { Ball } from "./Mario/GameObjects/Ball";
-import { Computer } from "./Mario/GameObjects/Computer";
-import { GameObject } from "./GameEngine/Core/GameObject";
-import Background from "./assets/images/background.png";
-import { Trump } from "./Mario/GameObjects/Trump";
 import { RenderingEngine } from "./GameEngine/Core/RenderingEngine";
-import { Ground } from "./Mario/GameObjects/Ground";
-import { Color } from "./GameEngine/Core/Enums/Color";
-import { RectangleBackground } from "./GameEngine/Core/Helpers/RectangleBackground";
-import { TerrainSpec } from "./GameEngine/Core/Helpers/TerrainSpec";
+import { Scene1 } from "./TestGame/Scenes/Scene1";
 
-let gameCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("game-canvas");
 
-let gameEngine: GameEngine = GameEngine.buildGameEngine(gameCanvas);
+const main = async (): Promise<void> => {
+    const gameCanvas = <HTMLCanvasElement>document.getElementById("game-canvas");
+    const gameEngine = GameEngine.buildGameEngine(gameCanvas);
 
-RenderingEngine.instance.renderGizmos = true;
+    RenderingEngine.instance.renderGizmos = true;
 
-let background = new RectangleBackground(gameCanvas, Color.Black); //new ImageBackground(gameCanvas, Background);
+    gameEngine.setScenes([new Scene1()]);
 
-let gameManager: GameManagerObject = new GameManagerObject("GameManager");
+    gameEngine.loadScene(1);
+}
 
-//let player: Player = new Player("player");
-//let ball: Ball = new Ball("ball");
-//let computer: Computer = new Computer("computer");
-let trump: Trump = new Trump("trump");
-//let ground = new Ground(350, 400, 700, 55, Color.Brown);
-//let ground2 = new Ground(400, 270, 100, 10, Color.Brown);
-
-let gameObjects: GameObject[] = [trump, gameManager];//[gameManager, player, computer, ball, trump, ground, ground2];
-
-gameEngine.initializeScene(gameObjects, background, new TerrainSpec(3)).then(() => {
-    gameEngine.startGame();
-});
+main();

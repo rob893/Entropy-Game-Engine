@@ -46,9 +46,9 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: "Mario Clone",
+            title: "TypeScript Game Engine",
             template: "src/index.html",
-            favicon: "src/assets/images/favicon.ico",
+            favicon: "src/TestGame/Assets/Images/favicon.ico",
             
         })
     ]
