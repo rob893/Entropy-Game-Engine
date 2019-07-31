@@ -9,6 +9,7 @@ import { RenderingEngine } from "../Core/RenderingEngine";
 import { IRenderableGizmo } from "../Core/Interfaces/IRenderableGizmo";
 import { Rigidbody } from "./Rigidbody";
 import { Color } from "../Core/Enums/Color";
+import { GameEngine } from "../Core/GameEngine";
 
 export class RectangleCollider extends Component implements IRenderableGizmo {
 
@@ -36,7 +37,7 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
         this._bottomLeft = new Vector2(transform.position.x - (width / 2), transform.position.y);
         this._bottomRight = new Vector2(transform.position.x + (width / 2), transform.position.y);
 
-        PhysicsEngine.instance.addCollider(this);
+        GameEngine.instance.physicsEngine.addCollider(this);
         RenderingEngine.instance.addRenderableGizmo(this);
     }
 

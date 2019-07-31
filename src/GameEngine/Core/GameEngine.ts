@@ -15,28 +15,34 @@ export class GameEngine {
     private static _instance: GameEngine;
 
     private gameCanvas: HTMLCanvasElement;
-    private physicsEngine: PhysicsEngine;
+    private _physicsEngine: PhysicsEngine;
     private renderingEngine: RenderingEngine;
     private scenes: Map<number | string, IScene> = new Map<number | string, IScene>();
-    private loadedScene: IScene;
-    private terrainObject: Terrain;
+    private loadedScene: IScene = null;
+    private terrainObject: Terrain = null;
     private gameObjects: GameObject[] = [];
     private gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
     private gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private gameInitialized: boolean = false;
+    private gameLoopId: number = null;
     private paused: boolean = false;
 
 
     private constructor(gameCanvas: HTMLCanvasElement, physicsEngine: PhysicsEngine, renderingEngine: RenderingEngine) {
-        this.gameInitialized = false;
         this.gameCanvas = gameCanvas;
-        this.physicsEngine = physicsEngine;
+        this._physicsEngine = physicsEngine;
         this.renderingEngine = renderingEngine;
 
         document.addEventListener('keydown', (event) => {
             if (event.keyCode === Key.UpArrow) {
                 this.gameCanvas.requestFullscreen();
+            }
+            else if (event.keyCode === Key.Two && this.loadedScene.loadOrder !== 2) {
+                this.loadScene(2);
+            }
+            else if (event.keyCode === Key.One && this.loadedScene.loadOrder !== 1) {
+                this.loadScene(1);
             }
         });
     }
@@ -51,6 +57,10 @@ export class GameEngine {
 
     public get terrain(): Terrain {
         return this.terrainObject;
+    }
+
+    public get physicsEngine(): PhysicsEngine {
+        return this._physicsEngine;
     }
 
     public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
@@ -78,10 +88,13 @@ export class GameEngine {
             throw new Error('Scene ' + loadOrderOrName + ' not found.');
         }
 
+        this.endCurrentScene();
+
         const scene = this.scenes.get(loadOrderOrName);
 
         await this.initializeScene(scene.getStartingGameObjects(), scene.getSkybox(this.gameCanvas), scene.terrainSpec);
 
+        this.loadedScene = scene;
         this.startGame();
     }
 
@@ -110,7 +123,7 @@ export class GameEngine {
 
         this.gameObjects.forEach(go => go.start());
 
-        requestAnimationFrame(() => this.gameLoop());
+        this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
     }
 
     public instantiate(newGameObject: GameObject): GameObject {
@@ -210,6 +223,24 @@ export class GameEngine {
         }
     }
 
+    private endCurrentScene(): void {
+        if (this.loadedScene === null) {
+            return;
+        }
+
+        if (this.gameLoopId !== null) {
+            cancelAnimationFrame(this.gameLoopId);
+            this.gameLoopId = null;
+        }
+
+        this.tagMap.clear();
+        this.gameObjectMap.clear();
+        this.gameObjectNumMap.clear();
+        this.gameObjects.length = 0;
+        this.loadedScene = null;
+        this._physicsEngine = PhysicsEngine.buildPhysicsEngine(this.gameCanvas);
+    }
+
     private update(): void {
         if (this.paused) {
             return;
@@ -227,8 +258,8 @@ export class GameEngine {
         this.renderingEngine.renderScene();
     }
 
-    private gameLoop(): void { 
+    private gameLoop(): void {
         this.update();
-        requestAnimationFrame(() => this.gameLoop());
+        this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
     }
 }

@@ -25,6 +25,7 @@ export class RenderingEngine {
         this.renderableGizmos = [];
         this.renderableGUIElements = [];
         this.renderGizmos = false;
+        this._terrain = null;
     }
 
    

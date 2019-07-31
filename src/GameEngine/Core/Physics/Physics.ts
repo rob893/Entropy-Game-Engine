@@ -2,6 +2,7 @@ import { Vector2 } from "../Helpers/Vector2";
 import { RectangleCollider } from "../../Components/RectangleCollider";
 import { PhysicsEngine } from "../PhysicsEngine";
 import { Geometry } from "../Helpers/Geometry";
+import { GameEngine } from "../GameEngine";
 
 export abstract class Physics {
     
@@ -26,7 +27,7 @@ export abstract class Physics {
         let results: RectangleCollider[] = [];
         let terminalPoint = Vector2.add(origin, direction.multiplyScalar(distance));
 
-        for (let collider of PhysicsEngine.instance.colliders) {
+        for (let collider of GameEngine.instance.physicsEngine.colliders) {
             if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
                 results.push(collider);
             }

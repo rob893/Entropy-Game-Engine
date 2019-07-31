@@ -10,8 +10,6 @@ import { CollisionResolver } from "./Physics/CollisionResolver";
 
 export class PhysicsEngine {
 
-    private static _instance: PhysicsEngine;
-
     public gravity: number;
 
     private readonly rigidbodies: Rigidbody[];
@@ -29,21 +27,13 @@ export class PhysicsEngine {
         this.collisionDetector.onCollisionDetected.add((colliderA, colliderB) => this.resolveCollisions(colliderA, colliderB));
     }
 
-    public static get instance(): PhysicsEngine {
-        if (this._instance === null || this._instance === undefined) {
-            throw new Error('The instance has not been built yet. Call the buildInstance() function first.');
-        }
-
-        return this._instance;
-    }
-
     public static buildPhysicsEngine(gameCanvas: HTMLCanvasElement) : PhysicsEngine {
         let collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, 100);
         let collisionResolver = new CollisionResolver();
 
-        this._instance = new PhysicsEngine(gameCanvas, collisionDetector, collisionResolver);
+        const engine = new PhysicsEngine(gameCanvas, collisionDetector, collisionResolver);
         
-        return this._instance;
+        return engine;
     }
 
     public get colliders(): RectangleCollider[] {

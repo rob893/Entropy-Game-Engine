@@ -4,6 +4,7 @@ import { Transform } from "./Transform";
 import { GameObject } from "../Core/GameObject";
 import { PhysicsEngine } from "../Core/PhysicsEngine";
 import { Time } from "../Core/Time";
+import { GameEngine } from "../Core/GameEngine";
 
 export class Rigidbody extends Component {
 
@@ -23,7 +24,7 @@ export class Rigidbody extends Component {
         this.velocity = new Vector2(0, 0);
         this.acceleration = new Vector2(0, 0);
         this.force = Vector2.zero;
-        PhysicsEngine.instance.addRigidbody(this);
+        GameEngine.instance.physicsEngine.addRigidbody(this);
     }
 
     public updatePhysics(): void {
