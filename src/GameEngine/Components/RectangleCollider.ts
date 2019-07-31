@@ -3,9 +3,7 @@ import { Component } from "./Component";
 import { Transform } from "./Transform";
 import { LiteEvent } from "../Core/Helpers/LiteEvent";
 import { GameObject } from "../Core/GameObject";
-import { PhysicsEngine } from "../Core/PhysicsEngine";
 import { ILiteEvent } from "../Core/Interfaces/ILiteEvent";
-import { RenderingEngine } from "../Core/RenderingEngine";
 import { IRenderableGizmo } from "../Core/Interfaces/IRenderableGizmo";
 import { Rigidbody } from "./Rigidbody";
 import { Color } from "../Core/Enums/Color";
@@ -38,7 +36,7 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
         this._bottomRight = new Vector2(transform.position.x + (width / 2), transform.position.y);
 
         GameEngine.instance.physicsEngine.addCollider(this);
-        RenderingEngine.instance.addRenderableGizmo(this);
+        GameEngine.instance.renderingEngine.addRenderableGizmo(this);
     }
 
     public start(): void {

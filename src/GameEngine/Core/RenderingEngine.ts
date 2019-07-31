@@ -7,8 +7,6 @@ import { Terrain } from "./Helpers/Terrain";
 
 export class RenderingEngine {
 
-    private static _instance: RenderingEngine;
-
     public renderGizmos: boolean;
 
     private _background: IRenderableBackground;
@@ -26,21 +24,6 @@ export class RenderingEngine {
         this.renderableGUIElements = [];
         this.renderGizmos = false;
         this._terrain = null;
-    }
-
-   
-    public static get instance(): RenderingEngine {
-        if (this._instance === null || this._instance === undefined) {
-            throw new Error('The instance has not been created yet. Call the buildRenderingEngine() function first.');
-        }
-
-        return this._instance;
-    }
-
-    public static buildRenderingEngine(context: CanvasRenderingContext2D): RenderingEngine {
-        this._instance = new RenderingEngine(context);
-
-        return this._instance;
     }
 
     public set terrain(terrain: Terrain) {

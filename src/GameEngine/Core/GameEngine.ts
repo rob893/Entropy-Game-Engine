@@ -16,7 +16,7 @@ export class GameEngine {
 
     private gameCanvas: HTMLCanvasElement;
     private _physicsEngine: PhysicsEngine;
-    private renderingEngine: RenderingEngine;
+    private _renderingEngine: RenderingEngine;
     private scenes: Map<number | string, IScene> = new Map<number | string, IScene>();
     private loadedScene: IScene = null;
     private terrainObject: Terrain = null;
@@ -32,7 +32,7 @@ export class GameEngine {
     private constructor(gameCanvas: HTMLCanvasElement, physicsEngine: PhysicsEngine, renderingEngine: RenderingEngine) {
         this.gameCanvas = gameCanvas;
         this._physicsEngine = physicsEngine;
-        this.renderingEngine = renderingEngine;
+        this._renderingEngine = renderingEngine;
 
         document.addEventListener('keydown', (event) => {
             if (event.keyCode === Key.UpArrow) {
@@ -63,9 +63,13 @@ export class GameEngine {
         return this._physicsEngine;
     }
 
+    public get renderingEngine(): RenderingEngine {
+        return this._renderingEngine;
+    }
+
     public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
-        let physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
-        let renderingEngine = RenderingEngine.buildRenderingEngine(gameCanvas.getContext('2d'));
+        const physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
+        const renderingEngine = new RenderingEngine(gameCanvas.getContext('2d'));
         
         this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
         
@@ -100,13 +104,13 @@ export class GameEngine {
 
     private async initializeScene(gameObjects: GameObject[], skybox: IRenderableBackground, terrainSpec: ITerrainSpec = null): Promise<void> {
         this.setGameObjects(gameObjects);
-        this.renderingEngine.background = skybox;
+        this._renderingEngine.background = skybox;
 
         if (terrainSpec !== null) {
             const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
             const terrain = await terrianBuilder.buildTerrain(terrainSpec);
             this.terrainObject = terrain;
-            this.renderingEngine.terrain = terrain;
+            this._renderingEngine.terrain = terrain;
         }
 
         this.gameInitialized = true;
@@ -189,7 +193,7 @@ export class GameEngine {
     public printGameData(): void {
         console.log(this);
         console.log("Time since game start " + Time.TotalTime + "s");
-        console.log(this.renderingEngine);
+        console.log(this._renderingEngine);
         console.log(this.physicsEngine);
         this.gameObjects.forEach(go => console.log(go));
     }
@@ -239,6 +243,7 @@ export class GameEngine {
         this.gameObjects.length = 0;
         this.loadedScene = null;
         this._physicsEngine = PhysicsEngine.buildPhysicsEngine(this.gameCanvas);
+        this._renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
     }
 
     private update(): void {
@@ -255,7 +260,7 @@ export class GameEngine {
             }
         }
 
-        this.renderingEngine.renderScene();
+        this._renderingEngine.renderScene();
     }
 
     private gameLoop(): void {

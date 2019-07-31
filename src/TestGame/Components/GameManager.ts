@@ -1,20 +1,15 @@
 import { Component } from "../../GameEngine/Components/Component";
-import { Player } from "../GameObjects/Player";
-import { RectangleRenderer } from "../../GameEngine/Components/RectangleRenderer";
 import { GameObject } from "../../GameEngine/Core/GameObject";
 import { GameEngine } from "../../GameEngine/Core/GameEngine";
 import { Ball } from "../GameObjects/Ball";
 import { AudioSource } from "../../GameEngine/Components/AudioSource";
 import { IRenderableGUI } from "../../GameEngine/Core/Interfaces/IRenderableGUI";
-import { RenderingEngine } from "../../GameEngine/Core/RenderingEngine";
 import { Time } from "../../GameEngine/Core/Time";
 
 export class GameManager extends Component implements IRenderableGUI {
 
     private static _instance: GameManager;
 
-    private player: Player;
-    private playerRenderer: RectangleRenderer;
     private audioSource: AudioSource;
     private sceneMessage: string = '';
     private messageColor: string = '';
@@ -33,8 +28,7 @@ export class GameManager extends Component implements IRenderableGUI {
     }
 
     public start(): void {
-        RenderingEngine.instance.addRenderableGUIElement(this);
-        this.player = GameEngine.instance.getGameObjectById("player");
+        GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
         this.audioSource = this.gameObject.getComponent(AudioSource);
         this.audioSource.loop = true;
     }

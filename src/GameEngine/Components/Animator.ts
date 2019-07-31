@@ -1,9 +1,8 @@
-import { Transform } from "./Transform";
 import { Component } from "./Component";
 import { GameObject } from "../Core/GameObject";
 import { Animation } from "../Core/Helpers/Animation";
 import { IRenderable } from "../Core/Interfaces/IRenderable";
-import { RenderingEngine } from "../Core/RenderingEngine";
+import { GameEngine } from "../Core/GameEngine";
 
 export class Animator extends Component implements IRenderable {
 
@@ -19,7 +18,7 @@ export class Animator extends Component implements IRenderable {
         this.renderHeight = renderHeight;
         this.animation = initialAnimation;
 
-        RenderingEngine.instance.addRenderableObject(this);
+        GameEngine.instance.renderingEngine.addRenderableObject(this);
     }
 
     public setAnimation(animation: Animation): void {

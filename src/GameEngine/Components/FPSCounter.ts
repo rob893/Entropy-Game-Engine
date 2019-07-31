@@ -1,7 +1,7 @@
 import { Component } from "./Component";
 import { Time } from "../Core/Time";
 import { IRenderableGUI } from "../Core/Interfaces/IRenderableGUI";
-import { RenderingEngine } from "../Core/RenderingEngine";
+import { GameEngine } from "../Core/GameEngine";
 
 export class FPSCounter extends Component implements IRenderableGUI {
 
@@ -11,8 +11,8 @@ export class FPSCounter extends Component implements IRenderableGUI {
 
 
     public start(): void {
-        RenderingEngine.instance.addRenderableGUIElement(this);
-        RenderingEngine.instance.canvasContext.font = "20px Arial";
+        GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
+        GameEngine.instance.renderingEngine.canvasContext.font = "20px Arial";
     }
 
     public renderGUI(context: CanvasRenderingContext2D): void {

@@ -1,8 +1,7 @@
 import { Component } from "./Component";
-import { Transform } from "./Transform";
 import { GameObject } from "../Core/GameObject";
 import { IRenderable } from "../Core/Interfaces/IRenderable";
-import { RenderingEngine } from "../Core/RenderingEngine";
+import { GameEngine } from "../Core/GameEngine";
 
 export class RectangleRenderer extends Component implements IRenderable {
 
@@ -17,7 +16,7 @@ export class RectangleRenderer extends Component implements IRenderable {
         this.renderHeight = renderHeight;
         this.color = color
 
-        RenderingEngine.instance.addRenderableObject(this);
+        GameEngine.instance.renderingEngine.addRenderableObject(this);
     }
 
     public setColor(color: string): void {

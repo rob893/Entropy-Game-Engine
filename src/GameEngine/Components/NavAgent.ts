@@ -7,7 +7,6 @@ import { IWeightedGraphCell } from "../Core/Interfaces/IWeightedGraphCell";
 import { GameEngine } from "../Core/GameEngine";
 import { AStarSearch } from "../Core/Helpers/AStarSearch";
 import { GameObject } from "../Core/GameObject";
-import { RenderingEngine } from "../Core/RenderingEngine";
 
 export class NavAgent extends Component implements IRenderableGizmo {
     
@@ -22,7 +21,7 @@ export class NavAgent extends Component implements IRenderableGizmo {
     public constructor(gameObject: GameObject) {
         super(gameObject);
 
-        RenderingEngine.instance.addRenderableGizmo(this);
+        GameEngine.instance.renderingEngine.addRenderableGizmo(this);
     }
 
     public start(): void {
