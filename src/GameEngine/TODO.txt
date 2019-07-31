@@ -8,3 +8,5 @@
     and being able to dynamically inject and remove function calls from update.
 - Do something similar for general update?
 - Finish scene idea.
+- Figure out what is keeping references to old objects after switching scenes (maybe event listeners?)
+- Build input class for all event listeners to, if I need to, I can manually remove all listeners when needed.

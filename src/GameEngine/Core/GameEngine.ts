@@ -44,6 +44,9 @@ export class GameEngine {
             else if (event.keyCode === Key.One && this.loadedScene.loadOrder !== 1) {
                 this.loadScene(1);
             }
+            else if (event.keyCode === Key.P) {
+                this.printGameData();
+            }
         });
     }
 
