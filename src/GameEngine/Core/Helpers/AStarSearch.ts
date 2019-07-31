@@ -14,7 +14,8 @@ export class AStarSearch {
         const costSoFar: Map<Vector2, number> = new Map<Vector2, number>();
 
         const frontier = new PriorityQueue<Vector2>();
-        const originalGoal = goal;
+        //set to new object to keep from referencing original object
+        const originalGoal = new Vector2(goal.x, goal.y);
 
         //So that the algorithm does not reference the passed in start vector.
         start = new Vector2(start.x, start.y);
