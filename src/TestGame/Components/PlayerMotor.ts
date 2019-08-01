@@ -26,9 +26,9 @@ export class PlayerMotor extends Motor {
     public constructor(gameObject: GameObject) {
         super(gameObject);
 
-        document.addEventListener('keydown', () => this.onKeyDown(<KeyboardEvent>event));
-        document.addEventListener('keyup', () => this.onKeyUp(<KeyboardEvent>event));
-        document.addEventListener('click', () => this.onClick(<MouseEvent>event));
+        //document.addEventListener('keydown', () => this.onKeyDown(<KeyboardEvent>event));
+        //document.addEventListener('keyup', () => this.onKeyUp(<KeyboardEvent>event));
+        //document.addEventListener('click', () => this.onClick(<MouseEvent>event));
         this.moveRightAnimation = new Animation(MovingRightSprite, 4, 1, 0.1);
         this.moveLeftAnimation = new Animation(MovingLeftSprite, 4, 1, 0.1);
     }

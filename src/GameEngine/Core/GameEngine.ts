@@ -9,6 +9,7 @@ import { ITerrainSpec } from "./Interfaces/ITerrainSpec";
 import { TerrainBuilder } from "./Helpers/TerrainBuilder";
 import { Vector2 } from "./Helpers/Vector2";
 import { IScene } from "./Interfaces/IScene";
+import { Input } from "./Helpers/Input";
 
 export class GameEngine {
 
@@ -73,7 +74,7 @@ export class GameEngine {
     public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
         const physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
         const renderingEngine = new RenderingEngine(gameCanvas.getContext('2d'));
-        
+        Input.init();
         this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
         
         return this._instance;
@@ -240,13 +241,16 @@ export class GameEngine {
             this.gameLoopId = null;
         }
 
+        Input.clearListeners();
         this.tagMap.clear();
         this.gameObjectMap.clear();
         this.gameObjectNumMap.clear();
         this.gameObjects.length = 0;
         this.loadedScene = null;
+        this.terrainObject = null;
         this._physicsEngine = PhysicsEngine.buildPhysicsEngine(this.gameCanvas);
         this._renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
+        this._renderingEngine.renderGizmos = true;
     }
 
     private update(): void {
