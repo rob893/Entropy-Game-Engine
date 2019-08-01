@@ -12,6 +12,7 @@ import { RenderingEngine } from "./RenderingEngine";
 import { Key } from "./Enums/Key";
 import { TerrainBuilder } from "./Helpers/TerrainBuilder";
 import { Vector2 } from "./Helpers/Vector2";
+import { Input } from "./Helpers/Input";
 export class GameEngine {
     constructor(gameCanvas, physicsEngine, renderingEngine) {
         this.scenes = new Map();
@@ -37,6 +38,9 @@ export class GameEngine {
             else if (event.keyCode === Key.One && this.loadedScene.loadOrder !== 1) {
                 this.loadScene(1);
             }
+            else if (event.keyCode === Key.P) {
+                this.printGameData();
+            }
         });
     }
     static get instance() {
@@ -57,6 +61,7 @@ export class GameEngine {
     static buildGameEngine(gameCanvas) {
         const physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
         const renderingEngine = new RenderingEngine(gameCanvas.getContext('2d'));
+        Input.init();
         this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
         return this._instance;
     }
@@ -188,13 +193,16 @@ export class GameEngine {
             cancelAnimationFrame(this.gameLoopId);
             this.gameLoopId = null;
         }
+        Input.clearListeners();
         this.tagMap.clear();
         this.gameObjectMap.clear();
         this.gameObjectNumMap.clear();
         this.gameObjects.length = 0;
         this.loadedScene = null;
+        this.terrainObject = null;
         this._physicsEngine = PhysicsEngine.buildPhysicsEngine(this.gameCanvas);
         this._renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
+        this._renderingEngine.renderGizmos = true;
     }
     update() {
         if (this.paused) {

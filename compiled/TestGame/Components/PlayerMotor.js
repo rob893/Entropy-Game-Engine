@@ -14,9 +14,6 @@ export class PlayerMotor extends Motor {
         this.movingRight = false;
         this.movingLeft = false;
         this.jumping = false;
-        document.addEventListener('keydown', () => this.onKeyDown(event));
-        document.addEventListener('keyup', () => this.onKeyUp(event));
-        document.addEventListener('click', () => this.onClick(event));
         this.moveRightAnimation = new Animation(MovingRightSprite, 4, 1, 0.1);
         this.moveLeftAnimation = new Animation(MovingLeftSprite, 4, 1, 0.1);
     }

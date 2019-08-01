@@ -3,11 +3,12 @@ import { NavAgent } from "../../GameEngine/Components/NavAgent";
 import { Key } from "../../GameEngine/Core/Enums/Key";
 import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
 import { GameEngine } from "../../GameEngine/Core/GameEngine";
+import { Input } from "../../GameEngine/Core/Helpers/Input";
 export class NavTester extends Component {
     constructor(gameObject) {
         super(gameObject);
-        document.addEventListener('keydown', () => this.onKeyDown(event));
-        document.addEventListener('click', () => this.onClick(event));
+        Input.addClickListener(0, (event) => this.onClick(event));
+        Input.addKeydownListener(Key.Backspace, (event) => this.onKeyDown(event));
     }
     start() {
         this.navAgent = this.gameObject.getComponent(NavAgent);
