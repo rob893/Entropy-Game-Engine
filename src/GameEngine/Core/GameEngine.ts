@@ -3,13 +3,14 @@ import { GameObject } from "./GameObject";
 import { Time } from "./Time";
 import { RenderingEngine } from "./RenderingEngine";
 import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
-import { Key } from "./Enums/Key";
+import { KeyCode } from "./Enums/KeyCode";
 import { Terrain } from "./Helpers/Terrain";
 import { ITerrainSpec } from "./Interfaces/ITerrainSpec";
 import { TerrainBuilder } from "./Helpers/TerrainBuilder";
 import { Vector2 } from "./Helpers/Vector2";
 import { IScene } from "./Interfaces/IScene";
 import { Input } from "./Helpers/Input";
+import { EventType } from "./Enums/EventType";
 
 export class GameEngine {
 
@@ -34,18 +35,18 @@ export class GameEngine {
         this.gameCanvas = gameCanvas;
         this._physicsEngine = physicsEngine;
         this._renderingEngine = renderingEngine;
-
+        Input.addEventListener(EventType.Click, () => console.log('test'));
         document.addEventListener('keydown', (event) => {
-            if (event.keyCode === Key.UpArrow) {
+            if (event.keyCode === KeyCode.UpArrow) {
                 this.gameCanvas.requestFullscreen();
             }
-            else if (event.keyCode === Key.Two && this.loadedScene.loadOrder !== 2) {
+            else if (event.keyCode === KeyCode.Two && this.loadedScene.loadOrder !== 2) {
                 this.loadScene(2);
             }
-            else if (event.keyCode === Key.One && this.loadedScene.loadOrder !== 1) {
+            else if (event.keyCode === KeyCode.One && this.loadedScene.loadOrder !== 1) {
                 this.loadScene(1);
             }
-            else if (event.keyCode === Key.P) {
+            else if (event.keyCode === KeyCode.P) {
                 this.printGameData();
             }
         });
@@ -74,7 +75,7 @@ export class GameEngine {
     public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
         const physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
         const renderingEngine = new RenderingEngine(gameCanvas.getContext('2d'));
-        Input.init();
+        Input.init(gameCanvas);
         this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
         
         return this._instance;
@@ -156,14 +157,6 @@ export class GameEngine {
         newGameObject.start();
         
         return newGameObject;
-    }
-
-    public getCursorPosition(event: MouseEvent): Vector2 {
-        const rect = this.gameCanvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-
-        return new Vector2(x, y);
     }
 
     public getGameObjectById(id: string): GameObject {

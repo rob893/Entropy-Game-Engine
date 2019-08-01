@@ -1,7 +1,7 @@
 import { Motor } from "./Motor";
 import { GameObject } from "../../GameEngine/Core/GameObject";
 import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
-import { Key } from "../../GameEngine/Core/Enums/Key";
+import { KeyCode } from "../../GameEngine/Core/Enums/KeyCode";
 import { Rigidbody } from "../../GameEngine/Components/Rigidbody";
 import MovingRightSprite from "../Assets/Images/mario.png"
 import MovingLeftSprite from "../Assets/Images/marioLeft.png"
@@ -108,27 +108,27 @@ export class PlayerMotor extends Motor {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        if (event.keyCode == Key.RightArrow || event.keyCode == Key.D) {
+        if (event.keyCode == KeyCode.RightArrow || event.keyCode == KeyCode.D) {
             this.movingRight = true;
             this.movingLeft = false;
             this.animator.setAnimation(this.moveRightAnimation);
         }
-        else if (event.keyCode == Key.LeftArrow || event.keyCode == Key.A) {
+        else if (event.keyCode == KeyCode.LeftArrow || event.keyCode == KeyCode.A) {
             this.movingRight = false;
             this.movingLeft = true;
             this.animator.setAnimation(this.moveLeftAnimation);
         }
 
-        if (event.keyCode == Key.Space) {
+        if (event.keyCode == KeyCode.Space) {
             this.jump();
         }
     }
 
     private onKeyUp(event: KeyboardEvent): void {
-        if (event.keyCode == Key.RightArrow || event.keyCode == Key.D) {
+        if (event.keyCode == KeyCode.RightArrow || event.keyCode == KeyCode.D) {
             this.movingRight = false;
         }
-        else if (event.keyCode == Key.LeftArrow || event.keyCode == Key.A) {
+        else if (event.keyCode == KeyCode.LeftArrow || event.keyCode == KeyCode.A) {
             this.movingLeft = false;
         }
     }
