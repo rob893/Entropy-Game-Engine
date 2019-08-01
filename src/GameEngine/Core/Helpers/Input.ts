@@ -1,32 +1,37 @@
 import { KeyCode } from "../Enums/KeyCode";
 import { Vector2 } from "./Vector2";
 import { EventType } from "../Enums/EventType";
+import { GameEngine } from "../GameEngine";
+import { ICanvasMouseEvent } from "../Interfaces/ICanvasMouseEvent";
 
 export abstract class Input {
 
-    private static gameCanvas: HTMLCanvasElement;
+    private static _gameCanvas: HTMLCanvasElement;
     private static keyDownMap: Map<KeyCode, ((event: KeyboardEvent) => void)[]> = new Map<KeyCode, ((event: KeyboardEvent) => void)[]>();
     private static keyUpMap: Map<KeyCode, ((event: KeyboardEvent) => void)[]> = new Map<KeyCode, ((event: KeyboardEvent) => void)[]>();
-    private static clickMap: Map<number, ((event: MouseEvent) => void)[]> = new Map<number, ((event: MouseEvent) => void)[]>();
-    private static genericEventMap: Map<EventType,((event: Event) => void)[]> = new Map<EventType,((event: Event) => void)[]>();
+    private static clickMap: Map<number, ((event: ICanvasMouseEvent) => void)[]> = new Map<number, ((event: ICanvasMouseEvent) => void)[]>();
+    private static genericEventMap: Map<EventType, ((event: Event) => void)[]> = new Map<EventType, ((event: Event) => void)[]>();
+    private static currentListeners: Map<EventType, ((event: Event) => void)> = new Map<EventType, ((event: Event) => void)>();
+    private static reservedEvents: Set<EventType> = new Set([EventType.Click, EventType.KeyDown, EventType.KeyUp]);
     private static keyDownSet: Set<KeyCode> = new Set<KeyCode>();
     private static mouseButtonDownSet: Set<number> = new Set<number>();
 
 
-    public static init(gameCanvas: HTMLCanvasElement): void {
-        this.gameCanvas = gameCanvas;
-        //possible lazy load of this?
-        document.addEventListener('keydown', () => this.invokeKeyDown(<KeyboardEvent>event));
-        document.addEventListener('keyup', () => this.invokeKeyUp(<KeyboardEvent>event));
-        document.addEventListener('click', () => this.invokeClick(<MouseEvent>event));
-    }
-
     public static addEventListener(eventType: EventType, handler: ((event: Event) => void)): void {
+        if (this.reservedEvents.has(eventType)) {
+            console.error(eventType + ' is a reserved event. Please use the correct method to add a listener for it.');
+            return;
+        }
+
         if (this.genericEventMap.has(eventType)) {
             this.genericEventMap.get(eventType).push(handler);
         }
         else {
-            document.addEventListener(eventType, () => this.invokeGenericEvent(event));
+            if (!this.currentListeners.has(eventType)) {
+                document.addEventListener(eventType, (event) => this.invokeGenericEvent(event));
+                this.currentListeners.set(eventType, this.invokeGenericEvent);
+            }
+            
             this.genericEventMap.set(eventType, [handler]);
         }
     }
@@ -36,6 +41,11 @@ export abstract class Input {
             this.keyDownMap.get(keyCode).push(handler);
         }
         else {
+            if (!this.currentListeners.has(EventType.KeyDown)) {
+                document.addEventListener(EventType.KeyDown, (event) => this.invokeKeyDown(event));
+                this.currentListeners.set(EventType.KeyDown, this.invokeKeyDown);
+            }
+
             this.keyDownMap.set(keyCode, [handler]);
         }
     }
@@ -45,6 +55,11 @@ export abstract class Input {
             this.keyUpMap.get(keyCode).push(handler);
         }
         else {
+            if (!this.currentListeners.has(EventType.KeyUp)) {
+                document.addEventListener(EventType.KeyUp, (event) => this.invokeKeyUp(event));
+                this.currentListeners.set(EventType.KeyUp, this.invokeKeyUp);
+            }
+
             this.keyUpMap.set(keyCode, [handler]);
         }
     }
@@ -56,11 +71,16 @@ export abstract class Input {
      * @param handler the callback function to be called
      * @example Input.addClickListener(0, (event) => this.handleClick(event));
      */
-    public static addClickListener(mouseButton: number, handler: ((event: MouseEvent) => void)): void {
+    public static addClickListener(mouseButton: number, handler: ((event: ICanvasMouseEvent) => void)): void {
         if (this.clickMap.has(mouseButton)) {
             this.clickMap.get(mouseButton).push(handler);
         }
         else {
+            if (!this.currentListeners.has(EventType.Click)) {
+                document.addEventListener(EventType.Click, (event) => this.invokeClick(event));
+                this.currentListeners.set(EventType.Click, this.invokeClick);
+            }
+
             this.clickMap.set(mouseButton, [handler]);
         }
     }
@@ -78,18 +98,23 @@ export abstract class Input {
         this.keyUpMap.clear();
         this.genericEventMap.clear();
         this.clickMap.clear();
+        console.log(this.currentListeners);
+        this.currentListeners.forEach((handler, eventType) => {
+            this.gameCanvas.removeEventListener(eventType, handler);
+        });
     }
 
-    public static getCursorPosition(event: MouseEvent): Vector2 {
-        const rect = this.gameCanvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+    private static get gameCanvas(): HTMLCanvasElement {
+        if (this._gameCanvas === undefined || this._gameCanvas === null) {
+            this._gameCanvas = GameEngine.instance.getGameCanvas();
+        }
 
-        return new Vector2(x, y);
+        return this._gameCanvas;
     }
 
     private static invokeGenericEvent(event: Event): void {
         if (this.genericEventMap.has(<EventType>event.type)) {
+            console.log('being invoked');
             this.genericEventMap.get(<EventType>event.type).forEach(handler => handler(event));
         }
     }
@@ -112,7 +137,18 @@ export abstract class Input {
 
     private static invokeClick(event: MouseEvent): void {
         if (this.clickMap.has(event.button)) {
-            this.clickMap.get(event.button).forEach(handler => handler(event));
+            const canvasMouseEvent = event as ICanvasMouseEvent;
+            canvasMouseEvent.cursorPositionOnCanvas = this.getCursorPosition(event);
+
+            this.clickMap.get(event.button).forEach(handler => handler(canvasMouseEvent));
         }
+    }
+
+    private static getCursorPosition(event: MouseEvent): Vector2 {
+        const rect = this.gameCanvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        return new Vector2(x, y);
     }
 }

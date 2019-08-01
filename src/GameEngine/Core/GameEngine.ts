@@ -35,7 +35,7 @@ export class GameEngine {
         this.gameCanvas = gameCanvas;
         this._physicsEngine = physicsEngine;
         this._renderingEngine = renderingEngine;
-        Input.addEventListener(EventType.Click, () => console.log('test'));
+        
         document.addEventListener('keydown', (event) => {
             if (event.keyCode === KeyCode.UpArrow) {
                 this.gameCanvas.requestFullscreen();
@@ -75,7 +75,7 @@ export class GameEngine {
     public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
         const physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
         const renderingEngine = new RenderingEngine(gameCanvas.getContext('2d'));
-        Input.init(gameCanvas);
+        
         this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
         
         return this._instance;
@@ -98,7 +98,7 @@ export class GameEngine {
         }
 
         this.endCurrentScene();
-
+        Input.addEventListener(EventType.Click, () => console.log('test'));
         const scene = this.scenes.get(loadOrderOrName);
 
         await this.initializeScene(scene.getStartingGameObjects(), scene.getSkybox(this.gameCanvas), scene.terrainSpec);

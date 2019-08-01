@@ -5,6 +5,7 @@ import { KeyCode } from "../../GameEngine/Core/Enums/KeyCode";
 import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
 import { GameEngine } from "../../GameEngine/Core/GameEngine";
 import { Input } from "../../GameEngine/Core/Helpers/Input";
+import { ICanvasMouseEvent } from "../../GameEngine/Core/Interfaces/ICanvasMouseEvent";
 
 export class NavTester extends Component {
 
@@ -31,7 +32,7 @@ export class NavTester extends Component {
         }
     }
 
-    private onClick(event: MouseEvent): void {
-        this.navAgent.setDestination(Input.getCursorPosition(event));
+    private onClick(event: ICanvasMouseEvent): void {
+        this.navAgent.setDestination(event.cursorPositionOnCanvas);
     }
 }
