@@ -36,20 +36,10 @@ export class GameEngine {
         this._physicsEngine = physicsEngine;
         this._renderingEngine = renderingEngine;
         
-        document.addEventListener('keydown', (event) => {
-            if (event.keyCode === KeyCode.UpArrow) {
-                this.gameCanvas.requestFullscreen();
-            }
-            else if (event.keyCode === KeyCode.Two && this.loadedScene.loadOrder !== 2) {
-                this.loadScene(2);
-            }
-            else if (event.keyCode === KeyCode.One && this.loadedScene.loadOrder !== 1) {
-                this.loadScene(1);
-            }
-            else if (event.keyCode === KeyCode.P) {
-                this.printGameData();
-            }
-        });
+        Input.addKeyListener(EventType.KeyDown, KeyCode.One, () => this.loadScene(1));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, () => this.loadScene(2));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
+        Input.addKeyListener(EventType.KeyDown, KeyCode.UpArrow, () => this.gameCanvas.requestFullscreen());
     }
 
     public static get instance(): GameEngine {

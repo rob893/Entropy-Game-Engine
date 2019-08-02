@@ -7,14 +7,14 @@ import { ICanvasMouseEvent } from "../Interfaces/ICanvasMouseEvent";
 export abstract class Input {
 
     private static _gameCanvas: HTMLCanvasElement;
-    private static keyDownMap: Map<KeyCode, ((event: KeyboardEvent) => void)[]> = new Map<KeyCode, ((event: KeyboardEvent) => void)[]>();
-    private static keyUpMap: Map<KeyCode, ((event: KeyboardEvent) => void)[]> = new Map<KeyCode, ((event: KeyboardEvent) => void)[]>();
-    private static clickMap: Map<number, ((event: ICanvasMouseEvent) => void)[]> = new Map<number, ((event: ICanvasMouseEvent) => void)[]>();
-    private static genericEventMap: Map<EventType, ((event: Event) => void)[]> = new Map<EventType, ((event: Event) => void)[]>();
-    private static currentListeners: Map<EventType, ((event: Event) => void)> = new Map<EventType, ((event: Event) => void)>();
-    private static reservedEvents: Set<EventType> = new Set([EventType.Click, EventType.KeyDown, EventType.KeyUp]);
-    private static keyDownSet: Set<KeyCode> = new Set<KeyCode>();
-    private static mouseButtonDownSet: Set<number> = new Set<number>();
+    private static readonly keyMap = new Map<EventType.KeyDown | EventType.KeyUp, Map<KeyCode, ((event: KeyboardEvent) => void)[]>>();
+    private static readonly mouseMap = new Map<EventType.Click | EventType.MouseDown | EventType.MouseUp, Map<0 | 1 | 2, ((event: ICanvasMouseEvent) => void)[]>>();
+    private static readonly clickMap = new Map<number, ((event: ICanvasMouseEvent) => void)[]>();
+    private static readonly genericEventMap = new Map<EventType, ((event: Event) => void)[]>();
+    private static readonly currentListeners = new Map<EventType, ((event: Event) => void)>();
+    private static readonly reservedEvents = new Set([EventType.Click, EventType.KeyDown, EventType.KeyUp]);
+    private static readonly keyDownSet = new Set<KeyCode>();
+    private static readonly mouseButtonDownSet = new Set<number>();
 
 
     public static addEventListener(eventType: EventType, handler: ((event: Event) => void)): void {
@@ -28,39 +28,35 @@ export abstract class Input {
         }
         else {
             if (!this.currentListeners.has(eventType)) {
-                document.addEventListener(eventType, (event) => this.invokeGenericEvent(event));
-                this.currentListeners.set(eventType, this.invokeGenericEvent);
+                document.addEventListener(eventType, (event) => this.invokeGenericHandlers(event));
+                this.currentListeners.set(eventType, this.invokeGenericHandlers);
             }
             
             this.genericEventMap.set(eventType, [handler]);
         }
     }
 
-    public static addKeyDownListener(keyCode: KeyCode, handler: ((event: KeyboardEvent) => void)): void {
-        if (this.keyDownMap.has(keyCode)) {
-            this.keyDownMap.get(keyCode).push(handler);
+    public static addKeyListener(type: EventType.KeyUp | EventType.KeyDown, keyCodes: KeyCode | KeyCode[], handler: ((event: KeyboardEvent) => void)): void {
+        if (!this.currentListeners.has(type)) {
+            document.addEventListener(type, (event) => this.invokeKeyHandlers(event));
+            this.currentListeners.set(type, (event) => this.invokeKeyHandlers(event as KeyboardEvent));
         }
-        else {
-            if (!this.currentListeners.has(EventType.KeyDown)) {
-                document.addEventListener(EventType.KeyDown, (event) => this.invokeKeyDown(event));
-                this.currentListeners.set(EventType.KeyDown, this.invokeKeyDown);
+
+        if (!this.keyMap.has(type)) {
+            this.keyMap.set(type, new Map<KeyCode, ((event: KeyboardEvent) => void)[]>());
+        }
+
+        if (typeof keyCodes === 'number') {
+            keyCodes = [keyCodes];
+        }
+        
+        for (let key of keyCodes) {
+            if (this.keyMap.get(type).has(key)) {
+                this.keyMap.get(type).get(key).push(handler);
             }
-
-            this.keyDownMap.set(keyCode, [handler]);
-        }
-    }
-
-    public static addKeyUpListener(keyCode: KeyCode, handler: ((event: KeyboardEvent) => void)): void {
-        if (this.keyUpMap.has(keyCode)) {
-            this.keyUpMap.get(keyCode).push(handler);
-        }
-        else {
-            if (!this.currentListeners.has(EventType.KeyUp)) {
-                document.addEventListener(EventType.KeyUp, (event) => this.invokeKeyUp(event));
-                this.currentListeners.set(EventType.KeyUp, this.invokeKeyUp);
+            else {
+                this.keyMap.get(type).set(key, [handler]);
             }
-
-            this.keyUpMap.set(keyCode, [handler]);
         }
     }
 
@@ -94,8 +90,7 @@ export abstract class Input {
     }
 
     public static clearListeners(): void {
-        this.keyDownMap.clear();
-        this.keyUpMap.clear();
+        this.keyMap.clear();
         this.genericEventMap.clear();
         this.clickMap.clear();
         
@@ -112,27 +107,29 @@ export abstract class Input {
         return this._gameCanvas;
     }
 
-    private static invokeGenericEvent(event: Event): void {
+    private static invokeGenericHandlers(event: Event): void {
         if (this.genericEventMap.has(<EventType>event.type)) {
-            console.log('being invoked');
             this.genericEventMap.get(<EventType>event.type).forEach(handler => handler(event));
         }
     }
 
-    private static invokeKeyDown(event: KeyboardEvent): void {
-        if (this.keyDownMap.has(event.keyCode)) {
-            this.keyDownMap.get(event.keyCode).forEach(handler => handler(event));
+    private static invokeKeyHandlers(event: KeyboardEvent): void {
+        const eventType = event.type as EventType.KeyUp | EventType.KeyDown;
+
+        if (eventType === EventType.KeyDown) {
+            this.keyDownSet.add(event.keyCode);
+        }
+        else {
+            this.keyDownSet.delete(event.keyCode);
+        }
+        
+        if (!this.keyMap.has(eventType)) {
+            return;
         }
 
-        this.keyDownSet.add(event.keyCode);
-    }
-
-    private static invokeKeyUp(event: KeyboardEvent): void {
-        if (this.keyUpMap.has(event.keyCode)) {
-            this.keyUpMap.get(event.keyCode).forEach(handler => handler(event));
+        if (this.keyMap.get(eventType).has(event.keyCode)) {
+            this.keyMap.get(eventType).get(event.keyCode).forEach(handler => handler(event));
         }
-
-        this.keyDownSet.delete(event.keyCode);
     }
 
     private static invokeClick(event: MouseEvent): void {

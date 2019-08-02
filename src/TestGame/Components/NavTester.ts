@@ -6,6 +6,7 @@ import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
 import { GameEngine } from "../../GameEngine/Core/GameEngine";
 import { Input } from "../../GameEngine/Core/Helpers/Input";
 import { ICanvasMouseEvent } from "../../GameEngine/Core/Interfaces/ICanvasMouseEvent";
+import { EventType } from "../../GameEngine/Core/Enums/EventType";
 
 export class NavTester extends Component {
 
@@ -15,7 +16,7 @@ export class NavTester extends Component {
     public constructor(gameObject: GameObject) {
         super(gameObject);
         Input.addClickListener(0, (event) => this.onClick(event));
-        Input.addKeyDownListener(KeyCode.Backspace, (event) => this.onKeyDown(event));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, (event) => this.onKeyDown(event));
     }
 
     public start(): void {

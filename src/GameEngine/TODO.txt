@@ -10,3 +10,4 @@
 - Finish scene idea.
 - Figure out what is keeping references to old objects after switching scenes (maybe event listeners?)
 - Build input class for all event listeners to, if I need to, I can manually remove all listeners when needed.
+- Finish mouseMap in input.

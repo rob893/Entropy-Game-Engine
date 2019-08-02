@@ -9,6 +9,8 @@ import { Animator } from "../../GameEngine/Components/Animator";
 import { Animation } from "../../GameEngine/Core/Helpers/Animation";
 import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
 import { Physics } from "../../GameEngine/Core/Physics/Physics";
+import { Input } from "../../GameEngine/Core/Helpers/Input";
+import { EventType } from "../../GameEngine/Core/Enums/EventType";
 
 
 export class PlayerMotor extends Motor {
@@ -25,10 +27,8 @@ export class PlayerMotor extends Motor {
 
     public constructor(gameObject: GameObject) {
         super(gameObject);
-
-        //document.addEventListener('keydown', () => this.onKeyDown(<KeyboardEvent>event));
-        //document.addEventListener('keyup', () => this.onKeyUp(<KeyboardEvent>event));
-        //document.addEventListener('click', () => this.onClick(<MouseEvent>event));
+        Input.addKeyListener(EventType.KeyDown, [KeyCode.RightArrow, KeyCode.D, KeyCode.LeftArrow, KeyCode.A, KeyCode.Space], (event) => this.onKeyDown(event));
+        Input.addKeyListener(EventType.KeyUp, [KeyCode.RightArrow, KeyCode.D, KeyCode.LeftArrow, KeyCode.A], (event) => this.onKeyUp(event))
         this.moveRightAnimation = new Animation(MovingRightSprite, 4, 1, 0.1);
         this.moveLeftAnimation = new Animation(MovingLeftSprite, 4, 1, 0.1);
     }

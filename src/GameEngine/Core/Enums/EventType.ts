@@ -3,6 +3,8 @@
  * Info gathered from https://developer.mozilla.org/en-US/docs/Web/Events
  */
 export enum EventType {
+    // Keyboard Events
+    
     /** ANY key is pressed */
     KeyDown = 'keydown',
 
@@ -11,6 +13,8 @@ export enum EventType {
 
     /** ANY key except Shift, Fn, CapsLock is in pressed position. (Fired continously.) */
     KeyPress = 'keypress',
+
+    // Mouse Events
 
     /** A pointing device button (ANY non-primary button) has been pressed and released on an element. */
     AuxClick = 'auxclick',
@@ -55,5 +59,38 @@ export enum EventType {
     Select = 'select',
 
     /** A wheel button of a pointing device is rotated in any direction. */
-    Wheel = 'wheel'
+    Wheel = 'wheel',
+
+    // Resource Events
+
+    /** A resource failed to load. */
+    Error = 'error',
+
+    /** The loading of a resource has been aborted. */
+    Abort = 'abort',
+
+    /** A resource and its dependent resources have finished loading. */
+    Load = 'load',
+
+    /** The window, the document and its resources are about to be unloaded. */
+    BeforeUnload = 'beforeunload',
+
+    /** The document or a dependent resource is being unloaded. */
+    Unload = 'unload',
+
+    // Network Events
+
+    /** The browser has gained access to the network. */
+    Online = 'online',
+
+    /** The browser has lost access to the network. */
+    Offline = 'offline',
+
+    // Focus Events
+
+    /** An element has received focus (does not bubble). */
+    Focus = 'focus',
+
+    /** An element has lost focus (does not bubble). */
+    Blur = 'blur'
 }
