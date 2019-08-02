@@ -98,9 +98,9 @@ export abstract class Input {
         this.keyUpMap.clear();
         this.genericEventMap.clear();
         this.clickMap.clear();
-        console.log(this.currentListeners);
+        
         this.currentListeners.forEach((handler, eventType) => {
-            this.gameCanvas.removeEventListener(eventType, handler);
+            document.removeEventListener(eventType, handler);
         });
     }
 
