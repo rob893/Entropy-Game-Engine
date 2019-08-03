@@ -1,7 +1,7 @@
 {
-    "name": "mario-clone",
+    "name": "typescript-game-engine",
     "version": "1.0.0",
-    "description": "Mario Clone made with custom engine",
+    "description": "Custom 2D game engine written in TypeScript.",
     "private": true,
     "directories": {
         "test": "test"
@@ -9,17 +9,17 @@
     "dependencies": {},
     "devDependencies": {
         "@types/html-webpack-plugin": "^3.2.1",
-        "@types/jest": "^24.0.15",
+        "@types/jest": "^24.0.16",
         "clean-webpack-plugin": "^3.0.0",
-        "file-loader": "^4.0.0",
+        "file-loader": "^4.1.0",
         "html-webpack-plugin": "^3.2.0",
         "jest": "^24.8.0",
         "jest-matcher-deep-close-to": "^1.3.0",
         "ts-jest": "^24.0.2",
         "ts-loader": "^6.0.4",
         "typescript": "^3.5.3",
-        "webpack": "^4.35.3",
-        "webpack-cli": "^3.3.5",
+        "webpack": "^4.39.1",
+        "webpack-cli": "^3.3.6",
         "webpack-dev-server": "^3.7.2",
         "webpack-merge": "^4.2.1"
     },
@@ -31,7 +31,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/rob893/Mario-Clone.git"
+        "url": "git+https://github.com/rob893/TypeScript-Game-Engine.git"
     },
     "keywords": [
         "game",
@@ -41,7 +41,7 @@
     "author": "Robert Herber",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/rob893/Mario-Clone/issues"
+        "url": "https://github.com/rob893/TypeScript-Game-Engine/issues"
     },
-    "homepage": "https://github.com/rob893/Mario-Clone#readme"
+    "homepage": "https://github.com/rob893/TypeScript-Game-Engine#readme"
 }
