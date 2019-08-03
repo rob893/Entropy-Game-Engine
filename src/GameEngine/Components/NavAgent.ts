@@ -7,6 +7,8 @@ import { WeightedGraphCell } from '../Core/Interfaces/WeightedGraphCell';
 import { GameEngine } from '../Core/GameEngine';
 import { AStarSearch } from '../Core/Helpers/AStarSearch';
 import { GameObject } from '../Core/GameObject';
+import { LiteEvent } from '../Core/Helpers/LiteEvent';
+import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 
 export class NavAgent extends Component implements RenderableGizmo {
     
@@ -16,6 +18,8 @@ export class NavAgent extends Component implements RenderableGizmo {
     private nextPosition: Vector2 = null;
     private pathIndex: number = 0;
     private navGrid: NavGrid<WeightedGraphCell> = null;
+    private readonly onChangeDirection = new LiteEvent<Vector2>();
+    private readonly onPathComplete = new LiteEvent<Vector2>();
 
 
     public constructor(gameObject: GameObject) {
@@ -30,6 +34,22 @@ export class NavAgent extends Component implements RenderableGizmo {
         }
 
         this.navGrid = GameEngine.instance.terrain.navGrid;
+    }
+
+    public get onDirectionChanged(): CustomLiteEvent<Vector2> {
+        return this.onChangeDirection.expose();
+    }
+
+    public get onPathCompleted(): CustomLiteEvent<Vector2> {
+        return this.onPathComplete.expose();
+    }
+
+    public get heading(): Vector2 {
+        if (this.nextPosition === null) {
+            return null;
+        }
+
+        return Vector2.direction(this.transform.position, this.nextPosition);
     }
 
     public get hasPath(): boolean {
@@ -58,6 +78,7 @@ export class NavAgent extends Component implements RenderableGizmo {
             }
 
             this.nextPosition = this.path[this.pathIndex];
+            this.onChangeDirection.trigger(this.heading);
         }
 
         this.transform.translate(Vector2.direction(this.transform.position, this.nextPosition).multiplyScalar(this.speed));
@@ -75,6 +96,7 @@ export class NavAgent extends Component implements RenderableGizmo {
     }
 
     public resetPath(): void {
+        this.onPathComplete.trigger();
         this.path = null;
         this.nextPosition = null;
         this.pathIndex = 0;

@@ -1,6 +1,6 @@
 import { CollisionDetector } from '../Interfaces/CollisionDetector';
 import { RectangleCollider } from '../../Components/RectangleCollider';
-import { CustomEvent } from '../Interfaces/CustomEvent';
+import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
 import { LiteEvent } from '../Helpers/LiteEvent';
 import { Vector2 } from '../Helpers/Vector2';
 
@@ -28,7 +28,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         return this._colliders;
     }
 
-    public get onCollisionDetected(): CustomEvent<RectangleCollider> {
+    public get onCollisionDetected(): CustomLiteEvent<RectangleCollider> {
         return this._onCollisionDetected.expose();
     }
 

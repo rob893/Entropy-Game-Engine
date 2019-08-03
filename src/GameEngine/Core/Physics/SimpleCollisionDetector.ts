@@ -1,5 +1,5 @@
 import { CollisionDetector } from '../Interfaces/CollisionDetector';
-import { CustomEvent } from '../Interfaces/CustomEvent';
+import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
 import { RectangleCollider } from '../../Components/RectangleCollider';
 import { LiteEvent } from '../Helpers/LiteEvent';
 
@@ -17,7 +17,7 @@ export class SimpleCollisionDetector implements CollisionDetector {
         return this._colliders;
     }
 
-    public get onCollisionDetected(): CustomEvent<RectangleCollider> {
+    public get onCollisionDetected(): CustomLiteEvent<RectangleCollider> {
         return this._onCollisionDetected.expose();
     }
 

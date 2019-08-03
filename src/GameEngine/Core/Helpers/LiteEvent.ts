@@ -1,6 +1,6 @@
-import { CustomEvent } from '../Interfaces/CustomEvent';
+import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
 
-export class LiteEvent<T> implements CustomEvent<T> {
+export class LiteEvent<T> implements CustomLiteEvent<T> {
 
     private handlers: { (data?: T, moreData?: T): void }[] = [];
 
@@ -17,7 +17,7 @@ export class LiteEvent<T> implements CustomEvent<T> {
         this.handlers.slice(0).forEach(h => h(data, moreData));
     }
 
-    public expose(): CustomEvent<T> {
+    public expose(): CustomLiteEvent<T> {
         return this;
     }
 }

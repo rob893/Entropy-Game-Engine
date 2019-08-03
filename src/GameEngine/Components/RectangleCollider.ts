@@ -3,7 +3,7 @@ import { Component } from './Component';
 import { Transform } from './Transform';
 import { LiteEvent } from '../Core/Helpers/LiteEvent';
 import { GameObject } from '../Core/GameObject';
-import { CustomEvent } from '../Core/Interfaces/CustomEvent';
+import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 import { RenderableGizmo } from '../Core/Interfaces/RenderableGizmo';
 import { Rigidbody } from './Rigidbody';
 import { Color } from '../Core/Enums/Color';
@@ -93,7 +93,7 @@ export class RectangleCollider extends Component implements RenderableGizmo {
         return false;
     }
 
-    public get onCollided(): CustomEvent<RectangleCollider> { 
+    public get onCollided(): CustomLiteEvent<RectangleCollider> { 
         return this._onCollided.expose(); 
     }
 

@@ -2,7 +2,7 @@ import { Component } from './Component';
 import { Vector2 } from '../Core/Helpers/Vector2';
 import { LiteEvent } from '../Core/Helpers/LiteEvent';
 import { GameObject } from '../Core/GameObject';
-import { CustomEvent } from '../Core/Interfaces/CustomEvent';
+import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 
 export class Transform extends Component {
 
@@ -22,7 +22,7 @@ export class Transform extends Component {
         this.scale = Vector2.one;
     }
 
-    public get onMoved(): CustomEvent<void> { 
+    public get onMoved(): CustomLiteEvent<void> { 
         return this.onMove.expose(); 
     }
 
