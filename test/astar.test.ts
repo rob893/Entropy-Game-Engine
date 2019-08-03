@@ -2,11 +2,10 @@ import { AStarSearch } from '../src/GameEngine/Core/Helpers/AStarSearch';
 import { NavGrid } from '../src/GameEngine/Core/Helpers/NavGrid';
 import {toBeDeepCloseTo, toMatchCloseTo} from 'jest-matcher-deep-close-to';
 import { Vector2 } from '../src/GameEngine/Core/Helpers/Vector2';
-import { IWeightedGraph } from '../src/GameEngine/Core/Interfaces/IWeightedGraph';
-import { IWeightedGraphCell } from '../src/GameEngine/Core/Interfaces/IWeightedGraphCell';
+
 expect.extend({toBeDeepCloseTo, toMatchCloseTo});
 
-test('Test the a star path finding', () => {
+test('Test the a star path finding', (): void => {
     const graph = new NavGrid(1);
 
     let graphVisual = '';
@@ -14,7 +13,7 @@ test('Test the a star path finding', () => {
         for (let x = 0; x < 10; x++) {
             if (x === 4 && y < 7 && y > 2) {
                 graph.addCell({ passable: false, weight: 0, position: new Vector2(x, y) });
-                graphVisual += 'X '
+                graphVisual += 'X ';
             }
             else {
                 graph.addCell({ passable: true, weight: 0, position: new Vector2(x, y) });

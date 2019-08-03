@@ -7,10 +7,10 @@ module.exports = {
     module: {
         rules: [
             {
-                enforce: "pre",
+                enforce: 'pre',
                 test: /\.(js|tsx?)$/,
                 exclude: /node_modules/,
-                loader: "eslint-loader"
+                loader: 'eslint-loader'
             },
             {
                 test: /\.tsx?$/,
@@ -52,9 +52,9 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: "TypeScript Game Engine",
-            template: "src/index.html",
-            favicon: "src/TestGame/Assets/Images/favicon.ico",
+            title: 'TypeScript Game Engine',
+            template: 'src/index.html',
+            favicon: 'src/TestGame/Assets/Images/favicon.ico',
             
         })
     ]

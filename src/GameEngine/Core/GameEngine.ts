@@ -88,7 +88,7 @@ export class GameEngine {
         }
 
         this.endCurrentScene();
-        Input.addEventListener(EventType.Click, () => console.log('test'));
+        Input.addEventListener(EventType.Click, (): void => console.log('test'));
         const scene = this.scenes.get(loadOrderOrName);
 
         await this.initializeScene(scene.getStartingGameObjects(), scene.getSkybox(this.gameCanvas), scene.terrainSpec);

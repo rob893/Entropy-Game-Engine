@@ -33,8 +33,8 @@
         "test-watch": "jest --watch",
         "dev": "webpack-dev-server --open --config webpack.dev.js",
         "build": "webpack --config webpack.prod.js",
-        "lint": "./node_modules/.bin/eslint src/**/*/*.ts",
-        "lint-fix": "./node_modules/.bin/eslint --fix src/**/*/*.ts"
+        "lint": "./node_modules/.bin/eslint src/**/*.ts test/**/*.ts",
+        "lint-fix": "./node_modules/.bin/eslint --fix src/**/*.ts"
     },
     "repository": {
         "type": "git",
