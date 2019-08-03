@@ -1,8 +1,8 @@
-import { ICollisionResolver } from "../Interfaces/ICollisionResolver";
-import { RectangleCollider } from "../../Components/RectangleCollider";
+import { CollisionResolver } from '../Interfaces/CollisionResolver';
+import { RectangleCollider } from '../../Components/RectangleCollider';
 
-export class CollisionResolver implements ICollisionResolver {
-    resolveCollisions(colliderA: RectangleCollider, colliderB: RectangleCollider): void {
+export class SimpleCollisionResolver implements CollisionResolver {
+    public resolveCollisions(colliderA: RectangleCollider, colliderB: RectangleCollider): void {
         // if (colliderA.attachedRigidbody !== null && !colliderA.attachedRigidbody.isKinomatic) {
         //     //if (colliderA.gameObject.id === 'player') {debugger}
         //     while (colliderA.bottomLeft.y >= colliderB.topLeft.y) {

@@ -1,25 +1,20 @@
-import { Rigidbody } from "../Components/Rigidbody";
-import { RectangleCollider } from "../Components/RectangleCollider";
-import { Vector2 } from "./Helpers/Vector2";
-import { Geometry } from "./Helpers/Geometry";
-import { ICollisionDetector } from "./Interfaces/ICollisionDetector";
-import { SpatialHashCollisionDetector } from "./Physics/SpatialHashCollisionDetector";
-import { SimpleCollisionDetector } from "./Physics/SimpleCollisionDetector";
-import { ICollisionResolver } from "./Interfaces/ICollisionResolver";
-import { CollisionResolver } from "./Physics/CollisionResolver";
+import { Rigidbody } from '../Components/Rigidbody';
+import { RectangleCollider } from '../Components/RectangleCollider';
+import { CollisionDetector } from './Interfaces/CollisionDetector';
+import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDetector';
+import { CollisionResolver } from './Interfaces/CollisionResolver';
+import { SimpleCollisionResolver } from './Physics/CollisionResolver';
 
 export class PhysicsEngine {
 
     public gravity: number;
 
     private readonly rigidbodies: Rigidbody[];
-    private readonly gameCanvas: HTMLCanvasElement;
-    private readonly collisionDetector: ICollisionDetector;
-    private readonly collisionResolver: ICollisionResolver;
+    private readonly collisionDetector: CollisionDetector;
+    private readonly collisionResolver: CollisionResolver;
 
 
-    private constructor(gameCanvas: HTMLCanvasElement, collisionDetector: ICollisionDetector, collisionResolver: ICollisionResolver) {
-        this.gameCanvas = gameCanvas;
+    private constructor(collisionDetector: CollisionDetector, collisionResolver: CollisionResolver) {
         this.rigidbodies = [];
         this.gravity = 665;
         this.collisionDetector = collisionDetector;
@@ -27,11 +22,11 @@ export class PhysicsEngine {
         this.collisionDetector.onCollisionDetected.add((colliderA, colliderB) => this.resolveCollisions(colliderA, colliderB));
     }
 
-    public static buildPhysicsEngine(gameCanvas: HTMLCanvasElement) : PhysicsEngine {
-        let collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, 100);
-        let collisionResolver = new CollisionResolver();
+    public static buildPhysicsEngine(gameCanvas: HTMLCanvasElement): PhysicsEngine {
+        const collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, 100);
+        const collisionResolver = new SimpleCollisionResolver();
 
-        const engine = new PhysicsEngine(gameCanvas, collisionDetector, collisionResolver);
+        const engine = new PhysicsEngine(collisionDetector, collisionResolver);
         
         return engine;
     }

@@ -1,26 +1,26 @@
-import { Motor } from "./Motor";
-import { GameObject } from "../../GameEngine/Core/GameObject";
-import { GameEngine } from "../../GameEngine/Core/GameEngine";
-import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
-import { Transform } from "../../GameEngine/Components/Transform";
-import { Animation } from "../../GameEngine/Core/Helpers/Animation";
-import { Animator } from "../../GameEngine/Components/Animator";
-import TrumpRun from "../../assets/images/trump_run.png";
-import TrumpIdle from "../../assets/images/trump_idle.png";
-import YouSuckSound from "../../assets/sounds/suck.mp3";
-import { AudioSource } from "../../GameEngine/Components/AudioSource";
-import { IDamageable } from "../Interfaces/IDamageable";
-import { PlayerHealth } from "./PlayerHealth";
-import { Time } from "../../GameEngine/Core/Time";
+import { Motor } from './Motor';
+import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
+import { Transform } from '../../GameEngine/Components/Transform';
+import { Animation } from '../../GameEngine/Core/Helpers/Animation';
+import { Animator } from '../../GameEngine/Components/Animator';
+import TrumpRun from '../../assets/images/trump_run.png';
+import TrumpIdle from '../../assets/images/trump_idle.png';
+import YouSuckSound from '../../assets/sounds/suck.mp3';
+import { AudioSource } from '../../GameEngine/Components/AudioSource';
+import { Damageable } from '../Interfaces/Damageable';
+import { PlayerHealth } from './PlayerHealth';
+import { Time } from '../../GameEngine/Core/Time';
 
 export class TrumpMotor extends Motor {
     
     private player: GameObject;
     private playerTransform: Transform;
-    private playerHealth: IDamageable;
-    private idleAnimation: Animation;
-    private runRightAnimation: Animation;
-    private runLeftAnimation: Animation;
+    private playerHealth: Damageable;
+    private readonly idleAnimation: Animation;
+    private readonly runRightAnimation: Animation;
+    private readonly runLeftAnimation: Animation;
     private animator: Animator;
     private audioSource: AudioSource;
     private isMovingLeft: boolean = false;
@@ -47,7 +47,7 @@ export class TrumpMotor extends Motor {
     }
 
     protected move(): void {
-        let direction = Vector2.direction(this.transform.position, this.playerTransform.position);
+        const direction = Vector2.direction(this.transform.position, this.playerTransform.position);
         direction.y = 0;
 
         if (direction.x < -0.1 && !this.isMovingLeft) {

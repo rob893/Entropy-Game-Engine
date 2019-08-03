@@ -1,8 +1,7 @@
-import { Motor } from "./Motor";
-import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
-import { GameObject } from "../../GameEngine/Core/GameObject";
-import { GameEngine } from "../../GameEngine/Core/GameEngine";
-import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
+import { Motor } from './Motor';
+import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
+import { GameObject } from '../../GameEngine/Core/GameObject';
+import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 
 export class BallMotor extends Motor {
 
@@ -24,21 +23,6 @@ export class BallMotor extends Motor {
         this.collider.onCollided.add((other: RectangleCollider) => this.handleCollision(other));
     }
 
-    private handleCollision(other: RectangleCollider): void {
-        if (this.ready) {
-            this.ready = false;
-            this.speed += 0.125;
-            let direction = Vector2.direction(other.transform.position, this.transform.position);
-            
-            this.xVelocity = direction.x;
-            this.yVelocity = direction.y;
-
-            setTimeout(() => {
-                this.ready = true;
-            }, 15);
-        }
-    }
-
     protected handleOutOfBounds(): void {
         if(this.transform.position.y <= 0) {
             this.yVelocity = Math.abs(this.yVelocity);
@@ -57,6 +41,21 @@ export class BallMotor extends Motor {
 
     protected move(): void {
         this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
+    }
+
+    private handleCollision(other: RectangleCollider): void {
+        if (this.ready) {
+            this.ready = false;
+            this.speed += 0.125;
+            const direction = Vector2.direction(other.transform.position, this.transform.position);
+            
+            this.xVelocity = direction.x;
+            this.yVelocity = direction.y;
+
+            setTimeout(() => {
+                this.ready = true;
+            }, 15);
+        }
     }
 
     private reset(): void {

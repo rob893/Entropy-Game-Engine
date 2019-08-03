@@ -1,29 +1,29 @@
-import { Component } from "../../GameEngine/Components/Component";
-import { NavAgent } from "../../GameEngine/Components/NavAgent";
-import { Key } from "../../GameEngine/Core/Enums/Key";
-import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
-import { GameEngine } from "../../GameEngine/Core/GameEngine";
-import { Input } from "../../GameEngine/Core/Helpers/Input";
+import { Component } from '../../GameEngine/Components/Component';
+import { NavAgent } from '../../GameEngine/Components/NavAgent';
+import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
+import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
+import { Input } from '../../GameEngine/Core/Helpers/Input';
+import { EventType } from '../../GameEngine/Core/Enums/EventType';
 export class NavTester extends Component {
     constructor(gameObject) {
         super(gameObject);
         Input.addClickListener(0, (event) => this.onClick(event));
-        Input.addKeydownListener(Key.Backspace, (event) => this.onKeyDown(event));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, (event) => this.onKeyDown(event));
     }
     start() {
         this.navAgent = this.gameObject.getComponent(NavAgent);
     }
     onKeyDown(event) {
-        if (event.keyCode === Key.Space) {
+        if (event.keyCode === KeyCode.Space) {
             this.navAgent.setDestination(new Vector2(400, 300));
         }
-        else if (event.keyCode === Key.Backspace) {
+        else if (event.keyCode === KeyCode.Backspace) {
             this.navAgent.resetPath();
             this.transform.setPosition(200, 300);
         }
     }
     onClick(event) {
-        this.navAgent.setDestination(GameEngine.instance.getCursorPosition(event));
+        this.navAgent.setDestination(event.cursorPositionOnCanvas);
     }
 }
 //# sourceMappingURL=NavTester.js.map

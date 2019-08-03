@@ -11,23 +11,23 @@ export class Sprite {
         this.spriteWidth = spriteWidth;
         this.spriteHeight = spriteHeight;
 
-        let spriteSheet = new Image();
+        const spriteSheet = new Image();
         spriteSheet.src = spriteSheetUrl;
         spriteSheet.onload = () => {
-            let canvas = document.createElement('canvas');
+            const canvas = document.createElement('canvas');
                         
             canvas.width = spriteWidth;
             canvas.height = spriteHeight;
 
-            let context = canvas.getContext('2d');
+            const context = canvas.getContext('2d');
             context.drawImage(spriteSheet, locationX, loctationY, spriteWidth, spriteHeight, 0, 0, canvas.width, canvas.height);
-            let image = new Image();
+            const image = new Image();
             image.src = canvas.toDataURL();
             image.onload = () => {
                 this.spriteImage = image;
                 this.isReady = true;
-            }
-        }
+            };
+        };
     }
 
     public get image(): HTMLImageElement {

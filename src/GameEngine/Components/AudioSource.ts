@@ -1,5 +1,5 @@
-import { Component } from "./Component";
-import { GameObject } from "../Core/GameObject";
+import { Component } from './Component';
+import { GameObject } from '../Core/GameObject';
 
 export class AudioSource extends Component {
 
@@ -10,11 +10,11 @@ export class AudioSource extends Component {
     public constructor(gameObject: GameObject, audioURL?: string) {
         super(gameObject);
 
-        let audioClip = new Audio(audioURL);
+        const audioClip = new Audio(audioURL);
         audioClip.onloadeddata = () => {
             this.audioClip = audioClip;
             this.ready = true;
-        }
+        };
     }
 
     public get isPlaying(): boolean {
@@ -46,16 +46,16 @@ export class AudioSource extends Component {
 
     public setClip(audioURL: string): void {
         this.ready = false;
-        let newClip = new Audio(audioURL);
+        const newClip = new Audio(audioURL);
         newClip.onloadeddata = () => {
             this.audioClip = newClip;
             this.ready = true;
-        }
+        };
     }
 
     public async play(): Promise<void> {
         if (!this.ready) {
-            setTimeout(() => this.play(), 250);
+            setTimeout(async () => await this.play(), 250);
             return;
         }
 

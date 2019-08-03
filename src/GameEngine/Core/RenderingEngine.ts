@@ -1,19 +1,19 @@
-import { IRenderable } from "./Interfaces/IRenderable";
-import { IRenderableGizmo } from "./Interfaces/IRenderableGizmo";
-import { IRenderableGUI } from "./Interfaces/IRenderableGUI";
-import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
-import { Terrain } from "./Helpers/Terrain";
+import { Renderable } from './Interfaces/Renderable';
+import { RenderableGizmo } from './Interfaces/RenderableGizmo';
+import { RenderableGUI } from './Interfaces/RenderableGUI';
+import { RenderableBackground } from './Interfaces/RenderableBackground';
+import { Terrain } from './Helpers/Terrain';
 
 
 export class RenderingEngine {
 
     public renderGizmos: boolean;
 
-    private _background: IRenderableBackground;
+    private _background: RenderableBackground;
     private _terrain: Terrain;
-    private renderableObjects: IRenderable[];
-    private renderableGizmos: IRenderableGizmo[];
-    private renderableGUIElements: IRenderableGUI[];
+    private readonly renderableObjects: Renderable[];
+    private readonly renderableGizmos: RenderableGizmo[];
+    private readonly renderableGUIElements: RenderableGUI[];
     private readonly _canvasContext: CanvasRenderingContext2D;
     
 
@@ -30,7 +30,7 @@ export class RenderingEngine {
         this._terrain = terrain;
     }
 
-    public set background(background: IRenderableBackground) {
+    public set background(background: RenderableBackground) {
         this._background = background;
     }
 
@@ -38,15 +38,15 @@ export class RenderingEngine {
         return this._canvasContext;
     }
 
-    public addRenderableObject(object: IRenderable): void {
+    public addRenderableObject(object: Renderable): void {
         this.renderableObjects.push(object);
     }
 
-    public addRenderableGizmo(gizmo: IRenderableGizmo): void {
+    public addRenderableGizmo(gizmo: RenderableGizmo): void {
         this.renderableGizmos.push(gizmo);
     }
 
-    public addRenderableGUIElement(guiElement: IRenderableGUI) {
+    public addRenderableGUIElement(guiElement: RenderableGUI): void {
         this.renderableGUIElements.push(guiElement);
     }
 
@@ -57,21 +57,21 @@ export class RenderingEngine {
             this._terrain.renderBackground(this._canvasContext);
         }
 
-        for (let object of this.renderableObjects) {
+        for (const object of this.renderableObjects) {
             if (object.enabled) {
                 object.render(this._canvasContext);
             }
         }
 
         if (this.renderGizmos) {
-            for (let gizmo of this.renderableGizmos) {
+            for (const gizmo of this.renderableGizmos) {
                 if (gizmo.enabled) {
                     gizmo.renderGizmo(this._canvasContext);
                 }
             }
         }
 
-        for (let guiElement of this.renderableGUIElements) {
+        for (const guiElement of this.renderableGUIElements) {
             if (guiElement.enabled) {
                 guiElement.renderGUI(this._canvasContext);
             }

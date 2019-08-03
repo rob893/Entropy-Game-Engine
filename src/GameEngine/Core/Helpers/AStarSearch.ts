@@ -1,11 +1,11 @@
-import { Vector2 } from "./Vector2";
-import { IWeightedGraph } from "../Interfaces/IWeightedGraph";
-import { PriorityQueue } from "./PriorityQueue";
-import { IWeightedGraphCell } from "../Interfaces/IWeightedGraphCell";
+import { Vector2 } from './Vector2';
+import { WeightedGraph } from '../Interfaces/WeightedGraph';
+import { PriorityQueue } from './PriorityQueue';
+import { WeightedGraphCell } from '../Interfaces/WeightedGraphCell';
 
 export class AStarSearch {
 
-    public static findPath(graph: IWeightedGraph<IWeightedGraphCell>, start: Vector2, goal: Vector2): Vector2[] | null {
+    public static findPath(graph: WeightedGraph<WeightedGraphCell>, start: Vector2, goal: Vector2): Vector2[] | null {
         if (graph.isUnpassable(goal)) {
             return null;
         }
@@ -33,7 +33,7 @@ export class AStarSearch {
                 return this.constructPath(cameFrom, current, start, originalGoal);
             }
 
-            for (let next of graph.neighbors(current)) {
+            for (const next of graph.neighbors(current)) {
                 const newCost = costSoFar.get(current) + graph.cost(current, next.position);
 
                 if (!costSoFar.has(next.position) || newCost < costSoFar.get(next.position)) {

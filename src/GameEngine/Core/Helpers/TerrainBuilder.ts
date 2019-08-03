@@ -1,13 +1,13 @@
-import { ISpriteData } from "../Interfaces/ISpriteData";
-import { NavGrid } from "./NavGrid";
-import { Vector2 } from "./Vector2";
-import { Terrain } from "./Terrain";
-import { ITerrainSpec } from "../Interfaces/ITerrainSpec";
+import { SpriteData } from '../Interfaces/SpriteData';
+import { NavGrid } from './NavGrid';
+import { Vector2 } from './Vector2';
+import { Terrain } from './Terrain';
+import { TerrainSpec } from '../Interfaces/TerrainSpec';
 
 export class TerrainBuilder {
 
-    private builderMap: Map<HTMLImageElement, Map<string, ISpriteData[]>> = new Map<HTMLImageElement, Map<string, ISpriteData[]>>();
-    private spriteSheetSet: Set<string> = new Set<string>();
+    private readonly builderMap: Map<HTMLImageElement, Map<string, SpriteData[]>> = new Map<HTMLImageElement, Map<string, SpriteData[]>>();
+    private readonly spriteSheetSet: Set<string> = new Set<string>();
     private readonly context: CanvasRenderingContext2D;
     private readonly canvas: HTMLCanvasElement;
     private currentSpriteSheet: HTMLImageElement;
@@ -20,7 +20,7 @@ export class TerrainBuilder {
         this.context = this.canvas.getContext('2d');
     }
 
-    public async buildTerrain(terrainSpec: ITerrainSpec): Promise<Terrain> {
+    public async buildTerrain(terrainSpec: TerrainSpec): Promise<Terrain> {
 
         await this.using(terrainSpec.spriteSheetUrl);
 
@@ -56,7 +56,7 @@ export class TerrainBuilder {
             image.src = this.canvas.toDataURL();
             image.onload = () => {
                 resolve(new Terrain(image, navGrid, []));
-            }
+            };
         });
     }
 
@@ -68,13 +68,13 @@ export class TerrainBuilder {
         return new Promise(resolve => {
             this.spriteSheetSet.add(spriteSheet);
         
-            let spriteSheetImg = new Image();
+            const spriteSheetImg = new Image();
             spriteSheetImg.src = spriteSheet;
             spriteSheetImg.onload = () => {
-                this.builderMap.set(spriteSheetImg, new Map<string, ISpriteData[]>());
+                this.builderMap.set(spriteSheetImg, new Map<string, SpriteData[]>());
                 this.currentSpriteSheet = spriteSheetImg;
                 resolve(this);
-            }
+            };
         });
     }
 }

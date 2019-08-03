@@ -1,33 +1,33 @@
-import { Motor } from "./Motor";
-import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
-import { Key } from "../../GameEngine/Core/Enums/Key";
-import { Rigidbody } from "../../GameEngine/Components/Rigidbody";
-import MovingRightSprite from "../Assets/Images/mario.png";
-import MovingLeftSprite from "../Assets/Images/marioLeft.png";
-import { Animator } from "../../GameEngine/Components/Animator";
-import { Animation } from "../../GameEngine/Core/Helpers/Animation";
-import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
-import { Physics } from "../../GameEngine/Core/Physics/Physics";
+import { Motor } from './Motor';
+import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
+import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
+import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
+import MovingRightSprite from '../Assets/Images/mario.png';
+import MovingLeftSprite from '../Assets/Images/marioLeft.png';
+import { Animator } from '../../GameEngine/Components/Animator';
+import { Animation } from '../../GameEngine/Core/Helpers/Animation';
+import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
+import { Input } from '../../GameEngine/Core/Helpers/Input';
+import { EventType } from '../../GameEngine/Core/Enums/EventType';
 export class PlayerMotor extends Motor {
     constructor(gameObject) {
         super(gameObject);
         this.movingRight = false;
         this.movingLeft = false;
         this.jumping = false;
+        Input.addKeyListener(EventType.KeyDown, [KeyCode.RightArrow, KeyCode.D, KeyCode.LeftArrow, KeyCode.A, KeyCode.Space], (event) => this.onKeyDown(event));
+        Input.addKeyListener(EventType.KeyUp, [KeyCode.RightArrow, KeyCode.D, KeyCode.LeftArrow, KeyCode.A], (event) => this.onKeyUp(event));
         this.moveRightAnimation = new Animation(MovingRightSprite, 4, 1, 0.1);
         this.moveLeftAnimation = new Animation(MovingLeftSprite, 4, 1, 0.1);
     }
     start() {
         super.start();
         this.collider = this.gameObject.getComponent(RectangleCollider);
-        this.collider.onCollided.add((other) => this.handleCollision(other));
         this.rigidBody = this.gameObject.getComponent(Rigidbody);
         this.animator = this.gameObject.getComponent(Animator);
     }
     get isMoving() {
         return this.xVelocity !== 0 || this.yVelocity !== 0;
-    }
-    handleCollision(other) {
     }
     handleOutOfBounds() {
         if (this.transform.position.y <= 0) {
@@ -68,29 +68,26 @@ export class PlayerMotor extends Motor {
         this.rigidBody.resetForce();
         this.rigidBody.addForce(Vector2.up.multiplyScalar(400));
     }
-    onClick(event) {
-        let hit = Physics.raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1), Vector2.right, 5000);
-    }
     onKeyDown(event) {
-        if (event.keyCode == Key.RightArrow || event.keyCode == Key.D) {
+        if (event.keyCode == KeyCode.RightArrow || event.keyCode == KeyCode.D) {
             this.movingRight = true;
             this.movingLeft = false;
             this.animator.setAnimation(this.moveRightAnimation);
         }
-        else if (event.keyCode == Key.LeftArrow || event.keyCode == Key.A) {
+        else if (event.keyCode == KeyCode.LeftArrow || event.keyCode == KeyCode.A) {
             this.movingRight = false;
             this.movingLeft = true;
             this.animator.setAnimation(this.moveLeftAnimation);
         }
-        if (event.keyCode == Key.Space) {
+        if (event.keyCode == KeyCode.Space) {
             this.jump();
         }
     }
     onKeyUp(event) {
-        if (event.keyCode == Key.RightArrow || event.keyCode == Key.D) {
+        if (event.keyCode == KeyCode.RightArrow || event.keyCode == KeyCode.D) {
             this.movingRight = false;
         }
-        else if (event.keyCode == Key.LeftArrow || event.keyCode == Key.A) {
+        else if (event.keyCode == KeyCode.LeftArrow || event.keyCode == KeyCode.A) {
             this.movingLeft = false;
         }
     }

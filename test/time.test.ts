@@ -1,6 +1,6 @@
-import { Time } from '../src/GameEngine/Core/Time';
+// import { Time } from '../src/GameEngine/Core/Time';
 
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
+// const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 test('Measure change in time', async () => {
     // Time.start();

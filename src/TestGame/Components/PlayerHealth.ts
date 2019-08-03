@@ -1,9 +1,9 @@
-import { Component } from "../../GameEngine/Components/Component";
-import { IDamageable } from "../Interfaces/IDamageable";
-import { GameObject } from "../../GameEngine/Core/GameObject";
-import { GameManager } from "./GameManager";
+import { Component } from '../../GameEngine/Components/Component';
+import { Damageable } from '../Interfaces/Damageable';
+import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameManager } from './GameManager';
 
-export class PlayerHealth extends Component implements IDamageable {
+export class PlayerHealth extends Component implements Damageable {
 
     private _health: number;
     private _isDead: boolean;

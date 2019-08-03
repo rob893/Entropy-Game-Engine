@@ -1,4 +1,4 @@
-import { Vector2 } from "./Vector2";
+import { Vector2 } from './Vector2';
 
 export abstract class Geometry {
 
@@ -22,7 +22,7 @@ export abstract class Geometry {
      * 2 --> Counterclockwise
      */
     public static orientation(p: Vector2, q: Vector2, r: Vector2): number {
-        let val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+        const val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
 
         if (val === 0) {
             return 0; // colinear 
@@ -37,10 +37,10 @@ export abstract class Geometry {
     public static doIntersect(p1: Vector2, q1: Vector2, p2: Vector2, q2: Vector2): boolean {
         // Find the four orientations needed for general and 
         // special cases 
-        let o1 = this.orientation(p1, q1, p2);
-        let o2 = this.orientation(p1, q1, q2);
-        let o3 = this.orientation(p2, q2, p1);
-        let o4 = this.orientation(p2, q2, q1);
+        const o1 = this.orientation(p1, q1, p2);
+        const o2 = this.orientation(p1, q1, q2);
+        const o3 = this.orientation(p2, q2, p1);
+        const o4 = this.orientation(p2, q2, q1);
 
         // General case 
         if (o1 !== o2 && o3 !== o4) {

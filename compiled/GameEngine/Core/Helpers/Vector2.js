@@ -5,6 +5,73 @@ export class Vector2 {
         this.x = x;
         this.y = y;
     }
+    static fromString(xCommaY) {
+        if (xCommaY.split(',').length < 2) {
+            throw new Error(xCommaY + ' is invalid format. It should be x,y (eg: 5,6)');
+        }
+        const x = Number(xCommaY.split(',')[0]);
+        const y = Number(xCommaY.split(',')[1]);
+        return new Vector2(x, y);
+    }
+    static get up() {
+        return new Vector2(0, -1);
+    }
+    static get down() {
+        return new Vector2(0, 1);
+    }
+    static get left() {
+        return new Vector2(-1, 0);
+    }
+    static get right() {
+        return new Vector2(1, 0);
+    }
+    static get zero() {
+        return new Vector2(0, 0);
+    }
+    static get one() {
+        return new Vector2(1, 1);
+    }
+    static add(leftOperand, rightOperand) {
+        return new Vector2(leftOperand.x + rightOperand.x, leftOperand.y + rightOperand.y);
+    }
+    static subtract(leftOperand, rightOperand) {
+        return new Vector2(leftOperand.x - rightOperand.x, leftOperand.y - rightOperand.y);
+    }
+    static multiply(leftOperand, rightOperand) {
+        return new Vector2(leftOperand.x * rightOperand.x, leftOperand.y * rightOperand.y);
+    }
+    static divide(leftOperand, rightOperand) {
+        return new Vector2(leftOperand.x / rightOperand.x, leftOperand.y / rightOperand.y);
+    }
+    static multiplyScalar(leftOperand, scalar) {
+        return new Vector2(leftOperand.x * scalar, leftOperand.y * scalar);
+    }
+    static divideScalar(leftOperand, scalar) {
+        return new Vector2(leftOperand.x / scalar, leftOperand.y / scalar);
+    }
+    static distance(point1, point2) {
+        const distanceX = point1.x - point2.x;
+        const distanceY = point1.y - point2.y;
+        return Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+    }
+    static distanceSqrd(point1, point2) {
+        const distanceX = point1.x - point2.x;
+        const distanceY = point1.y - point2.y;
+        return (distanceX * distanceX) + (distanceY * distanceY);
+    }
+    static angleInRadians(from, to) {
+        const cos0 = Vector2.dot(from, to) / (from.magnitude * to.magnitude);
+        return Math.acos(cos0);
+    }
+    static angleInDegrees(from, to) {
+        return this.angleInRadians(from, to) * 180 / Math.PI;
+    }
+    static dot(point1, point2) {
+        return (point1.x * point2.x) + (point1.y * point2.y);
+    }
+    static direction(point1, point2) {
+        return new Vector2(point2.x - point1.x, point2.y - point1.y).normalized;
+    }
     get sqrMagnitude() {
         return (this.x * this.x) + (this.y * this.y);
     }
@@ -61,73 +128,6 @@ export class Vector2 {
     }
     toString() {
         return this.x + ',' + this.y;
-    }
-    static fromString(xCommaY) {
-        if (xCommaY.split(',').length < 2) {
-            throw new Error(xCommaY + ' is invalid format. It should be x,y (eg: 5,6)');
-        }
-        const x = Number(xCommaY.split(',')[0]);
-        const y = Number(xCommaY.split(',')[1]);
-        return new Vector2(x, y);
-    }
-    static get up() {
-        return new Vector2(0, -1);
-    }
-    static get down() {
-        return new Vector2(0, 1);
-    }
-    static get left() {
-        return new Vector2(-1, 0);
-    }
-    static get right() {
-        return new Vector2(1, 0);
-    }
-    static get zero() {
-        return new Vector2(0, 0);
-    }
-    static get one() {
-        return new Vector2(1, 1);
-    }
-    static add(leftOperand, rightOperand) {
-        return new Vector2(leftOperand.x + rightOperand.x, leftOperand.y + rightOperand.y);
-    }
-    static subtract(leftOperand, rightOperand) {
-        return new Vector2(leftOperand.x - rightOperand.x, leftOperand.y - rightOperand.y);
-    }
-    static multiply(leftOperand, rightOperand) {
-        return new Vector2(leftOperand.x * rightOperand.x, leftOperand.y * rightOperand.y);
-    }
-    static divide(leftOperand, rightOperand) {
-        return new Vector2(leftOperand.x / rightOperand.x, leftOperand.y / rightOperand.y);
-    }
-    static multiplyScalar(leftOperand, scalar) {
-        return new Vector2(leftOperand.x * scalar, leftOperand.y * scalar);
-    }
-    static divideScalar(leftOperand, scalar) {
-        return new Vector2(leftOperand.x / scalar, leftOperand.y / scalar);
-    }
-    static distance(point1, point2) {
-        let distanceX = point1.x - point2.x;
-        let distanceY = point1.y - point2.y;
-        return Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
-    }
-    static distanceSqrd(point1, point2) {
-        let distanceX = point1.x - point2.x;
-        let distanceY = point1.y - point2.y;
-        return (distanceX * distanceX) + (distanceY * distanceY);
-    }
-    static angleInRadians(from, to) {
-        let cos0 = Vector2.dot(from, to) / (from.magnitude * to.magnitude);
-        return Math.acos(cos0);
-    }
-    static angleInDegrees(from, to) {
-        return this.angleInRadians(from, to) * 180 / Math.PI;
-    }
-    static dot(point1, point2) {
-        return (point1.x * point2.x) + (point1.y * point2.y);
-    }
-    static direction(point1, point2) {
-        return new Vector2(point2.x - point1.x, point2.y - point1.y).normalized;
     }
 }
 //# sourceMappingURL=Vector2.js.map

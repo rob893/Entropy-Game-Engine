@@ -1,5 +1,5 @@
-import { Vector2 } from "./Vector2";
-import { PriorityQueue } from "./PriorityQueue";
+import { Vector2 } from './Vector2';
+import { PriorityQueue } from './PriorityQueue';
 export class AStarSearch {
     static findPath(graph, start, goal) {
         if (graph.isUnpassable(goal)) {
@@ -20,7 +20,7 @@ export class AStarSearch {
             if (current.equals(goal)) {
                 return this.constructPath(cameFrom, current, start, originalGoal);
             }
-            for (let next of graph.neighbors(current)) {
+            for (const next of graph.neighbors(current)) {
                 const newCost = costSoFar.get(current) + graph.cost(current, next.position);
                 if (!costSoFar.has(next.position) || newCost < costSoFar.get(next.position)) {
                     costSoFar.set(next.position, newCost);

@@ -1,31 +1,30 @@
-import { PhysicsEngine } from "./PhysicsEngine";
-import { GameObject } from "./GameObject";
-import { Time } from "./Time";
-import { RenderingEngine } from "./RenderingEngine";
-import { IRenderableBackground } from "./Interfaces/IRenderableBackground";
-import { KeyCode } from "./Enums/KeyCode";
-import { Terrain } from "./Helpers/Terrain";
-import { ITerrainSpec } from "./Interfaces/ITerrainSpec";
-import { TerrainBuilder } from "./Helpers/TerrainBuilder";
-import { Vector2 } from "./Helpers/Vector2";
-import { IScene } from "./Interfaces/IScene";
-import { Input } from "./Helpers/Input";
-import { EventType } from "./Enums/EventType";
+import { PhysicsEngine } from './PhysicsEngine';
+import { GameObject } from './GameObject';
+import { Time } from './Time';
+import { RenderingEngine } from './RenderingEngine';
+import { RenderableBackground } from './Interfaces/RenderableBackground';
+import { KeyCode } from './Enums/KeyCode';
+import { Terrain } from './Helpers/Terrain';
+import { TerrainSpec } from './Interfaces/TerrainSpec';
+import { TerrainBuilder } from './Helpers/TerrainBuilder';
+import { Scene } from './Interfaces/Scene';
+import { Input } from './Helpers/Input';
+import { EventType } from './Enums/EventType';
 
 export class GameEngine {
 
     private static _instance: GameEngine;
 
-    private gameCanvas: HTMLCanvasElement;
+    private readonly gameCanvas: HTMLCanvasElement;
     private _physicsEngine: PhysicsEngine;
     private _renderingEngine: RenderingEngine;
-    private scenes: Map<number | string, IScene> = new Map<number | string, IScene>();
-    private loadedScene: IScene = null;
+    private readonly scenes: Map<number | string, Scene> = new Map<number | string, Scene>();
+    private loadedScene: Scene = null;
     private terrainObject: Terrain = null;
     private gameObjects: GameObject[] = [];
-    private gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
-    private tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
-    private gameObjectNumMap: Map<string, number> = new Map<string, number>();
+    private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
+    private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
+    private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private gameInitialized: boolean = false;
     private gameLoopId: number = null;
     private paused: boolean = false;
@@ -36,10 +35,10 @@ export class GameEngine {
         this._physicsEngine = physicsEngine;
         this._renderingEngine = renderingEngine;
         
-        Input.addKeyListener(EventType.KeyDown, KeyCode.One, () => this.loadScene(1));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, () => this.loadScene(2));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.loadScene(1));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.loadScene(2));
         Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
-        Input.addKeyListener(EventType.KeyDown, KeyCode.UpArrow, () => this.gameCanvas.requestFullscreen());
+        Input.addKeyListener(EventType.KeyDown, KeyCode.UpArrow, async () => await this.gameCanvas.requestFullscreen());
     }
 
     public static get instance(): GameEngine {
@@ -71,8 +70,8 @@ export class GameEngine {
         return this._instance;
     }
 
-    public setScenes(scenes: IScene[]): void {
-        for (let scene of scenes) {
+    public setScenes(scenes: Scene[]): void {
+        for (const scene of scenes) {
             if (this.scenes.has(scene.loadOrder) || this.scenes.has(scene.name)) {
                 console.error('Duplicate scene load orders or name detected ' + scene.loadOrder + ' ' + scene.name);
             }
@@ -97,38 +96,10 @@ export class GameEngine {
         this.startGame();
     }
 
-    private async initializeScene(gameObjects: GameObject[], skybox: IRenderableBackground, terrainSpec: ITerrainSpec = null): Promise<void> {
-        this.setGameObjects(gameObjects);
-        this._renderingEngine.background = skybox;
-
-        if (terrainSpec !== null) {
-            const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
-            const terrain = await terrianBuilder.buildTerrain(terrainSpec);
-            this.terrainObject = terrain;
-            this._renderingEngine.terrain = terrain;
-        }
-
-        this.gameInitialized = true;
-    }
-
-    private startGame(): void {
-
-        if(!this.gameInitialized) {
-            throw new Error("The game is not initialized yet!");
-        }
-
-        Time.start();
-        this.paused = false;
-
-        this.gameObjects.forEach(go => go.start());
-
-        this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
-    }
-
     public instantiate(newGameObject: GameObject): GameObject {
         if (this.gameObjectMap.has(newGameObject.id)) {
-            let originalId = newGameObject.id;
-            newGameObject.id += " Clone(" + this.gameObjectNumMap.get(originalId) + ")";
+            const originalId = newGameObject.id;
+            newGameObject.id += ' Clone(' + this.gameObjectNumMap.get(originalId) + ')';
             this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
         }
         else {
@@ -151,7 +122,7 @@ export class GameEngine {
 
     public getGameObjectById(id: string): GameObject {
         if (!this.gameObjectMap.has(id)) {
-            throw new Error("No GameObject with id of " + id + " exists!");
+            throw new Error('No GameObject with id of ' + id + ' exists!');
         }
 
         return this.gameObjectMap.get(id);
@@ -159,7 +130,7 @@ export class GameEngine {
 
     public getGameObjectWithTag(tag: string): GameObject {
         if (!this.tagMap.has(tag)) {
-            throw new Error("No GameObject with tag of " + tag + " exists!");
+            throw new Error('No GameObject with tag of ' + tag + ' exists!');
         }
 
         return this.tagMap.get(tag)[0];
@@ -167,7 +138,7 @@ export class GameEngine {
 
     public getGameObjectsWithTag(tag: string): GameObject[] {
         if (!this.tagMap.has(tag)) {
-            throw new Error("No GameObject with tag of " + tag + " exists!");
+            throw new Error('No GameObject with tag of ' + tag + ' exists!');
         }
 
         return this.tagMap.get(tag);
@@ -179,7 +150,7 @@ export class GameEngine {
 
     public printGameData(): void {
         console.log(this);
-        console.log("Time since game start " + Time.TotalTime + "s");
+        console.log('Time since game start ' + Time.TotalTime + 's');
         console.log(this._renderingEngine);
         console.log(this.physicsEngine);
         this.gameObjects.forEach(go => console.log(go));
@@ -192,11 +163,11 @@ export class GameEngine {
     private setGameObjects(gameObjects: GameObject[]): void {
         this.gameObjects = gameObjects;
 
-        for (let gameObject of gameObjects) {
+        for (const gameObject of gameObjects) {
 
             if (this.gameObjectMap.has(gameObject.id)) {
-                let originalId = gameObject.id;
-                gameObject.id += " Clone(" + this.gameObjectNumMap.get(originalId) + ")";
+                const originalId = gameObject.id;
+                gameObject.id += ' Clone(' + this.gameObjectNumMap.get(originalId) + ')';
                 this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
             }
             else {
@@ -236,6 +207,34 @@ export class GameEngine {
         this._renderingEngine.renderGizmos = true;
     }
 
+    private async initializeScene(gameObjects: GameObject[], skybox: RenderableBackground, terrainSpec: TerrainSpec = null): Promise<void> {
+        this.setGameObjects(gameObjects);
+        this._renderingEngine.background = skybox;
+
+        if (terrainSpec !== null) {
+            const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
+            const terrain = await terrianBuilder.buildTerrain(terrainSpec);
+            this.terrainObject = terrain;
+            this._renderingEngine.terrain = terrain;
+        }
+
+        this.gameInitialized = true;
+    }
+
+    private startGame(): void {
+
+        if(!this.gameInitialized) {
+            throw new Error('The game is not initialized yet!');
+        }
+
+        Time.start();
+        this.paused = false;
+
+        this.gameObjects.forEach(go => go.start());
+
+        this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
+    }
+
     private update(): void {
         if (this.paused) {
             return;
@@ -244,7 +243,7 @@ export class GameEngine {
         Time.updateTime();
         this.physicsEngine.updatePhysics();
         
-        for (let gameObject of this.gameObjects) {
+        for (const gameObject of this.gameObjects) {
             if (gameObject.enabled) {
                 gameObject.update();
             }

@@ -1,8 +1,8 @@
-import { IWeightedGraph } from "../Interfaces/IWeightedGraph";
-import { Vector2 } from "./Vector2";
-import { IWeightedGraphCell } from "../Interfaces/IWeightedGraphCell";
+import { WeightedGraph } from '../Interfaces/WeightedGraph';
+import { Vector2 } from './Vector2';
+import { WeightedGraphCell } from '../Interfaces/WeightedGraphCell';
 
-export class NavGrid<T extends IWeightedGraphCell> implements IWeightedGraph<T> {
+export class NavGrid<T extends WeightedGraphCell> implements WeightedGraph<T> {
     
     public readonly cellSize: number;
     
@@ -26,7 +26,7 @@ export class NavGrid<T extends IWeightedGraphCell> implements IWeightedGraph<T> 
     }
 
     public *neighbors(id: Vector2): Iterable<T> {
-        for (let direction of this.directions) {
+        for (const direction of this.directions) {
             const key = this.getMapKey(id.x + direction.x, id.y + direction.y);
             
             if (!this.unpassableCells.has(key) && this.cells.has(key)) {

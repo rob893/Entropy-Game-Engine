@@ -1,12 +1,11 @@
-import { Component } from "../../GameEngine/Components/Component";
-import { GameObject } from "../../GameEngine/Core/GameObject";
-import { NavAgent } from "../../GameEngine/Components/NavAgent";
-import { KeyCode } from "../../GameEngine/Core/Enums/KeyCode";
-import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
-import { GameEngine } from "../../GameEngine/Core/GameEngine";
-import { Input } from "../../GameEngine/Core/Helpers/Input";
-import { ICanvasMouseEvent } from "../../GameEngine/Core/Interfaces/ICanvasMouseEvent";
-import { EventType } from "../../GameEngine/Core/Enums/EventType";
+import { Component } from '../../GameEngine/Components/Component';
+import { GameObject } from '../../GameEngine/Core/GameObject';
+import { NavAgent } from '../../GameEngine/Components/NavAgent';
+import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
+import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
+import { Input } from '../../GameEngine/Core/Helpers/Input';
+import { CanvasMouseEvent } from '.../../GameEngine/Core/Interfaces/CanvasMouseEvent';
+import { EventType } from '../../GameEngine/Core/Enums/EventType';
 
 export class NavTester extends Component {
 
@@ -33,7 +32,7 @@ export class NavTester extends Component {
         }
     }
 
-    private onClick(event: ICanvasMouseEvent): void {
+    private onClick(event: CanvasMouseEvent): void {
         this.navAgent.setDestination(event.cursorPositionOnCanvas);
     }
 }

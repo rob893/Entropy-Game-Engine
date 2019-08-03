@@ -5,10 +5,15 @@
         "preserveConstEnums": true,
         "outDir": "./compiled/",
         "sourceMap": true,
-        "target": "ES6"
+        "target": "es2017",
+        "pretty": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "allowUnreachableCode": false,
+        "forceConsistentCasingInFileNames": true
     },
     "include": [
-        "src"
+        "src/**/*.ts"
     ],
     "exclude": [
         "node_modules",

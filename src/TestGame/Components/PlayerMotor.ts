@@ -1,24 +1,23 @@
-import { Motor } from "./Motor";
-import { GameObject } from "../../GameEngine/Core/GameObject";
-import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
-import { KeyCode } from "../../GameEngine/Core/Enums/KeyCode";
-import { Rigidbody } from "../../GameEngine/Components/Rigidbody";
-import MovingRightSprite from "../Assets/Images/mario.png"
-import MovingLeftSprite from "../Assets/Images/marioLeft.png"
-import { Animator } from "../../GameEngine/Components/Animator";
-import { Animation } from "../../GameEngine/Core/Helpers/Animation";
-import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
-import { Physics } from "../../GameEngine/Core/Physics/Physics";
-import { Input } from "../../GameEngine/Core/Helpers/Input";
-import { EventType } from "../../GameEngine/Core/Enums/EventType";
+import { Motor } from './Motor';
+import { GameObject } from '../../GameEngine/Core/GameObject';
+import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
+import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
+import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
+import MovingRightSprite from '../Assets/Images/mario.png';
+import MovingLeftSprite from '../Assets/Images/marioLeft.png';
+import { Animator } from '../../GameEngine/Components/Animator';
+import { Animation } from '../../GameEngine/Core/Helpers/Animation';
+import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
+import { Input } from '../../GameEngine/Core/Helpers/Input';
+import { EventType } from '../../GameEngine/Core/Enums/EventType';
 
 
 export class PlayerMotor extends Motor {
 
     private movingRight: boolean = false;
     private movingLeft: boolean = false;
-    private moveRightAnimation: Animation;
-    private moveLeftAnimation: Animation;
+    private readonly moveRightAnimation: Animation;
+    private readonly moveLeftAnimation: Animation;
     private jumping: boolean = false;
     private rigidBody: Rigidbody;
     private animator: Animator;
@@ -28,7 +27,7 @@ export class PlayerMotor extends Motor {
     public constructor(gameObject: GameObject) {
         super(gameObject);
         Input.addKeyListener(EventType.KeyDown, [KeyCode.RightArrow, KeyCode.D, KeyCode.LeftArrow, KeyCode.A, KeyCode.Space], (event) => this.onKeyDown(event));
-        Input.addKeyListener(EventType.KeyUp, [KeyCode.RightArrow, KeyCode.D, KeyCode.LeftArrow, KeyCode.A], (event) => this.onKeyUp(event))
+        Input.addKeyListener(EventType.KeyUp, [KeyCode.RightArrow, KeyCode.D, KeyCode.LeftArrow, KeyCode.A], (event) => this.onKeyUp(event));
         this.moveRightAnimation = new Animation(MovingRightSprite, 4, 1, 0.1);
         this.moveLeftAnimation = new Animation(MovingLeftSprite, 4, 1, 0.1);
     }
@@ -37,7 +36,6 @@ export class PlayerMotor extends Motor {
         super.start();
 
         this.collider = this.gameObject.getComponent(RectangleCollider);
-        this.collider.onCollided.add((other) => this.handleCollision(other))
 
         this.rigidBody = this.gameObject.getComponent<Rigidbody>(Rigidbody);
         this.animator = this.gameObject.getComponent<Animator>(Animator);
@@ -45,17 +43,6 @@ export class PlayerMotor extends Motor {
 
     public get isMoving(): boolean { 
         return this.xVelocity !== 0 || this.yVelocity !== 0;
-    }
-
-    private handleCollision(other: RectangleCollider) {
-        // if (other.gameObject.tag === 'ground') {
-        //     while (this.transform.position.y >= other.topLeft.y) {
-        //         this.transform.position.y -= 1;
-        //     }
-        //     this.rigidBody.resetForce();
-        //     //this.rigidBody.isKinomatic = true;
-        //     this.jumping = false;
-        // }
     }
 
     protected handleOutOfBounds(): void {
@@ -99,12 +86,8 @@ export class PlayerMotor extends Motor {
         
         this.jumping = true;
         this.rigidBody.isKinomatic = false;
-        this.rigidBody.resetForce()
+        this.rigidBody.resetForce();
         this.rigidBody.addForce(Vector2.up.multiplyScalar(400));
-    }
-
-    private onClick(event: MouseEvent): void {
-        let hit = Physics.raycast(new Vector2(this.transform.position.x, this.transform.position.y - 1), Vector2.right, 5000);
     }
 
     private onKeyDown(event: KeyboardEvent): void {

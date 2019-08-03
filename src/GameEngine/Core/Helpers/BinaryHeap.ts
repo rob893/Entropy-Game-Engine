@@ -1,12 +1,107 @@
-import { IComparable } from "../Interfaces/IComparable";
+import { Comparable } from '../Interfaces/Comparable';
 
-export class BinaryHeap<T extends IComparable> {
+export class BinaryHeap<T extends Comparable> {
     
     private readonly heapArray: T[] = [];
     private readonly minHeap: boolean;
     
+    
     public constructor(minHeap: boolean = true) {
         this.minHeap = minHeap;
+    }
+
+    public static from<T extends Comparable>(items: Iterable<T>, minHeap: boolean = true): BinaryHeap<T> {
+        const heap = new BinaryHeap<T>(minHeap);
+
+        for (const item of items) {
+            heap.add(item);
+        }
+
+        return heap;
+    } 
+
+    public static isBinaryHeap(heap: Comparable[] | BinaryHeap<Comparable>): boolean {
+        return BinaryHeap.isMaxBinaryHeap(heap) || BinaryHeap.isMinBinaryHeap(heap);
+    }
+
+    public static isMinBinaryHeap(heap: Comparable[] | BinaryHeap<Comparable>): boolean {
+        let heapArray: Comparable[]; 
+        
+        if (heap instanceof BinaryHeap) {
+            heapArray = heap.heapArray;
+        }
+        else {
+            heapArray = heap;
+        }
+        
+        for (let i = 0, l = heapArray.length; i < l; i++) {
+            const item = heapArray[i];
+            
+            //if we have a null spot, the tree is not complete and thus not a heap
+            if (item === null) {
+                return false;
+            }
+
+            //if left child is less than parent, not a min heap
+            if ((i * 2) + 1 < l) {
+                const lChild = heapArray[(i * 2) + 1];
+
+                if (lChild < item) {
+                    return false;
+                }
+            }
+
+            //if right child is less than parent, not a min heap
+            if ((i * 2) + 2 < l) {
+                const rChild = heapArray[(i * 2) + 2];
+
+                if (rChild < item) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    public static isMaxBinaryHeap(heap: Comparable[] | BinaryHeap<Comparable>): boolean {
+        let heapArray: Comparable[]; 
+        
+        if (heap instanceof BinaryHeap) {
+            heapArray = heap.heapArray;
+        }
+        else {
+            heapArray = heap;
+        }
+        
+        for (let i = 0, l = heapArray.length; i < l; i++) {
+            const item = heapArray[i];
+            
+            //if we have a null spot, the tree is not complete and thus not a heap
+            if (item === null) {
+                return false;
+            }
+
+            //if left child is greater than parent, not a max heap
+            if ((i * 2) + 1 < l) {
+                const lChild = heapArray[(i * 2) + 1];
+
+                if (lChild > item) {
+                    return false;
+                }
+            }
+
+            //if right child is greater than parent, not a max heap
+            if ((i * 2) + 2 < l) {
+                const rChild = heapArray[(i * 2) + 2];
+
+                if (rChild > item) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
     }
 
     public get isEmpty(): boolean {
@@ -152,99 +247,5 @@ export class BinaryHeap<T extends IComparable> {
         const temp = this.heapArray[index1];
         this.heapArray[index1] = this.heapArray[index2];
         this.heapArray[index2] = temp;
-    }
-
-    public static from<T extends IComparable>(items: Iterable<T>, minHeap: boolean = true): BinaryHeap<T> {
-        const heap = new BinaryHeap<T>(minHeap);
-
-        for (let item of items) {
-            heap.add(item);
-        }
-
-        return heap;
-    } 
-
-    public static isBinaryHeap(heap: IComparable[] | BinaryHeap<IComparable>): boolean {
-        return BinaryHeap.isMaxBinaryHeap(heap) || BinaryHeap.isMinBinaryHeap(heap);
-    }
-
-    public static isMinBinaryHeap(heap: IComparable[] | BinaryHeap<IComparable>): boolean {
-        let heapArray: IComparable[]; 
-        
-        if (heap instanceof BinaryHeap) {
-            heapArray = heap.heapArray;
-        }
-        else {
-           heapArray = heap;
-        }
-        
-        for (let i = 0, l = heapArray.length; i < l; i++) {
-            const item = heapArray[i];
-            
-            //if we have a null spot, the tree is not complete and thus not a heap
-            if (item === null) {
-                return false;
-            }
-
-            //if left child is less than parent, not a min heap
-            if ((i * 2) + 1 < l) {
-                const lChild = heapArray[(i * 2) + 1];
-
-                if (lChild < item) {
-                    return false;
-                }
-            }
-
-            //if right child is less than parent, not a min heap
-            if ((i * 2) + 2 < l) {
-                const rChild = heapArray[(i * 2) + 2];
-
-                if (rChild < item) {
-                    return false;
-                }
-            }
-        }
-        
-        return true;
-    }
-
-    public static isMaxBinaryHeap(heap: IComparable[] | BinaryHeap<IComparable>): boolean {
-        let heapArray: IComparable[]; 
-        
-        if (heap instanceof BinaryHeap) {
-            heapArray = heap.heapArray;
-        }
-        else {
-           heapArray = heap;
-        }
-        
-        for (let i = 0, l = heapArray.length; i < l; i++) {
-            const item = heapArray[i];
-            
-            //if we have a null spot, the tree is not complete and thus not a heap
-            if (item === null) {
-                return false;
-            }
-
-            //if left child is greater than parent, not a max heap
-            if ((i * 2) + 1 < l) {
-                const lChild = heapArray[(i * 2) + 1];
-
-                if (lChild > item) {
-                    return false;
-                }
-            }
-
-            //if right child is greater than parent, not a max heap
-            if ((i * 2) + 2 < l) {
-                const rChild = heapArray[(i * 2) + 2];
-
-                if (rChild > item) {
-                    return false;
-                }
-            }
-        }
-        
-        return true;
     }
 }

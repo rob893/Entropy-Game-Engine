@@ -3,6 +3,72 @@ export class BinaryHeap {
         this.heapArray = [];
         this.minHeap = minHeap;
     }
+    static from(items, minHeap = true) {
+        const heap = new BinaryHeap(minHeap);
+        for (const item of items) {
+            heap.add(item);
+        }
+        return heap;
+    }
+    static isBinaryHeap(heap) {
+        return BinaryHeap.isMaxBinaryHeap(heap) || BinaryHeap.isMinBinaryHeap(heap);
+    }
+    static isMinBinaryHeap(heap) {
+        let heapArray;
+        if (heap instanceof BinaryHeap) {
+            heapArray = heap.heapArray;
+        }
+        else {
+            heapArray = heap;
+        }
+        for (let i = 0, l = heapArray.length; i < l; i++) {
+            const item = heapArray[i];
+            if (item === null) {
+                return false;
+            }
+            if ((i * 2) + 1 < l) {
+                const lChild = heapArray[(i * 2) + 1];
+                if (lChild < item) {
+                    return false;
+                }
+            }
+            if ((i * 2) + 2 < l) {
+                const rChild = heapArray[(i * 2) + 2];
+                if (rChild < item) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    static isMaxBinaryHeap(heap) {
+        let heapArray;
+        if (heap instanceof BinaryHeap) {
+            heapArray = heap.heapArray;
+        }
+        else {
+            heapArray = heap;
+        }
+        for (let i = 0, l = heapArray.length; i < l; i++) {
+            const item = heapArray[i];
+            if (item === null) {
+                return false;
+            }
+            if ((i * 2) + 1 < l) {
+                const lChild = heapArray[(i * 2) + 1];
+                if (lChild > item) {
+                    return false;
+                }
+            }
+            if ((i * 2) + 2 < l) {
+                const rChild = heapArray[(i * 2) + 2];
+                if (rChild > item) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     get isEmpty() {
         return this.heapArray.length === 0;
     }
@@ -112,72 +178,6 @@ export class BinaryHeap {
         const temp = this.heapArray[index1];
         this.heapArray[index1] = this.heapArray[index2];
         this.heapArray[index2] = temp;
-    }
-    static from(items, minHeap = true) {
-        const heap = new BinaryHeap(minHeap);
-        for (let item of items) {
-            heap.add(item);
-        }
-        return heap;
-    }
-    static isBinaryHeap(heap) {
-        return BinaryHeap.isMaxBinaryHeap(heap) || BinaryHeap.isMinBinaryHeap(heap);
-    }
-    static isMinBinaryHeap(heap) {
-        let heapArray;
-        if (heap instanceof BinaryHeap) {
-            heapArray = heap.heapArray;
-        }
-        else {
-            heapArray = heap;
-        }
-        for (let i = 0, l = heapArray.length; i < l; i++) {
-            const item = heapArray[i];
-            if (item === null) {
-                return false;
-            }
-            if ((i * 2) + 1 < l) {
-                const lChild = heapArray[(i * 2) + 1];
-                if (lChild < item) {
-                    return false;
-                }
-            }
-            if ((i * 2) + 2 < l) {
-                const rChild = heapArray[(i * 2) + 2];
-                if (rChild < item) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    static isMaxBinaryHeap(heap) {
-        let heapArray;
-        if (heap instanceof BinaryHeap) {
-            heapArray = heap.heapArray;
-        }
-        else {
-            heapArray = heap;
-        }
-        for (let i = 0, l = heapArray.length; i < l; i++) {
-            const item = heapArray[i];
-            if (item === null) {
-                return false;
-            }
-            if ((i * 2) + 1 < l) {
-                const lChild = heapArray[(i * 2) + 1];
-                if (lChild > item) {
-                    return false;
-                }
-            }
-            if ((i * 2) + 2 < l) {
-                const rChild = heapArray[(i * 2) + 2];
-                if (rChild > item) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 }
 //# sourceMappingURL=BinaryHeap.js.map

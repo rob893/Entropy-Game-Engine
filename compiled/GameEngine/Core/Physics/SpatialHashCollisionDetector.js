@@ -1,4 +1,4 @@
-import { LiteEvent } from "../Helpers/LiteEvent";
+import { LiteEvent } from '../Helpers/LiteEvent';
 export class SpatialHashCollisionDetector {
     constructor(gameMapWidth, gameMapHeight, cellSize = 100) {
         this._onCollisionDetected = new LiteEvent();
@@ -17,11 +17,11 @@ export class SpatialHashCollisionDetector {
         return this._onCollisionDetected.expose();
     }
     detectCollisions() {
-        for (let collider of this._colliders) {
+        for (const collider of this._colliders) {
             if (!collider.enabled) {
                 continue;
             }
-            for (let other of this.getPossibleCollisions(collider)) {
+            for (const other of this.getPossibleCollisions(collider)) {
                 if (collider.detectCollision(other)) {
                     this._onCollisionDetected.trigger(collider, other);
                 }
@@ -51,20 +51,20 @@ export class SpatialHashCollisionDetector {
         }
     }
     updateColliderSpatialMapping(collider) {
-        for (let key of this.colliderSpacialMapKeys.get(collider)) {
+        for (const key of this.colliderSpacialMapKeys.get(collider)) {
             this.spatialMap.get(key).delete(collider);
         }
         this.addColliderToSpatialMap(collider);
     }
     addColliderToSpatialMap(collider) {
-        let tlKey = this.getMapKey(collider.topLeft);
-        let trKey = this.getMapKey(collider.topRight);
-        let blKey = this.getMapKey(collider.bottomLeft);
-        let brKey = this.getMapKey(collider.bottomRight);
+        const tlKey = this.getMapKey(collider.topLeft);
+        const trKey = this.getMapKey(collider.topRight);
+        const blKey = this.getMapKey(collider.bottomLeft);
+        const brKey = this.getMapKey(collider.bottomRight);
         if (!this.colliderSpacialMapKeys.has(collider)) {
             this.colliderSpacialMapKeys.set(collider, new Set());
         }
-        let previousKeys = this.colliderSpacialMapKeys.get(collider);
+        const previousKeys = this.colliderSpacialMapKeys.get(collider);
         previousKeys.clear();
         if (tlKey === brKey) {
             if (this.spatialMap.has(tlKey)) {
@@ -76,13 +76,13 @@ export class SpatialHashCollisionDetector {
             previousKeys.add(tlKey);
             return;
         }
-        let tlx = Number(tlKey.split(',')[0]);
-        let tly = Number(tlKey.split(',')[1]);
-        let xDiff = Number(trKey.split(',')[0]) - tlx;
-        let yDiff = Number(blKey.split(',')[1]) - tly;
+        const tlx = Number(tlKey.split(',')[0]);
+        const tly = Number(tlKey.split(',')[1]);
+        const xDiff = Number(trKey.split(',')[0]) - tlx;
+        const yDiff = Number(blKey.split(',')[1]) - tly;
         for (let x = tlx; x <= xDiff + tlx; x += this.cellSize) {
             for (let y = tly; y <= yDiff + tly; y += this.cellSize) {
-                let key = this.getMapKey(x, y);
+                const key = this.getMapKey(x, y);
                 if (this.spatialMap.has(key)) {
                     this.spatialMap.get(key).add(collider);
                 }
@@ -94,9 +94,9 @@ export class SpatialHashCollisionDetector {
         }
     }
     getPossibleCollisions(collider) {
-        let possibleCollisions = new Set();
-        for (let key of this.colliderSpacialMapKeys.get(collider)) {
-            for (let other of this.spatialMap.get(key)) {
+        const possibleCollisions = new Set();
+        for (const key of this.colliderSpacialMapKeys.get(collider)) {
+            for (const other of this.spatialMap.get(key)) {
                 if (other !== collider) {
                     possibleCollisions.add(other);
                 }

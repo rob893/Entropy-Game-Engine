@@ -1,6 +1,6 @@
-import { GameObject } from "../../GameEngine/Core/GameObject";
-import { RectangleCollider } from "../../GameEngine/Components/RectangleCollider";
-import { RectangleRenderer } from "../../GameEngine/Components/RectangleRenderer";
+import { GameObject } from '../../GameEngine/Core/GameObject';
+import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
+import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
 export class Ground extends GameObject {
     constructor(x, y, w, h, color) {
         super('ground', x, y, 'ground');

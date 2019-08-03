@@ -1,7 +1,7 @@
-import { GameManagerObject } from "../GameObjects/GameManagerObject";
-import { Player } from "../GameObjects/Player";
-import { ImageBackground } from "../../GameEngine/Core/Helpers/ImageBackground";
-import Background from "../Assets/Images/background.png";
+import { GameManagerObject } from '../GameObjects/GameManagerObject';
+import { Player } from '../GameObjects/Player';
+import { ImageBackground } from '../../GameEngine/Core/Helpers/ImageBackground';
+import Background from '../Assets/Images/background.png';
 export class Scene2 {
     constructor() {
         this.name = 'Scene2';
@@ -13,7 +13,7 @@ export class Scene2 {
     }
     getStartingGameObjects() {
         return [
-            new GameManagerObject("GameManager"),
+            new GameManagerObject('GameManager'),
             new Player('player')
         ];
     }

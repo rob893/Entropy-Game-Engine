@@ -1,5 +1,5 @@
-import { GameObject } from "../Core/GameObject";
-import { Transform } from "./Transform";
+import { GameObject } from '../Core/GameObject';
+import { Transform } from './Transform';
 
 export abstract class Component {
 

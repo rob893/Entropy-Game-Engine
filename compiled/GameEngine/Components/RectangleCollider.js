@@ -1,16 +1,16 @@
-import { Vector2 } from "../Core/Helpers/Vector2";
-import { Component } from "./Component";
-import { LiteEvent } from "../Core/Helpers/LiteEvent";
-import { Rigidbody } from "./Rigidbody";
-import { Color } from "../Core/Enums/Color";
-import { GameEngine } from "../Core/GameEngine";
+import { Vector2 } from '../Core/Helpers/Vector2';
+import { Component } from './Component';
+import { LiteEvent } from '../Core/Helpers/LiteEvent';
+import { Rigidbody } from './Rigidbody';
+import { Color } from '../Core/Enums/Color';
+import { GameEngine } from '../Core/GameEngine';
 export class RectangleCollider extends Component {
     constructor(gameObject, width, height) {
         super(gameObject);
         this._onCollided = new LiteEvent();
         this.width = width;
         this.height = height;
-        let transform = this.transform;
+        const transform = this.transform;
         this._topLeft = new Vector2(transform.position.x - (width / 2), transform.position.y - height);
         this._topRight = new Vector2(transform.position.x + (width / 2), transform.position.y - height);
         this._bottomLeft = new Vector2(transform.position.x - (width / 2), transform.position.y);

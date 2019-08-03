@@ -30,19 +30,19 @@ export class RenderingEngine {
         if (this._terrain !== null) {
             this._terrain.renderBackground(this._canvasContext);
         }
-        for (let object of this.renderableObjects) {
+        for (const object of this.renderableObjects) {
             if (object.enabled) {
                 object.render(this._canvasContext);
             }
         }
         if (this.renderGizmos) {
-            for (let gizmo of this.renderableGizmos) {
+            for (const gizmo of this.renderableGizmos) {
                 if (gizmo.enabled) {
                     gizmo.renderGizmo(this._canvasContext);
                 }
             }
         }
-        for (let guiElement of this.renderableGUIElements) {
+        for (const guiElement of this.renderableGUIElements) {
             if (guiElement.enabled) {
                 guiElement.renderGUI(this._canvasContext);
             }

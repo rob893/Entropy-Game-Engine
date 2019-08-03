@@ -1,9 +1,9 @@
-import { ICollisionDetector } from "../Interfaces/ICollisionDetector";
-import { ILiteEvent } from "../Interfaces/ILiteEvent";
-import { RectangleCollider } from "../../Components/RectangleCollider";
-import { LiteEvent } from "../Helpers/LiteEvent";
+import { CollisionDetector } from '../Interfaces/CollisionDetector';
+import { CustomEvent } from '../Interfaces/CustomEvent';
+import { RectangleCollider } from '../../Components/RectangleCollider';
+import { LiteEvent } from '../Helpers/LiteEvent';
 
-export class SimpleCollisionDetector implements ICollisionDetector {
+export class SimpleCollisionDetector implements CollisionDetector {
     
     private readonly _colliders: RectangleCollider[];
     private readonly _onCollisionDetected: LiteEvent<RectangleCollider> = new LiteEvent<RectangleCollider>();
@@ -17,7 +17,7 @@ export class SimpleCollisionDetector implements ICollisionDetector {
         return this._colliders;
     }
 
-    public get onCollisionDetected(): ILiteEvent<RectangleCollider> {
+    public get onCollisionDetected(): CustomEvent<RectangleCollider> {
         return this._onCollisionDetected.expose();
     }
 

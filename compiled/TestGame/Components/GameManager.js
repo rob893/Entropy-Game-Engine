@@ -1,8 +1,8 @@
-import { Component } from "../../GameEngine/Components/Component";
-import { GameEngine } from "../../GameEngine/Core/GameEngine";
-import { Ball } from "../GameObjects/Ball";
-import { AudioSource } from "../../GameEngine/Components/AudioSource";
-import { Time } from "../../GameEngine/Core/Time";
+import { Component } from '../../GameEngine/Components/Component';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { Ball } from '../GameObjects/Ball';
+import { AudioSource } from '../../GameEngine/Components/AudioSource';
+import { Time } from '../../GameEngine/Core/Time';
 export class GameManager extends Component {
     constructor(gameObject) {
         super(gameObject);
@@ -11,19 +11,14 @@ export class GameManager extends Component {
         this.messageTimer = 0;
         this.messageLength = 0;
         this.gameOver = false;
-        document.getElementById("print-button").addEventListener("click", () => this.printGameData());
-        document.getElementById("pause-button").addEventListener("click", () => this.togglePause());
-        document.getElementById("add-ball").addEventListener("click", () => this.testInstantiate());
-        document.getElementById("toggle-music").addEventListener("click", () => this.toggleMusic());
-    }
-    start() {
-        GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
-        this.audioSource = this.gameObject.getComponent(AudioSource);
-        this.audioSource.loop = true;
+        document.getElementById('print-button').addEventListener('click', () => this.printGameData());
+        document.getElementById('pause-button').addEventListener('click', () => this.togglePause());
+        document.getElementById('add-ball').addEventListener('click', () => this.testInstantiate());
+        document.getElementById('toggle-music').addEventListener('click', () => this.toggleMusic());
     }
     static get instance() {
         if (this._instance === null || this._instance === undefined) {
-            throw new Error("GameManager has not been created yet. Use the createinstance method first.");
+            throw new Error('GameManager has not been created yet. Use the createinstance method first.');
         }
         return this._instance;
     }
@@ -32,7 +27,12 @@ export class GameManager extends Component {
             this._instance = new GameManager(gameObject);
             return this.instance;
         }
-        throw new Error("More than one GameManager cannot be created!");
+        throw new Error('More than one GameManager cannot be created!');
+    }
+    start() {
+        GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
+        this.audioSource = this.gameObject.getComponent(AudioSource);
+        this.audioSource.loop = true;
     }
     endGame() {
         this.togglePause();
@@ -49,7 +49,7 @@ export class GameManager extends Component {
     }
     renderGameOver(context) {
         if (this.gameOver) {
-            context.fillText("Game Over! YOU SUCK", 50, 50);
+            context.fillText('Game Over! YOU SUCK', 50, 50);
         }
     }
     renderMessage(context) {
@@ -79,7 +79,7 @@ export class GameManager extends Component {
         GameEngine.instance.printGameData();
     }
     testInstantiate() {
-        GameEngine.instance.instantiate(new Ball("ball2"));
+        GameEngine.instance.instantiate(new Ball('ball2'));
     }
 }
 //# sourceMappingURL=GameManager.js.map

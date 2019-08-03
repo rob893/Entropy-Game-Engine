@@ -1,14 +1,14 @@
-import { Motor } from "./Motor";
-import { GameEngine } from "../../GameEngine/Core/GameEngine";
-import { Vector2 } from "../../GameEngine/Core/Helpers/Vector2";
-import { Animation } from "../../GameEngine/Core/Helpers/Animation";
-import { Animator } from "../../GameEngine/Components/Animator";
-import TrumpRun from "../../assets/images/trump_run.png";
-import TrumpIdle from "../../assets/images/trump_idle.png";
-import YouSuckSound from "../../assets/sounds/suck.mp3";
-import { AudioSource } from "../../GameEngine/Components/AudioSource";
-import { PlayerHealth } from "./PlayerHealth";
-import { Time } from "../../GameEngine/Core/Time";
+import { Motor } from './Motor';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
+import { Animation } from '../../GameEngine/Core/Helpers/Animation';
+import { Animator } from '../../GameEngine/Components/Animator';
+import TrumpRun from '../../assets/images/trump_run.png';
+import TrumpIdle from '../../assets/images/trump_idle.png';
+import YouSuckSound from '../../assets/sounds/suck.mp3';
+import { AudioSource } from '../../GameEngine/Components/AudioSource';
+import { PlayerHealth } from './PlayerHealth';
+import { Time } from '../../GameEngine/Core/Time';
 export class TrumpMotor extends Motor {
     constructor(gameObject) {
         super(gameObject);
@@ -30,7 +30,7 @@ export class TrumpMotor extends Motor {
         this.playerHealth = this.player.getComponent(PlayerHealth);
     }
     move() {
-        let direction = Vector2.direction(this.transform.position, this.playerTransform.position);
+        const direction = Vector2.direction(this.transform.position, this.playerTransform.position);
         direction.y = 0;
         if (direction.x < -0.1 && !this.isMovingLeft) {
             this.isMovingLeft = true;

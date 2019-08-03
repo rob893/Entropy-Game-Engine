@@ -1,4 +1,4 @@
-import { Transform } from "../Components/Transform";
+import { Transform } from '../Components/Transform';
 export class GameObject {
     constructor(id, x = 0, y = 0, tag = '') {
         this.components = [];
@@ -12,7 +12,7 @@ export class GameObject {
         this.components.forEach(c => c.start());
     }
     update() {
-        for (let component of this.components) {
+        for (const component of this.components) {
             if (component.enabled) {
                 component.update();
             }
@@ -23,7 +23,7 @@ export class GameObject {
             return;
         }
         this.isEnabled = enabled;
-        for (let component of this.components) {
+        for (const component of this.components) {
             if (component.enabled) {
                 enabled ? component.onEnabled() : component.onDisable();
             }
@@ -39,16 +39,16 @@ export class GameObject {
         return this.componentMap.has(component.name);
     }
     getComponent(component) {
-        let componentType = component.name;
+        const componentType = component.name;
         if (!this.componentMap.has(componentType)) {
-            throw new Error(componentType + " not found on the GameObject with id of " + this.id + "!");
+            throw new Error(componentType + ' not found on the GameObject with id of ' + this.id + '!');
         }
         return this.componentMap.get(componentType)[0];
     }
     getComponents(component) {
-        let componentType = component.name;
+        const componentType = component.name;
         if (!this.componentMap.has(componentType)) {
-            throw new Error(componentType + " not found on the GameObject with id of " + this.id + "!");
+            throw new Error(componentType + ' not found on the GameObject with id of ' + this.id + '!');
         }
         return this.componentMap.get(componentType);
     }
@@ -65,14 +65,14 @@ export class GameObject {
     }
     removeComponent(component) {
         if (!this.componentMap.has(component.constructor.name)) {
-            throw new Error("This object does not have a " + component.constructor.name + " component!");
+            throw new Error('This object does not have a ' + component.constructor.name + ' component!');
         }
         this.components.splice(this.components.indexOf(component), 1);
         this.componentMap.delete(component.constructor.name);
         component.onDestroy();
     }
     setComponents(components) {
-        for (let component of components) {
+        for (const component of components) {
             this.components.push(component);
             if (this.componentMap.has(component.constructor.name)) {
                 this.componentMap.get(component.constructor.name).push(component);

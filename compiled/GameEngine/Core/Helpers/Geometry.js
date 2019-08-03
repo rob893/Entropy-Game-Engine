@@ -7,17 +7,17 @@ export class Geometry {
         return false;
     }
     static orientation(p, q, r) {
-        let val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+        const val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
         if (val === 0) {
             return 0;
         }
         return (val > 0) ? 1 : 2;
     }
     static doIntersect(p1, q1, p2, q2) {
-        let o1 = this.orientation(p1, q1, p2);
-        let o2 = this.orientation(p1, q1, q2);
-        let o3 = this.orientation(p2, q2, p1);
-        let o4 = this.orientation(p2, q2, q1);
+        const o1 = this.orientation(p1, q1, p2);
+        const o2 = this.orientation(p1, q1, q2);
+        const o3 = this.orientation(p2, q2, p1);
+        const o4 = this.orientation(p2, q2, q1);
         if (o1 !== o2 && o3 !== o4) {
             return true;
         }

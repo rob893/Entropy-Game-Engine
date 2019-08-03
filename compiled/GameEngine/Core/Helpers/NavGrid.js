@@ -1,4 +1,4 @@
-import { Vector2 } from "./Vector2";
+import { Vector2 } from './Vector2';
 export class NavGrid {
     constructor(cellSize) {
         this.cells = new Map();
@@ -15,7 +15,7 @@ export class NavGrid {
         return Array.from(this.cells.values()).filter(cell => cell.passable);
     }
     *neighbors(id) {
-        for (let direction of this.directions) {
+        for (const direction of this.directions) {
             const key = this.getMapKey(id.x + direction.x, id.y + direction.y);
             if (!this.unpassableCells.has(key) && this.cells.has(key)) {
                 yield this.cells.get(key);

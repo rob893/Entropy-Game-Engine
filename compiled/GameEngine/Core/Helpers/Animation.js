@@ -1,4 +1,4 @@
-import { Time } from "../Time";
+import { Time } from '../Time';
 export class Animation {
     constructor(spriteSheetUrl, numFrames, numRows, delay = 0, specificRows = null, trimEdgesBy = 0) {
         this.loop = true;
@@ -8,24 +8,24 @@ export class Animation {
         this.delay = 0;
         this.timer = 0;
         this.delay = delay;
-        let spriteSheet = new Image();
+        const spriteSheet = new Image();
         spriteSheet.src = spriteSheetUrl;
         spriteSheet.onload = () => {
-            let spriteWidth = spriteSheet.width / numFrames;
-            let spriteHeight = spriteSheet.height / numRows;
+            const spriteWidth = spriteSheet.width / numFrames;
+            const spriteHeight = spriteSheet.height / numRows;
             if (specificRows !== null) {
-                for (let row of specificRows) {
+                for (const row of specificRows) {
                     if (row < 1 || row > numRows) {
-                        throw new Error("Invalid specificRow argument. It must be greater than 0 and less than or equal to numRows.");
+                        throw new Error('Invalid specificRow argument. It must be greater than 0 and less than or equal to numRows.');
                     }
                     for (let i = 0; i < numFrames; i++) {
                         this.animationReady = false;
-                        let canvas = document.createElement('canvas');
+                        const canvas = document.createElement('canvas');
                         canvas.width = spriteWidth;
                         canvas.height = spriteHeight;
-                        let context = canvas.getContext('2d');
+                        const context = canvas.getContext('2d');
                         context.drawImage(spriteSheet, (i * spriteWidth) + trimEdgesBy, ((row - 1) * spriteHeight) + trimEdgesBy, spriteWidth - trimEdgesBy, spriteHeight - trimEdgesBy, 0, 0, canvas.width, canvas.height);
-                        let frame = new Image();
+                        const frame = new Image();
                         frame.src = canvas.toDataURL();
                         frame.onload = () => {
                             this.frames.push(frame);
@@ -38,12 +38,12 @@ export class Animation {
                 for (let i = 0; i < numRows; i++) {
                     for (let j = 0; j < numFrames; j++) {
                         this.animationReady = false;
-                        let canvas = document.createElement('canvas');
+                        const canvas = document.createElement('canvas');
                         canvas.width = spriteWidth;
                         canvas.height = spriteHeight;
-                        let context = canvas.getContext('2d');
+                        const context = canvas.getContext('2d');
                         context.drawImage(spriteSheet, (j * spriteWidth) + trimEdgesBy, (i * spriteHeight) + trimEdgesBy, spriteWidth - trimEdgesBy, spriteHeight - trimEdgesBy, 0, 0, canvas.width, canvas.height);
-                        let frame = new Image();
+                        const frame = new Image();
                         frame.src = canvas.toDataURL();
                         frame.onload = () => {
                             this.frames.push(frame);

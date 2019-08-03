@@ -1,45 +1,45 @@
-import { ISpriteData } from "../../GameEngine/Core/Interfaces/ISpriteData";
-import { ITerrainCell } from "../../GameEngine/Core/Interfaces/ITerrainCell";
-import { ITerrainSpec } from "../../GameEngine/Core/Interfaces/ITerrainSpec";
-import SpriteSheet from "../Assets/Images/DungeonTileset.png";
+import { SpriteData } from '../../GameEngine/Core/Interfaces/SpriteData';
+import { TerrainCell } from '../../GameEngine/Core/Interfaces/TerrainCell';
+import { TerrainSpec } from '../../GameEngine/Core/Interfaces/TerrainSpec';
+import SpriteSheet from '../Assets/Images/DungeonTileset.png';
 
 
-export class Scene1TerrainSpec implements ITerrainSpec {
+export class Scene1TerrainSpec implements TerrainSpec {
     
     public readonly cellSize: number = 16;
     public readonly scale: number = 1;
     public readonly spriteSheetUrl: string = SpriteSheet;
     
-    private readonly topWall: ISpriteData = { sliceX: 16, sliceY: 0, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
-    private readonly midWall: ISpriteData = { sliceX: 16, sliceY: 16, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
-    private readonly rightWall: ISpriteData = { sliceX: 0, sliceY: 128, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
-    private readonly leftWall: ISpriteData = { sliceX: 16, sliceY: 128, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
-    private readonly bottomWall: ISpriteData = { sliceX: 36, sliceY: 124, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-    private readonly bottomRCornerWall: ISpriteData = { sliceX: 48, sliceY: 124, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-    private readonly topRCornerWall: ISpriteData = { sliceX: 48, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-    private readonly sideWallEndRight: ISpriteData = { sliceX: 0, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-    private readonly sideWallEndLeft: ISpriteData = { sliceX: 16, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-    private readonly floorTile: ISpriteData = { sliceX: 16, sliceY: 64, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-    private readonly floorHole: ISpriteData = { sliceX: 96, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
+    private readonly topWall: SpriteData = { sliceX: 16, sliceY: 0, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
+    private readonly midWall: SpriteData = { sliceX: 16, sliceY: 16, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
+    private readonly rightWall: SpriteData = { sliceX: 0, sliceY: 128, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
+    private readonly leftWall: SpriteData = { sliceX: 16, sliceY: 128, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
+    private readonly bottomWall: SpriteData = { sliceX: 36, sliceY: 124, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
+    //private readonly bottomRCornerWall: ISpriteData = { sliceX: 48, sliceY: 124, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
+    //private readonly topRCornerWall: ISpriteData = { sliceX: 48, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
+    private readonly sideWallEndRight: SpriteData = { sliceX: 0, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
+    private readonly sideWallEndLeft: SpriteData = { sliceX: 16, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
+    private readonly floorTile: SpriteData = { sliceX: 16, sliceY: 64, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
+    private readonly floorHole: SpriteData = { sliceX: 96, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
 
 
     public constructor(scale: number = 1) {
         this.scale = scale;
     }
 
-    public getSpec(): ITerrainCell[][] {
-        const tw: ITerrainCell = { spriteData: this.topWall, passable: false, weight: 0 };
-        const mw: ITerrainCell = { spriteData: this.midWall, passable: false, weight: 0 };
-        const rw: ITerrainCell = { spriteData: this.rightWall, passable: false, weight: 0 };
-        const lw: ITerrainCell = { spriteData: this.leftWall, passable: false, weight: 0 };
-        const bw: ITerrainCell = { spriteData: this.bottomWall, passable: false, weight: 0 };
-        const ft: ITerrainCell = { spriteData: this.floorTile, passable: true, weight: 0 };
-        const rc: ITerrainCell = { spriteData: this.bottomRCornerWall, passable: false, weight: 0 };
-        const tc: ITerrainCell = { spriteData: this.topRCornerWall, passable: false, weight: 0 };
-        const er: ITerrainCell = { spriteData: this.sideWallEndRight, passable: false, weight: 0 };
-        const el: ITerrainCell = { spriteData: this.sideWallEndLeft, passable: false, weight: 0 };
-        const hl: ITerrainCell = { spriteData: this.floorHole, passable: false, weight: 0 };
-        let nl = null;
+    public getSpec(): TerrainCell[][] {
+        const tw: TerrainCell = { spriteData: this.topWall, passable: false, weight: 0 };
+        const mw: TerrainCell = { spriteData: this.midWall, passable: false, weight: 0 };
+        const rw: TerrainCell = { spriteData: this.rightWall, passable: false, weight: 0 };
+        const lw: TerrainCell = { spriteData: this.leftWall, passable: false, weight: 0 };
+        const bw: TerrainCell = { spriteData: this.bottomWall, passable: false, weight: 0 };
+        const ft: TerrainCell = { spriteData: this.floorTile, passable: true, weight: 0 };
+        //const rc: ITerrainCell = { spriteData: this.bottomRCornerWall, passable: false, weight: 0 };
+        //const tc: ITerrainCell = { spriteData: this.topRCornerWall, passable: false, weight: 0 };
+        const er: TerrainCell = { spriteData: this.sideWallEndRight, passable: false, weight: 0 };
+        const el: TerrainCell = { spriteData: this.sideWallEndLeft, passable: false, weight: 0 };
+        const hl: TerrainCell = { spriteData: this.floorHole, passable: false, weight: 0 };
+        const nl: TerrainCell = null;
         
         return [
             [nl, nl, nl, tw, tw, tw, tw, tw, tw, tw, tw, tw, tw, nl],

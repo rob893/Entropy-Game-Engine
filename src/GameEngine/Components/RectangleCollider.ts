@@ -1,15 +1,15 @@
-import { Vector2 } from "../Core/Helpers/Vector2";
-import { Component } from "./Component";
-import { Transform } from "./Transform";
-import { LiteEvent } from "../Core/Helpers/LiteEvent";
-import { GameObject } from "../Core/GameObject";
-import { ILiteEvent } from "../Core/Interfaces/ILiteEvent";
-import { IRenderableGizmo } from "../Core/Interfaces/IRenderableGizmo";
-import { Rigidbody } from "./Rigidbody";
-import { Color } from "../Core/Enums/Color";
-import { GameEngine } from "../Core/GameEngine";
+import { Vector2 } from '../Core/Helpers/Vector2';
+import { Component } from './Component';
+import { Transform } from './Transform';
+import { LiteEvent } from '../Core/Helpers/LiteEvent';
+import { GameObject } from '../Core/GameObject';
+import { CustomEvent } from '../Core/Interfaces/CustomEvent';
+import { RenderableGizmo } from '../Core/Interfaces/RenderableGizmo';
+import { Rigidbody } from './Rigidbody';
+import { Color } from '../Core/Enums/Color';
+import { GameEngine } from '../Core/GameEngine';
 
-export class RectangleCollider extends Component implements IRenderableGizmo {
+export class RectangleCollider extends Component implements RenderableGizmo {
 
     public width: number;
     public height: number;
@@ -28,7 +28,7 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
         this.width = width;
         this.height = height;
 
-        let transform: Transform = this.transform;
+        const transform: Transform = this.transform;
 
         this._topLeft = new Vector2(transform.position.x - (width / 2), transform.position.y - height);
         this._topRight = new Vector2(transform.position.x + (width / 2), transform.position.y - height);
@@ -93,7 +93,7 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
         return false;
     }
 
-    public get onCollided(): ILiteEvent<RectangleCollider> { 
+    public get onCollided(): CustomEvent<RectangleCollider> { 
         return this._onCollided.expose(); 
     }
 

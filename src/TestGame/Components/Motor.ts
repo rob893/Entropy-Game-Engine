@@ -1,5 +1,5 @@
-import { Component } from "../../GameEngine/Components/Component";
-import { GameEngine } from "../../GameEngine/Core/GameEngine";
+import { Component } from '../../GameEngine/Components/Component';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export abstract class Motor extends Component {
 

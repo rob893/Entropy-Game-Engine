@@ -1,5 +1,5 @@
-import { Transform } from "../Components/Transform";
-import { Component } from "../Components/Component";
+import { Transform } from '../Components/Transform';
+import { Component } from '../Components/Component';
 
 export abstract class GameObject {
     
@@ -25,7 +25,7 @@ export abstract class GameObject {
     }
 
     public update(): void {
-        for (let component of this.components) {
+        for (const component of this.components) {
             if (component.enabled) {
                 component.update();
             }
@@ -39,7 +39,7 @@ export abstract class GameObject {
 
         this.isEnabled = enabled;
 
-        for (let component of this.components) {
+        for (const component of this.components) {
             if (component.enabled) {
                 enabled ? component.onEnabled() : component.onDisable();
             }
@@ -59,23 +59,23 @@ export abstract class GameObject {
     }
 
     public getComponent<T extends Component>(component: new (...args: any[]) => T): T {
-        let componentType = component.name;
+        const componentType = component.name;
 
         if (!this.componentMap.has(componentType)) {
-            throw new Error(componentType + " not found on the GameObject with id of " + this.id + "!");
+            throw new Error(componentType + ' not found on the GameObject with id of ' + this.id + '!');
         }
 
-        return <T>this.componentMap.get(componentType)[0];
+        return this.componentMap.get(componentType)[0] as T;
     }
 
     public getComponents<T extends Component>(component: new (...args: any[]) => T): T[] {
-        let componentType = component.name;
+        const componentType = component.name;
 
         if (!this.componentMap.has(componentType)) {
-            throw new Error(componentType + " not found on the GameObject with id of " + this.id + "!");
+            throw new Error(componentType + ' not found on the GameObject with id of ' + this.id + '!');
         }
 
-        return <T[]>this.componentMap.get(componentType);
+        return this.componentMap.get(componentType) as T[];
     }
 
     public addComponent<T extends Component>(newComponent: Component): T {
@@ -89,12 +89,12 @@ export abstract class GameObject {
         newComponent.enabled = true;
         newComponent.start();
 
-        return <T>newComponent;
+        return newComponent as T;
     }
 
     public removeComponent(component: Component): void {
         if (!this.componentMap.has(component.constructor.name)) {
-            throw new Error("This object does not have a " + component.constructor.name + " component!");
+            throw new Error('This object does not have a ' + component.constructor.name + ' component!');
         }
 
         this.components.splice(this.components.indexOf(component), 1);
@@ -103,7 +103,7 @@ export abstract class GameObject {
     }
 
     protected setComponents(components: Component[]): void {
-        for (let component of components) {
+        for (const component of components) {
             this.components.push(component);
             
             if (this.componentMap.has(component.constructor.name)) {

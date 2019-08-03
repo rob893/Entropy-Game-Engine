@@ -1,4 +1,13 @@
-import { BinaryHeap } from "./BinaryHeap";
+import { BinaryHeap } from './BinaryHeap';
+class QueueItem {
+    constructor(item, priority) {
+        this.item = item;
+        this.priority = priority;
+    }
+    valueOf() {
+        return this.priority;
+    }
+}
 export class PriorityQueue {
     constructor(minPriorityQueue = true) {
         this.elementsHeap = new BinaryHeap(minPriorityQueue);
@@ -14,15 +23,6 @@ export class PriorityQueue {
     }
     dequeue() {
         return this.elementsHeap.remove().item;
-    }
-}
-class QueueItem {
-    constructor(item, priority) {
-        this.item = item;
-        this.priority = priority;
-    }
-    valueOf() {
-        return this.priority;
     }
 }
 //# sourceMappingURL=PriorityQueue.js.map

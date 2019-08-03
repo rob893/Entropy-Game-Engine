@@ -1,5 +1,5 @@
-import { Component } from "./Component";
-import { GameEngine } from "../Core/GameEngine";
+import { Component } from './Component';
+import { GameEngine } from '../Core/GameEngine';
 export class RectangleRenderer extends Component {
     constructor(gameObject, renderWidth, renderHeight, color) {
         super(gameObject);

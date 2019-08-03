@@ -1,12 +1,12 @@
-import { Component } from "./Component";
-import { GameObject } from "../Core/GameObject";
-import { IRenderable } from "../Core/Interfaces/IRenderable";
-import { GameEngine } from "../Core/GameEngine";
+import { Component } from './Component';
+import { GameObject } from '../Core/GameObject';
+import { Renderable } from '../Core/Interfaces/Renderable';
+import { GameEngine } from '../Core/GameEngine';
 
-export class RectangleRenderer extends Component implements IRenderable {
+export class RectangleRenderer extends Component implements Renderable {
 
-    private renderWidth: number;
-    private renderHeight: number;
+    private readonly renderWidth: number;
+    private readonly renderHeight: number;
     private color: string;
 
     public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, color: string) {
@@ -14,7 +14,7 @@ export class RectangleRenderer extends Component implements IRenderable {
 
         this.renderWidth = renderWidth;
         this.renderHeight = renderHeight;
-        this.color = color
+        this.color = color;
 
         GameEngine.instance.renderingEngine.addRenderableObject(this);
     }

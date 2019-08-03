@@ -1,8 +1,8 @@
-import { Component } from "./Component";
-import { Vector2 } from "../Core/Helpers/Vector2";
-import { Color } from "../Core/Enums/Color";
-import { GameEngine } from "../Core/GameEngine";
-import { AStarSearch } from "../Core/Helpers/AStarSearch";
+import { Component } from './Component';
+import { Vector2 } from '../Core/Helpers/Vector2';
+import { Color } from '../Core/Enums/Color';
+import { GameEngine } from '../Core/GameEngine';
+import { AStarSearch } from '../Core/Helpers/AStarSearch';
 export class NavAgent extends Component {
     constructor(gameObject) {
         super(gameObject);
@@ -61,7 +61,7 @@ export class NavAgent extends Component {
         }
         context.beginPath();
         let start = true;
-        for (let nodePos of this.path) {
+        for (const nodePos of this.path) {
             if (start) {
                 start = false;
                 context.moveTo(nodePos.x, nodePos.y);

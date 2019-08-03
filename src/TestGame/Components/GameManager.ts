@@ -1,12 +1,12 @@
-import { Component } from "../../GameEngine/Components/Component";
-import { GameObject } from "../../GameEngine/Core/GameObject";
-import { GameEngine } from "../../GameEngine/Core/GameEngine";
-import { Ball } from "../GameObjects/Ball";
-import { AudioSource } from "../../GameEngine/Components/AudioSource";
-import { IRenderableGUI } from "../../GameEngine/Core/Interfaces/IRenderableGUI";
-import { Time } from "../../GameEngine/Core/Time";
+import { Component } from '../../GameEngine/Components/Component';
+import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { Ball } from '../GameObjects/Ball';
+import { AudioSource } from '../../GameEngine/Components/AudioSource';
+import { RenderableGUI } from '../../GameEngine/Core/Interfaces/RenderableGUI';
+import { Time } from '../../GameEngine/Core/Time';
 
-export class GameManager extends Component implements IRenderableGUI {
+export class GameManager extends Component implements RenderableGUI {
 
     private static _instance: GameManager;
 
@@ -21,21 +21,15 @@ export class GameManager extends Component implements IRenderableGUI {
     private constructor(gameObject: GameObject) {
         super(gameObject);
 
-        document.getElementById("print-button").addEventListener("click", () => this.printGameData());
-        document.getElementById("pause-button").addEventListener("click", () => this.togglePause());
-        document.getElementById("add-ball").addEventListener("click", () => this.testInstantiate());
-        document.getElementById("toggle-music").addEventListener("click", () => this.toggleMusic());
-    }
-
-    public start(): void {
-        GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
-        this.audioSource = this.gameObject.getComponent(AudioSource);
-        this.audioSource.loop = true;
+        document.getElementById('print-button').addEventListener('click', () => this.printGameData());
+        document.getElementById('pause-button').addEventListener('click', () => this.togglePause());
+        document.getElementById('add-ball').addEventListener('click', () => this.testInstantiate());
+        document.getElementById('toggle-music').addEventListener('click', () => this.toggleMusic());
     }
 
     public static get instance(): GameManager {
         if(this._instance === null || this._instance === undefined) {
-            throw new Error("GameManager has not been created yet. Use the createinstance method first.");
+            throw new Error('GameManager has not been created yet. Use the createinstance method first.');
         }
 
         return this._instance;
@@ -47,10 +41,16 @@ export class GameManager extends Component implements IRenderableGUI {
             return this.instance;
         }
         
-        throw new Error("More than one GameManager cannot be created!");
+        throw new Error('More than one GameManager cannot be created!');
     }
 
-    public endGame() {
+    public start(): void {
+        GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
+        this.audioSource = this.gameObject.getComponent(AudioSource);
+        this.audioSource.loop = true;
+    }
+
+    public endGame(): void {
         this.togglePause();
         this.gameOver = true;
     }
@@ -68,7 +68,7 @@ export class GameManager extends Component implements IRenderableGUI {
 
     private renderGameOver(context: CanvasRenderingContext2D): void {
         if (this.gameOver) {
-            context.fillText("Game Over! YOU SUCK", 50, 50);
+            context.fillText('Game Over! YOU SUCK', 50, 50);
         }
     }
 
@@ -104,6 +104,6 @@ export class GameManager extends Component implements IRenderableGUI {
     }
 
     private testInstantiate(): void {
-        GameEngine.instance.instantiate(new Ball("ball2"));
+        GameEngine.instance.instantiate(new Ball('ball2'));
     }
 }

@@ -1,15 +1,15 @@
-import { KeyCode } from "../Enums/KeyCode";
-import { Vector2 } from "./Vector2";
-import { EventType } from "../Enums/EventType";
-import { GameEngine } from "../GameEngine";
-import { ICanvasMouseEvent } from "../Interfaces/ICanvasMouseEvent";
+import { KeyCode } from '../Enums/KeyCode';
+import { Vector2 } from './Vector2';
+import { EventType } from '../Enums/EventType';
+import { GameEngine } from '../GameEngine';
+import { CanvasMouseEvent } from '../Interfaces/CanvasMouseEvent';
 
 export abstract class Input {
 
     private static _gameCanvas: HTMLCanvasElement;
     private static readonly keyMap = new Map<EventType.KeyDown | EventType.KeyUp, Map<KeyCode, ((event: KeyboardEvent) => void)[]>>();
-    private static readonly mouseMap = new Map<EventType.Click | EventType.MouseDown | EventType.MouseUp, Map<0 | 1 | 2, ((event: ICanvasMouseEvent) => void)[]>>();
-    private static readonly clickMap = new Map<number, ((event: ICanvasMouseEvent) => void)[]>();
+    private static readonly mouseMap = new Map<EventType.Click | EventType.MouseDown | EventType.MouseUp, Map<0 | 1 | 2, ((event: CanvasMouseEvent) => void)[]>>();
+    private static readonly clickMap = new Map<number, ((event: CanvasMouseEvent) => void)[]>();
     private static readonly genericEventMap = new Map<EventType, ((event: Event) => void)[]>();
     private static readonly currentListeners = new Map<EventType, ((event: Event) => void)>();
     private static readonly reservedEvents = new Set([EventType.Click, EventType.KeyDown, EventType.KeyUp]);
@@ -50,7 +50,7 @@ export abstract class Input {
             keyCodes = [keyCodes];
         }
         
-        for (let key of keyCodes) {
+        for (const key of keyCodes) {
             if (this.keyMap.get(type).has(key)) {
                 this.keyMap.get(type).get(key).push(handler);
             }
@@ -67,7 +67,7 @@ export abstract class Input {
      * @param handler the callback function to be called
      * @example Input.addClickListener(0, (event) => this.handleClick(event));
      */
-    public static addClickListener(mouseButton: number, handler: ((event: ICanvasMouseEvent) => void)): void {
+    public static addClickListener(mouseButton: number, handler: ((event: CanvasMouseEvent) => void)): void {
         if (this.clickMap.has(mouseButton)) {
             this.clickMap.get(mouseButton).push(handler);
         }
@@ -108,8 +108,8 @@ export abstract class Input {
     }
 
     private static invokeGenericHandlers(event: Event): void {
-        if (this.genericEventMap.has(<EventType>event.type)) {
-            this.genericEventMap.get(<EventType>event.type).forEach(handler => handler(event));
+        if (this.genericEventMap.has(event.type as EventType)) {
+            this.genericEventMap.get(event.type as EventType).forEach(handler => handler(event));
         }
     }
 
@@ -134,7 +134,7 @@ export abstract class Input {
 
     private static invokeClick(event: MouseEvent): void {
         if (this.clickMap.has(event.button)) {
-            const canvasMouseEvent = event as ICanvasMouseEvent;
+            const canvasMouseEvent = event as CanvasMouseEvent;
             canvasMouseEvent.cursorPositionOnCanvas = this.getCursorPosition(event);
 
             this.clickMap.get(event.button).forEach(handler => handler(canvasMouseEvent));

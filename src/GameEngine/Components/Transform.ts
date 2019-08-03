@@ -1,8 +1,8 @@
-import { Component } from "./Component";
-import { Vector2 } from "../Core/Helpers/Vector2";
-import { LiteEvent } from "../Core/Helpers/LiteEvent";
-import { GameObject } from "../Core/GameObject";
-import { ILiteEvent } from "../Core/Interfaces/ILiteEvent";
+import { Component } from './Component';
+import { Vector2 } from '../Core/Helpers/Vector2';
+import { LiteEvent } from '../Core/Helpers/LiteEvent';
+import { GameObject } from '../Core/GameObject';
+import { CustomEvent } from '../Core/Interfaces/CustomEvent';
 
 export class Transform extends Component {
 
@@ -22,7 +22,7 @@ export class Transform extends Component {
         this.scale = Vector2.one;
     }
 
-    public get onMoved(): ILiteEvent<void> { 
+    public get onMoved(): CustomEvent<void> { 
         return this.onMove.expose(); 
     }
 

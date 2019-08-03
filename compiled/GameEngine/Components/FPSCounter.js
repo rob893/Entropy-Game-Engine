@@ -1,6 +1,6 @@
-import { Component } from "./Component";
-import { Time } from "../Core/Time";
-import { GameEngine } from "../Core/GameEngine";
+import { Component } from './Component';
+import { Time } from '../Core/Time';
+import { GameEngine } from '../Core/GameEngine';
 export class FPSCounter extends Component {
     constructor() {
         super(...arguments);
@@ -10,7 +10,7 @@ export class FPSCounter extends Component {
     }
     start() {
         GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
-        GameEngine.instance.renderingEngine.canvasContext.font = "20px Arial";
+        GameEngine.instance.renderingEngine.canvasContext.font = '20px Arial';
     }
     renderGUI(context) {
         this.timer += Time.DeltaTime;
@@ -21,7 +21,7 @@ export class FPSCounter extends Component {
             this.numFrames = 0;
         }
         context.fillStyle = 'white';
-        context.fillText("FPS: " + this.FPS.toFixed(2), 0, 20);
+        context.fillText('FPS: ' + this.FPS.toFixed(2), 0, 20);
     }
 }
 //# sourceMappingURL=FPSCounter.js.map

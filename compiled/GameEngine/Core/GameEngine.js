@@ -1,18 +1,10 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-import { PhysicsEngine } from "./PhysicsEngine";
-import { Time } from "./Time";
-import { RenderingEngine } from "./RenderingEngine";
-import { Key } from "./Enums/Key";
-import { TerrainBuilder } from "./Helpers/TerrainBuilder";
-import { Vector2 } from "./Helpers/Vector2";
-import { Input } from "./Helpers/Input";
+import { PhysicsEngine } from './PhysicsEngine';
+import { Time } from './Time';
+import { RenderingEngine } from './RenderingEngine';
+import { KeyCode } from './Enums/KeyCode';
+import { TerrainBuilder } from './Helpers/TerrainBuilder';
+import { Input } from './Helpers/Input';
+import { EventType } from './Enums/EventType';
 export class GameEngine {
     constructor(gameCanvas, physicsEngine, renderingEngine) {
         this.scenes = new Map();
@@ -28,20 +20,10 @@ export class GameEngine {
         this.gameCanvas = gameCanvas;
         this._physicsEngine = physicsEngine;
         this._renderingEngine = renderingEngine;
-        document.addEventListener('keydown', (event) => {
-            if (event.keyCode === Key.UpArrow) {
-                this.gameCanvas.requestFullscreen();
-            }
-            else if (event.keyCode === Key.Two && this.loadedScene.loadOrder !== 2) {
-                this.loadScene(2);
-            }
-            else if (event.keyCode === Key.One && this.loadedScene.loadOrder !== 1) {
-                this.loadScene(1);
-            }
-            else if (event.keyCode === Key.P) {
-                this.printGameData();
-            }
-        });
+        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.loadScene(1));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.loadScene(2));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
+        Input.addKeyListener(EventType.KeyDown, KeyCode.UpArrow, async () => await this.gameCanvas.requestFullscreen());
     }
     static get instance() {
         if (this._instance === null || this._instance === undefined) {
@@ -61,12 +43,11 @@ export class GameEngine {
     static buildGameEngine(gameCanvas) {
         const physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
         const renderingEngine = new RenderingEngine(gameCanvas.getContext('2d'));
-        Input.init();
         this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
         return this._instance;
     }
     setScenes(scenes) {
-        for (let scene of scenes) {
+        for (const scene of scenes) {
             if (this.scenes.has(scene.loadOrder) || this.scenes.has(scene.name)) {
                 console.error('Duplicate scene load orders or name detected ' + scene.loadOrder + ' ' + scene.name);
             }
@@ -74,44 +55,21 @@ export class GameEngine {
             this.scenes.set(scene.name, scene);
         }
     }
-    loadScene(loadOrderOrName) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.scenes.has(loadOrderOrName)) {
-                throw new Error('Scene ' + loadOrderOrName + ' not found.');
-            }
-            this.endCurrentScene();
-            const scene = this.scenes.get(loadOrderOrName);
-            yield this.initializeScene(scene.getStartingGameObjects(), scene.getSkybox(this.gameCanvas), scene.terrainSpec);
-            this.loadedScene = scene;
-            this.startGame();
-        });
-    }
-    initializeScene(gameObjects, skybox, terrainSpec = null) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.setGameObjects(gameObjects);
-            this._renderingEngine.background = skybox;
-            if (terrainSpec !== null) {
-                const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
-                const terrain = yield terrianBuilder.buildTerrain(terrainSpec);
-                this.terrainObject = terrain;
-                this._renderingEngine.terrain = terrain;
-            }
-            this.gameInitialized = true;
-        });
-    }
-    startGame() {
-        if (!this.gameInitialized) {
-            throw new Error("The game is not initialized yet!");
+    async loadScene(loadOrderOrName) {
+        if (!this.scenes.has(loadOrderOrName)) {
+            throw new Error('Scene ' + loadOrderOrName + ' not found.');
         }
-        Time.start();
-        this.paused = false;
-        this.gameObjects.forEach(go => go.start());
-        this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
+        this.endCurrentScene();
+        Input.addEventListener(EventType.Click, () => console.log('test'));
+        const scene = this.scenes.get(loadOrderOrName);
+        await this.initializeScene(scene.getStartingGameObjects(), scene.getSkybox(this.gameCanvas), scene.terrainSpec);
+        this.loadedScene = scene;
+        this.startGame();
     }
     instantiate(newGameObject) {
         if (this.gameObjectMap.has(newGameObject.id)) {
-            let originalId = newGameObject.id;
-            newGameObject.id += " Clone(" + this.gameObjectNumMap.get(originalId) + ")";
+            const originalId = newGameObject.id;
+            newGameObject.id += ' Clone(' + this.gameObjectNumMap.get(originalId) + ')';
             this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
         }
         else {
@@ -128,27 +86,21 @@ export class GameEngine {
         newGameObject.start();
         return newGameObject;
     }
-    getCursorPosition(event) {
-        const rect = this.gameCanvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        return new Vector2(x, y);
-    }
     getGameObjectById(id) {
         if (!this.gameObjectMap.has(id)) {
-            throw new Error("No GameObject with id of " + id + " exists!");
+            throw new Error('No GameObject with id of ' + id + ' exists!');
         }
         return this.gameObjectMap.get(id);
     }
     getGameObjectWithTag(tag) {
         if (!this.tagMap.has(tag)) {
-            throw new Error("No GameObject with tag of " + tag + " exists!");
+            throw new Error('No GameObject with tag of ' + tag + ' exists!');
         }
         return this.tagMap.get(tag)[0];
     }
     getGameObjectsWithTag(tag) {
         if (!this.tagMap.has(tag)) {
-            throw new Error("No GameObject with tag of " + tag + " exists!");
+            throw new Error('No GameObject with tag of ' + tag + ' exists!');
         }
         return this.tagMap.get(tag);
     }
@@ -157,7 +109,7 @@ export class GameEngine {
     }
     printGameData() {
         console.log(this);
-        console.log("Time since game start " + Time.TotalTime + "s");
+        console.log('Time since game start ' + Time.TotalTime + 's');
         console.log(this._renderingEngine);
         console.log(this.physicsEngine);
         this.gameObjects.forEach(go => console.log(go));
@@ -167,10 +119,10 @@ export class GameEngine {
     }
     setGameObjects(gameObjects) {
         this.gameObjects = gameObjects;
-        for (let gameObject of gameObjects) {
+        for (const gameObject of gameObjects) {
             if (this.gameObjectMap.has(gameObject.id)) {
-                let originalId = gameObject.id;
-                gameObject.id += " Clone(" + this.gameObjectNumMap.get(originalId) + ")";
+                const originalId = gameObject.id;
+                gameObject.id += ' Clone(' + this.gameObjectNumMap.get(originalId) + ')';
                 this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
             }
             else {
@@ -204,13 +156,33 @@ export class GameEngine {
         this._renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
         this._renderingEngine.renderGizmos = true;
     }
+    async initializeScene(gameObjects, skybox, terrainSpec = null) {
+        this.setGameObjects(gameObjects);
+        this._renderingEngine.background = skybox;
+        if (terrainSpec !== null) {
+            const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
+            const terrain = await terrianBuilder.buildTerrain(terrainSpec);
+            this.terrainObject = terrain;
+            this._renderingEngine.terrain = terrain;
+        }
+        this.gameInitialized = true;
+    }
+    startGame() {
+        if (!this.gameInitialized) {
+            throw new Error('The game is not initialized yet!');
+        }
+        Time.start();
+        this.paused = false;
+        this.gameObjects.forEach(go => go.start());
+        this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
+    }
     update() {
         if (this.paused) {
             return;
         }
         Time.updateTime();
         this.physicsEngine.updatePhysics();
-        for (let gameObject of this.gameObjects) {
+        for (const gameObject of this.gameObjects) {
             if (gameObject.enabled) {
                 gameObject.update();
             }

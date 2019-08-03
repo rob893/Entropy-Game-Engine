@@ -1,6 +1,6 @@
-import { Component } from "./Component";
-import { Vector2 } from "../Core/Helpers/Vector2";
-import { LiteEvent } from "../Core/Helpers/LiteEvent";
+import { Component } from './Component';
+import { Vector2 } from '../Core/Helpers/Vector2';
+import { LiteEvent } from '../Core/Helpers/LiteEvent';
 export class Transform extends Component {
     constructor(gameObject, x, y) {
         super(gameObject);

@@ -1,5 +1,5 @@
-import { Component } from "../../GameEngine/Components/Component";
-import { GameManager } from "./GameManager";
+import { Component } from '../../GameEngine/Components/Component';
+import { GameManager } from './GameManager';
 export class PlayerHealth extends Component {
     constructor(gameObject, health = 100) {
         super(gameObject);

@@ -1,8 +1,7 @@
-import { SpatialHashCollisionDetector } from "./Physics/SpatialHashCollisionDetector";
-import { CollisionResolver } from "./Physics/CollisionResolver";
+import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDetector';
+import { SimpleCollisionResolver } from './Physics/CollisionResolver';
 export class PhysicsEngine {
-    constructor(gameCanvas, collisionDetector, collisionResolver) {
-        this.gameCanvas = gameCanvas;
+    constructor(collisionDetector, collisionResolver) {
         this.rigidbodies = [];
         this.gravity = 665;
         this.collisionDetector = collisionDetector;
@@ -10,9 +9,9 @@ export class PhysicsEngine {
         this.collisionDetector.onCollisionDetected.add((colliderA, colliderB) => this.resolveCollisions(colliderA, colliderB));
     }
     static buildPhysicsEngine(gameCanvas) {
-        let collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, 100);
-        let collisionResolver = new CollisionResolver();
-        const engine = new PhysicsEngine(gameCanvas, collisionDetector, collisionResolver);
+        const collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, 100);
+        const collisionResolver = new SimpleCollisionResolver();
+        const engine = new PhysicsEngine(collisionDetector, collisionResolver);
         return engine;
     }
     get colliders() {

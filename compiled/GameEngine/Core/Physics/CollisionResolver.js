@@ -1,4 +1,4 @@
-export class CollisionResolver {
+export class SimpleCollisionResolver {
     resolveCollisions(colliderA, colliderB) {
     }
 }

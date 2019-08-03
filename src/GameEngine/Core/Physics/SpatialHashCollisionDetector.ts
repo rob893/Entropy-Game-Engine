@@ -1,10 +1,10 @@
-import { ICollisionDetector } from "../Interfaces/ICollisionDetector";
-import { RectangleCollider } from "../../Components/RectangleCollider";
-import { ILiteEvent } from "../Interfaces/ILiteEvent";
-import { LiteEvent } from "../Helpers/LiteEvent";
-import { Vector2 } from "../Helpers/Vector2";
+import { CollisionDetector } from '../Interfaces/CollisionDetector';
+import { RectangleCollider } from '../../Components/RectangleCollider';
+import { CustomEvent } from '../Interfaces/CustomEvent';
+import { LiteEvent } from '../Helpers/LiteEvent';
+import { Vector2 } from '../Helpers/Vector2';
 
-export class SpatialHashCollisionDetector implements ICollisionDetector {
+export class SpatialHashCollisionDetector implements CollisionDetector {
     
     private readonly _colliders: RectangleCollider[];
     private readonly _onCollisionDetected: LiteEvent<RectangleCollider> = new LiteEvent<RectangleCollider>();
@@ -28,17 +28,17 @@ export class SpatialHashCollisionDetector implements ICollisionDetector {
         return this._colliders;
     }
 
-    public get onCollisionDetected(): ILiteEvent<RectangleCollider> {
+    public get onCollisionDetected(): CustomEvent<RectangleCollider> {
         return this._onCollisionDetected.expose();
     }
 
     public detectCollisions(): void {
-        for (let collider of this._colliders) {
+        for (const collider of this._colliders) {
             if (!collider.enabled) {
                 continue;
             }
 
-            for (let other of this.getPossibleCollisions(collider)) {
+            for (const other of this.getPossibleCollisions(collider)) {
                 if (collider.detectCollision(other)) {
                     this._onCollisionDetected.trigger(collider, other);
                 }
@@ -78,7 +78,7 @@ export class SpatialHashCollisionDetector implements ICollisionDetector {
     }
 
     private updateColliderSpatialMapping(collider: RectangleCollider): void {
-        for (let key of this.colliderSpacialMapKeys.get(collider)) {
+        for (const key of this.colliderSpacialMapKeys.get(collider)) {
             this.spatialMap.get(key).delete(collider);
         }
 
@@ -86,16 +86,16 @@ export class SpatialHashCollisionDetector implements ICollisionDetector {
     }
 
     private addColliderToSpatialMap(collider: RectangleCollider): void {
-        let tlKey = this.getMapKey(collider.topLeft);
-        let trKey = this.getMapKey(collider.topRight);
-        let blKey = this.getMapKey(collider.bottomLeft);
-        let brKey = this.getMapKey(collider.bottomRight);
+        const tlKey = this.getMapKey(collider.topLeft);
+        const trKey = this.getMapKey(collider.topRight);
+        const blKey = this.getMapKey(collider.bottomLeft);
+        const brKey = this.getMapKey(collider.bottomRight);
 
         if (!this.colliderSpacialMapKeys.has(collider)) {
             this.colliderSpacialMapKeys.set(collider, new Set<string>());
         }
 
-        let previousKeys = this.colliderSpacialMapKeys.get(collider);
+        const previousKeys = this.colliderSpacialMapKeys.get(collider);
 
         // let movedCells = previousKeys.size === 0 ? true : false;
 
@@ -129,14 +129,14 @@ export class SpatialHashCollisionDetector implements ICollisionDetector {
             return;
         }
 
-        let tlx = Number(tlKey.split(',')[0]);
-        let tly = Number(tlKey.split(',')[1]);
-        let xDiff = Number(trKey.split(',')[0]) - tlx;
-        let yDiff = Number(blKey.split(',')[1]) - tly;
+        const tlx = Number(tlKey.split(',')[0]);
+        const tly = Number(tlKey.split(',')[1]);
+        const xDiff = Number(trKey.split(',')[0]) - tlx;
+        const yDiff = Number(blKey.split(',')[1]) - tly;
 
         for (let x = tlx; x <= xDiff + tlx; x += this.cellSize) {
             for (let y = tly; y <= yDiff + tly; y += this.cellSize) {
-                let key = this.getMapKey(x, y);
+                const key = this.getMapKey(x, y);
                 
                 if (this.spatialMap.has(key)) {
                     this.spatialMap.get(key).add(collider);
@@ -150,14 +150,14 @@ export class SpatialHashCollisionDetector implements ICollisionDetector {
     }
 
     private getPossibleCollisions(collider: RectangleCollider): Set<RectangleCollider> {
-        let possibleCollisions: Set<RectangleCollider> = new Set<RectangleCollider>();
+        const possibleCollisions: Set<RectangleCollider> = new Set<RectangleCollider>();
 
-        for (let key of this.colliderSpacialMapKeys.get(collider)) {
-           for (let other of this.spatialMap.get(key)) {
-               if (other !== collider) {
-                   possibleCollisions.add(other);
-               }
-           }
+        for (const key of this.colliderSpacialMapKeys.get(collider)) {
+            for (const other of this.spatialMap.get(key)) {
+                if (other !== collider) {
+                    possibleCollisions.add(other);
+                }
+            }
         }
 
         return possibleCollisions;

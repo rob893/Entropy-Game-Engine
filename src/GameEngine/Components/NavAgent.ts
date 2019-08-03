@@ -1,21 +1,21 @@
-import { Component } from "./Component";
-import { IRenderableGizmo } from "../Core/Interfaces/IRenderableGizmo";
-import { Vector2 } from "../Core/Helpers/Vector2";
-import { Color } from "../Core/Enums/Color";
-import { NavGrid } from "../Core/Helpers/NavGrid";
-import { IWeightedGraphCell } from "../Core/Interfaces/IWeightedGraphCell";
-import { GameEngine } from "../Core/GameEngine";
-import { AStarSearch } from "../Core/Helpers/AStarSearch";
-import { GameObject } from "../Core/GameObject";
+import { Component } from './Component';
+import { RenderableGizmo } from '../Core/Interfaces/RenderableGizmo';
+import { Vector2 } from '../Core/Helpers/Vector2';
+import { Color } from '../Core/Enums/Color';
+import { NavGrid } from '../Core/Helpers/NavGrid';
+import { WeightedGraphCell } from '../Core/Interfaces/WeightedGraphCell';
+import { GameEngine } from '../Core/GameEngine';
+import { AStarSearch } from '../Core/Helpers/AStarSearch';
+import { GameObject } from '../Core/GameObject';
 
-export class NavAgent extends Component implements IRenderableGizmo {
+export class NavAgent extends Component implements RenderableGizmo {
     
     public speed: number = 1;
     
     private path: Vector2[] = null;
     private nextPosition: Vector2 = null;
     private pathIndex: number = 0;
-    private navGrid: NavGrid<IWeightedGraphCell> = null;
+    private navGrid: NavGrid<WeightedGraphCell> = null;
 
 
     public constructor(gameObject: GameObject) {
@@ -88,7 +88,7 @@ export class NavAgent extends Component implements IRenderableGizmo {
         context.beginPath();
 
         let start = true;
-        for (let nodePos of this.path) {
+        for (const nodePos of this.path) {
             if (start) {
                 start = false;
                 context.moveTo(nodePos.x, nodePos.y);

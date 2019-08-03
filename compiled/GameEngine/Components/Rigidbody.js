@@ -1,14 +1,13 @@
-import { Component } from "./Component";
-import { Vector2 } from "../Core/Helpers/Vector2";
-import { Time } from "../Core/Time";
-import { GameEngine } from "../Core/GameEngine";
+import { Component } from './Component';
+import { Vector2 } from '../Core/Helpers/Vector2';
+import { Time } from '../Core/Time';
+import { GameEngine } from '../Core/GameEngine';
 export class Rigidbody extends Component {
     constructor(gameObject, mass = 70) {
         super(gameObject);
         this.isKinomatic = false;
         this.mass = mass;
         this.velocity = new Vector2(0, 0);
-        this.acceleration = new Vector2(0, 0);
         this.force = Vector2.zero;
         GameEngine.instance.physicsEngine.addRigidbody(this);
     }

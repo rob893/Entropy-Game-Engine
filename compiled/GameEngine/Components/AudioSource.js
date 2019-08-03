@@ -1,17 +1,9 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-import { Component } from "./Component";
+import { Component } from './Component';
 export class AudioSource extends Component {
     constructor(gameObject, audioURL) {
         super(gameObject);
         this.ready = false;
-        let audioClip = new Audio(audioURL);
+        const audioClip = new Audio(audioURL);
         audioClip.onloadeddata = () => {
             this.audioClip = audioClip;
             this.ready = true;
@@ -39,20 +31,18 @@ export class AudioSource extends Component {
     }
     setClip(audioURL) {
         this.ready = false;
-        let newClip = new Audio(audioURL);
+        const newClip = new Audio(audioURL);
         newClip.onloadeddata = () => {
             this.audioClip = newClip;
             this.ready = true;
         };
     }
-    play() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.ready) {
-                setTimeout(() => this.play(), 250);
-                return;
-            }
-            yield this.audioClip.play();
-        });
+    async play() {
+        if (!this.ready) {
+            setTimeout(async () => await this.play(), 250);
+            return;
+        }
+        await this.audioClip.play();
     }
     pause() {
         if (!this.ready) {

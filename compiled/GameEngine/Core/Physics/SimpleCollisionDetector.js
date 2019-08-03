@@ -1,4 +1,4 @@
-import { LiteEvent } from "../Helpers/LiteEvent";
+import { LiteEvent } from '../Helpers/LiteEvent';
 export class SimpleCollisionDetector {
     constructor() {
         this._onCollisionDetected = new LiteEvent();

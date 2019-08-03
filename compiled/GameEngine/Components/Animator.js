@@ -1,5 +1,5 @@
-import { Component } from "./Component";
-import { GameEngine } from "../Core/GameEngine";
+import { Component } from './Component';
+import { GameEngine } from '../Core/GameEngine';
 export class Animator extends Component {
     constructor(gameObject, renderWidth, renderHeight, initialAnimation) {
         super(gameObject);
