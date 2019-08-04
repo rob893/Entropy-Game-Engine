@@ -1,5 +1,6 @@
 import { Transform } from '../Components/Transform';
 import { Component } from '../Components/Component';
+import { GameEngine } from './GameEngine';
 
 export abstract class GameObject {
     
@@ -18,6 +19,22 @@ export abstract class GameObject {
         this._transform = new Transform(this, x, y);
         this.isEnabled = true;
         this.tag = tag;
+    }
+
+    public static findGameObjectById(id: string): GameObject {
+        return GameEngine.instance.findGameObjectById(id);
+    }
+
+    public static findGameObjectWithTag(tag: string): GameObject {
+        return GameEngine.instance.findGameObjectWithTag(tag);
+    }
+
+    public static findGameObjectsWithTag(tag: string): GameObject[] {
+        return GameEngine.instance.findGameObjectsWithTag(tag);
+    }
+
+    public static instantiate(newGameObject: GameObject): GameObject {
+        return GameEngine.instance.instantiate(newGameObject);
     }
 
     public start(): void {
@@ -52,6 +69,24 @@ export abstract class GameObject {
 
     public get transform(): Transform {
         return this._transform;
+    }
+
+    /**
+     * Use this function to remove one of a game object's components from the update loop. This is used by empty update functions to reduce 
+     * the amount of update calls per frame (no point in calling empty update functions).
+     * 
+     * @param component the component to be removed from this game object's update loop. It MUST be one of the game object's components.
+     */
+    public removeComponentFromUpdate(component: Component): void {
+        if (!this.componentMap.has(component.constructor.name)) {
+            throw new Error('This game object does not have a component of type ' + component.constructor.name);
+        }
+
+        if (!this.components.includes(component)) {
+            throw new Error('This game object does not have the component being removed.');
+        }
+
+        this.components.splice(this.components.indexOf(component), 1);
     }
 
     public hasComponent<T extends Component>(component: new (...args: any[]) => T): boolean {

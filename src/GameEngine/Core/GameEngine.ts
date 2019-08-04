@@ -15,19 +15,19 @@ export class GameEngine {
 
     private static _instance: GameEngine;
 
-    private readonly gameCanvas: HTMLCanvasElement;
     private _physicsEngine: PhysicsEngine;
     private _renderingEngine: RenderingEngine;
-    private readonly scenes: Map<number | string, Scene> = new Map<number | string, Scene>();
     private loadedScene: Scene = null;
     private terrainObject: Terrain = null;
+    private gameLoopId: number = null;
+    private gameInitialized: boolean = false;
+    private paused: boolean = false;
     private gameObjects: GameObject[] = [];
     private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
-    private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
     private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
-    private gameInitialized: boolean = false;
-    private gameLoopId: number = null;
-    private paused: boolean = false;
+    private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
+    private readonly scenes: Map<number | string, Scene> = new Map<number | string, Scene>();
+    private readonly gameCanvas: HTMLCanvasElement;
 
 
     private constructor(gameCanvas: HTMLCanvasElement, physicsEngine: PhysicsEngine, renderingEngine: RenderingEngine) {
@@ -35,10 +35,7 @@ export class GameEngine {
         this._physicsEngine = physicsEngine;
         this._renderingEngine = renderingEngine;
         
-        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.loadScene(1));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.loadScene(2));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
-        Input.addKeyListener(EventType.KeyDown, KeyCode.UpArrow, async () => await this.gameCanvas.requestFullscreen());
+        Input.initialize();
     }
 
     public static get instance(): GameEngine {
@@ -87,10 +84,15 @@ export class GameEngine {
         }
 
         this.endCurrentScene();
-        Input.addEventListener(EventType.Click, (): void => console.log('test'));
+
         const scene = this.scenes.get(loadOrderOrName);
 
         await this.initializeScene(scene.getStartingGameObjects(), scene.getSkybox(this.gameCanvas), scene.terrainSpec);
+
+        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.loadScene(1));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.loadScene(2));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
+        Input.addKeyListener(EventType.KeyDown, KeyCode.UpArrow, async () => await this.gameCanvas.requestFullscreen());
 
         this.loadedScene = scene;
         this.startGame();
@@ -120,25 +122,25 @@ export class GameEngine {
         return newGameObject;
     }
 
-    public getGameObjectById(id: string): GameObject {
+    public findGameObjectById(id: string): GameObject {
         if (!this.gameObjectMap.has(id)) {
-            throw new Error('No GameObject with id of ' + id + ' exists!');
+            return null;
         }
 
         return this.gameObjectMap.get(id);
     }
 
-    public getGameObjectWithTag(tag: string): GameObject {
+    public findGameObjectWithTag(tag: string): GameObject {
         if (!this.tagMap.has(tag)) {
-            throw new Error('No GameObject with tag of ' + tag + ' exists!');
+            return null;
         }
 
         return this.tagMap.get(tag)[0];
     }
 
-    public getGameObjectsWithTag(tag: string): GameObject[] {
+    public findGameObjectsWithTag(tag: string): GameObject[] {
         if (!this.tagMap.has(tag)) {
-            throw new Error('No GameObject with tag of ' + tag + ' exists!');
+            return [];
         }
 
         return this.tagMap.get(tag);

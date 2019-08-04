@@ -44,7 +44,13 @@ export abstract class Component {
 
     public start(): void {}
 
-    public update(): void {}
+    /**
+     * This function is called once every frame. Override this function in derived components if accessing the update loop is needed. 
+     * Do not call super() as the original implementaiton will remove itself from the update loop for performance reasons (no point in invoking a bunch of empty update methods).
+     */
+    public update(): void {
+        this.gameObject.removeComponentFromUpdate(this);
+    }
 
     public onDisable(): void {}
 

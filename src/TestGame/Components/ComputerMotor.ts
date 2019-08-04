@@ -25,7 +25,7 @@ export class ComputerMotor extends Motor {
         super.start();
 
         this.collider = this.gameObject.getComponent(RectangleCollider);
-        this.ballTransform = GameEngine.instance.getGameObjectById('ball').transform;
+        this.ballTransform = GameEngine.instance.findGameObjectById('ball').transform;
         this.quarterFieldX = this.gameCanvas.width / 4;
         this.midFieldY = this.gameCanvas.height / 2;
     }

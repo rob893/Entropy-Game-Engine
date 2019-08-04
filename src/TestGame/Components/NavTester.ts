@@ -25,7 +25,7 @@ export class NavTester extends Component {
     public constructor(gameObject: GameObject) {
         super(gameObject);
 
-        Input.addClickListener(0, (event) => this.onClick(event));
+        Input.addMouseListener(EventType.Click, 0, (event) => this.onClick(event));
         Input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, (event) => this.onKeyDown(event));
 
         this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, [2]);
@@ -58,7 +58,6 @@ export class NavTester extends Component {
     }
 
     private changeAnimation(newDirection: Vector2): void {
-        console.log(newDirection);
         if (Math.abs(newDirection.x) > Math.abs(newDirection.y)) {
             if (newDirection.x > 0.5) {
                 this.animator.setAnimation(this.runRightAnimation);

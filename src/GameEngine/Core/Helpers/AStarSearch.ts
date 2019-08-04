@@ -9,7 +9,7 @@ export class AStarSearch {
         if (graph.isUnpassable(goal)) {
             return null;
         }
-        console.log('searching');
+        
         const cameFrom: Map<Vector2, Vector2> = new Map<Vector2, Vector2>();
         const costSoFar: Map<Vector2, number> = new Map<Vector2, number>();
 

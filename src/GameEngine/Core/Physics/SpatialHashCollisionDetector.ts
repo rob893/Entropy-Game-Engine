@@ -97,6 +97,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
 
         const previousKeys = this.colliderSpacialMapKeys.get(collider);
 
+        //TODO: come back to this.
         // let movedCells = previousKeys.size === 0 ? true : false;
 
         // for (let key of previousKeys) {
