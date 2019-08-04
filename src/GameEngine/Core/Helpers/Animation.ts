@@ -11,7 +11,7 @@ export class Animation {
     private timer: number = 0;
     
 
-    public constructor(spriteSheetUrl: string, numFrames: number, numRows: number, delay: number = 0, specificRows: number[] = null, trimEdgesBy: number = 0) {        
+    public constructor(spriteSheetUrl: string, numFrames: number, numRows: number, delay: number = 0, rowsToAnimate: number[] | number = null, trimEdgesBy: number = 0) {        
         this.delay = delay;
 
         const spriteSheet = new Image();
@@ -20,8 +20,12 @@ export class Animation {
             const spriteWidth = spriteSheet.width / numFrames;
             const spriteHeight = spriteSheet.height / numRows;
 
-            if (specificRows !== null) {
-                for (const row of specificRows) {
+            if (typeof rowsToAnimate === 'number') {
+                rowsToAnimate = [rowsToAnimate];
+            }
+
+            if (rowsToAnimate !== null) {
+                for (const row of rowsToAnimate) {
                     if (row < 1 || row > numRows) {
                         throw new Error('Invalid specificRow argument. It must be greater than 0 and less than or equal to numRows.');
                     }

@@ -6,11 +6,11 @@ import { RenderableBackground } from '../Interfaces/RenderableBackground';
 export class Terrain implements RenderableBackground {
     
     public readonly terrainImage: HTMLImageElement;
-    public readonly navGrid: NavGrid<WeightedGraphCell>;
+    public readonly navGrid: NavGrid;
     public readonly terrainColliders: RectangleCollider[];
 
 
-    public constructor(terrainImage: HTMLImageElement, navGrid: NavGrid<WeightedGraphCell>, terrainColliders: RectangleCollider[]) {
+    public constructor(terrainImage: HTMLImageElement, navGrid: NavGrid, terrainColliders: RectangleCollider[]) {
         this.terrainImage = terrainImage;
         this.navGrid = navGrid;
         this.terrainColliders = terrainColliders;

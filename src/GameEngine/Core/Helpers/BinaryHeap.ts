@@ -6,8 +6,14 @@ export class BinaryHeap<T extends Comparable> {
     private readonly minHeap: boolean;
     
     
-    public constructor(minHeap: boolean = true) {
+    public constructor(minHeap: boolean = true, items?: Iterable<T>) {
         this.minHeap = minHeap;
+
+        if (items) {
+            for (const item of items) {
+                this.add(item);
+            }
+        }
     }
 
     public static from<T extends Comparable>(items: Iterable<T>, minHeap: boolean = true): BinaryHeap<T> {

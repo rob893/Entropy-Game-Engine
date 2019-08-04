@@ -2,7 +2,7 @@ import { WeightedGraph } from '../Interfaces/WeightedGraph';
 import { Vector2 } from './Vector2';
 import { WeightedGraphCell } from '../Interfaces/WeightedGraphCell';
 
-export class NavGrid<T extends WeightedGraphCell> implements WeightedGraph<T> {
+export class NavGrid<T extends WeightedGraphCell = WeightedGraphCell> implements WeightedGraph<T> {
     
     public readonly cellSize: number;
     

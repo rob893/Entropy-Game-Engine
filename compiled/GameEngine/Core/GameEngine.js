@@ -7,23 +7,20 @@ import { Input } from './Helpers/Input';
 import { EventType } from './Enums/EventType';
 export class GameEngine {
     constructor(gameCanvas, physicsEngine, renderingEngine) {
-        this.scenes = new Map();
         this.loadedScene = null;
         this.terrainObject = null;
+        this.gameLoopId = null;
+        this.gameInitialized = false;
+        this.paused = false;
         this.gameObjects = [];
         this.gameObjectMap = new Map();
-        this.tagMap = new Map();
         this.gameObjectNumMap = new Map();
-        this.gameInitialized = false;
-        this.gameLoopId = null;
-        this.paused = false;
+        this.tagMap = new Map();
+        this.scenes = new Map();
         this.gameCanvas = gameCanvas;
         this._physicsEngine = physicsEngine;
         this._renderingEngine = renderingEngine;
-        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.loadScene(1));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.loadScene(2));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
-        Input.addKeyListener(EventType.KeyDown, KeyCode.UpArrow, async () => await this.gameCanvas.requestFullscreen());
+        Input.initialize();
     }
     static get instance() {
         if (this._instance === null || this._instance === undefined) {
@@ -60,9 +57,12 @@ export class GameEngine {
             throw new Error('Scene ' + loadOrderOrName + ' not found.');
         }
         this.endCurrentScene();
-        Input.addEventListener(EventType.Click, () => console.log('test'));
         const scene = this.scenes.get(loadOrderOrName);
         await this.initializeScene(scene.getStartingGameObjects(), scene.getSkybox(this.gameCanvas), scene.terrainSpec);
+        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.loadScene(1));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.loadScene(2));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
+        Input.addKeyListener(EventType.KeyDown, KeyCode.UpArrow, async () => await this.gameCanvas.requestFullscreen());
         this.loadedScene = scene;
         this.startGame();
     }
@@ -86,21 +86,21 @@ export class GameEngine {
         newGameObject.start();
         return newGameObject;
     }
-    getGameObjectById(id) {
+    findGameObjectById(id) {
         if (!this.gameObjectMap.has(id)) {
-            throw new Error('No GameObject with id of ' + id + ' exists!');
+            return null;
         }
         return this.gameObjectMap.get(id);
     }
-    getGameObjectWithTag(tag) {
+    findGameObjectWithTag(tag) {
         if (!this.tagMap.has(tag)) {
-            throw new Error('No GameObject with tag of ' + tag + ' exists!');
+            return null;
         }
         return this.tagMap.get(tag)[0];
     }
-    getGameObjectsWithTag(tag) {
+    findGameObjectsWithTag(tag) {
         if (!this.tagMap.has(tag)) {
-            throw new Error('No GameObject with tag of ' + tag + ' exists!');
+            return [];
         }
         return this.tagMap.get(tag);
     }

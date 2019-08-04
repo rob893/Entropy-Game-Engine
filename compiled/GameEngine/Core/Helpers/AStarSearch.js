@@ -5,7 +5,6 @@ export class AStarSearch {
         if (graph.isUnpassable(goal)) {
             return null;
         }
-        console.log('searching');
         const cameFrom = new Map();
         const costSoFar = new Map();
         const frontier = new PriorityQueue();

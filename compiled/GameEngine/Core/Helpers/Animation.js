@@ -1,6 +1,6 @@
 import { Time } from '../Time';
 export class Animation {
-    constructor(spriteSheetUrl, numFrames, numRows, delay = 0, specificRows = null, trimEdgesBy = 0) {
+    constructor(spriteSheetUrl, numFrames, numRows, delay = 0, rowsToAnimate = null, trimEdgesBy = 0) {
         this.loop = true;
         this.animationReady = false;
         this.frames = [];
@@ -13,8 +13,11 @@ export class Animation {
         spriteSheet.onload = () => {
             const spriteWidth = spriteSheet.width / numFrames;
             const spriteHeight = spriteSheet.height / numRows;
-            if (specificRows !== null) {
-                for (const row of specificRows) {
+            if (typeof rowsToAnimate === 'number') {
+                rowsToAnimate = [rowsToAnimate];
+            }
+            if (rowsToAnimate !== null) {
+                for (const row of rowsToAnimate) {
                     if (row < 1 || row > numRows) {
                         throw new Error('Invalid specificRow argument. It must be greater than 0 and less than or equal to numRows.');
                     }

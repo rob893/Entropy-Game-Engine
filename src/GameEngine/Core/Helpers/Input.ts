@@ -15,6 +15,8 @@ export abstract class Input {
     private static readonly reservedEvents = new Set([EventType.Click, EventType.KeyDown, EventType.KeyUp]);
     private static readonly keyDownSet = new Set<KeyCode>();
     private static readonly mouseButtonDownSet = new Set<number>();
+    private static readonly canvasStartingWidth: number = 1024;
+    private static readonly canvasStartingHeight: number = 576;
 
 
     /**
@@ -168,9 +170,28 @@ export abstract class Input {
 
     private static getCursorPosition(event: MouseEvent): Vector2 {
         const rect = this.gameCanvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        //TODO: come back to this. While the scale works when the aspect ratio is the same, if it is not, when height is the cause, the x value is off and 
+        // when width is the cuase, the y value is off.
+        //const originalAR = this.gameCanvas.width / this.gameCanvas.height;
+        //const newAR = rect.width / rect.height;
+        //const scalar = originalAR / newAR;
+        //console.log(rect);
+        //console.log(rect.width + ', ' + rect.height);
+        const scaleX = this.gameCanvas.width / rect.width; //(this.gameCanvas.width / (rect.height * this.gameCanvas.width / this.gameCanvas.height));
+        const scaleY = this.gameCanvas.height / rect.height;
 
+        //console.log(scaleX + ', ' + scaleY);
+        const x = (event.clientX - rect.left) * scaleX; //* scaleX) * (rect.height / (rect.width / originalAR));
+        const y = (event.clientY - rect.top) * scaleY;//(originalAR / newAR); //* scaleY;
+
+        // if (rect.width !== this.gameCanvas.width) {
+        //     y = 0;
+        // }
+
+        // if (rect.height !== this.gameCanvas.height) {
+        //     x = 0;
+        // }
+        //console.log(x + ', ' + y);
         return new Vector2(x, y);
     }
 }

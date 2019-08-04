@@ -5,7 +5,7 @@ import { WeightedGraphCell } from '../Interfaces/WeightedGraphCell';
 
 export class AStarSearch {
 
-    public static findPath(graph: WeightedGraph<WeightedGraphCell>, start: Vector2, goal: Vector2): Vector2[] | null {
+    public static findPath(graph: WeightedGraph, start: Vector2, goal: Vector2): Vector2[] | null {
         if (graph.isUnpassable(goal)) {
             return null;
         }

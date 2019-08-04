@@ -2,6 +2,16 @@ import { Vector2 } from './Vector2';
 import { EventType } from '../Enums/EventType';
 import { GameEngine } from '../GameEngine';
 export class Input {
+    static initialize() {
+        if (this.initialized) {
+            return;
+        }
+        this.initialized = true;
+        document.addEventListener('keydown', (event) => this.keyDownSet.add(event.keyCode));
+        document.addEventListener('keyup', (event) => this.keyDownSet.delete(event.keyCode));
+        document.addEventListener('mousedown', (event) => this.mouseButtonDownSet.add(event.button));
+        document.addEventListener('mouseup', (event) => this.mouseButtonDownSet.delete(event.button));
+    }
     static addEventListener(eventType, handler) {
         if (this.reservedEvents.has(eventType)) {
             console.error(eventType + ' is a reserved event. Please use the correct method to add a listener for it.');
@@ -38,16 +48,19 @@ export class Input {
             }
         }
     }
-    static addClickListener(mouseButton, handler) {
-        if (this.clickMap.has(mouseButton)) {
-            this.clickMap.get(mouseButton).push(handler);
+    static addMouseListener(type, mouseButton, handler) {
+        if (!this.currentListeners.has(type)) {
+            document.addEventListener(type, (event) => this.invokeMouseHandlers(event));
+            this.currentListeners.set(type, (event) => this.invokeMouseHandlers(event));
+        }
+        if (!this.mouseMap.has(type)) {
+            this.mouseMap.set(type, new Map());
+        }
+        if (this.mouseMap.get(type).has(mouseButton)) {
+            this.mouseMap.get(type).get(mouseButton).push(handler);
         }
         else {
-            if (!this.currentListeners.has(EventType.Click)) {
-                document.addEventListener(EventType.Click, (event) => this.invokeClick(event));
-                this.currentListeners.set(EventType.Click, this.invokeClick);
-            }
-            this.clickMap.set(mouseButton, [handler]);
+            this.mouseMap.get(type).set(mouseButton, [handler]);
         }
     }
     static getKey(keyCode) {
@@ -58,8 +71,8 @@ export class Input {
     }
     static clearListeners() {
         this.keyMap.clear();
+        this.mouseMap.clear();
         this.genericEventMap.clear();
-        this.clickMap.clear();
         this.currentListeners.forEach((handler, eventType) => {
             document.removeEventListener(eventType, handler);
         });
@@ -77,12 +90,6 @@ export class Input {
     }
     static invokeKeyHandlers(event) {
         const eventType = event.type;
-        if (eventType === EventType.KeyDown) {
-            this.keyDownSet.add(event.keyCode);
-        }
-        else {
-            this.keyDownSet.delete(event.keyCode);
-        }
         if (!this.keyMap.has(eventType)) {
             return;
         }
@@ -90,11 +97,15 @@ export class Input {
             this.keyMap.get(eventType).get(event.keyCode).forEach(handler => handler(event));
         }
     }
-    static invokeClick(event) {
-        if (this.clickMap.has(event.button)) {
-            const canvasMouseEvent = event;
-            canvasMouseEvent.cursorPositionOnCanvas = this.getCursorPosition(event);
-            this.clickMap.get(event.button).forEach(handler => handler(canvasMouseEvent));
+    static invokeMouseHandlers(event) {
+        const eventType = event.type;
+        if (!this.mouseMap.has(eventType)) {
+            return;
+        }
+        const canvasMouseEvent = event;
+        canvasMouseEvent.cursorPositionOnCanvas = this.getCursorPosition(event);
+        if (this.mouseMap.get(eventType).has(event.button)) {
+            this.mouseMap.get(eventType).get(event.button).forEach(handler => handler(canvasMouseEvent));
         }
     }
     static getCursorPosition(event) {
@@ -104,9 +115,9 @@ export class Input {
         return new Vector2(x, y);
     }
 }
+Input.initialized = false;
 Input.keyMap = new Map();
 Input.mouseMap = new Map();
-Input.clickMap = new Map();
 Input.genericEventMap = new Map();
 Input.currentListeners = new Map();
 Input.reservedEvents = new Set([EventType.Click, EventType.KeyDown, EventType.KeyUp]);

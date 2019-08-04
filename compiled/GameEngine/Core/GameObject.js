@@ -1,4 +1,5 @@
 import { Transform } from '../Components/Transform';
+import { GameEngine } from './GameEngine';
 export class GameObject {
     constructor(id, x = 0, y = 0, tag = '') {
         this.components = [];
@@ -7,6 +8,18 @@ export class GameObject {
         this._transform = new Transform(this, x, y);
         this.isEnabled = true;
         this.tag = tag;
+    }
+    static findGameObjectById(id) {
+        return GameEngine.instance.findGameObjectById(id);
+    }
+    static findGameObjectWithTag(tag) {
+        return GameEngine.instance.findGameObjectWithTag(tag);
+    }
+    static findGameObjectsWithTag(tag) {
+        return GameEngine.instance.findGameObjectsWithTag(tag);
+    }
+    static instantiate(newGameObject) {
+        return GameEngine.instance.instantiate(newGameObject);
     }
     start() {
         this.components.forEach(c => c.start());
@@ -34,6 +47,15 @@ export class GameObject {
     }
     get transform() {
         return this._transform;
+    }
+    removeComponentFromUpdate(component) {
+        if (!this.componentMap.has(component.constructor.name)) {
+            throw new Error('This game object does not have a component of type ' + component.constructor.name);
+        }
+        if (!this.components.includes(component)) {
+            throw new Error('This game object does not have the component being removed.');
+        }
+        this.components.splice(this.components.indexOf(component), 1);
     }
     hasComponent(component) {
         return this.componentMap.has(component.name);

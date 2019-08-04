@@ -3,6 +3,7 @@ import { Vector2 } from '../Core/Helpers/Vector2';
 import { Color } from '../Core/Enums/Color';
 import { GameEngine } from '../Core/GameEngine';
 import { AStarSearch } from '../Core/Helpers/AStarSearch';
+import { LiteEvent } from '../Core/Helpers/LiteEvent';
 export class NavAgent extends Component {
     constructor(gameObject) {
         super(gameObject);
@@ -11,6 +12,8 @@ export class NavAgent extends Component {
         this.nextPosition = null;
         this.pathIndex = 0;
         this.navGrid = null;
+        this.onChangeDirection = new LiteEvent();
+        this.onPathComplete = new LiteEvent();
         GameEngine.instance.renderingEngine.addRenderableGizmo(this);
     }
     start() {
@@ -18,6 +21,18 @@ export class NavAgent extends Component {
             throw new Error('No terrain navigation grid found!');
         }
         this.navGrid = GameEngine.instance.terrain.navGrid;
+    }
+    get onDirectionChanged() {
+        return this.onChangeDirection.expose();
+    }
+    get onPathCompleted() {
+        return this.onPathComplete.expose();
+    }
+    get heading() {
+        if (this.nextPosition === null) {
+            return null;
+        }
+        return Vector2.direction(this.transform.position, this.nextPosition);
     }
     get hasPath() {
         return this.path !== null;
@@ -39,6 +54,7 @@ export class NavAgent extends Component {
                 return;
             }
             this.nextPosition = this.path[this.pathIndex];
+            this.onChangeDirection.trigger(this.heading);
         }
         this.transform.translate(Vector2.direction(this.transform.position, this.nextPosition).multiplyScalar(this.speed));
     }
@@ -51,6 +67,7 @@ export class NavAgent extends Component {
         }
     }
     resetPath() {
+        this.onPathComplete.trigger();
         this.path = null;
         this.nextPosition = null;
         this.pathIndex = 0;

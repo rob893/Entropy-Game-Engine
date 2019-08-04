@@ -26,7 +26,9 @@ export class Component {
     }
     onEnabled() { }
     start() { }
-    update() { }
+    update() {
+        this.gameObject.removeComponentFromUpdate(this);
+    }
     onDisable() { }
     onDestroy() { }
 }

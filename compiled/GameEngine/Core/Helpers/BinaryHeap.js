@@ -1,7 +1,12 @@
 export class BinaryHeap {
-    constructor(minHeap = true) {
+    constructor(minHeap = true, items) {
         this.heapArray = [];
         this.minHeap = minHeap;
+        if (items) {
+            for (const item of items) {
+                this.add(item);
+            }
+        }
     }
     static from(items, minHeap = true) {
         const heap = new BinaryHeap(minHeap);
