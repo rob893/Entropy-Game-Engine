@@ -207,8 +207,11 @@ export class GameEngine {
         this.gameObjects.length = 0;
         this.loadedScene = null;
         this._physicsEngine = PhysicsEngine.buildPhysicsEngine(this.gameCanvas);
+
+        const renderGizmos = this._renderingEngine.renderGizmos;
+
         this._renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
-        this._renderingEngine.renderGizmos = true;
+        this._renderingEngine.renderGizmos = renderGizmos;
     }
 
     private async initializeScene(gameObjects: GameObject[], skybox: RenderableBackground, terrainSpec: TerrainSpec = null): Promise<void> {

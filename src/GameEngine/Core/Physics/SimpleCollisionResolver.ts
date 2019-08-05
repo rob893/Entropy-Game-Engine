@@ -3,6 +3,7 @@ import { RectangleCollider } from '../../Components/RectangleCollider';
 
 export class SimpleCollisionResolver implements CollisionResolver {
     public resolveCollisions(colliderA: RectangleCollider, colliderB: RectangleCollider): void {
+        //console.log(colliderA.gameObject.id + ' has collided with ' + colliderB.gameObject.id);
         // if (colliderA.attachedRigidbody !== null && !colliderA.attachedRigidbody.isKinomatic) {
         //     //if (colliderA.gameObject.id === 'player') {debugger}
         //     while (colliderA.bottomLeft.y >= colliderB.topLeft.y) {

@@ -3,8 +3,9 @@ import { RectangleCollider } from '../Components/RectangleCollider';
 import { CollisionDetector } from './Interfaces/CollisionDetector';
 import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDetector';
 import { CollisionResolver } from './Interfaces/CollisionResolver';
-import { SimpleCollisionResolver } from './Physics/CollisionResolver';
+import { SimpleCollisionResolver } from './Physics/SimpleCollisionResolver';
 import { Layer } from './Enums/Layer';
+import { SimpleCollisionDetector } from './Physics/SimpleCollisionDetector';
 
 export class PhysicsEngine {
 
@@ -13,7 +14,7 @@ export class PhysicsEngine {
     private readonly rigidbodies: Rigidbody[];
     private readonly collisionDetector: CollisionDetector;
     private readonly collisionResolver: CollisionResolver;
-    //private readonly layerCollisionMatrix = new Map<Layer, Set<Layer>>();
+    private readonly layerCollisionMatrix = new Map<Layer, Set<Layer>>();
 
 
     private constructor(collisionDetector: CollisionDetector, collisionResolver: CollisionResolver) {
@@ -23,14 +24,25 @@ export class PhysicsEngine {
         this.collisionResolver = collisionResolver;
         this.collisionDetector.onCollisionDetected.add((colliderA, colliderB) => this.resolveCollisions(colliderA, colliderB));
 
-        // const layers = Object.keys(Layer).filter(c => typeof Layer[c as any] === 'number').map(k => Layer[k as any]);
-        // for (const layer of layers) {
-        //     this.layerCollisionMatrix.set(Number(layer), new Set(layers));
-        // }
+        const layers = Object.keys(Layer).filter(c => typeof Layer[c as any] === 'number').map(k => Number(Layer[k as any]));
+
+        for (const layer of layers) {
+            this.layerCollisionMatrix.set(layer, new Set(layers));
+        }
     }
 
     public static buildPhysicsEngine(gameCanvas: HTMLCanvasElement): PhysicsEngine {
-        const collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, 100);
+        const layerCollisionMatrix = new Map<Layer, Set<Layer>>();
+
+        const layers = Object.keys(Layer).filter(c => typeof Layer[c as any] === 'number').map(k => Number(Layer[k as any]));
+        
+        for (const layer of layers) {
+            layerCollisionMatrix.set(layer, new Set(layers));
+        }
+
+        layerCollisionMatrix.get(Layer.Terrain).delete(Layer.Terrain);
+
+        const collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, layerCollisionMatrix, 100);
         const collisionResolver = new SimpleCollisionResolver();
 
         const engine = new PhysicsEngine(collisionDetector, collisionResolver);

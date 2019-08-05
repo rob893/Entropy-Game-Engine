@@ -3,6 +3,7 @@ import { RectangleCollider } from '../../Components/RectangleCollider';
 import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
 import { LiteEvent } from '../Helpers/LiteEvent';
 import { Vector2 } from '../Helpers/Vector2';
+import { Layer } from '../Enums/Layer';
 
 export class SpatialHashCollisionDetector implements CollisionDetector {
     
@@ -13,13 +14,15 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
     private readonly cellSize: number;
     private readonly gameMapWidth: number;
     private readonly gameMapHeight: number;
+    private readonly layerCollisionMatrix: Map<Layer, Set<Layer>>;
 
 
-    public constructor(gameMapWidth: number, gameMapHeight: number, cellSize: number = 100) {
+    public constructor(gameMapWidth: number, gameMapHeight: number, layerCollisionMatrix: Map<Layer, Set<Layer>>, cellSize: number = 100) {
         this._colliders = [];
         this.cellSize = cellSize;
         this.gameMapWidth = gameMapWidth;
         this.gameMapHeight = gameMapHeight;
+        this.layerCollisionMatrix = layerCollisionMatrix;
 
         this.buildSpatialMapCells();
     }
@@ -155,7 +158,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
 
         for (const key of this.colliderSpacialMapKeys.get(collider)) {
             for (const other of this.spatialMap.get(key)) {
-                if (other !== collider) {
+                if (other !== collider && this.layerCollisionMatrix.get(collider.gameObject.layer).has(other.gameObject.layer)) {
                     possibleCollisions.add(other);
                 }
             }
