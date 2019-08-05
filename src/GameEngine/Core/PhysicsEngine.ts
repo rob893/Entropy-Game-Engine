@@ -4,6 +4,7 @@ import { CollisionDetector } from './Interfaces/CollisionDetector';
 import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDetector';
 import { CollisionResolver } from './Interfaces/CollisionResolver';
 import { SimpleCollisionResolver } from './Physics/CollisionResolver';
+import { Layer } from './Enums/Layer';
 
 export class PhysicsEngine {
 
@@ -12,6 +13,7 @@ export class PhysicsEngine {
     private readonly rigidbodies: Rigidbody[];
     private readonly collisionDetector: CollisionDetector;
     private readonly collisionResolver: CollisionResolver;
+    //private readonly layerCollisionMatrix = new Map<Layer, Set<Layer>>();
 
 
     private constructor(collisionDetector: CollisionDetector, collisionResolver: CollisionResolver) {
@@ -20,6 +22,11 @@ export class PhysicsEngine {
         this.collisionDetector = collisionDetector;
         this.collisionResolver = collisionResolver;
         this.collisionDetector.onCollisionDetected.add((colliderA, colliderB) => this.resolveCollisions(colliderA, colliderB));
+
+        // const layers = Object.keys(Layer).filter(c => typeof Layer[c as any] === 'number').map(k => Layer[k as any]);
+        // for (const layer of layers) {
+        //     this.layerCollisionMatrix.set(Number(layer), new Set(layers));
+        // }
     }
 
     public static buildPhysicsEngine(gameCanvas: HTMLCanvasElement): PhysicsEngine {

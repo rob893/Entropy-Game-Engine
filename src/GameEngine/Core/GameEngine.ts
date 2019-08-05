@@ -18,7 +18,6 @@ export class GameEngine {
     private _physicsEngine: PhysicsEngine;
     private _renderingEngine: RenderingEngine;
     private loadedScene: Scene = null;
-    private terrainObject: Terrain = null;
     private gameLoopId: number = null;
     private gameInitialized: boolean = false;
     private paused: boolean = false;
@@ -47,7 +46,11 @@ export class GameEngine {
     }
 
     public get terrain(): Terrain {
-        return this.terrainObject;
+        if (this.gameObjectMap.has('terrain')) {
+            return this.gameObjectMap.get('terrain') as Terrain;
+        }
+
+        return null;
     }
 
     public get physicsEngine(): PhysicsEngine {
@@ -203,22 +206,23 @@ export class GameEngine {
         this.gameObjectNumMap.clear();
         this.gameObjects.length = 0;
         this.loadedScene = null;
-        this.terrainObject = null;
         this._physicsEngine = PhysicsEngine.buildPhysicsEngine(this.gameCanvas);
         this._renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
         this._renderingEngine.renderGizmos = true;
     }
 
     private async initializeScene(gameObjects: GameObject[], skybox: RenderableBackground, terrainSpec: TerrainSpec = null): Promise<void> {
-        this.setGameObjects(gameObjects);
-        this._renderingEngine.background = skybox;
-
         if (terrainSpec !== null) {
             const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
             const terrain = await terrianBuilder.buildTerrain(terrainSpec);
-            this.terrainObject = terrain;
+            
+            gameObjects.push(terrain);
+
             this._renderingEngine.terrain = terrain;
         }
+
+        this.setGameObjects(gameObjects);
+        this._renderingEngine.background = skybox;
 
         this.gameInitialized = true;
     }

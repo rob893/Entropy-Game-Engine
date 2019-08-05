@@ -1,24 +1,26 @@
 import { Transform } from '../Components/Transform';
 import { Component } from '../Components/Component';
 import { GameEngine } from './GameEngine';
+import { Layer } from './Enums/Layer';
 
 export abstract class GameObject {
-    
-    public id: string;
-    public tag: string;
 
-    protected readonly _transform: Transform;
-    protected readonly components: Component[] = [];
-    protected readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
+    public id: string;
+    public readonly tag: string;
+    public readonly layer: Layer;
 
     private isEnabled: boolean;
+    private readonly _transform: Transform;
+    private readonly components: Component[] = [];
+    private readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
     
 
-    public constructor(id: string, x: number = 0, y: number = 0, tag: string = '') {
+    public constructor(id: string, x: number = 0, y: number = 0, tag: string = '', layer: Layer = Layer.Default) {
         this.id = id;
         this._transform = new Transform(this, x, y);
         this.isEnabled = true;
         this.tag = tag;
+        this.layer = layer;
     }
 
     public static findGameObjectById(id: string): GameObject {
@@ -37,16 +39,8 @@ export abstract class GameObject {
         return GameEngine.instance.instantiate(newGameObject);
     }
 
-    public start(): void {
-        this.components.forEach(c => c.start());
-    }
-
-    public update(): void {
-        for (const component of this.components) {
-            if (component.enabled) {
-                component.update();
-            }
-        }
+    public get enabled(): boolean {
+        return this.isEnabled;
     }
 
     public set enabled(enabled: boolean) {
@@ -63,12 +57,20 @@ export abstract class GameObject {
         }
     }
 
-    public get enabled(): boolean {
-        return this.isEnabled;
-    }
-
     public get transform(): Transform {
         return this._transform;
+    }
+
+    public start(): void {
+        this.components.forEach(c => c.start());
+    }
+
+    public update(): void {
+        for (const component of this.components) {
+            if (component.enabled) {
+                component.update();
+            }
+        }
     }
 
     /**
