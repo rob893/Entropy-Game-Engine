@@ -29,6 +29,7 @@ export class TerrainBuilder {
             const terrainGrid = terrainSpec.getSpec();
             const cellSize = terrainSpec.cellSize;
             const navGrid = new NavGrid(cellSize * scale);
+            const colliderOffsets: Vector2[] = [];
 
             let x = 0;
             let y = 0;
@@ -43,6 +44,10 @@ export class TerrainBuilder {
                     }
 
                     navGrid.addCell({ passable: gridCell.passable, weight: gridCell.weight, position: new Vector2(x, y) });
+
+                    if (!gridCell.passable) {
+                        colliderOffsets.push(new Vector2(x, y));
+                    }
                     
                     const c = gridCell.spriteData;
 
@@ -55,7 +60,7 @@ export class TerrainBuilder {
             const image = new Image();
             image.src = this.canvas.toDataURL();
             image.onload = () => {
-                resolve(new Terrain(image, navGrid, []));
+                resolve(new Terrain(image, navGrid, colliderOffsets));
             };
         });
     }

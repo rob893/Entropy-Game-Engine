@@ -2,14 +2,22 @@
     <head>
         <title><%= htmlWebpackPlugin.options.title %></title>
     </head>
-    <body>
-        <button id="add-ball">Add Ball</button>
-        <button id="toggle-music">Music</button>
-        <br><br>
-        <canvas width="1024px" height="576px" id="game-canvas" class="game-canvas"></canvas>
-        <br>
-        <button id="pause-button">Pause Game</button>
-        <br><br>
-        <button id="print-button">Print Game Data</button>
+    <body id="body">
+        <canvas width="1280px" height="720px" id="game-canvas" class="game-canvas"></canvas>
     </body>
 </html>
+
+<style>
+
+canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+</style>

@@ -16,7 +16,7 @@ export class Trump extends GameObject {
 
         const components: Component[] = [];
         
-        components.push(new RectangleCollider(this, 60, 60));
+        components.push(new RectangleCollider(this, 60, 60, 0, -5));
         components.push(new NavAgent(this));
         components.push(new NavTester(this));
         //components.push(new TrumpMotor(this));

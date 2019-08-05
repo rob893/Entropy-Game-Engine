@@ -34,8 +34,8 @@ export class GameEngine {
         this.gameCanvas = gameCanvas;
         this._physicsEngine = physicsEngine;
         this._renderingEngine = renderingEngine;
-        
-        Input.initialize();
+
+        Input.initialize(this.gameCanvas);
     }
 
     public static get instance(): GameEngine {

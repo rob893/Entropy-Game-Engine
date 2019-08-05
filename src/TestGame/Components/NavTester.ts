@@ -28,11 +28,11 @@ export class NavTester extends Component {
         Input.addMouseListener(EventType.Click, 0, (event) => this.onClick(event));
         Input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, (event) => this.onKeyDown(event));
 
-        this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, [2]);
-        this.runLeftAnimation = new Animation(TrumpRun, 6, 4, 0.075, [4]);
-        this.runUpAnimation = new Animation(TrumpRun, 6, 4, 0.075, [1]);
-        this.runDownAnimation = new Animation(TrumpRun, 6, 4, 0.075, [3]);
-        this.idleAnimation = new Animation(TrumpIdle, 10, 4, 0.1, [1]);
+        this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, 2);
+        this.runLeftAnimation = new Animation(TrumpRun, 6, 4, 0.075, 4);
+        this.runUpAnimation = new Animation(TrumpRun, 6, 4, 0.075, 1);
+        this.runDownAnimation = new Animation(TrumpRun, 6, 4, 0.075, 3);
+        this.idleAnimation = new Animation(TrumpIdle, 10, 4, 0.1, 1);
     }
 
     public start(): void {

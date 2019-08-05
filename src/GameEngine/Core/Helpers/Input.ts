@@ -6,7 +6,7 @@ import { CanvasMouseEvent } from '../Interfaces/CanvasMouseEvent';
 
 export abstract class Input {
 
-    private static _gameCanvas: HTMLCanvasElement;
+    private static  gameCanvas: HTMLCanvasElement;
     private static initialized: boolean = false;
     private static readonly keyMap = new Map<EventType.KeyDown | EventType.KeyUp, Map<KeyCode, ((event: KeyboardEvent) => void)[]>>();
     private static readonly mouseMap = new Map<EventType.Click | EventType.MouseDown | EventType.MouseUp, Map<number, ((event: CanvasMouseEvent) => void)[]>>();
@@ -15,23 +15,30 @@ export abstract class Input {
     private static readonly reservedEvents = new Set([EventType.Click, EventType.KeyDown, EventType.KeyUp]);
     private static readonly keyDownSet = new Set<KeyCode>();
     private static readonly mouseButtonDownSet = new Set<number>();
-    private static readonly canvasStartingWidth: number = 1024;
-    private static readonly canvasStartingHeight: number = 576;
+    private static readonly currentMousePosition = Vector2.zero;
 
 
     /**
      * This function should be called once to add the event listeners required for getKey and getMouseButton.
      */
-    public static initialize(): void {
+    public static initialize(gameCanvas: HTMLCanvasElement): void {
         if (this.initialized) {
             return;
         }
 
         this.initialized = true;
+        this.gameCanvas = gameCanvas;
         document.addEventListener('keydown', (event) => this.keyDownSet.add(event.keyCode));
         document.addEventListener('keyup', (event) => this.keyDownSet.delete(event.keyCode));
         document.addEventListener('mousedown', (event) => this.mouseButtonDownSet.add(event.button));
         document.addEventListener('mouseup', (event) => this.mouseButtonDownSet.delete(event.button));
+        document.addEventListener('mousemove', (event) => this.updateCursorPosition(event));
+    }
+
+    public static get canvasMousePosition(): Vector2 {
+        const rect = this.gameCanvas.getBoundingClientRect();
+
+        return new Vector2(this.currentMousePosition.x - rect.left, this.currentMousePosition.y - rect.top);
     }
 
     public static addEventListener(eventType: EventType, handler: ((event: Event) => void)): void {
@@ -127,14 +134,6 @@ export abstract class Input {
         });
     }
 
-    private static get gameCanvas(): HTMLCanvasElement {
-        if (this._gameCanvas === undefined || this._gameCanvas === null) {
-            this._gameCanvas = GameEngine.instance.getGameCanvas();
-        }
-
-        return this._gameCanvas;
-    }
-
     private static invokeGenericHandlers(event: Event): void {
         if (this.genericEventMap.has(event.type as EventType)) {
             this.genericEventMap.get(event.type as EventType).forEach(handler => handler(event));
@@ -161,37 +160,16 @@ export abstract class Input {
         }
 
         const canvasMouseEvent = event as CanvasMouseEvent;
-        canvasMouseEvent.cursorPositionOnCanvas = this.getCursorPosition(event);
+        this.updateCursorPosition(event);
+        canvasMouseEvent.cursorPositionOnCanvas = this.canvasMousePosition;
 
         if (this.mouseMap.get(eventType).has(event.button)) {
             this.mouseMap.get(eventType).get(event.button).forEach(handler => handler(canvasMouseEvent));
         }
     }
 
-    private static getCursorPosition(event: MouseEvent): Vector2 {
-        const rect = this.gameCanvas.getBoundingClientRect();
-        //TODO: come back to this. While the scale works when the aspect ratio is the same, if it is not, when height is the cause, the x value is off and 
-        // when width is the cuase, the y value is off.
-        //const originalAR = this.gameCanvas.width / this.gameCanvas.height;
-        //const newAR = rect.width / rect.height;
-        //const scalar = originalAR / newAR;
-        //console.log(rect);
-        //console.log(rect.width + ', ' + rect.height);
-        const scaleX = this.gameCanvas.width / rect.width; //(this.gameCanvas.width / (rect.height * this.gameCanvas.width / this.gameCanvas.height));
-        const scaleY = this.gameCanvas.height / rect.height;
-
-        //console.log(scaleX + ', ' + scaleY);
-        const x = (event.clientX - rect.left) * scaleX; //* scaleX) * (rect.height / (rect.width / originalAR));
-        const y = (event.clientY - rect.top) * scaleY;//(originalAR / newAR); //* scaleY;
-
-        // if (rect.width !== this.gameCanvas.width) {
-        //     y = 0;
-        // }
-
-        // if (rect.height !== this.gameCanvas.height) {
-        //     x = 0;
-        // }
-        //console.log(x + ', ' + y);
-        return new Vector2(x, y);
+    private static updateCursorPosition(event: MouseEvent): void {
+        this.currentMousePosition.x = event.clientX;
+        this.currentMousePosition.y = event.clientY;
     }
 }

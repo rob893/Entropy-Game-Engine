@@ -9,17 +9,6 @@ export class Vector2 {
         this.y = y;
     }
 
-    public static fromString(xCommaY: string): Vector2 {
-        if (xCommaY.split(',').length < 2) {
-            throw new Error(xCommaY + ' is invalid format. It should be x,y (eg: 5,6)');
-        }
-
-        const x = Number(xCommaY.split(',')[0]);
-        const y = Number(xCommaY.split(',')[1]);
-
-        return new Vector2(x, y);
-    }
-
     /**
      * Returns a new Vector2 with an up direction (a negative y value is up for html canvas)
      */
@@ -48,6 +37,21 @@ export class Vector2 {
 
     public static get one(): Vector2 {
         return new Vector2(1, 1);
+    }
+
+    public static clone(from: Vector2): Vector2 {
+        return new Vector2(from.x, from.y);
+    }
+
+    public static fromString(xCommaY: string): Vector2 {
+        if (xCommaY.split(',').length < 2) {
+            throw new Error(xCommaY + ' is invalid format. It should be x,y (eg: 5,6)');
+        }
+
+        const x = Number(xCommaY.split(',')[0]);
+        const y = Number(xCommaY.split(',')[1]);
+
+        return new Vector2(x, y);
     }
 
     public static add(leftOperand: Vector2, rightOperand: Vector2): Vector2 {

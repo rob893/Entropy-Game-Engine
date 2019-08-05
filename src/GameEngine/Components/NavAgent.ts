@@ -74,6 +74,7 @@ export class NavAgent extends Component implements RenderableGizmo {
             
             if (this.pathIndex >= this.path.length) {
                 this.resetPath();
+                this.onPathComplete.trigger();
                 return;
             }
 
@@ -96,7 +97,6 @@ export class NavAgent extends Component implements RenderableGizmo {
     }
 
     public resetPath(): void {
-        this.onPathComplete.trigger();
         this.path = null;
         this.nextPosition = null;
         this.pathIndex = 0;
