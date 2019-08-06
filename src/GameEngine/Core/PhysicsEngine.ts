@@ -5,7 +5,7 @@ import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDete
 import { CollisionResolver } from './Interfaces/CollisionResolver';
 import { SimpleCollisionResolver } from './Physics/SimpleCollisionResolver';
 import { Layer } from './Enums/Layer';
-import { SimpleCollisionDetector } from './Physics/SimpleCollisionDetector';
+
 
 export class PhysicsEngine {
 

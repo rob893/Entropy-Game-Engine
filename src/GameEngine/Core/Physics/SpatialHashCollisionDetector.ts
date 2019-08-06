@@ -5,6 +5,7 @@ import { LiteEvent } from '../Helpers/LiteEvent';
 import { Vector2 } from '../Helpers/Vector2';
 import { Layer } from '../Enums/Layer';
 
+
 export class SpatialHashCollisionDetector implements CollisionDetector {
     
     private readonly _colliders: RectangleCollider[];
@@ -52,7 +53,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
     public addCollider(collider: RectangleCollider): void {
         collider.transform.onMoved.add(() => this.updateColliderSpatialMapping(collider));
         this._colliders.push(collider);
-        this.addColliderToSpatialMap(collider);
+        this.updateColliderSpatialMapping(collider);
     }
 
     public addColliders(colliders: RectangleCollider[]): void {
@@ -81,42 +82,40 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
     }
 
     private updateColliderSpatialMapping(collider: RectangleCollider): void {
-        for (const key of this.colliderSpacialMapKeys.get(collider)) {
-            this.spatialMap.get(key).delete(collider);
-        }
-
-        this.addColliderToSpatialMap(collider);
-    }
-
-    private addColliderToSpatialMap(collider: RectangleCollider): void {
         const tlKey = this.getMapKey(collider.topLeft);
         const trKey = this.getMapKey(collider.topRight);
         const blKey = this.getMapKey(collider.bottomLeft);
         const brKey = this.getMapKey(collider.bottomRight);
+
+        const newKeys = new Set([tlKey, trKey, blKey, brKey]);
 
         if (!this.colliderSpacialMapKeys.has(collider)) {
             this.colliderSpacialMapKeys.set(collider, new Set<string>());
         }
 
         const previousKeys = this.colliderSpacialMapKeys.get(collider);
+        
+        let movedCells = false;
 
-        //TODO: come back to this.
-        // let movedCells = previousKeys.size === 0 ? true : false;
+        if (newKeys.size !== previousKeys.size) {
+            movedCells = true;
+        }
+        else {
+            for (const newKey of newKeys) {
+                if (!previousKeys.has(newKey)) {
+                    movedCells = true;
+                    break;
+                }
+            }
+        }
 
-        // for (let key of previousKeys) {
-        //     if (key !== tlKey && key !== trKey && key !== blKey && key !== brKey) {
-        //         movedCells = true;
-        //         break;
-        //     }
-        // }
-
-        // if (!movedCells) {
-        //     return;
-        // }
-        // console.log('moved cells');
-        // for (let key of previousKeys) {
-        //     this.spatialMap.get(key).delete(collider);
-        // }
+        if (!movedCells) {
+            return;
+        }
+        
+        for (const key of previousKeys) {
+            this.spatialMap.get(key).delete(collider);
+        }
 
         previousKeys.clear();
         
