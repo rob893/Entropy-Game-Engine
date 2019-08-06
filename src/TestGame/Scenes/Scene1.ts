@@ -7,6 +7,8 @@ import { RectangleBackground } from '../../GameEngine/Core/Helpers/RectangleBack
 import { Color } from '../../GameEngine/Core/Enums/Color';
 import { GameManagerObject } from '../GameObjects/GameManagerObject';
 import { Trump } from '../GameObjects/Trump';
+import { Player } from '../GameObjects/Player';
+import { Player2 } from '../GameObjects/Player2';
 
 export class Scene1 implements Scene {
     
@@ -22,7 +24,8 @@ export class Scene1 implements Scene {
     public getStartingGameObjects(): GameObject[] {
         return [
             new GameManagerObject('GameManager'),
-            new Trump('trump')
+            new Trump('trump'),
+            new Player2('player')
         ];
     }
 }
