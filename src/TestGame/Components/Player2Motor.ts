@@ -49,7 +49,7 @@ export class Player2Motor extends Motor {
         this.collider = this.gameObject.getComponent(RectangleCollider);
         this.animator = this.gameObject.getComponent<Animator>(Animator);
 
-        this.collider.onCollided.add((other) => this.handleCollisions(other));
+        //this.collider.onCollided.add((other) => this.handleCollisions(other));
     }
 
     public get isMoving(): boolean { 

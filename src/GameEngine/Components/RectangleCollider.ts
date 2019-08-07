@@ -74,7 +74,7 @@ export class RectangleCollider extends Component implements RenderableGizmo {
     }
 
     public get center(): Vector2 {
-        return new Vector2(this.topLeft.x + this.offset.x + (this.width / 2), this.topLeft.y + this.offset.y + (this.height / 2));
+        return new Vector2(this.topLeft.x + (this.width / 2), this.topLeft.y + (this.height / 2));
     }
 
     public get attachedRigidbody(): Rigidbody|null {
