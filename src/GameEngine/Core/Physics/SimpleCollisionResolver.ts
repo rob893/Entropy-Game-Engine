@@ -4,10 +4,10 @@ import { Vector2 } from '../Helpers/Vector2';
 
 export class SimpleCollisionResolver implements CollisionResolver {
     public resolveCollisions(colliderA: RectangleCollider, colliderB: RectangleCollider): void {
-        if (colliderA.gameObject.id !== 'player' && colliderB.gameObject.id !== 'player') {
+        if (colliderA.gameObject.id !== 'player') {
             return;
         }
-        //console.log(colliderA.)
+
         const player = colliderA.gameObject.id === 'player' ? colliderA.transform : colliderB.transform;
 
         const xAxis = Math.abs(colliderA.center.x - colliderB.center.x);
@@ -29,6 +29,8 @@ export class SimpleCollisionResolver implements CollisionResolver {
             projection.y = 0;
         }
 
-        player.position.add(projection);
+        while (colliderA.detectCollision(colliderB)) {
+            player.position.add(projection);
+        }
     }
 }
