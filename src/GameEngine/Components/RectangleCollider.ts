@@ -11,8 +11,9 @@ import { GameEngine } from '../Core/GameEngine';
 
 export class RectangleCollider extends Component implements RenderableGizmo {
 
-    public width: number;
-    public height: number;
+    public isTrigger: boolean = false;
+    public readonly width: number;
+    public readonly height: number;
     public readonly offset: Vector2;
 
     private _attachedRigidbody: Rigidbody|null;
