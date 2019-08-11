@@ -13,6 +13,8 @@ export class SimpleCollisionResolver implements CollisionResolver {
         //    return;
         //}
 
+        //this wont work corrct here now since duplicate pairs of colliders (ie: (a, b) (b, a)) are not being computed. Need to implement impulse resolution using rigidbodies
+
         if (colliderA.gameObject.id !== 'player') {
             return;
         }
