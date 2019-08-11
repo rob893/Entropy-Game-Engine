@@ -3,10 +3,15 @@ import { RectangleCollider } from '../../Components/RectangleCollider';
 import { Vector2 } from '../Helpers/Vector2';
 
 export class SimpleCollisionResolver implements CollisionResolver {
+
     public resolveCollisions(colliderA: RectangleCollider, colliderB: RectangleCollider): void {
         if (colliderA.isTrigger || colliderB.isTrigger) {
             return;
         }
+
+        //if (colliderA.attachedRigidbody === null) {
+        //    return;
+        //}
 
         if (colliderA.gameObject.id !== 'player') {
             return;

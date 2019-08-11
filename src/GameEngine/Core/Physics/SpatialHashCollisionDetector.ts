@@ -12,6 +12,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
     private readonly _onCollisionDetected: LiteEvent<RectangleCollider> = new LiteEvent<RectangleCollider>();
     private readonly colliderSpacialMapKeys: Map<RectangleCollider, Set<string>> = new Map<RectangleCollider, Set<string>>();
     private readonly spatialMap: Map<string, Set<RectangleCollider>> = new Map<string, Set<RectangleCollider>>();
+    private readonly collisionMap: Map<RectangleCollider, Set<RectangleCollider>> = new Map<RectangleCollider, Set<RectangleCollider>>();
     private readonly cellSize: number;
     private readonly gameMapWidth: number;
     private readonly gameMapHeight: number;
@@ -37,6 +38,8 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
     }
 
     public detectCollisions(): void {
+        this.collisionMap.clear();
+
         for (const collider of this._colliders) {
             if (!collider.enabled) {
                 continue;
@@ -44,6 +47,13 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
 
             for (const other of this.getPossibleCollisions(collider)) {
                 if (collider.detectCollision(other)) {
+                    if (this.collisionMap.has(collider)) {
+                        this.collisionMap.get(collider).add(other);
+                    }
+                    else {
+                        this.collisionMap.set(collider, new Set([other]));
+                    }
+
                     this._onCollisionDetected.trigger(collider, other);
                 }
             }
@@ -158,6 +168,10 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         for (const key of this.colliderSpacialMapKeys.get(collider)) {
             for (const other of this.spatialMap.get(key)) {
                 if (other !== collider && this.layerCollisionMatrix.get(collider.gameObject.layer).has(other.gameObject.layer)) {
+                    if (this.collisionMap.has(other) && this.collisionMap.get(other).has(collider)) {
+                        continue;
+                    }
+
                     possibleCollisions.add(other);
                 }
             }

@@ -9,8 +9,8 @@ export class Rigidbody extends Component {
     // In kg
     public mass: number;
     public isKinomatic: boolean = false;
+
     private readonly velocity: Vector2;
-    
     private readonly force: Vector2;
 
 
@@ -21,6 +21,10 @@ export class Rigidbody extends Component {
         this.velocity = new Vector2(0, 0);
         this.force = Vector2.zero;
         GameEngine.instance.physicsEngine.addRigidbody(this);
+    }
+
+    public get inverseMass(): number {
+        return this.mass !== 0 ? 1 / this.mass : 0;
     }
 
     public updatePhysics(): void {
