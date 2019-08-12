@@ -9,6 +9,7 @@ import { Animator } from '../../GameEngine/Components/Animator';
 import { NavAgent } from '../../GameEngine/Components/NavAgent';
 import { NavTester } from '../Components/NavTester';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
+import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 
 export class Trump extends GameObject {
 
@@ -16,13 +17,15 @@ export class Trump extends GameObject {
         super(id, 200, 300);
 
         const components: Component[] = [];
-        
-        components.push(new RectangleCollider(this, 60, 60, 0, -5));
+
+        const collider = new RectangleCollider(this, 60, 60, 0, -5);
+        collider.physicalMaterial = PhysicalMaterial.bouncy;
+        components.push(collider);
 
         const rb = new Rigidbody(this);
         rb.isKinomatic = true;
-
         components.push(rb);
+
         components.push(new NavAgent(this));
         components.push(new NavTester(this));
         //components.push(new TrumpMotor(this));

@@ -8,15 +8,15 @@ import { RenderableGizmo } from '../Core/Interfaces/RenderableGizmo';
 import { Rigidbody } from './Rigidbody';
 import { Color } from '../Core/Enums/Color';
 import { GameEngine } from '../Core/GameEngine';
-import { PhysicalMaterial } from '../Core/Interfaces/PhysicalMaterial';
+import { PhysicalMaterial } from '../Core/Helpers/PhysicalMaterial';
 
 export class RectangleCollider extends Component implements RenderableGizmo {
 
     public isTrigger: boolean = false;
+    public physicalMaterial: PhysicalMaterial = PhysicalMaterial.zero;
     public readonly width: number;
     public readonly height: number;
     public readonly offset: Vector2;
-    public readonly physicalMaterial: PhysicalMaterial;
 
     private _attachedRigidbody: Rigidbody|null;
     private readonly _onCollided = new LiteEvent<RectangleCollider>();

@@ -36,6 +36,14 @@ export abstract class Component {
         return this.isEnabled;
     }
 
+    public get tag(): string {
+        return this.gameObject.tag;
+    }
+
+    public get id(): string {
+        return this.gameObject.id;
+    }
+
     public get transform(): Transform {
         return this.gameObject.transform;
     }

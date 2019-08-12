@@ -7,34 +7,54 @@ import { GameEngine } from '../Core/GameEngine';
 export class Rigidbody extends Component {
 
     // In kg
-    public mass: number;
-    public isKinomatic: boolean = false;
-    public readonly velocity: Vector2;
+    
+    public readonly velocity: Vector2 = Vector2.zero;
 
     //private readonly force: Vector2;
+    private _mass: number;
+    private _inverseMass: number;
+    private _isKinomatic: boolean = false;
     private readonly forces: Vector2[] = [];
 
 
-    public constructor(gameObject: GameObject, mass: number = 70) {
+    public constructor(gameObject: GameObject, mass: number = 70, isKinomatic: boolean = false) {
         super(gameObject);
 
         this.mass = mass;
-        this.velocity = new Vector2(0, 0);
         //this.force = Vector2.zero;
-        GameEngine.instance.physicsEngine.addRigidbody(this);
+        this.isKinomatic = isKinomatic;
+    }
+
+    public set mass(mass: number) {
+        this._mass = mass;
+        this._inverseMass = mass !== 0 ? 1 / mass : 0;
+    }
+
+    public get mass(): number {
+        return this._mass;
     }
 
     public get inverseMass(): number {
-        return this.mass !== 0 ? 1 / this.mass : 0;
+        return this._inverseMass;
+    }
+
+    public set isKinomatic(isKinomatic: boolean) {
+        this._isKinomatic = isKinomatic;
+
+        if (isKinomatic) {
+            GameEngine.instance.physicsEngine.removeRigidbody(this);
+        }
+        else {
+            GameEngine.instance.physicsEngine.addRigidbody(this);
+        }
+    }
+
+    public get isKinomatic(): boolean {
+        return this._isKinomatic;
     }
 
     public updatePhysics(): void {
-        if (this.isKinomatic) {
-            return;
-        }
-
         this.forces.forEach(force => this.velocity.add(force.divideScalar(this.mass)));
-
         this.forces.length = 0;
 
         //this.addGravity(665);

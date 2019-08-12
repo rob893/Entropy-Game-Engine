@@ -63,6 +63,10 @@ export class PhysicsEngine {
         this.rigidbodies.push(rb);
     }
 
+    public removeRigidbody(rb: Rigidbody): void {
+        this.rigidbodies.splice(this.rigidbodies.indexOf(rb), 1);
+    }
+
     public addCollider(collider: RectangleCollider): void {
         this.collisionDetector.addCollider(collider);
     }

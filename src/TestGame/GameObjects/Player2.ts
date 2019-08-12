@@ -10,6 +10,7 @@ import { NavAgent } from '../../GameEngine/Components/NavAgent';
 import { NavTester } from '../Components/NavTester';
 import { Player2Motor } from '../Components/Player2Motor';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
+import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 
 export class Player2 extends GameObject {
 
@@ -18,7 +19,9 @@ export class Player2 extends GameObject {
 
         const components: Component[] = [];
         
-        components.push(new RectangleCollider(this, 35, 35, 0, -5));
+        const collider = new RectangleCollider(this, 35, 35, 0, -5);
+        collider.physicalMaterial = PhysicalMaterial.bouncy;
+        components.push(collider);
         components.push(new Player2Motor(this));
         components.push(new Rigidbody(this));
         
