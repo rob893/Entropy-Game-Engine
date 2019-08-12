@@ -20,6 +20,7 @@ export class Player2Motor extends Motor {
     private movingDown: boolean = false;
     private colliding: boolean = false;
     private animator: Animator;
+    private rb: Rigidbody;
     private collider: RectangleCollider;
     private readonly runRightAnimation: Animation;
     private readonly runLeftAnimation: Animation;
@@ -48,7 +49,7 @@ export class Player2Motor extends Motor {
 
         this.collider = this.gameObject.getComponent(RectangleCollider);
         this.animator = this.gameObject.getComponent<Animator>(Animator);
-
+        this.rb = this.gameObject.getComponent(Rigidbody);
         //this.collider.onCollided.add((other) => this.handleCollisions(other));
     }
 
@@ -63,27 +64,31 @@ export class Player2Motor extends Motor {
         }
 
         if (this.movingRight) {
-            this.xVelocity = 1;
+            //this.xVelocity = 1;
+            this.rb.addForce(Vector2.right);
         }
         else if (this.movingLeft) {
-            this.xVelocity = -1;
+            //this.xVelocity = -1;
+            this.rb.addForce(Vector2.left);
         }
         else {
-            this.xVelocity = 0;
+            //this.xVelocity = 0;
         }
 
         if (this.movingUp) {
-            this.yVelocity = -1;
+            this.rb.addForce(Vector2.up);
+            //this.yVelocity = -1;
         }
         else if (this.movingDown) {
-            this.yVelocity = 1;
+            this.rb.addForce(Vector2.down);
+            //this.yVelocity = 1;
         }
         else {
-            this.yVelocity = 0;
+            //this.yVelocity = 0;
         }
         
         if (this.isMoving) {
-            this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
+            //this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
         }
     }
 

@@ -9,6 +9,7 @@ import { Animator } from '../../GameEngine/Components/Animator';
 import { NavAgent } from '../../GameEngine/Components/NavAgent';
 import { NavTester } from '../Components/NavTester';
 import { Player2Motor } from '../Components/Player2Motor';
+import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 
 export class Player2 extends GameObject {
 
@@ -19,6 +20,7 @@ export class Player2 extends GameObject {
         
         components.push(new RectangleCollider(this, 35, 35, 0, -5));
         components.push(new Player2Motor(this));
+        components.push(new Rigidbody(this));
         
         //components.push(new TrumpMotor(this));
 

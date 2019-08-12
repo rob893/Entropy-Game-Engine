@@ -190,6 +190,10 @@ export class Vector2 {
         return this;
     }
 
+    public clone(): Vector2 {
+        return new Vector2(this.x, this.y);
+    }
+
     public toString(): string {
         return this.x + ',' + this.y;
     }

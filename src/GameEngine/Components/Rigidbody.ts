@@ -9,9 +9,10 @@ export class Rigidbody extends Component {
     // In kg
     public mass: number;
     public isKinomatic: boolean = false;
+    public readonly velocity: Vector2;
 
-    private readonly velocity: Vector2;
-    private readonly force: Vector2;
+    //private readonly force: Vector2;
+    private readonly forces: Vector2[] = [];
 
 
     public constructor(gameObject: GameObject, mass: number = 70) {
@@ -19,7 +20,7 @@ export class Rigidbody extends Component {
 
         this.mass = mass;
         this.velocity = new Vector2(0, 0);
-        this.force = Vector2.zero;
+        //this.force = Vector2.zero;
         GameEngine.instance.physicsEngine.addRigidbody(this);
     }
 
@@ -32,21 +33,21 @@ export class Rigidbody extends Component {
             return;
         }
 
-        this.addGravity(665);
-        this.velocity.add(this.force.divideScalar(this.mass));
+        this.forces.forEach(force => this.velocity.add(force.divideScalar(this.mass)));
+
+        this.forces.length = 0;
+
+        //this.addGravity(665);
+        //this.velocity.add(this.force.divideScalar(this.mass));
         this.transform.translate(this.velocity);
     }
 
     public addForce(force: Vector2): void {
-        this.force.add(force);
+        //this.force.add(force);
+        this.forces.push(force);
     }
 
     public addGravity(newtonsDown: number): void {
         this.addForce(Vector2.down.multiplyScalar(newtonsDown).multiplyScalar(Time.DeltaTime));
-    }
-
-    public resetForce(): void {
-        this.force.zero();
-        this.velocity.zero();
     }
 }

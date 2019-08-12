@@ -8,6 +8,7 @@ import { Animator } from '../../GameEngine/Components/Animator';
 //import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { NavAgent } from '../../GameEngine/Components/NavAgent';
 import { NavTester } from '../Components/NavTester';
+import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 
 export class Trump extends GameObject {
 
@@ -17,6 +18,11 @@ export class Trump extends GameObject {
         const components: Component[] = [];
         
         components.push(new RectangleCollider(this, 60, 60, 0, -5));
+
+        const rb = new Rigidbody(this);
+        rb.isKinomatic = true;
+
+        components.push(rb);
         components.push(new NavAgent(this));
         components.push(new NavTester(this));
         //components.push(new TrumpMotor(this));

@@ -86,7 +86,7 @@ export class PlayerMotor extends Motor {
         
         this.jumping = true;
         this.rigidBody.isKinomatic = false;
-        this.rigidBody.resetForce();
+        //this.rigidBody.resetForce();
         this.rigidBody.addForce(Vector2.up.multiplyScalar(400));
     }
 
