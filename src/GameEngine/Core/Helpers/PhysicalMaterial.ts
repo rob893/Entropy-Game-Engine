@@ -35,15 +35,15 @@ export class PhysicalMaterial {
     }
 
     public static get metal(): PhysicalMaterial {
-        return new PhysicalMaterial(0.15, 0.15, 0);
+        return new PhysicalMaterial(0.15, 0.15, 0.597);
     }
 
     public static get rubber(): PhysicalMaterial {
-        return new PhysicalMaterial(1, 1, 0.5);
+        return new PhysicalMaterial(1, 1, 0.828);
     }
 
     public static get wood(): PhysicalMaterial {
-        return new PhysicalMaterial(0.45, 0.45, 0);
+        return new PhysicalMaterial(0.45, 0.45, 0.603);
     }
 
     public static get zero(): PhysicalMaterial {

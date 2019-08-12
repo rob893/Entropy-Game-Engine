@@ -55,7 +55,12 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
                         this.collisionMap.set(collider, new Set([other]));
                     }
 
-                    this._onCollisionDetected.trigger(this.buildCollisionManifold(collider, other));
+                    const collisionManifold = this.buildCollisionManifold(collider, other);
+
+                    collider.triggerCollision(collisionManifold);
+                    other.triggerCollision(collisionManifold);
+
+                    this._onCollisionDetected.trigger(collisionManifold);
                 }
             }
         }
