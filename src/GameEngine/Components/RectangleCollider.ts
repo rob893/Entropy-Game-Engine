@@ -9,6 +9,7 @@ import { Rigidbody } from './Rigidbody';
 import { Color } from '../Core/Enums/Color';
 import { GameEngine } from '../Core/GameEngine';
 import { PhysicalMaterial } from '../Core/Helpers/PhysicalMaterial';
+import { CollisionManifold } from '../Core/Helpers/CollisionManifold';
 
 export class RectangleCollider extends Component implements RenderableGizmo {
 
@@ -19,7 +20,7 @@ export class RectangleCollider extends Component implements RenderableGizmo {
     public readonly offset: Vector2;
 
     private _attachedRigidbody: Rigidbody|null;
-    private readonly _onCollided = new LiteEvent<RectangleCollider>();
+    private readonly _onCollided = new LiteEvent<CollisionManifold>();
     private readonly _topLeft: Vector2;
     private readonly _topRight: Vector2;
     private readonly _bottomLeft: Vector2;
@@ -90,7 +91,6 @@ export class RectangleCollider extends Component implements RenderableGizmo {
             other.topRight.x < this.topLeft.x ||
             other.topLeft.y > this.bottomLeft.y ||
             other.bottomLeft.y < this.topLeft.y)) {
-            this._onCollided.trigger(other);
                 
             return true;
         }
@@ -98,7 +98,11 @@ export class RectangleCollider extends Component implements RenderableGizmo {
         return false;
     }
 
-    public get onCollided(): CustomLiteEvent<RectangleCollider> { 
+    public triggerCollision(manifold: CollisionManifold): void {
+        this._onCollided.trigger(manifold);
+    }
+
+    public get onCollided(): CustomLiteEvent<CollisionManifold> { 
         return this._onCollided.expose(); 
     }
 

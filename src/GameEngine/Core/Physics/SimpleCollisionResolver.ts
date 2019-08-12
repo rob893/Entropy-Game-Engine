@@ -2,10 +2,14 @@ import { CollisionResolver } from '../Interfaces/CollisionResolver';
 import { RectangleCollider } from '../../Components/RectangleCollider';
 import { Vector2 } from '../Helpers/Vector2';
 import { Rigidbody } from '../../Components/Rigidbody';
+import { CollisionManifold } from '../Helpers/CollisionManifold';
 
 export class SimpleCollisionResolver implements CollisionResolver {
 
-    public resolveCollisions(colliderA: RectangleCollider, colliderB: RectangleCollider): void {
+    public resolveCollisions(collisionManifold: CollisionManifold): void {
+        const colliderA = collisionManifold.colliderA;
+        const colliderB = collisionManifold.colliderB;
+
         if (colliderA.isTrigger || colliderB.isTrigger) {
             return;
         }
@@ -14,45 +18,14 @@ export class SimpleCollisionResolver implements CollisionResolver {
             return;
         }
 
-        //this wont work corrct here now since duplicate pairs of colliders (ie: (a, b) (b, a)) are not being computed. Need to implement impulse resolution using rigidbodies
-
-        // if (colliderA.gameObject.id !== 'player') {
-        //     return;
-        // }
-
-        const xAxis = Math.abs(colliderA.center.x - colliderB.center.x);
-        const yAxis = Math.abs(colliderA.center.y - colliderB.center.y);
-
-        const cw = (colliderA.width / 2) + (colliderB.width / 2);
-        const ch = (colliderA.height / 2) + (colliderB.height / 2);
-
-        const ox = Math.abs(xAxis - cw);
-        const oy = Math.abs(yAxis - ch);
-
-        const dir = Vector2.clone(colliderA.center).subtract(colliderB.center).normalized;
-        //const projection = new Vector2(dir.x * (ox + 1), dir.y * (oy + 1));
-
-        const penetration = ox < oy ? oy : ox;
-
-        if (ox > oy) {
-            dir.x = 0;
-            dir.y = dir.y > 0 ? 1 : -1;
-            // projection.x = 0;
-            // projection.y = projection.y > 0 ? 1 : -1; 
-        }
-        else if (ox < oy) {
-            dir.y = 0;
-            dir.x = dir.x > 0 ? 1 : -1;
-            // projection.y = 0;
-            // projection.x = projection.x > 0 ? 1 : -1;
-        }
+        const collisionNormal = collisionManifold.collisionNormal;
 
         const rbA = colliderA.attachedRigidbody;
         const rbB = colliderB.attachedRigidbody;
 
         const rv = Vector2.subtract(rbB.velocity, rbA.velocity);
 
-        const velAlongNormal = Vector2.dot(rv, dir);
+        const velAlongNormal = Vector2.dot(rv, collisionNormal);
 
         if (velAlongNormal < 0) {
             return;
@@ -63,29 +36,25 @@ export class SimpleCollisionResolver implements CollisionResolver {
         let j = -1 * (1 + e) * velAlongNormal;
         j /= (rbA.inverseMass + rbB.inverseMass);
 
-        const impulse = Vector2.multiplyScalar(dir, j);
+        const impulse = Vector2.multiplyScalar(collisionNormal, j);
 
         const combinedMass = rbA.mass + rbB.mass;
 
         if (!rbA.isKinomatic) {
             const a = Vector2.multiplyScalar(impulse, rbA.inverseMass);
-            a.multiplyScalar(rbA.mass / combinedMass);
-            rbA.velocity.subtract(a);
+            //a.multiplyScalar(rbA.mass / combinedMass);
+            rbA.addForce(a);
+            //rbA.velocity.subtract(a);
         }
 
         if (!rbB.isKinomatic) {
-            const b = Vector2.multiplyScalar(impulse, rbA.inverseMass);
-            b.multiplyScalar(rbA.mass / combinedMass);
-            rbB.velocity.add(b);
+            const b = Vector2.multiplyScalar(impulse, rbB.inverseMass);
+            //b.multiplyScalar(rbB.mass / combinedMass);
+            rbB.addForce(b);
+            //rbB.velocity.add(b);
         }
 
-        this.positionalCorrection(rbA, rbB, dir, penetration);
-        
-        // const colliderAPos = colliderA.transform.position;
-
-        // while (colliderA.detectCollision(colliderB)) {
-        //     colliderAPos.add(dir);
-        // }
+        this.positionalCorrection(rbA, rbB, collisionNormal, collisionManifold.penetrationDepth);
     }
 
     private positionalCorrection(rbA: Rigidbody, rbB: Rigidbody, normal: Vector2, penetration: number): void {

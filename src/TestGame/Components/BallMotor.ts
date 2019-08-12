@@ -20,7 +20,7 @@ export class BallMotor extends Motor {
         
         this.collider = this.gameObject.getComponent<RectangleCollider>(RectangleCollider);
 
-        this.collider.onCollided.add((other: RectangleCollider) => this.handleCollision(other));
+        //this.collider.onCollided.add((other: RectangleCollider) => this.handleCollision(other));
     }
 
     protected handleOutOfBounds(): void {

@@ -4,12 +4,13 @@ import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
 import { LiteEvent } from '../Helpers/LiteEvent';
 import { Vector2 } from '../Helpers/Vector2';
 import { Layer } from '../Enums/Layer';
+import { CollisionManifold } from '../Helpers/CollisionManifold';
 
 
 export class SpatialHashCollisionDetector implements CollisionDetector {
     
     private readonly _colliders: RectangleCollider[];
-    private readonly _onCollisionDetected: LiteEvent<RectangleCollider> = new LiteEvent<RectangleCollider>();
+    private readonly _onCollisionDetected: LiteEvent<CollisionManifold> = new LiteEvent<CollisionManifold>();
     private readonly colliderSpacialMapKeys: Map<RectangleCollider, Set<string>> = new Map<RectangleCollider, Set<string>>();
     private readonly spatialMap: Map<string, Set<RectangleCollider>> = new Map<string, Set<RectangleCollider>>();
     private readonly collisionMap: Map<RectangleCollider, Set<RectangleCollider>> = new Map<RectangleCollider, Set<RectangleCollider>>();
@@ -33,7 +34,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         return this._colliders;
     }
 
-    public get onCollisionDetected(): CustomLiteEvent<RectangleCollider> {
+    public get onCollisionDetected(): CustomLiteEvent<CollisionManifold> {
         return this._onCollisionDetected.expose();
     }
 
@@ -54,7 +55,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
                         this.collisionMap.set(collider, new Set([other]));
                     }
 
-                    this._onCollisionDetected.trigger(collider, other);
+                    this._onCollisionDetected.trigger(this.buildCollisionManifold(collider, other));
                 }
             }
         }
@@ -178,5 +179,31 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         }
 
         return possibleCollisions;
+    }
+
+    private buildCollisionManifold(colliderA: RectangleCollider, colliderB: RectangleCollider): CollisionManifold {
+        const xAxis = Math.abs(colliderA.center.x - colliderB.center.x);
+        const yAxis = Math.abs(colliderA.center.y - colliderB.center.y);
+
+        const cw = (colliderA.width / 2) + (colliderB.width / 2);
+        const ch = (colliderA.height / 2) + (colliderB.height / 2);
+
+        const ox = Math.abs(xAxis - cw);
+        const oy = Math.abs(yAxis - ch);
+
+        const normal = Vector2.clone(colliderA.center).subtract(colliderB.center).normalized;
+
+        const penetration = ox > oy ? oy : ox;
+
+        if (ox > oy) {
+            normal.x = 0;
+            normal.y = normal.y > 0 ? 1 : -1;
+        }
+        else if (ox < oy) {
+            normal.y = 0;
+            normal.x = normal.x > 0 ? 1 : -1;
+        }
+
+        return new CollisionManifold(colliderA, colliderB, penetration, normal);
     }
 }

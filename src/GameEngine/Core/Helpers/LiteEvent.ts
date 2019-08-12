@@ -14,7 +14,7 @@ export class LiteEvent<T> implements CustomLiteEvent<T> {
     }
 
     public trigger(data?: T, moreData?: T): void {
-        this.handlers.slice(0).forEach(h => h(data, moreData));
+        this.handlers.forEach(h => h(data, moreData));
     }
 
     public expose(): CustomLiteEvent<T> {

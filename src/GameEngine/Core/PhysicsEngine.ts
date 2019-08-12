@@ -5,6 +5,7 @@ import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDete
 import { CollisionResolver } from './Interfaces/CollisionResolver';
 import { SimpleCollisionResolver } from './Physics/SimpleCollisionResolver';
 import { Layer } from './Enums/Layer';
+import { CollisionManifold } from './Helpers/CollisionManifold';
 
 
 export class PhysicsEngine {
@@ -22,7 +23,7 @@ export class PhysicsEngine {
         this.gravity = 665;
         this.collisionDetector = collisionDetector;
         this.collisionResolver = collisionResolver;
-        this.collisionDetector.onCollisionDetected.add((colliderA, colliderB) => this.resolveCollisions(colliderA, colliderB));
+        this.collisionDetector.onCollisionDetected.add((manifold) => this.resolveCollisions(manifold));
 
         const layers = Object.keys(Layer).filter(c => typeof Layer[c as any] === 'number').map(k => Number(Layer[k as any]));
 
@@ -71,7 +72,7 @@ export class PhysicsEngine {
         this.collisionDetector.addCollider(collider);
     }
 
-    private resolveCollisions(colliderA: RectangleCollider, colliderB: RectangleCollider): void {
-        this.collisionResolver.resolveCollisions(colliderA, colliderB);
+    private resolveCollisions(collisionManifold: CollisionManifold): void {
+        this.collisionResolver.resolveCollisions(collisionManifold);
     }
 }

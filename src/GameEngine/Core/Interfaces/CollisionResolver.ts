@@ -1,5 +1,5 @@
-import { RectangleCollider } from '../../Components/RectangleCollider';
+import { CollisionManifold } from '../Helpers/CollisionManifold';
 
 export interface CollisionResolver {
-    resolveCollisions(colliderA: RectangleCollider, colliderB: RectangleCollider): void;
+    resolveCollisions(collisionManifold: CollisionManifold): void;
 }

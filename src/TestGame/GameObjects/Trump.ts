@@ -22,8 +22,8 @@ export class Trump extends GameObject {
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
 
-        const rb = new Rigidbody(this);
-        rb.isKinomatic = true;
+        const rb = new Rigidbody(this, 1000000);
+        //rb.isKinomatic = true;
         components.push(rb);
 
         components.push(new NavAgent(this));
