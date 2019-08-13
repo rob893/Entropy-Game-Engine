@@ -1,6 +1,5 @@
 import { GameEngine } from './GameEngine/Core/GameEngine';
-import { Scene1 } from './TestGame/Scenes/Scene1';
-import { Scene2 } from './TestGame/Scenes/Scene2';
+import { scene1, scene2 } from './TestGame/Scenes/Scenes';
 import { Color } from './GameEngine/Core/Enums/Color';
 
 
@@ -14,7 +13,7 @@ const main = async (): Promise<void> => {
 
     gameEngine.renderingEngine.renderGizmos = true;
 
-    gameEngine.setScenes([new Scene1(), new Scene2]);
+    gameEngine.setScenes([scene1, scene2]);
 
     await gameEngine.loadScene(1);
 };

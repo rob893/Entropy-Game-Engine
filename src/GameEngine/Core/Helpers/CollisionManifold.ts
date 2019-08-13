@@ -15,4 +15,12 @@ export class CollisionManifold {
         this.penetrationDepth = penetrationDepth;
         this.collisionNormal = collisionNormal;
     }
+
+    public getOtherCollider(collider: RectangleCollider): RectangleCollider {
+        return collider === this.colliderA ? this.colliderB : this.colliderA;
+    }
+
+    public getCollisionNormalForCollider(collider: RectangleCollider): Vector2 {
+        return collider === this.colliderA ? this.collisionNormal.clone() : this.collisionNormal.clone().multiplyScalar(-1);
+    }
 }

@@ -23,7 +23,7 @@ export class Player2 extends GameObject {
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
         components.push(new Player2Motor(this));
-        components.push(new Rigidbody(this));
+        //components.push(new Rigidbody(this));
         
         //components.push(new TrumpMotor(this));
 

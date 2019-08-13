@@ -41,19 +41,11 @@ export class SimpleCollisionResolver implements CollisionResolver {
         const combinedMass = rbA.mass + rbB.mass;
 
         if (!rbA.isKinomatic) {
-            //const a = Vector2.multiplyScalar(impulse, rbA.inverseMass);
-            const a = Vector2.multiplyScalar(impulse, -1 * (rbB.mass / combinedMass));
-            //a.multiplyScalar(rbA.mass / combinedMass);
-            rbA.addForce(a);
-            //rbA.velocity.subtract(a);
+            rbA.addForce(Vector2.multiplyScalar(impulse, -1 * (rbB.mass / combinedMass)));
         }
 
         if (!rbB.isKinomatic) {
-            //const b = Vector2.multiplyScalar(impulse, rbB.inverseMass);
-            const b = Vector2.multiplyScalar(impulse, rbA.mass / combinedMass);
-            //b.multiplyScalar(rbB.mass / combinedMass);
-            rbB.addForce(b);
-            //rbB.velocity.add(b);
+            rbB.addForce(Vector2.multiplyScalar(impulse, rbA.mass / combinedMass));
         }
 
         this.positionalCorrection(rbA, rbB, collisionNormal, collisionManifold.penetrationDepth);

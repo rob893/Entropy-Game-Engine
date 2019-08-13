@@ -10,6 +10,7 @@ import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { Input } from '../../GameEngine/Core/Helpers/Input';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
+import { CollisionManifold } from '../../GameEngine/Core/Helpers/CollisionManifold';
 
 
 export class Player2Motor extends Motor {
@@ -18,10 +19,9 @@ export class Player2Motor extends Motor {
     private movingLeft: boolean = false;
     private movingUp: boolean = false;
     private movingDown: boolean = false;
-    private colliding: boolean = false;
     private animator: Animator;
-    private rb: Rigidbody;
     private collider: RectangleCollider;
+    //private rb: Rigidbody;
     private readonly runRightAnimation: Animation;
     private readonly runLeftAnimation: Animation;
     private readonly runUpAnimation: Animation;
@@ -49,8 +49,9 @@ export class Player2Motor extends Motor {
 
         this.collider = this.gameObject.getComponent(RectangleCollider);
         this.animator = this.gameObject.getComponent<Animator>(Animator);
-        this.rb = this.gameObject.getComponent(Rigidbody);
-        //this.collider.onCollided.add((other) => this.handleCollisions(other));
+        //this.rb = this.gameObject.getComponent(Rigidbody);
+
+        this.collider.onCollided.add((manifold) => this.handleCollisions(manifold));
     }
 
     public get isMoving(): boolean { 
@@ -58,66 +59,44 @@ export class Player2Motor extends Motor {
     }
 
     protected move(): void {
-        if (this.colliding) {
-            this.colliding = false;
-            return;
-        }
-
         if (this.movingRight) {
-            //this.xVelocity = 1;
-            this.rb.addForce(Vector2.right);
+            this.xVelocity = 1;
+            //this.rb.addForce(Vector2.right);
         }
         else if (this.movingLeft) {
-            //this.xVelocity = -1;
-            this.rb.addForce(Vector2.left);
+            this.xVelocity = -1;
+            //this.rb.addForce(Vector2.left);
         }
         else {
-            //this.xVelocity = 0;
+            this.xVelocity = 0;
         }
 
         if (this.movingUp) {
-            this.rb.addForce(Vector2.up);
-            //this.yVelocity = -1;
+            //this.rb.addForce(Vector2.up);
+            this.yVelocity = -1;
         }
         else if (this.movingDown) {
-            this.rb.addForce(Vector2.down);
-            //this.yVelocity = 1;
+            //this.rb.addForce(Vector2.down);
+            this.yVelocity = 1;
         }
         else {
-            //this.yVelocity = 0;
+            this.yVelocity = 0;
         }
         
         if (this.isMoving) {
-            //this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
+            this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
         }
     }
 
     protected handleOutOfBounds(): void {
     }
 
-    private handleCollisions(other: RectangleCollider): void {
-        this.colliding = true;
-        
-        if (this.movingRight) {
-            while (this.collider.topRight.x > other.topLeft.x) {
-                this.transform.setPosition(this.transform.position.x - 1, this.transform.position.y);
-            }
-        }
-        else if (this.movingLeft) {
-            while (this.collider.topLeft.x < other.topRight.x) {
-                this.transform.setPosition(this.transform.position.x + 1, this.transform.position.y);
-            }
-        }
+    private handleCollisions(collisionManifold: CollisionManifold): void {
+        const other = collisionManifold.getOtherCollider(this.collider);
+        const normal = collisionManifold.getCollisionNormalForCollider(this.collider);
 
-        if (this.movingUp) {
-            while (this.collider.topLeft.y < other.topLeft.y) {
-                this.transform.setPosition(this.transform.position.x, this.transform.position.y + 1);
-            }
-        }
-        else {
-            while (this.collider.bottomLeft.y > other.bottomLeft.y) {
-                this.transform.setPosition(this.transform.position.x, this.transform.position.y - 1);
-            }
+        while (this.collider.detectCollision(other)) {
+            this.transform.position.add(normal);
         }
     }
 
