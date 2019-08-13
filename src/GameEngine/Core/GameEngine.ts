@@ -92,11 +92,6 @@ export class GameEngine {
 
         await this.initializeScene(scene.getStartingGameObjects(), scene.getSkybox(this.gameCanvas), scene.terrainSpec);
 
-        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.loadScene(1));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.loadScene(2));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
-        Input.addKeyListener(EventType.KeyDown, KeyCode.UpArrow, async () => await this.gameCanvas.requestFullscreen());
-
         this.loadedScene = scene;
         this.startGame();
     }

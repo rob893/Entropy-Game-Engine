@@ -7,6 +7,7 @@ export class PlayerHealth extends Component implements Damageable {
 
     private _health: number;
     private _isDead: boolean;
+    private gameManager: GameManager;
     
 
     public constructor(gameObject: GameObject, health: number = 100) {
@@ -14,6 +15,10 @@ export class PlayerHealth extends Component implements Damageable {
 
         this._health = health;
         this._isDead = false;
+    }
+
+    public start(): void {
+        this.gameManager = GameObject.findGameObjectById('gameManager').getComponent(GameManager);
     }
 
     public get health(): number {
@@ -27,7 +32,7 @@ export class PlayerHealth extends Component implements Damageable {
     public takeDamage(amount: number): void {
         this._health -= amount;
 
-        GameManager.instance.showMessage('You were hit for ' + amount + ' damage!', 1, 'red');
+        this.gameManager.showMessage('You were hit for ' + amount + ' damage!', 1, 'red');
 
         if (this._health <= 0) {
             this.die();
@@ -36,7 +41,7 @@ export class PlayerHealth extends Component implements Damageable {
 
     public die(): void {
         this._isDead = true;
-        GameManager.instance.endGame();
+        this.gameManager.endGame();
         console.log('You are dead!');
     }
 }

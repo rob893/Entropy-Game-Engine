@@ -5,12 +5,13 @@ import { Ball } from '../GameObjects/Ball';
 import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { RenderableGUI } from '../../GameEngine/Core/Interfaces/RenderableGUI';
 import { Time } from '../../GameEngine/Core/Time';
+import { Input } from '../../GameEngine/Core/Helpers/Input';
+import { EventType } from '../../GameEngine/Core/Enums/EventType';
+import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
 
 export class GameManager extends Component implements RenderableGUI {
 
-    private static _instance: GameManager;
-
-    private audioSource: AudioSource;
+    //private audioSource: AudioSource;
     private sceneMessage: string = '';
     private messageColor: string = '';
     private messageTimer: number = 0;
@@ -18,36 +19,19 @@ export class GameManager extends Component implements RenderableGUI {
     private gameOver: boolean = false;
 
 
-    private constructor(gameObject: GameObject) {
+    public constructor(gameObject: GameObject) {
         super(gameObject);
 
-        document.getElementById('print-button').addEventListener('click', () => this.printGameData());
-        document.getElementById('pause-button').addEventListener('click', () => this.togglePause());
-        document.getElementById('add-ball').addEventListener('click', () => this.testInstantiate());
-        document.getElementById('toggle-music').addEventListener('click', () => this.toggleMusic());
-    }
-
-    public static get instance(): GameManager {
-        if(this._instance === null || this._instance === undefined) {
-            throw new Error('GameManager has not been created yet. Use the createinstance method first.');
-        }
-
-        return this._instance;
-    }
-
-    public static createinstance(gameObject: GameObject): GameManager {
-        if(this._instance === null || this._instance === undefined) {
-            this._instance = new GameManager(gameObject);
-            return this.instance;
-        }
-        
-        throw new Error('More than one GameManager cannot be created!');
+        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await GameEngine.instance.loadScene(1));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await GameEngine.instance.loadScene(2));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await GameEngine.instance.loadScene(3));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
     }
 
     public start(): void {
         GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
-        this.audioSource = this.gameObject.getComponent(AudioSource);
-        this.audioSource.loop = true;
+        //this.audioSource = this.gameObject.getComponent(AudioSource);
+        //this.audioSource.loop = true;
     }
 
     public endGame(): void {
@@ -86,14 +70,14 @@ export class GameManager extends Component implements RenderableGUI {
         }
     }
 
-    private toggleMusic(): void {
-        if (this.audioSource.isPlaying) {
-            this.audioSource.pause();
-        }
-        else {
-            this.audioSource.play();
-        }
-    }
+    // private toggleMusic(): void {
+    //     if (this.audioSource.isPlaying) {
+    //         this.audioSource.pause();
+    //     }
+    //     else {
+    //         this.audioSource.play();
+    //     }
+    // }
 
     private togglePause(): void {
         GameEngine.instance.togglePause();

@@ -65,7 +65,9 @@ export class PhysicsEngine {
     }
 
     public removeRigidbody(rb: Rigidbody): void {
-        this.rigidbodies.splice(this.rigidbodies.indexOf(rb), 1);
+        if (this.rigidbodies.includes(rb)) {
+            this.rigidbodies.splice(this.rigidbodies.indexOf(rb));
+        }
     }
 
     public addCollider(collider: RectangleCollider): void {

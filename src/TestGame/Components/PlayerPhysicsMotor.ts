@@ -1,4 +1,3 @@
-import { Motor } from './Motor';
 import { GameObject } from '../../GameEngine/Core/GameObject';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
@@ -7,20 +6,20 @@ import TrumpRun from '../Assets/Images/trump_run.png';
 import TrumpIdle from '../Assets/Images/trump_idle.png';
 import { Animator } from '../../GameEngine/Components/Animator';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
-import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { Input } from '../../GameEngine/Core/Helpers/Input';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
-import { CollisionManifold } from '../../GameEngine/Core/Helpers/CollisionManifold';
+import { Component } from '../../GameEngine/Components/Component';
 
 
-export class Player2Motor extends Motor {
+export class PlayerPhysicsMotor extends Component {
 
     private movingRight: boolean = false;
     private movingLeft: boolean = false;
     private movingUp: boolean = false;
     private movingDown: boolean = false;
+    private readonly speed: number;
     private animator: Animator;
-    private collider: RectangleCollider;
+    private rb: Rigidbody;
     private readonly runRightAnimation: Animation;
     private readonly runLeftAnimation: Animation;
     private readonly runUpAnimation: Animation;
@@ -40,57 +39,29 @@ export class Player2Motor extends Motor {
         this.runDownAnimation = new Animation(TrumpRun, 6, 4, 0.075, 1);
         this.idleAnimation = new Animation(TrumpIdle, 10, 4, 0.1, 1);
 
-        this.speed = 2;
+        this.speed = 5;
     }
 
     public start(): void {
         super.start();
 
-        this.collider = this.gameObject.getComponent(RectangleCollider);
         this.animator = this.gameObject.getComponent<Animator>(Animator);
-
-        this.collider.onCollided.add((manifold) => this.handleCollisions(manifold));
+        this.rb = this.gameObject.getComponent(Rigidbody);
     }
 
-    public get isMoving(): boolean { 
-        return this.xVelocity !== 0 || this.yVelocity !== 0;
-    }
-
-    protected move(): void {
+    public update(): void {
         if (this.movingRight) {
-            this.xVelocity = 1;
+            this.rb.addForce(Vector2.right.multiplyScalar(this.speed));
         }
         else if (this.movingLeft) {
-            this.xVelocity = -1;
-        }
-        else {
-            this.xVelocity = 0;
+            this.rb.addForce(Vector2.left.multiplyScalar(this.speed));
         }
 
         if (this.movingUp) {
-            this.yVelocity = -1;
+            this.rb.addForce(Vector2.up.multiplyScalar(this.speed));
         }
         else if (this.movingDown) {
-            this.yVelocity = 1;
-        }
-        else {
-            this.yVelocity = 0;
-        }
-        
-        if (this.isMoving) {
-            this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
-        }
-    }
-
-    protected handleOutOfBounds(): void {
-    }
-
-    private handleCollisions(collisionManifold: CollisionManifold): void {
-        const other = collisionManifold.getOtherCollider(this.collider);
-        const normal = collisionManifold.getCollisionNormalForCollider(this.collider);
-
-        while (this.collider.detectCollision(other)) {
-            this.transform.position.add(normal);
+            this.rb.addForce(Vector2.down.multiplyScalar(this.speed));
         }
     }
 
