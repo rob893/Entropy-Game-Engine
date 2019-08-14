@@ -38,14 +38,25 @@ export class SimpleCollisionResolver implements CollisionResolver {
 
         const impulse = Vector2.multiplyScalar(collisionNormal, j);
 
+        const tangent = rv.clone().subtract(Vector2.multiplyScalar(collisionNormal, Vector2.dot(rv, collisionNormal))).normalized;
+
+        let jt = -1 * Vector2.dot(rv, tangent);
+        jt = jt / (1 / rbA.mass + 1 / rbB.mass); 
+
+        const mu = (colliderA.physicalMaterial.staticFriction ** 2) + (colliderB.physicalMaterial.staticFriction ** 2);
+
+        const frictionImpulse = tangent.multiplyScalar(jt);
+
         const combinedMass = rbA.mass + rbB.mass;
 
         if (!rbA.isKinomatic) {
             rbA.addForce(Vector2.multiplyScalar(impulse, -1 * (rbB.mass / combinedMass)));
+            //rbA.addForce(Vector2.multiplyScalar(frictionImpulse, -1));
         }
 
         if (!rbB.isKinomatic) {
             rbB.addForce(Vector2.multiplyScalar(impulse, rbA.mass / combinedMass));
+            //rbB.addForce(frictionImpulse);
         }
 
         this.positionalCorrection(rbA, rbB, collisionNormal, collisionManifold.penetrationDepth);

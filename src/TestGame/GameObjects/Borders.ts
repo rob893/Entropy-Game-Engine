@@ -11,24 +11,34 @@ export class Borders extends GameObject {
 
         const rb = new Rigidbody(this, 100000, true);
 
+        const colliders: RectangleCollider[] = [];
+
         const topBorder = new RectangleCollider(this, 1280, 50, 1280 / 2, 50);
-        topBorder.physicalMaterial = PhysicalMaterial.bouncy;
+        colliders.push(topBorder);
 
         const bottomBorder = new RectangleCollider(this, 1280, 50, 1280 / 2, 720);
-        bottomBorder.physicalMaterial = PhysicalMaterial.bouncy;
+        colliders.push(bottomBorder);
 
         const leftBorder = new RectangleCollider(this, 50, 720, 25, 720);
-        leftBorder.physicalMaterial = PhysicalMaterial.bouncy;
+        colliders.push(leftBorder);
 
         const rightBorder = new RectangleCollider(this, 50, 720, 1280 - 25, 720);
-        rightBorder.physicalMaterial = PhysicalMaterial.bouncy;
+        colliders.push(rightBorder);
+
+        const midBox = new RectangleCollider(this, 150, 20, 640, 520);
+        colliders.push(midBox);
+
+        for (const collider of colliders) {
+            collider.physicalMaterial = PhysicalMaterial.metal;
+        }
 
         this.setComponents([
             rb,
             topBorder,
             bottomBorder,
             leftBorder,
-            rightBorder
+            rightBorder,
+            midBox
         ]);
     }
 }

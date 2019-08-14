@@ -6,11 +6,9 @@ import { GameEngine } from '../Core/GameEngine';
 
 export class Rigidbody extends Component {
 
-    // In kg
-    
     public readonly velocity: Vector2 = Vector2.zero;
 
-    //private readonly force: Vector2;
+    // In kg
     private _mass: number;
     private _inverseMass: number;
     private _isKinomatic: boolean = false;
@@ -21,7 +19,6 @@ export class Rigidbody extends Component {
         super(gameObject);
 
         this.mass = mass;
-        //this.force = Vector2.zero;
         this.isKinomatic = isKinomatic;
     }
 
@@ -57,13 +54,11 @@ export class Rigidbody extends Component {
         this.forces.forEach(force => this.velocity.add(force.divideScalar(this.mass)));
         this.forces.length = 0;
 
-        //this.addGravity(665);
-        //this.velocity.add(this.force.divideScalar(this.mass));
+        this.addGravity(665);
         this.transform.translate(this.velocity);
     }
 
     public addForce(force: Vector2): void {
-        //this.force.add(force);
         this.forces.push(force);
     }
 

@@ -30,7 +30,7 @@ export class PlayerPhysicsMotor extends Component {
     public constructor(gameObject: GameObject) {
         super(gameObject);
 
-        Input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyDown(event));
+        Input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space], (event) => this.onKeyDown(event));
         Input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
 
         this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, 2);
@@ -86,6 +86,10 @@ export class PlayerPhysicsMotor extends Component {
             this.movingUp = false;
             this.movingDown = true;
             this.animator.setAnimation(this.runDownAnimation);
+        }
+
+        if (event.keyCode === KeyCode.Space) {
+            this.rb.addForce(Vector2.up.multiplyScalar(600));
         }
     }
 

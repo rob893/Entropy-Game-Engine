@@ -64,10 +64,10 @@ export const scene3: Scene = {
             new GameManagerObject('gameManager'),
             new PlayerRB('player'),
             new Borders('borders'),
-            new TrumpRB('trump'),
-            new TrumpRB('trump'),
-            new TrumpRB('trump'),
-            new TrumpRB('trump')
+            //new TrumpRB('trump'),
+            //new TrumpRB('trump'),
+            //new TrumpRB('trump'),
+            //new TrumpRB('trump')
         ];
     }
 };
