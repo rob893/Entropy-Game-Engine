@@ -53,16 +53,11 @@ export class Rigidbody extends Component {
     public updatePhysics(): void {
         this.forces.forEach(force => this.velocity.add(force.divideScalar(this.mass)));
         this.forces.length = 0;
-
-        this.addGravity(665);
+        
         this.transform.translate(this.velocity);
     }
 
     public addForce(force: Vector2): void {
         this.forces.push(force);
-    }
-
-    public addGravity(newtonsDown: number): void {
-        this.addForce(Vector2.down.multiplyScalar(newtonsDown).multiplyScalar(Time.DeltaTime));
     }
 }

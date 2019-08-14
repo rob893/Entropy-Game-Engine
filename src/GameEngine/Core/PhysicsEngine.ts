@@ -6,6 +6,8 @@ import { CollisionResolver } from './Interfaces/CollisionResolver';
 import { SimpleCollisionResolver } from './Physics/SimpleCollisionResolver';
 import { Layer } from './Enums/Layer';
 import { CollisionManifold } from './Helpers/CollisionManifold';
+import { Vector2 } from './Helpers/Vector2';
+import { Time } from './Time';
 
 
 export class PhysicsEngine {
@@ -57,7 +59,10 @@ export class PhysicsEngine {
 
     public updatePhysics(): void {
         this.collisionDetector.detectCollisions();
-        this.rigidbodies.forEach(rb => rb.updatePhysics());
+        this.rigidbodies.forEach(rb => {
+            rb.addForce(Vector2.down.multiplyScalar(this.gravity).multiplyScalar(Time.DeltaTime)); //add gravity
+            rb.updatePhysics();
+        });
     }
 
     public addRigidbody(rb: Rigidbody): void {
