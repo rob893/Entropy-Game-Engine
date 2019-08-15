@@ -10,8 +10,8 @@ import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 
 export class TrumpRB extends GameObject {
 
-    public constructor(id: string) {
-        super(id, Math.random() * 1000, Math.random() * 600);
+    public constructor(id: string, startX: number, startY: number) {
+        super(id, startX, startY);
 
         const components: Component[] = [];
 
@@ -20,7 +20,7 @@ export class TrumpRB extends GameObject {
         components.push(collider);
 
         const rb = new Rigidbody(this);
-        rb.addForce(new Vector2(Math.random(), Math.random()).multiplyScalar(1000));
+        //rb.addForce(new Vector2(Math.random(), Math.random()).multiplyScalar(1000));
         components.push(rb);
 
         const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [1]);

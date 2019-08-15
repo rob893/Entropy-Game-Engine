@@ -67,7 +67,7 @@ export class Vector2 {
     }
 
     public static divide(leftOperand: Vector2, rightOperand: Vector2): Vector2 {
-        return new Vector2(leftOperand.x / rightOperand.x, leftOperand.y / rightOperand.y);
+        return new Vector2(rightOperand.x !== 0 ? leftOperand.x / rightOperand.x : 0, rightOperand.y !== 0 ? leftOperand.y / rightOperand.y : 0);
     }
 
     public static multiplyScalar(leftOperand: Vector2, scalar: number): Vector2 {
@@ -110,6 +110,14 @@ export class Vector2 {
         return new Vector2(point2.x - point1.x, point2.y - point1.y).normalized;
     }
 
+    /**
+     * 
+     * @param vector The vector to normalize. This will change the passed in vector, not return a new one.
+     */
+    public static normalize(vector: Vector2): Vector2 {
+        return vector.divide(new Vector2(vector.magnitude, vector.magnitude));
+    }
+
     public get sqrMagnitude(): number {
         return (this.x * this.x) + (this.y * this.y);
     }
@@ -149,8 +157,8 @@ export class Vector2 {
     }
 
     public divide(rightOperand: Vector2): Vector2 {
-        this.x /= rightOperand.x;
-        this.y /= rightOperand.y;
+        this.x = rightOperand.x !== 0 ? this.x / rightOperand.x : 0;
+        this.y = rightOperand.y !== 0 ? this.y / rightOperand.y : 0;
 
         return this;
     }
