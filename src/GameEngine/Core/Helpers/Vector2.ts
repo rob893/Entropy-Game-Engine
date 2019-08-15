@@ -67,7 +67,11 @@ export class Vector2 {
     }
 
     public static divide(leftOperand: Vector2, rightOperand: Vector2): Vector2 {
-        return new Vector2(rightOperand.x !== 0 ? leftOperand.x / rightOperand.x : 0, rightOperand.y !== 0 ? leftOperand.y / rightOperand.y : 0);
+        if (rightOperand.x === 0 || rightOperand.y === 0) {
+            console.warn('Attempting to divide by 0!');
+        }
+
+        return new Vector2(leftOperand.x / rightOperand.x, leftOperand.y / rightOperand.y);
     }
 
     public static multiplyScalar(leftOperand: Vector2, scalar: number): Vector2 {
@@ -75,6 +79,10 @@ export class Vector2 {
     }
 
     public static divideScalar(leftOperand: Vector2, scalar: number): Vector2 {
+        if (scalar === 0) {
+            console.warn('Attempting to divide by 0!');
+        }
+
         return new Vector2(leftOperand.x / scalar, leftOperand.y / scalar);
     }
 
@@ -157,17 +165,25 @@ export class Vector2 {
     }
 
     public divide(rightOperand: Vector2): Vector2 {
-        this.x = rightOperand.x !== 0 ? this.x / rightOperand.x : 0;
-        this.y = rightOperand.y !== 0 ? this.y / rightOperand.y : 0;
+        if (rightOperand.x === 0 || rightOperand.y === 0) {
+            console.warn('Attempting to divide by 0!');
+        }
+
+        this.x /= rightOperand.x;
+        this.y /= rightOperand.y;
 
         return this;
     }
 
-    public equals(rightOperand: Vector2): boolean {
-        const equalX = this.x === rightOperand.x;
-        const equalY = this.y === rightOperand.y;
-
-        return equalX && equalY;
+    public equals(x: number, y: number): boolean;
+    public equals(rightOperand: Vector2): boolean;
+    public equals(rightOperandOrX: Vector2 | number, y?: number): boolean {
+        if (typeof rightOperandOrX === 'number') {
+            return this.x === rightOperandOrX && this.y === y;
+        }
+        else {
+            return this.x === rightOperandOrX.x && this.y === rightOperandOrX.y;
+        }
     }
 
     public isCloseTo(rightOperand: Vector2, leniency: number = 1): boolean {
@@ -185,6 +201,10 @@ export class Vector2 {
     }
 
     public divideScalar(rightOperand: number): Vector2 {
+        if (rightOperand === 0) {
+            console.warn('Attempting to divide by 0!');
+        }
+        
         this.x /= rightOperand;
         this.y /= rightOperand;
 

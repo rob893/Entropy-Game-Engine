@@ -41,7 +41,10 @@ export class SimpleCollisionResolver implements CollisionResolver {
         let tangent = rv.clone();
         const asdf = Vector2.multiplyScalar(collisionNormal, Vector2.dot(rv, collisionNormal));
         tangent.subtract(asdf);
-        tangent = tangent.normalized;
+
+        if (!tangent.equals(0, 0)) {
+            tangent = tangent.normalized;
+        }
 
         let jt = -1 * Vector2.dot(rv, tangent);
         jt /= (1 / rbA.mass + 1 / rbB.mass); 

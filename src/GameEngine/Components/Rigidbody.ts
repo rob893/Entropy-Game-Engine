@@ -8,7 +8,9 @@ export class Rigidbody extends Component {
 
     public readonly velocity: Vector2 = Vector2.zero;
 
-    // In kg
+    /**
+     * Mass in KG. 0 represents an infinite mass.
+     */
     private _mass: number;
     private _inverseMass: number;
     private _isKinomatic: boolean = false;
@@ -22,12 +24,22 @@ export class Rigidbody extends Component {
         this.isKinomatic = isKinomatic;
     }
 
+    /**
+     * Mass in KG. 0 represents an infinite mass.
+     */
     public set mass(mass: number) {
         this._mass = mass;
         this._inverseMass = mass !== 0 ? 1 / mass : 0;
     }
 
+    /**
+     * Mass in KG. 0 represents an infinite mass.
+     */
     public get mass(): number {
+        if (this._mass === 0) {
+            return Infinity;
+        }
+
         return this._mass;
     }
 
