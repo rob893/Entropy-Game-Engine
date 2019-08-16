@@ -1,13 +1,7 @@
-- Terrain builder should produce a 'Terrain' object which consists of the nav mesh/grid, the actual image of the map, and the colliders for the unpassable areas
-- Make ITerrainSpec interface with getSpec() and cellSize prop.
-- Refactor levelspec and IMapCell?
 - Use maps in ITerrainSpec to map floor tile/wall/whatever to an array of possible sprites (for more diverse). All stats same except image
 - Use this when building the image to get more randomized flooring
 - Make a start path straighter? 
 - Look into having an array for function calls for rendering engine and stuff (loop though and call each function) 
     and being able to dynamically inject and remove function calls from update.
 - Do something similar for general update?
-- Finish scene idea.
-- Figure out what is keeping references to old objects after switching scenes (maybe event listeners?)
-- Build input class for all event listeners to, if I need to, I can manually remove all listeners when needed.
-- Finish mouseMap in input.
+- Continue to work on impulese collision resolution. Friction is wonky. Infinite mass object still don't work. Still losing energy in fully elastic collisions.
