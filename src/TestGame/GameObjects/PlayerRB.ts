@@ -9,11 +9,15 @@ import { Animator } from '../../GameEngine/Components/Animator';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { PlayerPhysicsMotor } from '../Components/PlayerPhysicsMotor';
+import { Weapon } from './Weapon';
 
 export class PlayerRB extends GameObject {
 
     public constructor(id: string) {
         super(id, 400, 250);
+
+        const weapon = new Weapon();
+        this.transform.addChild(weapon.transform);
 
         const components: Component[] = [];
         

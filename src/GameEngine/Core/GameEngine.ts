@@ -10,6 +10,7 @@ import { TerrainBuilder } from './Helpers/TerrainBuilder';
 import { Scene } from './Interfaces/Scene';
 import { Input } from './Helpers/Input';
 import { EventType } from './Enums/EventType';
+import { Transform } from '../Components/Transform';
 
 export class GameEngine {
 
@@ -116,6 +117,10 @@ export class GameEngine {
         this.gameObjectMap.set(newGameObject.id, newGameObject);
         this.gameObjects.push(newGameObject);
         newGameObject.start();
+
+        for (const child of newGameObject.transform.children) {
+            this.instantiate(child.gameObject);
+        }
         
         return newGameObject;
     }
@@ -161,9 +166,9 @@ export class GameEngine {
     }
 
     private setGameObjects(gameObjects: GameObject[]): void {
-        this.gameObjects = gameObjects;
+        this.gameObjects = [...gameObjects];
 
-        for (const gameObject of gameObjects) {
+        for (const gameObject of this.gameObjects) {
 
             if (this.gameObjectMap.has(gameObject.id)) {
                 const originalId = gameObject.id;
@@ -181,6 +186,19 @@ export class GameEngine {
             }
             else {
                 this.tagMap.set(gameObject.tag, [gameObject]);
+            }
+
+            //Initialize children of gameObject
+            const children = gameObject.transform.children;
+
+            while (children.length > 0) {
+                const child = children.pop();
+
+                this.gameObjects.push(child.gameObject);
+
+                for (const childsChild of child.children) {
+                    children.push(childsChild);
+                }
             }
         }
     }
@@ -234,7 +252,19 @@ export class GameEngine {
         Time.start();
         this.paused = false;
 
-        this.gameObjects.forEach(go => go.start());
+        this.gameObjects.forEach(go => {
+            go.start();
+            const children = go.transform.children;
+
+            while (children.length > 0) {
+                const child = children.pop();
+                child.gameObject.start();
+
+                for (const childsChild of child.children) {
+                    children.push(childsChild);
+                }
+            }
+        });
 
         this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
     }

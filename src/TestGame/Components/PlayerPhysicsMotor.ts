@@ -9,6 +9,7 @@ import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Input } from '../../GameEngine/Core/Helpers/Input';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { Component } from '../../GameEngine/Components/Component';
+import { Transform } from '../../GameEngine/Components/Transform';
 
 
 export class PlayerPhysicsMotor extends Component {
@@ -20,6 +21,7 @@ export class PlayerPhysicsMotor extends Component {
     private readonly speed: number;
     private animator: Animator;
     private rb: Rigidbody;
+    private weapon: Transform;
     private readonly runRightAnimation: Animation;
     private readonly runLeftAnimation: Animation;
     private readonly runUpAnimation: Animation;
@@ -30,7 +32,7 @@ export class PlayerPhysicsMotor extends Component {
     public constructor(gameObject: GameObject) {
         super(gameObject);
 
-        Input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space], (event) => this.onKeyDown(event));
+        Input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space, KeyCode.Backspace], (event) => this.onKeyDown(event));
         Input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
 
         this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, 2);
@@ -47,6 +49,8 @@ export class PlayerPhysicsMotor extends Component {
 
         this.animator = this.gameObject.getComponent<Animator>(Animator);
         this.rb = this.gameObject.getComponent(Rigidbody);
+
+        this.weapon = this.gameObject.getComponentInChildren(Transform);
     }
 
     public update(): void {
@@ -92,6 +96,10 @@ export class PlayerPhysicsMotor extends Component {
 
         if (event.keyCode === KeyCode.Space) {
             this.rb.addForce(Vector2.up.multiplyScalar(600));
+        }
+
+        if (event.keyCode === KeyCode.Backspace) {
+            this.weapon.parent = this.weapon.parent === null ? this.transform : null;
         }
     }
 

@@ -2,6 +2,7 @@ import { Transform } from '../Components/Transform';
 import { Component } from '../Components/Component';
 import { GameEngine } from './GameEngine';
 import { Layer } from './Enums/Layer';
+import { Vector2 } from './Helpers/Vector2';
 
 export abstract class GameObject {
 
@@ -21,6 +22,8 @@ export abstract class GameObject {
         this.isEnabled = true;
         this.tag = tag;
         this.layer = layer;
+
+        this.setComponents([this._transform]);
     }
 
     public static findGameObjectById(id: string): GameObject {
@@ -35,7 +38,11 @@ export abstract class GameObject {
         return GameEngine.instance.findGameObjectsWithTag(tag);
     }
 
-    public static instantiate(newGameObject: GameObject): GameObject {
+    public static instantiate(newGameObject: GameObject, position: Vector2 = Vector2.zero, rotation: number = 0, parent: Transform = null): GameObject {
+        newGameObject.transform.setPosition(position.x, position.y);
+        newGameObject.transform.rotation = rotation;
+        newGameObject.transform.parent = parent;
+        
         return GameEngine.instance.instantiate(newGameObject);
     }
 
@@ -99,7 +106,7 @@ export abstract class GameObject {
         const componentType = component.name;
 
         if (!this.componentMap.has(componentType)) {
-            throw new Error(componentType + ' not found on the GameObject with id of ' + this.id + '!');
+            return null;
         }
 
         return this.componentMap.get(componentType)[0] as T;
@@ -109,10 +116,76 @@ export abstract class GameObject {
         const componentType = component.name;
 
         if (!this.componentMap.has(componentType)) {
-            throw new Error(componentType + ' not found on the GameObject with id of ' + this.id + '!');
+            return [];
         }
 
         return this.componentMap.get(componentType) as T[];
+    }
+
+    public getComponentInParent<T extends Component>(component: new (...args: any[]) => T): T {
+        let parent = this.transform.parent;
+
+        while (parent !== null) {
+            if (parent.gameObject.hasComponent(component)) {
+                return parent.gameObject.getComponent(component);
+            }
+
+            parent = parent.parent;
+        }
+        
+        return null;
+    }
+
+    public getComponentsInParent<T extends Component>(component: new (...args: any[]) => T): T[] {
+        let parent = this.transform.parent;
+        const components: T[] = [];
+
+        while (parent !== null) {
+            if (parent.gameObject.hasComponent(component)) {
+                components.push(parent.gameObject.getComponent(component));
+            }
+
+            parent = parent.parent;
+        }
+        
+        return components;
+    }
+
+    public getComponentInChildren<T extends Component>(component: new (...args: any[]) => T): T {
+        const children: Transform[] = this.transform.children;
+
+        while (children.length > 0) {
+            const child = children.pop();
+
+            if (child.gameObject.hasComponent(component)) {
+                return child.gameObject.getComponent(component);
+            }
+
+            for (const childsChild of child.children) {
+                children.push(childsChild);
+            }
+        }
+        
+        return null;
+    }
+
+    public getComponentsInChildren<T extends Component>(component: new (...args: any[]) => T): T[] {
+        const children: Transform[] = this.transform.children;
+        const components: T[] = [];
+
+        while (children.length > 0) {
+            const child = children.pop();
+
+            if (child.gameObject.hasComponent(component)) {
+                components.push(child.gameObject.getComponent(component));
+            }
+
+            for (const childsChild of child.children) {
+                children.push(childsChild);
+            }
+        }
+        
+        return components;
     }
 
     public addComponent<T extends Component>(newComponent: Component): T {

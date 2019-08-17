@@ -32,7 +32,7 @@ export abstract class Input {
         document.addEventListener('keyup', (event) => this.keyDownSet.delete(event.keyCode));
         document.addEventListener('mousedown', (event) => this.mouseButtonDownSet.add(event.button));
         document.addEventListener('mouseup', (event) => this.mouseButtonDownSet.delete(event.button));
-        document.addEventListener('mousemove', (event) => this.updateCursorPosition(event));
+        document.addEventListener('mousemove', this.updateCursorPosition);
     }
 
     public static get canvasMousePosition(): Vector2 {
@@ -52,7 +52,7 @@ export abstract class Input {
         }
         else {
             if (!this.currentListeners.has(eventType)) {
-                document.addEventListener(eventType, (event) => this.invokeGenericHandlers(event));
+                document.addEventListener(eventType, this.invokeGenericHandlers);
                 this.currentListeners.set(eventType, this.invokeGenericHandlers);
             }
             
@@ -62,8 +62,8 @@ export abstract class Input {
 
     public static addKeyListener(type: EventType.KeyUp | EventType.KeyDown, keyCodes: KeyCode | KeyCode[], handler: ((event: KeyboardEvent) => void)): void {
         if (!this.currentListeners.has(type)) {
-            document.addEventListener(type, (event) => this.invokeKeyHandlers(event));
-            this.currentListeners.set(type, (event) => this.invokeKeyHandlers(event as KeyboardEvent));
+            document.addEventListener(type, this.invokeKeyHandlers);
+            this.currentListeners.set(type, this.invokeKeyHandlers);
         }
 
         if (!this.keyMap.has(type)) {
@@ -94,8 +94,8 @@ export abstract class Input {
      */
     public static addMouseListener(type: EventType.MouseDown | EventType.MouseUp | EventType.Click, mouseButton: 0 | 1 | 2, handler: ((event: CanvasMouseEvent) => void)): void {
         if (!this.currentListeners.has(type)) {
-            document.addEventListener(type, (event) => this.invokeMouseHandlers(event));
-            this.currentListeners.set(type, (event) => this.invokeMouseHandlers(event as MouseEvent));
+            document.addEventListener(type, this.invokeMouseHandlers);
+            this.currentListeners.set(type, this.invokeMouseHandlers);
         }
 
         if (!this.mouseMap.has(type)) {
@@ -132,44 +132,46 @@ export abstract class Input {
         this.currentListeners.forEach((handler, eventType) => {
             document.removeEventListener(eventType, handler);
         });
+
+        this.currentListeners.clear();
     }
 
-    private static invokeGenericHandlers(event: Event): void {
-        if (this.genericEventMap.has(event.type as EventType)) {
-            this.genericEventMap.get(event.type as EventType).forEach(handler => handler(event));
+    private static readonly invokeGenericHandlers = (event: Event): void => {
+        if (Input.genericEventMap.has(event.type as EventType)) {
+            Input.genericEventMap.get(event.type as EventType).forEach(handler => handler(event));
         }
     }
 
-    private static invokeKeyHandlers(event: KeyboardEvent): void {
+    private static readonly invokeKeyHandlers = (event: KeyboardEvent): void => {
         const eventType = event.type as EventType.KeyUp | EventType.KeyDown;
         
-        if (!this.keyMap.has(eventType)) {
+        if (!Input.keyMap.has(eventType)) {
             return;
         }
 
-        if (this.keyMap.get(eventType).has(event.keyCode)) {
-            this.keyMap.get(eventType).get(event.keyCode).forEach(handler => handler(event));
+        if (Input.keyMap.get(eventType).has(event.keyCode)) {
+            Input.keyMap.get(eventType).get(event.keyCode).forEach(handler => handler(event));
         }
     }
 
-    private static invokeMouseHandlers(event: MouseEvent): void {
+    private static readonly invokeMouseHandlers = (event: MouseEvent): void => {
         const eventType = event.type as EventType.MouseDown | EventType.MouseUp | EventType.Click;
         
-        if (!this.mouseMap.has(eventType)) {
+        if (!Input.mouseMap.has(eventType)) {
             return;
         }
 
         const canvasMouseEvent = event as CanvasMouseEvent;
-        this.updateCursorPosition(event);
-        canvasMouseEvent.cursorPositionOnCanvas = this.canvasMousePosition;
+        Input.updateCursorPosition(event);
+        canvasMouseEvent.cursorPositionOnCanvas = Input.canvasMousePosition;
 
-        if (this.mouseMap.get(eventType).has(event.button)) {
-            this.mouseMap.get(eventType).get(event.button).forEach(handler => handler(canvasMouseEvent));
+        if (Input.mouseMap.get(eventType).has(event.button)) {
+            Input.mouseMap.get(eventType).get(event.button).forEach(handler => handler(canvasMouseEvent));
         }
     }
 
-    private static updateCursorPosition(event: MouseEvent): void {
-        this.currentMousePosition.x = event.clientX;
-        this.currentMousePosition.y = event.clientY;
+    private static readonly updateCursorPosition = (event: MouseEvent): void => {
+        Input.currentMousePosition.x = event.clientX;
+        Input.currentMousePosition.y = event.clientY;
     }
 }
