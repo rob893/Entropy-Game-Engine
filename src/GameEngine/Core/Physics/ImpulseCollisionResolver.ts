@@ -4,7 +4,7 @@ import { Vector2 } from '../Helpers/Vector2';
 import { Rigidbody } from '../../Components/Rigidbody';
 import { CollisionManifold } from '../Helpers/CollisionManifold';
 
-export class SimpleCollisionResolver implements CollisionResolver {
+export class ImpulseCollisionResolver implements CollisionResolver {
 
     public resolveCollisions(collisionManifold: CollisionManifold): void {
         const colliderA = collisionManifold.colliderA;
@@ -39,8 +39,7 @@ export class SimpleCollisionResolver implements CollisionResolver {
         const impulse = Vector2.multiplyScalar(collisionNormal, j);
 
         let tangent = rv.clone();
-        const asdf = Vector2.multiplyScalar(collisionNormal, Vector2.dot(rv, collisionNormal));
-        tangent.subtract(asdf);
+        tangent.subtract(Vector2.multiplyScalar(collisionNormal, Vector2.dot(rv, collisionNormal)));
 
         if (!tangent.equals(0, 0)) {
             tangent = tangent.normalized;

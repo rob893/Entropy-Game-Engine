@@ -3,7 +3,7 @@ import { RectangleCollider } from '../Components/RectangleCollider';
 import { CollisionDetector } from './Interfaces/CollisionDetector';
 import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDetector';
 import { CollisionResolver } from './Interfaces/CollisionResolver';
-import { SimpleCollisionResolver } from './Physics/SimpleCollisionResolver';
+import { ImpulseCollisionResolver } from './Physics/ImpulseCollisionResolver';
 import { Layer } from './Enums/Layer';
 import { CollisionManifold } from './Helpers/CollisionManifold';
 import { Vector2 } from './Helpers/Vector2';
@@ -46,7 +46,7 @@ export class PhysicsEngine {
         layerCollisionMatrix.get(Layer.Terrain).delete(Layer.Terrain);
 
         const collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, layerCollisionMatrix, 100);
-        const collisionResolver = new SimpleCollisionResolver();
+        const collisionResolver = new ImpulseCollisionResolver();
 
         const engine = new PhysicsEngine(collisionDetector, collisionResolver);
         

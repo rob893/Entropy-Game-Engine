@@ -63,6 +63,8 @@ export class PlayerPhysicsMotor extends Component {
         else if (this.movingDown) {
             this.rb.addForce(Vector2.down.multiplyScalar(this.speed));
         }
+
+        this.transform.lookAt(Input.canvasMousePosition);
     }
 
     private onKeyDown(event: KeyboardEvent): void {

@@ -31,6 +31,10 @@ export class Transform extends Component {
         this.onMove.trigger();
     }
 
+    public lookAt(target: Vector2): void {
+        this.rotation = Math.atan2(target.y - this.position.y, target.x - this.position.x) - Math.PI / 2;
+    }
+
     public setPosition(x: number, y: number): void {
         this.position.x = x;
         this.position.y = y;

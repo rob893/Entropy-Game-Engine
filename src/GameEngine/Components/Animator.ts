@@ -7,15 +7,19 @@ import { GameEngine } from '../Core/GameEngine';
 export class Animator extends Component implements Renderable {
 
     private animation: Animation;
-    private readonly renderHeight: number;
     private readonly renderWidth: number;
+    private readonly renderHeight: number;
+    private readonly halfRWidth: number;
+    private readonly halfRHeight: number;
 
 
     public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, initialAnimation: Animation) {
         super(gameObject);
         
         this.renderWidth = renderWidth;
+        this.halfRWidth = renderWidth / 2;
         this.renderHeight = renderHeight;
+        this.halfRHeight = renderHeight / 2;
         this.animation = initialAnimation;
 
         GameEngine.instance.renderingEngine.addRenderableObject(this);
@@ -30,8 +34,14 @@ export class Animator extends Component implements Renderable {
             return;
         }
 
-        context.drawImage(this.animation.currentFrame, this.transform.position.x - (this.renderWidth / 2), 
-            this.transform.position.y - this.renderHeight, this.renderWidth, this.renderHeight);
+        context.translate(this.transform.position.x, this.transform.position.y - this.halfRHeight);
+        context.rotate(this.transform.rotation);
+
+        context.drawImage(this.animation.currentFrame, 0 - this.halfRWidth, 
+            0 - this.halfRHeight, this.renderWidth, this.renderHeight);
+
+        context.rotate(-this.transform.rotation);
+        context.translate(-this.transform.position.x, -(this.transform.position.y - this.halfRHeight));
         this.animation.updateAnimation();
     }
 }
