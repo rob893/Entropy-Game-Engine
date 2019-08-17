@@ -35,10 +35,12 @@ export class Transform extends Component {
 
     public set parent(newParent: Transform | null) {
         if (this._parent !== null) {
+            this._parent._children.splice(this._parent._children.indexOf(this), 1);
             this._parent.onMoved.remove(this.updatePositionBasedOnParent);
         }
         
         if (newParent !== null) {
+            newParent._children.push(this);
             newParent.onMoved.add(this.updatePositionBasedOnParent);
         }
 
@@ -62,11 +64,6 @@ export class Transform extends Component {
         this.position.x = x;
         this.position.y = y;
         this.onMove.trigger();
-    }
-
-    public addChild(child: Transform): void {
-        this._children.push(child);
-        child.parent = this;
     }
 
     public isChildOf(parent: Transform): boolean {

@@ -5,3 +5,5 @@
     and being able to dynamically inject and remove function calls from update.
 - Do something similar for general update?
 - Continue to work on impulese collision resolution. Friction is wonky. Infinite mass object still don't work. Still losing energy in fully elastic collisions.
+- Write tests for game objects and components.
+- Figure out a way to decouple components from rendering and physics engines.

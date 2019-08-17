@@ -71,7 +71,7 @@ export class PhysicsEngine {
 
     public removeRigidbody(rb: Rigidbody): void {
         if (this.rigidbodies.includes(rb)) {
-            this.rigidbodies.splice(this.rigidbodies.indexOf(rb));
+            this.rigidbodies.splice(this.rigidbodies.indexOf(rb), 1);
         }
     }
 

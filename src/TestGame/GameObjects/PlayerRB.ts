@@ -17,7 +17,7 @@ export class PlayerRB extends GameObject {
         super(id, 400, 250);
 
         const weapon = new Weapon();
-        this.transform.addChild(weapon.transform);
+        weapon.transform.parent = this.transform;
 
         const components: Component[] = [];
         
