@@ -25,7 +25,7 @@ export class NavAgent extends Component implements RenderableGizmo {
     public constructor(gameObject: GameObject) {
         super(gameObject);
 
-        GameEngine.instance.renderingEngine.addRenderableGizmo(this);
+        //GameEngine.instance.renderingEngine.addRenderableGizmo(this);
     }
 
     public start(): void {

@@ -34,6 +34,7 @@ export class GameEngine {
         this.gameCanvas = gameCanvas;
         this._physicsEngine = physicsEngine;
         this._renderingEngine = renderingEngine;
+        this._renderingEngine.renderGizmos = true;
 
         Input.initialize(this.gameCanvas);
     }
@@ -54,13 +55,13 @@ export class GameEngine {
         return null;
     }
 
-    public get physicsEngine(): PhysicsEngine {
-        return this._physicsEngine;
-    }
+    // public get physicsEngine(): PhysicsEngine {
+    //     return this._physicsEngine;
+    // }
 
-    public get renderingEngine(): RenderingEngine {
-        return this._renderingEngine;
-    }
+    // public get renderingEngine(): RenderingEngine {
+    //     return this._renderingEngine;
+    // }
 
     public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
         const physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
@@ -113,6 +114,9 @@ export class GameEngine {
         else {
             this.tagMap.set(newGameObject.tag, [newGameObject]);
         }
+
+        this._physicsEngine.extractCollidersAndRigidbodies(newGameObject);
+        this._renderingEngine.extractRenderableComponents(newGameObject);
         
         this.gameObjectMap.set(newGameObject.id, newGameObject);
         this.gameObjects.push(newGameObject);
@@ -157,7 +161,7 @@ export class GameEngine {
         console.log(this);
         console.log('Time since game start ' + Time.TotalTime + 's');
         console.log(this._renderingEngine);
-        console.log(this.physicsEngine);
+        console.log(this._physicsEngine);
         this.gameObjects.forEach(go => console.log(go));
     }
 
@@ -187,6 +191,9 @@ export class GameEngine {
             else {
                 this.tagMap.set(gameObject.tag, [gameObject]);
             }
+
+            this._physicsEngine.extractCollidersAndRigidbodies(gameObject);
+            this._renderingEngine.extractRenderableComponents(gameObject);
 
             //Initialize children of gameObject
             const children = gameObject.transform.children;
@@ -275,7 +282,7 @@ export class GameEngine {
         }
 
         Time.updateTime();
-        this.physicsEngine.updatePhysics();
+        this._physicsEngine.updatePhysics();
         
         for (const gameObject of this.gameObjects) {
             if (gameObject.enabled) {

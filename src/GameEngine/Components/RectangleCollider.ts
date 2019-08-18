@@ -41,8 +41,7 @@ export class RectangleCollider extends Component implements RenderableGizmo {
         this._bottomLeft = new Vector2(transform.position.x + this.offset.x - (width / 2), transform.position.y + this.offset.y);
         this._bottomRight = new Vector2(transform.position.x + this.offset.x + (width / 2), transform.position.y + this.offset.y);
 
-        GameEngine.instance.physicsEngine.addCollider(this);
-        GameEngine.instance.renderingEngine.addRenderableGizmo(this);
+        //GameEngine.instance.physicsEngine.addCollider(this);
     }
 
     public start(): void {

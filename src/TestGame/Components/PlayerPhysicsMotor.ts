@@ -100,6 +100,7 @@ export class PlayerPhysicsMotor extends Component {
 
         if (event.keyCode === KeyCode.Backspace) {
             this.weapon.parent = this.weapon.parent === null ? this.transform : null;
+            //this.rb.isKinomatic = !this.rb.isKinomatic;
         }
     }
 

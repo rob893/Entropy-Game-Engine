@@ -11,8 +11,8 @@ export class FPSCounter extends Component implements RenderableGUI {
 
 
     public start(): void {
-        GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
-        GameEngine.instance.renderingEngine.canvasContext.font = '20px Arial';
+        //GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
+        //GameEngine.instance.renderingEngine.canvasContext.font = '20px Arial';
     }
 
     public renderGUI(context: CanvasRenderingContext2D): void {
@@ -25,6 +25,7 @@ export class FPSCounter extends Component implements RenderableGUI {
             this.numFrames = 0;
         }
 
+        context.font = '20px Arial';
         context.fillStyle = 'white';
         context.fillText('FPS: ' + this.FPS.toFixed(2), 0, 20);
     }

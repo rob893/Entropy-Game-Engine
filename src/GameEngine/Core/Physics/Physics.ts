@@ -26,11 +26,11 @@ export abstract class Physics {
         const results: RectangleCollider[] = [];
         const terminalPoint = Vector2.add(origin, direction.multiplyScalar(distance));
 
-        for (const collider of GameEngine.instance.physicsEngine.colliders) {
-            if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
-                results.push(collider);
-            }
-        }
+        // for (const collider of GameEngine.instance.physicsEngine.colliders) {
+        //     if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
+        //         results.push(collider);
+        //     }
+        // }
 
         return results;
     }

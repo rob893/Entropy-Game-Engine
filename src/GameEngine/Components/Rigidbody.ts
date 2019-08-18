@@ -3,6 +3,8 @@ import { Vector2 } from '../Core/Helpers/Vector2';
 import { GameObject } from '../Core/GameObject';
 import { Time } from '../Core/Time';
 import { GameEngine } from '../Core/GameEngine';
+import { LiteEvent } from '../Core/Helpers/LiteEvent';
+import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 
 export class Rigidbody extends Component {
 
@@ -15,6 +17,8 @@ export class Rigidbody extends Component {
     private _inverseMass: number;
     private _isKinomatic: boolean = false;
     private readonly forces: Vector2[] = [];
+    private readonly _becameKinomatic = new LiteEvent<Rigidbody>();
+    private readonly _becameNonKinomatic = new LiteEvent<Rigidbody>();
 
 
     public constructor(gameObject: GameObject, mass: number = 70, isKinomatic: boolean = false) {
@@ -51,15 +55,25 @@ export class Rigidbody extends Component {
         this._isKinomatic = isKinomatic;
 
         if (isKinomatic) {
-            GameEngine.instance.physicsEngine.removeRigidbody(this);
+            this._becameKinomatic.trigger(this);
+            //GameEngine.instance.physicsEngine.removeRigidbody(this);
         }
         else {
-            GameEngine.instance.physicsEngine.addRigidbody(this);
+            this._becameNonKinomatic.trigger(this);
+            //GameEngine.instance.physicsEngine.addRigidbody(this);
         }
     }
 
     public get isKinomatic(): boolean {
         return this._isKinomatic;
+    }
+
+    public get becameKinomatic(): CustomLiteEvent<Rigidbody> {
+        return this._becameKinomatic.expose();
+    }
+
+    public get becameNonKinomatic(): CustomLiteEvent<Rigidbody> {
+        return this._becameNonKinomatic.expose();
     }
 
     public updatePhysics(): void {

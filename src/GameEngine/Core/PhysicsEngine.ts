@@ -8,6 +8,7 @@ import { Layer } from './Enums/Layer';
 import { CollisionManifold } from './Helpers/CollisionManifold';
 import { Vector2 } from './Helpers/Vector2';
 import { Time } from './Time';
+import { GameObject } from './GameObject';
 
 
 export class PhysicsEngine {
@@ -65,15 +66,38 @@ export class PhysicsEngine {
         });
     }
 
-    public addRigidbody(rb: Rigidbody): void {
-        this.rigidbodies.push(rb);
-    }
+    public extractCollidersAndRigidbodies(gameObject: GameObject): void {
+        const components = gameObject.getAllComponents();
 
-    public removeRigidbody(rb: Rigidbody): void {
-        if (this.rigidbodies.includes(rb)) {
-            this.rigidbodies.splice(this.rigidbodies.indexOf(rb), 1);
+        for (const component of components) {
+            if (component instanceof RectangleCollider) {
+                this.addCollider(component);
+            }
+            else if (component instanceof Rigidbody) {
+                if (!component.isKinomatic) {
+                    this.rigidbodies.push(component);
+                }
+
+                component.becameKinomatic.add((rb) => {
+                    if (this.rigidbodies.includes(rb)) {
+                        this.rigidbodies.splice(this.rigidbodies.indexOf(rb), 1);
+                    }
+                });
+
+                component.becameNonKinomatic.add((rb) => this.rigidbodies.push(rb));
+            }
         }
     }
+
+    // public addRigidbody(rb: Rigidbody): void {
+    //     this.rigidbodies.push(rb);
+    // }
+
+    // public removeRigidbody(rb: Rigidbody): void {
+    //     if (this.rigidbodies.includes(rb)) {
+    //         this.rigidbodies.splice(this.rigidbodies.indexOf(rb), 1);
+    //     }
+    // }
 
     public addCollider(collider: RectangleCollider): void {
         this.collisionDetector.addCollider(collider);

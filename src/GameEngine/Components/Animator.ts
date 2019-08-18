@@ -22,7 +22,7 @@ export class Animator extends Component implements Renderable {
         this.halfRHeight = renderHeight / 2;
         this.animation = initialAnimation;
 
-        GameEngine.instance.renderingEngine.addRenderableObject(this);
+        //GameEngine.instance.renderingEngine.addRenderableObject(this);
     }
 
     public setAnimation(animation: Animation): void {

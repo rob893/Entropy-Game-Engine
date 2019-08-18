@@ -3,6 +3,7 @@ import { Component } from '../Components/Component';
 import { GameEngine } from './GameEngine';
 import { Layer } from './Enums/Layer';
 import { Vector2 } from './Helpers/Vector2';
+import { Renderable } from './Interfaces/Renderable';
 
 export abstract class GameObject {
 
@@ -100,6 +101,16 @@ export abstract class GameObject {
 
     public hasComponent<T extends Component>(component: new (...args: any[]) => T): boolean {
         return this.componentMap.has(component.name);
+    }
+
+    public getAllComponents(): Component[] {
+        let components: Component[] = [];
+
+        for (const comps of this.componentMap.values()) {
+            components = [...components, ...comps];
+        }
+
+        return components;
     }
 
     public getComponent<T extends Component>(component: new (...args: any[]) => T): T {

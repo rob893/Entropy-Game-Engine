@@ -16,7 +16,7 @@ export class RectangleRenderer extends Component implements Renderable {
         this.renderHeight = renderHeight;
         this.color = color;
 
-        GameEngine.instance.renderingEngine.addRenderableObject(this);
+        //GameEngine.instance.renderingEngine.addRenderableObject(this);
     }
 
     public setColor(color: string): void {

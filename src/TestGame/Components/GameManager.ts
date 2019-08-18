@@ -29,7 +29,7 @@ export class GameManager extends Component implements RenderableGUI {
     }
 
     public start(): void {
-        GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
+        //GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
         //this.audioSource = this.gameObject.getComponent(AudioSource);
         //this.audioSource.loop = true;
     }

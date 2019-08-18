@@ -11,7 +11,7 @@ const main = async (): Promise<void> => {
     const gameCanvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     const gameEngine = GameEngine.buildGameEngine(gameCanvas);
 
-    gameEngine.renderingEngine.renderGizmos = true;
+    //gameEngine.renderingEngine.renderGizmos = true;
 
     gameEngine.setScenes([scene1, scene2, scene3]);
 
