@@ -4,6 +4,9 @@ import { RenderableBackground } from '../Interfaces/RenderableBackground';
 import { GameObject } from '../GameObject';
 import { Vector2 } from './Vector2';
 import { Layer } from '../Enums/Layer';
+import { Component } from '../../Components/Component';
+import { GameEngine } from '../GameEngine';
+import { PrefabSettings } from '../Interfaces/PrefabSettings';
 
 export class Terrain extends GameObject implements RenderableBackground {
     
@@ -11,8 +14,8 @@ export class Terrain extends GameObject implements RenderableBackground {
     public readonly navGrid: NavGrid;
 
 
-    public constructor(terrainImage: HTMLImageElement, navGrid: NavGrid, colliderPositions: Vector2[]) {
-        super('terrain', 0, 0, 'terrain', Layer.Terrain);
+    public constructor(gameEngine: GameEngine, terrainImage: HTMLImageElement, navGrid: NavGrid, colliderPositions: Vector2[]) {
+        super(gameEngine);
         
         this.terrainImage = terrainImage;
         this.navGrid = navGrid;
@@ -39,12 +42,25 @@ export class Terrain extends GameObject implements RenderableBackground {
 
         for (const yValueMap of colliderRows.values()) {
             for (const xTuple of yValueMap.values()) {
-                this.addComponent(new RectangleCollider(this, xTuple[1], navGrid.cellSize, xTuple[0].x + (xTuple[1] / 2), xTuple[0].y + navGrid.cellSize));
+                this.addComponent(new RectangleCollider(this, null, xTuple[1], navGrid.cellSize, xTuple[0].x + (xTuple[1] / 2), xTuple[0].y + navGrid.cellSize));
             }
         }
     }
 
     public renderBackground(context: CanvasRenderingContext2D): void {
         context.drawImage(this.terrainImage, 0, 0);
+    }
+
+    protected buildInitialComponents(): Component[] { return []; }
+
+    protected getPrefabSettings(): PrefabSettings {
+        return {
+            x: 0,
+            y: 0,
+            rotation: 0,
+            id: 'terrain',
+            tag: 'terrain',
+            layer: Layer.Terrain
+        };
     }
 }

@@ -10,30 +10,39 @@ import { NavAgent } from '../../GameEngine/Components/NavAgent';
 import { NavTester } from '../Components/NavTester';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
+import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Trump extends GameObject {
 
-    public constructor(id: string) {
-        super(id, 200, 300);
-
+    protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
 
-        const collider = new RectangleCollider(this, 60, 60, 0, -5);
+        const collider = new RectangleCollider(this, null, 60, 60, 0, -5);
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
 
-        //const rb = new Rigidbody(this);
-        //rb.isKinomatic = true;
-        //components.push(rb);
-
-        components.push(new NavAgent(this));
-        components.push(new NavTester(this));
-        //components.push(new TrumpMotor(this));
+        const navAgent = new NavAgent(this, this.gameEngine.terrain.navGrid);
+        components.push(navAgent);
 
         const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
-        components.push(new Animator(this, 75, 75, initialAnimation));
-        //components.push(new AudioSource(this));
+        const animator = new Animator(this, 75, 75, initialAnimation);
+        components.push(animator);
 
-        this.setComponents(components);
+        components.push(new NavTester(this, navAgent, animator));
+
+        return components;
+    }
+
+    protected getPrefabSettings(): PrefabSettings {
+        return {
+            x: 200,
+            y: 300,
+            rotation: 0,
+            id: 'trump',
+            tag: '',
+            layer: Layer.Default
+        };
     }
 }

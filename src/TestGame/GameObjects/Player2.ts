@@ -8,23 +8,24 @@ import { Animator } from '../../GameEngine/Components/Animator';
 //import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { Player2Motor } from '../Components/Player2Motor';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class Player2 extends GameObject {
 
-    public constructor(id: string) {
-        super(id, 400, 250);
-
+    protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
         
-        const collider = new RectangleCollider(this, 35, 35, 0, -5);
+        const collider = new RectangleCollider(this, null, 35, 35, 0, -5);
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
-        components.push(new Player2Motor(this));
-
+        
         const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
-        components.push(new Animator(this, 75, 75, initialAnimation));
+        const animator = new Animator(this, 75, 75, initialAnimation);
+        components.push(animator);
         //components.push(new AudioSource(this));
 
-        this.setComponents(components);
+        components.push(new Player2Motor(this, this.gameEngine.getGameCanvas(), collider, animator));
+
+        return components;
     }
 }

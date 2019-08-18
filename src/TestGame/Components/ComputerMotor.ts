@@ -12,20 +12,20 @@ export class ComputerMotor extends Motor {
     private timer: number = 0;
     private quarterFieldX: number;
     private midFieldY: number;
-    private collider: RectangleCollider;
+    private readonly collider: RectangleCollider;
 
 
-    public constructor(gameObject: GameObject) {
-        super(gameObject);
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, myCollider: RectangleCollider) {
+        super(gameObject, gameCanvas);
 
+        this.collider = myCollider;
         this.yVelocity = 1;
     }
 
     public start(): void {
         super.start();
 
-        this.collider = this.gameObject.getComponent(RectangleCollider);
-        this.ballTransform = GameEngine.instance.findGameObjectById('ball').transform;
+        this.ballTransform = this.gameObject.findGameObjectById('ball').transform;
         this.quarterFieldX = this.gameCanvas.width / 4;
         this.midFieldY = this.gameCanvas.height / 2;
     }

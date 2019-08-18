@@ -17,21 +17,18 @@ export class GameManager extends Component implements RenderableGUI {
     private messageTimer: number = 0;
     private messageLength: number = 0;
     private gameOver: boolean = false;
+    private readonly gameEngine: GameEngine;
 
 
-    public constructor(gameObject: GameObject) {
+    public constructor(gameObject: GameObject, gameEngine: GameEngine) {
         super(gameObject);
 
-        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await GameEngine.instance.loadScene(1));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await GameEngine.instance.loadScene(2));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await GameEngine.instance.loadScene(3));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
-    }
+        this.gameEngine = gameEngine;
 
-    public start(): void {
-        //GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
-        //this.audioSource = this.gameObject.getComponent(AudioSource);
-        //this.audioSource.loop = true;
+        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.gameEngine.loadScene(1));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.gameEngine.loadScene(2));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await this.gameEngine.loadScene(3));
+        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
     }
 
     public endGame(): void {
@@ -70,24 +67,15 @@ export class GameManager extends Component implements RenderableGUI {
         }
     }
 
-    // private toggleMusic(): void {
-    //     if (this.audioSource.isPlaying) {
-    //         this.audioSource.pause();
-    //     }
-    //     else {
-    //         this.audioSource.play();
-    //     }
-    // }
-
     private togglePause(): void {
-        GameEngine.instance.togglePause();
+        this.gameEngine.togglePause();
     }
 
     private printGameData(): void {
-        GameEngine.instance.printGameData();
+        this.gameEngine.printGameData();
     }
 
     private testInstantiate(): void {
-        GameEngine.instance.instantiate(new Ball('ball2'));
+        //GameEngine.instance.instantiate(new Ball('ball2'));
     }
 }

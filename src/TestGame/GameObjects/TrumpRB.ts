@@ -10,22 +10,20 @@ import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 
 export class TrumpRB extends GameObject {
 
-    public constructor(id: string, startX: number, startY: number) {
-        super(id, startX, startY);
-
+    protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
-
-        const collider = new RectangleCollider(this, 60, 60, 0, -5);
-        collider.physicalMaterial = PhysicalMaterial.bouncy;
-        components.push(collider);
 
         const rb = new Rigidbody(this);
         //rb.addForce(new Vector2(Math.random(), Math.random()).multiplyScalar(1000));
         components.push(rb);
 
+        const collider = new RectangleCollider(this, rb, 60, 60, 0, -5);
+        collider.physicalMaterial = PhysicalMaterial.bouncy;
+        components.push(collider);
+
         const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [1]);
         components.push(new Animator(this, 75, 75, initialAnimation));
 
-        this.setComponents(components);
+        return components;
     }
 }

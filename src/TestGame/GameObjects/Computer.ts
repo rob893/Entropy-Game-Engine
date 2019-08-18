@@ -4,19 +4,32 @@ import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider
 import { ComputerMotor } from '../Components/ComputerMotor';
 import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
+import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 
 export class Computer extends GameObject {
 
-    public constructor(gameEngine: GameEngine, id: string) {
-        super(gameEngine, id, 688, 175);
-
+    protected buildInitialComponents(): Component[] {
         const computerComponents: Component[] = [];
         
-        computerComponents.push(new RectangleCollider(this, 10, 50));
-        computerComponents.push(new ComputerMotor(this));
+        const collider = new RectangleCollider(this, null, 10, 50);
+        computerComponents.push(collider);
+
+        computerComponents.push(new ComputerMotor(this, this.gameEngine.getGameCanvas(), collider));
         computerComponents.push(new RectangleRenderer(this, 10, 50, 'white'));
 
-        this.setComponents(computerComponents);
+        return computerComponents;
+    }
+
+    protected getPrefabSettings(): PrefabSettings {
+        return {
+            x: 688,
+            y: 175,
+            rotation: 0,
+            id: 'computer',
+            tag: '',
+            layer: Layer.Default
+        };
     }
 }

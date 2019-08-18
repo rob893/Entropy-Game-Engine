@@ -3,12 +3,24 @@ import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider
 import { Color } from '../../GameEngine/Core/Enums/Color';
 import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { Component } from '../../GameEngine/Components/Component';
+import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
+import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Ground extends GameObject {
 
-    public constructor(gameEngine: GameEngine, x: number, y: number, w: number, h: number, color: Color) {
-        super(gameEngine, 'ground', x, y, 'ground');
+    protected buildInitialComponents(): Component[] {
+        return [new RectangleCollider(this, null, 20, 20), new RectangleRenderer(this, 20, 20, Color.Brown)];
+    }
 
-        this.setComponents([new RectangleCollider(this, w, h), new RectangleRenderer(this, w, h, color)]);
+    protected getPrefabSettings(): PrefabSettings {
+        return {
+            x: 0,
+            y: 0,
+            rotation: 0,
+            id: 'ground',
+            tag: 'ground',
+            layer: Layer.Terrain
+        };
     }
 }

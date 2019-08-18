@@ -8,12 +8,7 @@ export class FPSCounter extends Component implements RenderableGUI {
     private numFrames: number = 0;
     private timer: number = 0;
     private FPS: number = 0;
-
-
-    public start(): void {
-        //GameEngine.instance.renderingEngine.addRenderableGUIElement(this);
-        //GameEngine.instance.renderingEngine.canvasContext.font = '20px Arial';
-    }
+    
 
     public renderGUI(context: CanvasRenderingContext2D): void {
         this.timer += Time.DeltaTime;

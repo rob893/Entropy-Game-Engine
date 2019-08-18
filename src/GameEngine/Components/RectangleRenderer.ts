@@ -5,9 +5,9 @@ import { GameEngine } from '../Core/GameEngine';
 
 export class RectangleRenderer extends Component implements Renderable {
 
-    private readonly renderWidth: number;
-    private readonly renderHeight: number;
-    private color: string;
+    public renderWidth: number;
+    public renderHeight: number;
+    public color: string;
 
     public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, color: string) {
         super(gameObject);

@@ -5,22 +5,16 @@ import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 
 export class BallMotor extends Motor {
 
-    private collider: RectangleCollider;
+    private readonly collider: RectangleCollider;
     private ready: boolean = true;
 
 
-    public constructor(gameObject: GameObject) {
-        super(gameObject);
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider) {
+        super(gameObject, gameCanvas);
+
+        this.collider = collider;
 
         this.reset();
-    }
-
-    public start(): void {
-        super.start();
-        
-        this.collider = this.gameObject.getComponent<RectangleCollider>(RectangleCollider);
-
-        //this.collider.onCollided.add((other: RectangleCollider) => this.handleCollision(other));
     }
 
     protected handleOutOfBounds(): void {

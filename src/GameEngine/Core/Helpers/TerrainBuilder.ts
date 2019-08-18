@@ -3,6 +3,7 @@ import { NavGrid } from './NavGrid';
 import { Vector2 } from './Vector2';
 import { Terrain } from './Terrain';
 import { TerrainSpec } from '../Interfaces/TerrainSpec';
+import { GameEngine } from '../GameEngine';
 
 export class TerrainBuilder {
 
@@ -20,7 +21,7 @@ export class TerrainBuilder {
         this.context = this.canvas.getContext('2d');
     }
 
-    public async buildTerrain(terrainSpec: TerrainSpec): Promise<Terrain> {
+    public async buildTerrain(gameEngine: GameEngine, terrainSpec: TerrainSpec): Promise<Terrain> {
 
         await this.using(terrainSpec.spriteSheetUrl);
 
@@ -60,7 +61,7 @@ export class TerrainBuilder {
             const image = new Image();
             image.src = this.canvas.toDataURL();
             image.onload = () => {
-                resolve(new Terrain(image, navGrid, colliderOffsets));
+                resolve(new Terrain(gameEngine, image, navGrid, colliderOffsets));
             };
         });
     }

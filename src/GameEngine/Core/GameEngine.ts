@@ -14,7 +14,7 @@ import { Transform } from '../Components/Transform';
 
 export class GameEngine {
 
-    private static _instance: GameEngine;
+    //private static _instance: GameEngine;
 
     private _physicsEngine: PhysicsEngine;
     private _renderingEngine: RenderingEngine;
@@ -23,6 +23,7 @@ export class GameEngine {
     private gameInitialized: boolean = false;
     private paused: boolean = false;
     private gameObjects: GameObject[] = [];
+    private _terrain: Terrain = null;
     private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
@@ -39,20 +40,16 @@ export class GameEngine {
         Input.initialize(this.gameCanvas);
     }
 
-    public static get instance(): GameEngine {
-        if (this._instance === null || this._instance === undefined) {
-            throw new Error('The instance has not been built yet. Call the buildGameEngine() function first.');
-        }
+    // public static get instance(): GameEngine {
+    //     if (this._instance === null || this._instance === undefined) {
+    //         throw new Error('The instance has not been built yet. Call the buildGameEngine() function first.');
+    //     }
 
-        return this._instance;
-    }
+    //     return this._instance;
+    // }
 
     public get terrain(): Terrain {
-        if (this.gameObjectMap.has('terrain')) {
-            return this.gameObjectMap.get('terrain') as Terrain;
-        }
-
-        return null;
+        return this._terrain;
     }
 
     // public get physicsEngine(): PhysicsEngine {
@@ -67,9 +64,9 @@ export class GameEngine {
         const physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
         const renderingEngine = new RenderingEngine(gameCanvas.getContext('2d'));
         
-        this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
+        //this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
         
-        return this._instance;
+        return new GameEngine(gameCanvas, physicsEngine, renderingEngine);//this._instance;
     }
 
     public setScenes(scenes: Scene[]): void {
@@ -92,7 +89,7 @@ export class GameEngine {
 
         const scene = this.scenes.get(loadOrderOrName);
 
-        await this.initializeScene(scene.getStartingGameObjects(), scene.getSkybox(this.gameCanvas), scene.terrainSpec);
+        await this.initializeScene(scene);
 
         this.loadedScene = scene;
         this.startGame();
@@ -226,6 +223,7 @@ export class GameEngine {
         this.gameObjectNumMap.clear();
         this.gameObjects.length = 0;
         this.loadedScene = null;
+        this._terrain = null;
         this._physicsEngine = PhysicsEngine.buildPhysicsEngine(this.gameCanvas);
 
         const renderGizmos = this._renderingEngine.renderGizmos;
@@ -234,18 +232,24 @@ export class GameEngine {
         this._renderingEngine.renderGizmos = renderGizmos;
     }
 
-    private async initializeScene(gameObjects: GameObject[], skybox: RenderableBackground, terrainSpec: TerrainSpec = null): Promise<void> {
+    private async initializeScene(scene: Scene): Promise<void> {
+        const terrainSpec = scene.terrainSpec;
+        let gameObjects: GameObject[] = [];
+
         if (terrainSpec !== null) {
             const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
-            const terrain = await terrianBuilder.buildTerrain(terrainSpec);
+            const terrain = await terrianBuilder.buildTerrain(this, terrainSpec);
             
             gameObjects.push(terrain);
 
             this._renderingEngine.terrain = terrain;
+            this._terrain = terrain;
         }
 
+        gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this)];
+
         this.setGameObjects(gameObjects);
-        this._renderingEngine.background = skybox;
+        this._renderingEngine.background = scene.getSkybox(this.gameCanvas);
 
         this.gameInitialized = true;
     }

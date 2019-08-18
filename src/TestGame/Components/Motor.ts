@@ -1,5 +1,6 @@
 import { Component } from '../../GameEngine/Components/Component';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { GameObject } from '../../GameEngine/Core/GameObject';
 
 export abstract class Motor extends Component {
 
@@ -9,8 +10,10 @@ export abstract class Motor extends Component {
     protected speed: number = 5
 
 
-    public start(): void {
-        this.gameCanvas = GameEngine.instance.getGameCanvas();
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement) {
+        super(gameObject);
+        
+        this.gameCanvas = gameCanvas;
     }
 
     public update(): void {

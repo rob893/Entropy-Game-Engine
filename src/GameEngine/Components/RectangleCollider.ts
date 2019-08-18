@@ -15,11 +15,11 @@ export class RectangleCollider extends Component implements RenderableGizmo {
 
     public isTrigger: boolean = false;
     public physicalMaterial: PhysicalMaterial = PhysicalMaterial.zero;
-    public readonly width: number;
-    public readonly height: number;
-    public readonly offset: Vector2;
+    public width: number;
+    public height: number;
+    public offset: Vector2;
+    public readonly attachedRigidbody: Rigidbody|null;
 
-    private _attachedRigidbody: Rigidbody|null;
     private readonly _onCollided = new LiteEvent<CollisionManifold>();
     private readonly _topLeft: Vector2;
     private readonly _topRight: Vector2;
@@ -27,12 +27,13 @@ export class RectangleCollider extends Component implements RenderableGizmo {
     private readonly _bottomRight: Vector2;
     
 
-    public constructor(gameObject: GameObject, width: number, height: number, offsetX: number = 0, offsetY: number = 0) {
+    public constructor(gameObject: GameObject, rb: Rigidbody | null, width: number, height: number, offsetX: number = 0, offsetY: number = 0) {
         super(gameObject);
 
         this.width = width;
         this.height = height;
         this.offset = new Vector2(offsetX, offsetY);
+        this.attachedRigidbody = rb;
 
         const transform: Transform = this.transform;
 
@@ -40,12 +41,6 @@ export class RectangleCollider extends Component implements RenderableGizmo {
         this._topRight = new Vector2(transform.position.x + this.offset.x + (width / 2), transform.position.y + this.offset.y - height);
         this._bottomLeft = new Vector2(transform.position.x + this.offset.x - (width / 2), transform.position.y + this.offset.y);
         this._bottomRight = new Vector2(transform.position.x + this.offset.x + (width / 2), transform.position.y + this.offset.y);
-
-        //GameEngine.instance.physicsEngine.addCollider(this);
-    }
-
-    public start(): void {
-        this._attachedRigidbody = this.gameObject.hasComponent(Rigidbody) ? this.gameObject.getComponent(Rigidbody) : null;
     }
 
     public get topLeft(): Vector2 {
@@ -78,10 +73,6 @@ export class RectangleCollider extends Component implements RenderableGizmo {
 
     public get center(): Vector2 {
         return new Vector2(this.topLeft.x + (this.width / 2), this.topLeft.y + (this.height / 2));
-    }
-
-    public get attachedRigidbody(): Rigidbody|null {
-        return this._attachedRigidbody;
     }
 
     public detectCollision(other: RectangleCollider): boolean {

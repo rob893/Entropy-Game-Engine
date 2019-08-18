@@ -10,27 +10,45 @@ import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { PlayerPhysicsMotor } from '../Components/PlayerPhysicsMotor';
 import { Weapon } from './Weapon';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
+import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class PlayerRB extends GameObject {
 
-    public constructor(id: string) {
-        super(id, 400, 250);
-
-        const weapon = new Weapon();
-        weapon.transform.parent = this.transform;
-
+    protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
-        
-        const collider = new RectangleCollider(this, 35, 35, 0, -5);
+
+        const rb = new Rigidbody(this);
+        components.push(rb);
+
+        const collider = new RectangleCollider(this, rb, 35, 35, 0, -5);
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
-        components.push(new PlayerPhysicsMotor(this));
-        components.push(new Rigidbody(this));
-        
+
         const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
-        components.push(new Animator(this, 75, 75, initialAnimation));
+        const animator = new Animator(this, 75, 75, initialAnimation);
+        components.push(animator);
+
+        components.push(new PlayerPhysicsMotor(this, rb, animator));
         //components.push(new AudioSource(this));
 
-        this.setComponents(components);
+        return components;
+    }
+
+    protected buildChildGameObjects(gameEngine: GameEngine): void {
+        const weapon = new Weapon(gameEngine, 'weapon');
+        weapon.transform.parent = this.transform;
+    }
+
+    protected getPrefabSettings(): PrefabSettings {
+        return {
+            x: 400,
+            y: 250,
+            rotation: 0,
+            id: 'player',
+            tag: 'player',
+            layer: Layer.Default
+        };
     }
 }

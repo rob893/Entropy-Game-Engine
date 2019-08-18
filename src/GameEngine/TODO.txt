@@ -7,3 +7,6 @@
 - Continue to work on impulese collision resolution. Friction is wonky. Infinite mass object still don't work. Still losing energy in fully elastic collisions.
 - Write tests for game objects and components.
 - Figure out a way to decouple components from rendering and physics engines.
+- Continue to move to DI for component dependencies for other components on the game object (dependencies on other game objects (including parent and children) are
+    still obtained through the use of start and find/getComponent. This is intentional)
+- Move extracting renderables and colliders and rbs from game engine to game object.

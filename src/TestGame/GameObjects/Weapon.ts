@@ -4,13 +4,7 @@ import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer
 
 export class Weapon extends GameObject {
 
-    public constructor(id: string = 'weapon') {
-        super(id);
-
-        const weaponComponents: Component[] = [];
-        
-        weaponComponents.push(new RectangleRenderer(this, 15, 10, 'white'));
-
-        this.setComponents(weaponComponents);
+    protected buildInitialComponents(): Component[] {
+        return [new RectangleRenderer(this, 15, 10, 'white')];
     }
 }

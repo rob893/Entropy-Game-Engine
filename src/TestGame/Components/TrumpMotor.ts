@@ -21,16 +21,20 @@ export class TrumpMotor extends Motor {
     private readonly idleAnimation: Animation;
     private readonly runRightAnimation: Animation;
     private readonly runLeftAnimation: Animation;
-    private animator: Animator;
-    private audioSource: AudioSource;
+    private readonly animator: Animator;
+    private readonly audioSource: AudioSource;
     private isMovingLeft: boolean = false;
     private isMovingRight: boolean = false;
     private isIdle: boolean = true;
     private damageTimer: number = 0;
 
 
-    public constructor(gameObject: GameObject) {
-        super(gameObject);
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, animator: Animator, audioSource: AudioSource) {
+        super(gameObject, gameCanvas);
+
+        this.animator = animator;
+        this.audioSource = audioSource;
+
         this.speed = 2;
         this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, [2]);
         this.runLeftAnimation = new Animation(TrumpRun, 6, 4, 0.075, [4]);
@@ -38,10 +42,8 @@ export class TrumpMotor extends Motor {
     }
 
     public start(): void {
-        this.animator = this.gameObject.getComponent(Animator);
-        this.audioSource = this.gameObject.getComponent(AudioSource);
         this.audioSource.setClip(YouSuckSound);
-        this.player = GameEngine.instance.findGameObjectById('player');
+        this.player = this.gameObject.findGameObjectById('player');
         this.playerTransform = this.player.transform;
         this.playerHealth = this.player.getComponent(PlayerHealth);
     }

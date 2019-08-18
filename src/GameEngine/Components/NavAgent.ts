@@ -17,23 +17,15 @@ export class NavAgent extends Component implements RenderableGizmo {
     private path: Vector2[] = null;
     private nextPosition: Vector2 = null;
     private pathIndex: number = 0;
-    private navGrid: NavGrid<WeightedGraphCell> = null;
+    private readonly navGrid: NavGrid;
     private readonly onChangeDirection = new LiteEvent<Vector2>();
     private readonly onPathComplete = new LiteEvent<Vector2>();
 
 
-    public constructor(gameObject: GameObject) {
+    public constructor(gameObject: GameObject, navGrid: NavGrid) {
         super(gameObject);
 
-        //GameEngine.instance.renderingEngine.addRenderableGizmo(this);
-    }
-
-    public start(): void {
-        if (GameEngine.instance.terrain.navGrid === null) {
-            throw new Error('No terrain navigation grid found!');
-        }
-
-        this.navGrid = GameEngine.instance.terrain.navGrid;
+        this.navGrid = navGrid;
     }
 
     public get onDirectionChanged(): CustomLiteEvent<Vector2> {

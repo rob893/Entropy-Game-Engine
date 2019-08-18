@@ -14,6 +14,7 @@ import { PlayerRB } from './GameObjects/PlayerRB';
 import { Borders } from './GameObjects/Borders';
 import { TrumpRB } from './GameObjects/TrumpRB';
 import { GameEngine } from '../GameEngine/Core/GameEngine';
+import { Layer } from '../GameEngine/Core/Enums/Layer';
 
 
 export const scene1: Scene = {
@@ -27,9 +28,9 @@ export const scene1: Scene = {
 
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
-            new GameManagerObject('gameManager'),
-            new Trump('trump'),
-            new Player2('player')
+            new GameManagerObject(gameEngine, 'gameManager'),
+            new Trump(gameEngine, 'trump'),
+            new Player2(gameEngine, 'player', 400, 250)
         ];
     }
 };
@@ -45,8 +46,8 @@ export const scene2: Scene = {
     
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
-            new GameManagerObject('gameManager'),
-            new Player('player')
+            new GameManagerObject(gameEngine, 'gameManager'),
+            new Player(gameEngine, 'player')
         ];
     }
 };
@@ -62,9 +63,9 @@ export const scene3: Scene = {
     
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
-            new GameManagerObject('gameManager'),
-            new PlayerRB('player'),
-            new Borders(gameEngine, 'borders'),
+            new GameManagerObject(gameEngine, 'gameManager'),
+            new PlayerRB(gameEngine, 'player'),
+            new Borders(gameEngine, 'borders', 0, 0, 0, 'borders', Layer.Terrain),
             //new TrumpRB('trump', 500, 670),
             //new TrumpRB('trump', 570, 670),
             //new TrumpRB('trump', 640, 670),

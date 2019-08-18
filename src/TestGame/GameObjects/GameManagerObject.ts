@@ -9,15 +9,13 @@ import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class GameManagerObject extends GameObject {
 
-    public constructor(gameEngine: GameEngine, id: string) {
-        super(gameEngine, id, 0, 0);
-
+    protected buildInitialComponents(): Component[] {
         const gameManagerComponents: Component[] = [];
         
-        gameManagerComponents.push(new GameManager(this));
+        gameManagerComponents.push(new GameManager(this, this.gameEngine));
         gameManagerComponents.push(new FPSCounter(this));
         //gameManagerComponents.push(new AudioSource(this, MarioTheme));
 
-        this.setComponents(gameManagerComponents);
+        return gameManagerComponents;
     }
 }

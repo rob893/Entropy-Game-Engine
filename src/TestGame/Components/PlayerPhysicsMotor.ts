@@ -19,8 +19,8 @@ export class PlayerPhysicsMotor extends Component {
     private movingUp: boolean = false;
     private movingDown: boolean = false;
     private readonly speed: number;
-    private animator: Animator;
-    private rb: Rigidbody;
+    private readonly animator: Animator;
+    private readonly rb: Rigidbody;
     private weapon: Transform;
     private readonly runRightAnimation: Animation;
     private readonly runLeftAnimation: Animation;
@@ -29,8 +29,11 @@ export class PlayerPhysicsMotor extends Component {
     private readonly idleAnimation: Animation;
 
 
-    public constructor(gameObject: GameObject) {
+    public constructor(gameObject: GameObject, rb: Rigidbody, animator: Animator) {
         super(gameObject);
+
+        this.rb = rb;
+        this.animator = animator;
 
         Input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space, KeyCode.Backspace], (event) => this.onKeyDown(event));
         Input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
@@ -46,9 +49,6 @@ export class PlayerPhysicsMotor extends Component {
 
     public start(): void {
         super.start();
-
-        this.animator = this.gameObject.getComponent<Animator>(Animator);
-        this.rb = this.gameObject.getComponent(Rigidbody);
 
         this.weapon = this.gameObject.getComponentInChildren(Transform);
     }

@@ -4,50 +4,59 @@ import { GameEngine } from './GameEngine';
 import { Layer } from './Enums/Layer';
 import { Vector2 } from './Helpers/Vector2';
 import { Renderable } from './Interfaces/Renderable';
+import { PrefabSettings } from './Interfaces/PrefabSettings';
 
 export abstract class GameObject {
 
     public id: string;
     public readonly tag: string;
     public readonly layer: Layer;
+    public readonly gameEngine: GameEngine;
+    public readonly transform: Transform;
 
     private isEnabled: boolean;
-    private readonly _transform: Transform;
-    private readonly components: Component[] = [];
+    private readonly updatableComponents: Component[] = [];
     private readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
-    private readonly gameEngine: GameEngine;
     
 
-    public constructor(gameEngine: GameEngine, id: string, x: number = 0, y: number = 0, tag: string = '', layer: Layer = Layer.Default) {
+    public constructor(gameEngine: GameEngine, id?: string, x?: number, y?: number, rotation?: number, tag?: string, layer?: Layer) {
         this.gameEngine = gameEngine;
-        this.id = id;
-        this._transform = new Transform(this, x, y);
         this.isEnabled = true;
-        this.tag = tag;
-        this.layer = layer;
 
-        this.setComponents([this._transform]);
-    }
-
-    public static findGameObjectById(id: string): GameObject {
-        return GameEngine.instance.findGameObjectById(id);
-    }
-
-    public static findGameObjectWithTag(tag: string): GameObject {
-        return GameEngine.instance.findGameObjectWithTag(tag);
-    }
-
-    public static findGameObjectsWithTag(tag: string): GameObject[] {
-        return GameEngine.instance.findGameObjectsWithTag(tag);
-    }
-
-    public static instantiate(newGameObject: GameObject, position: Vector2 = Vector2.zero, rotation: number = 0, parent: Transform = null): GameObject {
-        newGameObject.transform.setPosition(position.x, position.y);
-        newGameObject.transform.rotation = rotation;
-        newGameObject.transform.parent = parent;
+        const prefabSettings = this.getPrefabSettings();
         
-        return GameEngine.instance.instantiate(newGameObject);
+        this.id = id ? id : prefabSettings.id;
+        this.transform = new Transform(this, x ? x : prefabSettings.x, y ? y : prefabSettings.y);
+        this.transform.rotation = rotation ? rotation : prefabSettings.rotation;
+        this.tag = tag ? tag : prefabSettings.tag;
+        this.layer = layer ? layer : prefabSettings.layer;
+
+        const initialComponents = this.buildInitialComponents();
+        initialComponents.push(this.transform);
+
+        this.setComponents(initialComponents);
+        this.buildChildGameObjects(this.gameEngine);
     }
+
+    public findGameObjectById(id: string): GameObject {
+        return this.gameEngine.findGameObjectById(id);
+    }
+
+    public findGameObjectWithTag(tag: string): GameObject {
+        return this.gameEngine.findGameObjectWithTag(tag);
+    }
+
+    public findGameObjectsWithTag(tag: string): GameObject[] {
+        return this.gameEngine.findGameObjectsWithTag(tag);
+    }
+
+    // public static instantiate(gameObject: typeof GameObject, position: Vector2 = Vector2.zero, rotation: number = 0, parent: Transform = null): GameObject {
+    //     newGameObject.transform.setPosition(position.x, position.y);
+    //     newGameObject.transform.rotation = rotation;
+    //     newGameObject.transform.parent = parent;
+        
+    //     return GameEngine.instance.instantiate(newGameObject);
+    // }
 
     public get enabled(): boolean {
         return this.isEnabled;
@@ -60,23 +69,19 @@ export abstract class GameObject {
 
         this.isEnabled = enabled;
 
-        for (const component of this.components) {
+        for (const component of this.updatableComponents) {
             if (component.enabled) {
                 enabled ? component.onEnabled() : component.onDisable();
             }
         }
     }
 
-    public get transform(): Transform {
-        return this._transform;
-    }
-
     public start(): void {
-        this.components.forEach(c => c.start());
+        this.updatableComponents.forEach(c => c.start());
     }
 
     public update(): void {
-        for (const component of this.components) {
+        for (const component of this.updatableComponents) {
             if (component.enabled) {
                 component.update();
             }
@@ -94,11 +99,11 @@ export abstract class GameObject {
             throw new Error('This game object does not have a component of type ' + component.constructor.name);
         }
 
-        if (!this.components.includes(component)) {
+        if (!this.updatableComponents.includes(component)) {
             throw new Error('This game object does not have the component being removed.');
         }
 
-        this.components.splice(this.components.indexOf(component), 1);
+        this.updatableComponents.splice(this.updatableComponents.indexOf(component), 1);
     }
 
     public hasComponent<T extends Component>(component: new (...args: any[]) => T): boolean {
@@ -220,14 +225,36 @@ export abstract class GameObject {
             throw new Error('This object does not have a ' + component.constructor.name + ' component!');
         }
 
-        this.components.splice(this.components.indexOf(component), 1);
+        this.updatableComponents.splice(this.updatableComponents.indexOf(component), 1);
         this.componentMap.delete(component.constructor.name);
         component.onDestroy();
     }
 
-    protected setComponents(components: Component[]): void {
+    /**
+     * This function is meant to be overridden by subclasses that require child game objects. Not making abstract as not all subclasses need it.
+     * 
+     * @param gameEngine The game engine
+     */
+    protected buildChildGameObjects(gameEngine: GameEngine): void {}
+
+    /**
+     * Meant to be overridden by subclasses to define prefab settings. These settings are overridden by 
+     * non-default constructor values.
+     */
+    protected getPrefabSettings(): PrefabSettings { 
+        return {
+            x: 0,
+            y: 0,
+            rotation: 0,
+            id: '',
+            tag: '',
+            layer: Layer.Default
+        }; 
+    }
+
+    private setComponents(components: Component[]): void {
         for (const component of components) {
-            this.components.push(component);
+            this.updatableComponents.push(component);
             
             if (this.componentMap.has(component.constructor.name)) {
                 this.componentMap.get(component.constructor.name).push(component);
@@ -237,4 +264,6 @@ export abstract class GameObject {
             }
         }
     }
+
+    protected abstract buildInitialComponents(): Component[];
 }

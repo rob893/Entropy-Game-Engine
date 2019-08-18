@@ -4,18 +4,31 @@ import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider
 import { BallMotor } from '../Components/BallMotor';
 import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
+import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Ball extends GameObject {
 
-    public constructor(gameEngine: GameEngine, id: string) {
-        super(gameEngine, id, 345, 195);
-
+    protected buildInitialComponents(): Component[] {
         const ballComponents: Component[] = [];
         
-        ballComponents.push(new RectangleCollider(this, 10, 10));
-        ballComponents.push(new BallMotor(this));
+        const collider =new RectangleCollider(this, null, 10, 10);
+        ballComponents.push(collider);
+
+        ballComponents.push(new BallMotor(this, this.gameEngine.getGameCanvas(), collider));
         ballComponents.push(new RectangleRenderer(this, 10, 10, 'white'));
 
-        this.setComponents(ballComponents);
+        return ballComponents;
+    }
+
+    protected getPrefabSettings(): PrefabSettings {
+        return {
+            x: 345,
+            y: 195,
+            rotation: 0,
+            id: 'ball',
+            tag: 'ball',
+            layer: Layer.Default
+        };
     }
 }

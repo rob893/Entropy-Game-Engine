@@ -19,26 +19,23 @@ export class PlayerMotor extends Motor {
     private readonly moveRightAnimation: Animation;
     private readonly moveLeftAnimation: Animation;
     private jumping: boolean = false;
-    private rigidBody: Rigidbody;
-    private animator: Animator;
-    private collider: RectangleCollider;
+    private readonly rigidBody: Rigidbody;
+    private readonly animator: Animator;
+    private readonly collider: RectangleCollider;
 
 
-    public constructor(gameObject: GameObject) {
-        super(gameObject);
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, rb: Rigidbody, animator: Animator) {
+        super(gameObject, gameCanvas);
+
+        this.collider = collider;
+        this.rigidBody = rb;
+        this.animator = animator;
+
         Input.addKeyListener(EventType.KeyDown, [KeyCode.RightArrow, KeyCode.D, KeyCode.LeftArrow, KeyCode.A, KeyCode.Space], (event) => this.onKeyDown(event));
         Input.addKeyListener(EventType.KeyUp, [KeyCode.RightArrow, KeyCode.D, KeyCode.LeftArrow, KeyCode.A], (event) => this.onKeyUp(event));
+
         this.moveRightAnimation = new Animation(MovingRightSprite, 4, 1, 0.1);
         this.moveLeftAnimation = new Animation(MovingLeftSprite, 4, 1, 0.1);
-    }
-
-    public start(): void {
-        super.start();
-
-        this.collider = this.gameObject.getComponent(RectangleCollider);
-
-        this.rigidBody = this.gameObject.getComponent<Rigidbody>(Rigidbody);
-        this.animator = this.gameObject.getComponent<Animator>(Animator);
     }
 
     public get isMoving(): boolean { 

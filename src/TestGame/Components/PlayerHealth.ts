@@ -18,7 +18,7 @@ export class PlayerHealth extends Component implements Damageable {
     }
 
     public start(): void {
-        this.gameManager = GameObject.findGameObjectById('gameManager').getComponent(GameManager);
+        this.gameManager = this.gameObject.findGameObjectById('gameManager').getComponent(GameManager);
     }
 
     public get health(): number {

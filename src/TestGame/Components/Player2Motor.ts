@@ -19,8 +19,8 @@ export class Player2Motor extends Motor {
     private movingLeft: boolean = false;
     private movingUp: boolean = false;
     private movingDown: boolean = false;
-    private animator: Animator;
-    private collider: RectangleCollider;
+    private readonly animator: Animator;
+    private readonly collider: RectangleCollider;
     private readonly runRightAnimation: Animation;
     private readonly runLeftAnimation: Animation;
     private readonly runUpAnimation: Animation;
@@ -28,8 +28,13 @@ export class Player2Motor extends Motor {
     private readonly idleAnimation: Animation;
 
 
-    public constructor(gameObject: GameObject) {
-        super(gameObject);
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, animator: Animator) {
+        super(gameObject, gameCanvas);
+
+        this.collider = collider;
+        this.animator = animator;
+
+        this.collider.onCollided.add((manifold) => this.handleCollisions(manifold));
 
         Input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyDown(event));
         Input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
@@ -41,15 +46,6 @@ export class Player2Motor extends Motor {
         this.idleAnimation = new Animation(TrumpIdle, 10, 4, 0.1, 1);
 
         this.speed = 2;
-    }
-
-    public start(): void {
-        super.start();
-
-        this.collider = this.gameObject.getComponent(RectangleCollider);
-        this.animator = this.gameObject.getComponent<Animator>(Animator);
-
-        this.collider.onCollided.add((manifold) => this.handleCollisions(manifold));
     }
 
     public get isMoving(): boolean { 
