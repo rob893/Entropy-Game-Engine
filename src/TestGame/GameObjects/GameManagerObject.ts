@@ -3,13 +3,14 @@ import { GameObject } from '../../GameEngine/Core/GameObject';
 //import { GameManager } from '../Components/GameManager';
 import { FPSCounter } from '../../GameEngine/Components/FPSCounter';
 import { GameManager } from '../Components/GameManager';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
 //import { AudioSource } from '../../GameEngine/Components/AudioSource';
 //import MarioTheme from '../../assets/sounds/marioTheme.mp3';
 
 export class GameManagerObject extends GameObject {
 
-    public constructor(id: string) {
-        super(id, 0, 0);
+    public constructor(gameEngine: GameEngine, id: string) {
+        super(gameEngine, id, 0, 0);
 
         const gameManagerComponents: Component[] = [];
         

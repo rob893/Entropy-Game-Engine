@@ -3,11 +3,12 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class Borders extends GameObject {
 
-    public constructor(id: string) {
-        super(id, 0, 0, 'border', Layer.Terrain);
+    public constructor(gameEngine: GameEngine, id: string) {
+        super(gameEngine, id, 0, 0, 'border', Layer.Terrain);
 
         const rb = new Rigidbody(this, 100000, true);
 

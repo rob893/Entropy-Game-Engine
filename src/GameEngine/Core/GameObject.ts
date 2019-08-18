@@ -15,9 +15,11 @@ export abstract class GameObject {
     private readonly _transform: Transform;
     private readonly components: Component[] = [];
     private readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
+    private readonly gameEngine: GameEngine;
     
 
-    public constructor(id: string, x: number = 0, y: number = 0, tag: string = '', layer: Layer = Layer.Default) {
+    public constructor(gameEngine: GameEngine, id: string, x: number = 0, y: number = 0, tag: string = '', layer: Layer = Layer.Default) {
+        this.gameEngine = gameEngine;
         this.id = id;
         this._transform = new Transform(this, x, y);
         this.isEnabled = true;

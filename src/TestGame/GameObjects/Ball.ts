@@ -3,11 +3,12 @@ import { Component } from '../../GameEngine/Components/Component';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { BallMotor } from '../Components/BallMotor';
 import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class Ball extends GameObject {
 
-    public constructor(id: string) {
-        super(id, 345, 195);
+    public constructor(gameEngine: GameEngine, id: string) {
+        super(gameEngine, id, 345, 195);
 
         const ballComponents: Component[] = [];
         
