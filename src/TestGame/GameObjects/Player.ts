@@ -13,7 +13,7 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Player extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected buildInitialComponents(gameEngine: GameEngine): Component[] {
         const playerComponents: Component[] = [];
 
         const rb = new Rigidbody(this);
@@ -22,13 +22,13 @@ export class Player extends GameObject {
         const collider = new RectangleCollider(this, rb, 50, 50);
         playerComponents.push(collider);
         
-        playerComponents.push(new PlayerHealth(this));
+        playerComponents.push(new PlayerHealth(this, gameEngine.objectManager));
         
         const initialAnimation = new Animation(MarioSprite, 4, 1, 0.1);
         const animator = new Animator(this, 50, 50, initialAnimation);
         playerComponents.push(animator);
 
-        playerComponents.push(new PlayerMotor(this, this.gameEngine.getGameCanvas(), collider, rb, animator));
+        playerComponents.push(new PlayerMotor(this, gameEngine.getGameCanvas(), collider, rb, animator));
 
         return playerComponents;
     }

@@ -12,6 +12,7 @@ import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { Damageable } from '../Interfaces/Damageable';
 import { PlayerHealth } from './PlayerHealth';
 import { Time } from '../../GameEngine/Core/Time';
+import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
 
 export class TrumpMotor extends Motor {
     
@@ -23,17 +24,19 @@ export class TrumpMotor extends Motor {
     private readonly runLeftAnimation: Animation;
     private readonly animator: Animator;
     private readonly audioSource: AudioSource;
+    private readonly objectManager: ObjectManager;
     private isMovingLeft: boolean = false;
     private isMovingRight: boolean = false;
     private isIdle: boolean = true;
     private damageTimer: number = 0;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, animator: Animator, audioSource: AudioSource) {
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, animator: Animator, audioSource: AudioSource, objectManager: ObjectManager) {
         super(gameObject, gameCanvas);
 
         this.animator = animator;
         this.audioSource = audioSource;
+        this.objectManager = objectManager;
 
         this.speed = 2;
         this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, [2]);
@@ -43,7 +46,7 @@ export class TrumpMotor extends Motor {
 
     public start(): void {
         this.audioSource.setClip(YouSuckSound);
-        this.player = this.gameObject.findGameObjectById('player');
+        this.player = this.objectManager.findGameObjectById('player');
         this.playerTransform = this.player.transform;
         this.playerHealth = this.player.getComponent(PlayerHealth);
     }

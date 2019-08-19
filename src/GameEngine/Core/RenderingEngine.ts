@@ -3,7 +3,6 @@ import { RenderableGizmo } from './Interfaces/RenderableGizmo';
 import { RenderableGUI } from './Interfaces/RenderableGUI';
 import { RenderableBackground } from './Interfaces/RenderableBackground';
 import { Terrain } from './Helpers/Terrain';
-import { GameObject } from './GameObject';
 
 
 export class RenderingEngine {
@@ -39,33 +38,17 @@ export class RenderingEngine {
         return this._canvasContext;
     }
 
-    public extractRenderableComponents(gameObject: GameObject): void {
-        const components = gameObject.getAllComponents();
-
-        for (const component of components) {
-            if (typeof (component as unknown as Renderable).render === 'function') {
-                this.renderableObjects.push(component as unknown as Renderable);
-            }
-            else if (typeof (component as unknown as RenderableGUI).renderGUI === 'function') {
-                this.renderableGUIElements.push(component as unknown as RenderableGUI);
-            }
-            else if (typeof (component as unknown as RenderableGizmo).renderGizmo === 'function') {
-                this.renderableGizmos.push(component as unknown as RenderableGizmo);
-            }
-        }
+    public addRenderableObject(object: Renderable): void {
+        this.renderableObjects.push(object);
     }
 
-    // public addRenderableObject(object: Renderable): void {
-    //     this.renderableObjects.push(object);
-    // }
+    public addRenderableGizmo(gizmo: RenderableGizmo): void {
+        this.renderableGizmos.push(gizmo);
+    }
 
-    // public addRenderableGizmo(gizmo: RenderableGizmo): void {
-    //     this.renderableGizmos.push(gizmo);
-    // }
-
-    // public addRenderableGUIElement(guiElement: RenderableGUI): void {
-    //     this.renderableGUIElements.push(guiElement);
-    // }
+    public addRenderableGUIElement(guiElement: RenderableGUI): void {
+        this.renderableGUIElements.push(guiElement);
+    }
 
     public renderScene(): void {
         this._background.renderBackground(this._canvasContext);

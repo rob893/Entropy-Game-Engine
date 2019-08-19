@@ -5,6 +5,7 @@ import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { Time } from '../../GameEngine/Core/Time';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
+import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
 
 export class ComputerMotor extends Motor {
 
@@ -13,19 +14,21 @@ export class ComputerMotor extends Motor {
     private quarterFieldX: number;
     private midFieldY: number;
     private readonly collider: RectangleCollider;
+    private readonly objectManager: ObjectManager;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, myCollider: RectangleCollider) {
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, objectManager: ObjectManager) {
         super(gameObject, gameCanvas);
 
-        this.collider = myCollider;
+        this.objectManager = objectManager;
+        this.collider = collider;
         this.yVelocity = 1;
     }
 
     public start(): void {
         super.start();
 
-        this.ballTransform = this.gameObject.findGameObjectById('ball').transform;
+        this.ballTransform = this.objectManager.findGameObjectById('ball').transform;
         this.quarterFieldX = this.gameCanvas.width / 4;
         this.midFieldY = this.gameCanvas.height / 2;
     }

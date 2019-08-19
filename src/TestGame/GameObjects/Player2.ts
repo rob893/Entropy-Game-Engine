@@ -12,7 +12,7 @@ import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class Player2 extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected buildInitialComponents(gameEngine: GameEngine): Component[] {
         const components: Component[] = [];
         
         const collider = new RectangleCollider(this, null, 35, 35, 0, -5);
@@ -24,7 +24,7 @@ export class Player2 extends GameObject {
         components.push(animator);
         //components.push(new AudioSource(this));
 
-        components.push(new Player2Motor(this, this.gameEngine.getGameCanvas(), collider, animator));
+        components.push(new Player2Motor(this, gameEngine.getGameCanvas(), collider, animator));
 
         return components;
     }

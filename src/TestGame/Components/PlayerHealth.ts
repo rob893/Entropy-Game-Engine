@@ -2,23 +2,26 @@ import { Component } from '../../GameEngine/Components/Component';
 import { Damageable } from '../Interfaces/Damageable';
 import { GameObject } from '../../GameEngine/Core/GameObject';
 import { GameManager } from './GameManager';
+import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
 
 export class PlayerHealth extends Component implements Damageable {
 
     private _health: number;
     private _isDead: boolean;
     private gameManager: GameManager;
+    private readonly objectManager: ObjectManager;
     
 
-    public constructor(gameObject: GameObject, health: number = 100) {
+    public constructor(gameObject: GameObject, objectManager: ObjectManager, health: number = 100) {
         super(gameObject);
 
         this._health = health;
+        this.objectManager = objectManager;
         this._isDead = false;
     }
 
     public start(): void {
-        this.gameManager = this.gameObject.findGameObjectById('gameManager').getComponent(GameManager);
+        this.gameManager = this.objectManager.findGameObjectById('gameManager').getComponent(GameManager);
     }
 
     public get health(): number {

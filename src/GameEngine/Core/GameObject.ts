@@ -2,22 +2,25 @@ import { Transform } from '../Components/Transform';
 import { Component } from '../Components/Component';
 import { GameEngine } from './GameEngine';
 import { Layer } from './Enums/Layer';
-import { Vector2 } from './Helpers/Vector2';
 import { Renderable } from './Interfaces/Renderable';
 import { PrefabSettings } from './Interfaces/PrefabSettings';
+import { Rigidbody } from '../Components/Rigidbody';
+import { RectangleCollider } from '../Components/RectangleCollider';
+import { RenderableGUI } from './Interfaces/RenderableGUI';
+import { RenderableGizmo } from './Interfaces/RenderableGizmo';
 
 export abstract class GameObject {
 
     public id: string;
     public readonly tag: string;
     public readonly layer: Layer;
-    public readonly gameEngine: GameEngine;
     public readonly transform: Transform;
 
     private isEnabled: boolean;
     private readonly updatableComponents: Component[] = [];
     private readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
-    
+    private readonly gameEngine: GameEngine;
+
 
     public constructor(gameEngine: GameEngine, id?: string, x?: number, y?: number, rotation?: number, tag?: string, layer?: Layer) {
         this.gameEngine = gameEngine;
@@ -31,32 +34,12 @@ export abstract class GameObject {
         this.tag = tag ? tag : prefabSettings.tag;
         this.layer = layer ? layer : prefabSettings.layer;
 
-        const initialComponents = this.buildInitialComponents();
+        const initialComponents = this.buildInitialComponents(gameEngine);
         initialComponents.push(this.transform);
 
         this.setComponents(initialComponents);
-        this.buildChildGameObjects(this.gameEngine);
+        this.buildChildGameObjects(gameEngine);
     }
-
-    public findGameObjectById(id: string): GameObject {
-        return this.gameEngine.findGameObjectById(id);
-    }
-
-    public findGameObjectWithTag(tag: string): GameObject {
-        return this.gameEngine.findGameObjectWithTag(tag);
-    }
-
-    public findGameObjectsWithTag(tag: string): GameObject[] {
-        return this.gameEngine.findGameObjectsWithTag(tag);
-    }
-
-    // public static instantiate(gameObject: typeof GameObject, position: Vector2 = Vector2.zero, rotation: number = 0, parent: Transform = null): GameObject {
-    //     newGameObject.transform.setPosition(position.x, position.y);
-    //     newGameObject.transform.rotation = rotation;
-    //     newGameObject.transform.parent = parent;
-        
-    //     return GameEngine.instance.instantiate(newGameObject);
-    // }
 
     public get enabled(): boolean {
         return this.isEnabled;
@@ -110,16 +93,6 @@ export abstract class GameObject {
         return this.componentMap.has(component.name);
     }
 
-    public getAllComponents(): Component[] {
-        let components: Component[] = [];
-
-        for (const comps of this.componentMap.values()) {
-            components = [...components, ...comps];
-        }
-
-        return components;
-    }
-
     public getComponent<T extends Component>(component: new (...args: any[]) => T): T {
         const componentType = component.name;
 
@@ -137,7 +110,7 @@ export abstract class GameObject {
             return [];
         }
 
-        return this.componentMap.get(componentType) as T[];
+        return [...this.componentMap.get(componentType)] as T[];
     }
 
     public getComponentInParent<T extends Component>(component: new (...args: any[]) => T): T {
@@ -213,6 +186,8 @@ export abstract class GameObject {
         else {
             this.componentMap.set(newComponent.constructor.name, [newComponent]);
         }
+
+        this.extractRenderablesCollidersAndRigidbodies(newComponent);
         
         newComponent.enabled = true;
         newComponent.start();
@@ -262,8 +237,29 @@ export abstract class GameObject {
             else {
                 this.componentMap.set(component.constructor.name, [component]);
             }
+
+            this.extractRenderablesCollidersAndRigidbodies(component);
         }
     }
 
-    protected abstract buildInitialComponents(): Component[];
+    private extractRenderablesCollidersAndRigidbodies(component: Component): void {
+        if (component instanceof Rigidbody) {
+            this.gameEngine.physicsEngine.addRigidbody(component);
+        }
+        else if (component instanceof RectangleCollider) {
+            this.gameEngine.physicsEngine.addCollider(component);
+        }
+
+        if (typeof (component as unknown as Renderable).render === 'function') {
+            this.gameEngine.renderingEngine.addRenderableObject(component as unknown as Renderable);
+        }
+        else if (typeof (component as unknown as RenderableGUI).renderGUI === 'function') {
+            this.gameEngine.renderingEngine.addRenderableGUIElement(component as unknown as RenderableGUI);
+        }
+        else if (typeof (component as unknown as RenderableGizmo).renderGizmo === 'function') {
+            this.gameEngine.renderingEngine.addRenderableGizmo(component as unknown as RenderableGizmo);
+        }
+    }
+
+    protected abstract buildInitialComponents(gameEngine: GameEngine): Component[];
 }

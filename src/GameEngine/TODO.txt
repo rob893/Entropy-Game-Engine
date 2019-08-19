@@ -9,4 +9,4 @@
 - Figure out a way to decouple components from rendering and physics engines.
 - Continue to move to DI for component dependencies for other components on the game object (dependencies on other game objects (including parent and children) are
     still obtained through the use of start and find/getComponent. This is intentional)
-- Move extracting renderables and colliders and rbs from game engine to game object.
+- Abstract APIs (Input, Physics, SceneManager, etc) into the GameEngine to make them services and have them injected into components.

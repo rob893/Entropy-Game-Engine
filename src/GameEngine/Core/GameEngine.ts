@@ -2,19 +2,13 @@ import { PhysicsEngine } from './PhysicsEngine';
 import { GameObject } from './GameObject';
 import { Time } from './Time';
 import { RenderingEngine } from './RenderingEngine';
-import { RenderableBackground } from './Interfaces/RenderableBackground';
-import { KeyCode } from './Enums/KeyCode';
 import { Terrain } from './Helpers/Terrain';
-import { TerrainSpec } from './Interfaces/TerrainSpec';
 import { TerrainBuilder } from './Helpers/TerrainBuilder';
 import { Scene } from './Interfaces/Scene';
 import { Input } from './Helpers/Input';
-import { EventType } from './Enums/EventType';
-import { Transform } from '../Components/Transform';
+import { ObjectManager } from './Helpers/ObjectManager';
 
 export class GameEngine {
-
-    //private static _instance: GameEngine;
 
     private _physicsEngine: PhysicsEngine;
     private _renderingEngine: RenderingEngine;
@@ -24,6 +18,7 @@ export class GameEngine {
     private paused: boolean = false;
     private gameObjects: GameObject[] = [];
     private _terrain: Terrain = null;
+    private _objectManager: ObjectManager;
     private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
@@ -40,33 +35,27 @@ export class GameEngine {
         Input.initialize(this.gameCanvas);
     }
 
-    // public static get instance(): GameEngine {
-    //     if (this._instance === null || this._instance === undefined) {
-    //         throw new Error('The instance has not been built yet. Call the buildGameEngine() function first.');
-    //     }
-
-    //     return this._instance;
-    // }
-
     public get terrain(): Terrain {
         return this._terrain;
     }
 
-    // public get physicsEngine(): PhysicsEngine {
-    //     return this._physicsEngine;
-    // }
+    public get objectManager(): ObjectManager {
+        return this._objectManager;
+    }
 
-    // public get renderingEngine(): RenderingEngine {
-    //     return this._renderingEngine;
-    // }
+    public get physicsEngine(): PhysicsEngine {
+        return this._physicsEngine;
+    }
+
+    public get renderingEngine(): RenderingEngine {
+        return this._renderingEngine;
+    }
 
     public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
         const physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
         const renderingEngine = new RenderingEngine(gameCanvas.getContext('2d'));
         
-        //this._instance = new GameEngine(gameCanvas, physicsEngine, renderingEngine);
-        
-        return new GameEngine(gameCanvas, physicsEngine, renderingEngine);//this._instance;
+        return new GameEngine(gameCanvas, physicsEngine, renderingEngine);
     }
 
     public setScenes(scenes: Scene[]): void {
@@ -86,6 +75,8 @@ export class GameEngine {
         }
 
         this.endCurrentScene();
+
+        this._objectManager = new ObjectManager(this);
 
         const scene = this.scenes.get(loadOrderOrName);
 
@@ -111,9 +102,6 @@ export class GameEngine {
         else {
             this.tagMap.set(newGameObject.tag, [newGameObject]);
         }
-
-        this._physicsEngine.extractCollidersAndRigidbodies(newGameObject);
-        this._renderingEngine.extractRenderableComponents(newGameObject);
         
         this.gameObjectMap.set(newGameObject.id, newGameObject);
         this.gameObjects.push(newGameObject);
@@ -188,9 +176,6 @@ export class GameEngine {
             else {
                 this.tagMap.set(gameObject.tag, [gameObject]);
             }
-
-            this._physicsEngine.extractCollidersAndRigidbodies(gameObject);
-            this._renderingEngine.extractRenderableComponents(gameObject);
 
             //Initialize children of gameObject
             const children = gameObject.transform.children;

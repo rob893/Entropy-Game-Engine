@@ -16,14 +16,14 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Trump extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected buildInitialComponents(gameEngine: GameEngine): Component[] {
         const components: Component[] = [];
 
         const collider = new RectangleCollider(this, null, 60, 60, 0, -5);
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
 
-        const navAgent = new NavAgent(this, this.gameEngine.terrain.navGrid);
+        const navAgent = new NavAgent(this, gameEngine.terrain.navGrid);
         components.push(navAgent);
 
         const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);

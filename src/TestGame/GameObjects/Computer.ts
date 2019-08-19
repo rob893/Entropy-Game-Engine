@@ -10,13 +10,13 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Computer extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected buildInitialComponents(gameEngine: GameEngine): Component[] {
         const computerComponents: Component[] = [];
         
         const collider = new RectangleCollider(this, null, 10, 50);
         computerComponents.push(collider);
 
-        computerComponents.push(new ComputerMotor(this, this.gameEngine.getGameCanvas(), collider));
+        computerComponents.push(new ComputerMotor(this, gameEngine.getGameCanvas(), collider, gameEngine.objectManager));
         computerComponents.push(new RectangleRenderer(this, 10, 50, 'white'));
 
         return computerComponents;

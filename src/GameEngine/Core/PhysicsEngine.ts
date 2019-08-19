@@ -8,7 +8,6 @@ import { Layer } from './Enums/Layer';
 import { CollisionManifold } from './Helpers/CollisionManifold';
 import { Vector2 } from './Helpers/Vector2';
 import { Time } from './Time';
-import { GameObject } from './GameObject';
 
 
 export class PhysicsEngine {
@@ -66,38 +65,14 @@ export class PhysicsEngine {
         });
     }
 
-    public extractCollidersAndRigidbodies(gameObject: GameObject): void {
-        const components = gameObject.getAllComponents();
-
-        for (const component of components) {
-            if (component instanceof RectangleCollider) {
-                this.addCollider(component);
-            }
-            else if (component instanceof Rigidbody) {
-                if (!component.isKinomatic) {
-                    this.rigidbodies.push(component);
-                }
-
-                component.becameKinomatic.add((rb) => {
-                    if (this.rigidbodies.includes(rb)) {
-                        this.rigidbodies.splice(this.rigidbodies.indexOf(rb), 1);
-                    }
-                });
-
-                component.becameNonKinomatic.add((rb) => this.rigidbodies.push(rb));
-            }
+    public addRigidbody(rb: Rigidbody): void {
+        if (!rb.isKinomatic) {
+            this.rigidbodies.push(rb);
         }
+
+        rb.becameKinomatic.add(this.removeKinomaticRigidbody);
+        rb.becameNonKinomatic.add(this.addNonKinomaticRigidbody);
     }
-
-    // public addRigidbody(rb: Rigidbody): void {
-    //     this.rigidbodies.push(rb);
-    // }
-
-    // public removeRigidbody(rb: Rigidbody): void {
-    //     if (this.rigidbodies.includes(rb)) {
-    //         this.rigidbodies.splice(this.rigidbodies.indexOf(rb), 1);
-    //     }
-    // }
 
     public addCollider(collider: RectangleCollider): void {
         this.collisionDetector.addCollider(collider);
@@ -105,5 +80,15 @@ export class PhysicsEngine {
 
     private resolveCollisions(collisionManifold: CollisionManifold): void {
         this.collisionResolver.resolveCollisions(collisionManifold);
+    }
+
+    private readonly addNonKinomaticRigidbody = (rb: Rigidbody): void => {
+        this.rigidbodies.push(rb);
+    }
+
+    private readonly removeKinomaticRigidbody = (rb: Rigidbody): void => {
+        if (this.rigidbodies.includes(rb)) {
+            this.rigidbodies.splice(this.rigidbodies.indexOf(rb), 1);
+        }
     }
 }
