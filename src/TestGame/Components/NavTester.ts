@@ -22,7 +22,7 @@ export class NavTester extends Component {
     private readonly idleAnimation: Animation;
 
 
-    public constructor(gameObject: GameObject, navAgent: NavAgent, animator: Animator) {
+    public constructor(gameObject: GameObject, navAgent: NavAgent, animator: Animator, input: Input) {
         super(gameObject);
 
         this.navAgent = navAgent;
@@ -31,8 +31,8 @@ export class NavTester extends Component {
         this.navAgent.onDirectionChanged.add((newDirection) => this.changeAnimation(newDirection));
         this.navAgent.onPathCompleted.add(() => this.animator.setAnimation(this.idleAnimation));
 
-        Input.addMouseListener(EventType.Click, 0, (event) => this.onClick(event));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, (event) => this.onKeyDown(event));
+        input.addMouseListener(EventType.Click, 0, (event) => this.onClick(event));
+        input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, (event) => this.onKeyDown(event));
 
         this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, 2);
         this.runLeftAnimation = new Animation(TrumpRun, 6, 4, 0.075, 4);

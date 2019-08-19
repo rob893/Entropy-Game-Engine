@@ -18,4 +18,6 @@ const main = async (): Promise<void> => {
     await gameEngine.loadScene(3);
 };
 
-main();
+window.onload = () => {
+    main();
+};

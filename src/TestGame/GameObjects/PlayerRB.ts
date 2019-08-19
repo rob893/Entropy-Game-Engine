@@ -16,7 +16,7 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class PlayerRB extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected buildInitialComponents(gameEngine: GameEngine): Component[] {
         const components: Component[] = [];
 
         const rb = new Rigidbody(this);
@@ -30,7 +30,7 @@ export class PlayerRB extends GameObject {
         const animator = new Animator(this, 75, 75, initialAnimation);
         components.push(animator);
 
-        components.push(new PlayerPhysicsMotor(this, rb, animator));
+        components.push(new PlayerPhysicsMotor(this, rb, animator, gameEngine.apis.input));
         //components.push(new AudioSource(this));
 
         return components;

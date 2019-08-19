@@ -7,6 +7,7 @@ import { TerrainBuilder } from './Helpers/TerrainBuilder';
 import { Scene } from './Interfaces/Scene';
 import { Input } from './Helpers/Input';
 import { ObjectManager } from './Helpers/ObjectManager';
+import { APIs } from './Interfaces/APIs';
 
 export class GameEngine {
 
@@ -18,7 +19,7 @@ export class GameEngine {
     private paused: boolean = false;
     private gameObjects: GameObject[] = [];
     private _terrain: Terrain = null;
-    private _objectManager: ObjectManager;
+    private _apis: APIs;
     private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
@@ -32,15 +33,15 @@ export class GameEngine {
         this._renderingEngine = renderingEngine;
         this._renderingEngine.renderGizmos = true;
 
-        Input.initialize(this.gameCanvas);
+        //Input.initialize(this.gameCanvas);
     }
 
     public get terrain(): Terrain {
         return this._terrain;
     }
 
-    public get objectManager(): ObjectManager {
-        return this._objectManager;
+    public get apis(): APIs {
+        return this._apis;
     }
 
     public get physicsEngine(): PhysicsEngine {
@@ -76,7 +77,7 @@ export class GameEngine {
 
         this.endCurrentScene();
 
-        this._objectManager = new ObjectManager(this);
+        this.createAPIs();
 
         const scene = this.scenes.get(loadOrderOrName);
 
@@ -202,7 +203,7 @@ export class GameEngine {
             this.gameLoopId = null;
         }
 
-        Input.clearListeners();
+        this.apis.input.clearListeners();
         this.tagMap.clear();
         this.gameObjectMap.clear();
         this.gameObjectNumMap.clear();
@@ -237,6 +238,13 @@ export class GameEngine {
         this._renderingEngine.background = scene.getSkybox(this.gameCanvas);
 
         this.gameInitialized = true;
+    }
+
+    private createAPIs(): void {
+        this._apis = {
+            input: new Input(this.gameCanvas),
+            objectManager: new ObjectManager(this)
+        };
     }
 
     private startGame(): void {

@@ -20,15 +20,15 @@ export class GameManager extends Component implements RenderableGUI {
     private readonly gameEngine: GameEngine;
 
 
-    public constructor(gameObject: GameObject, gameEngine: GameEngine) {
+    public constructor(gameObject: GameObject, gameEngine: GameEngine, input: Input) {
         super(gameObject);
 
         this.gameEngine = gameEngine;
 
-        Input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.gameEngine.loadScene(1));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.gameEngine.loadScene(2));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await this.gameEngine.loadScene(3));
-        Input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
+        input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.gameEngine.loadScene(1));
+        input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.gameEngine.loadScene(2));
+        input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await this.gameEngine.loadScene(3));
+        input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
     }
 
     public endGame(): void {

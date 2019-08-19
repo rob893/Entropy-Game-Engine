@@ -24,7 +24,7 @@ export class Player2 extends GameObject {
         components.push(animator);
         //components.push(new AudioSource(this));
 
-        components.push(new Player2Motor(this, gameEngine.getGameCanvas(), collider, animator));
+        components.push(new Player2Motor(this, gameEngine.getGameCanvas(), collider, animator, gameEngine.apis.input));
 
         return components;
     }

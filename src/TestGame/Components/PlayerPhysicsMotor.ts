@@ -27,16 +27,18 @@ export class PlayerPhysicsMotor extends Component {
     private readonly runUpAnimation: Animation;
     private readonly runDownAnimation: Animation;
     private readonly idleAnimation: Animation;
+    private readonly input: Input;
 
 
-    public constructor(gameObject: GameObject, rb: Rigidbody, animator: Animator) {
+    public constructor(gameObject: GameObject, rb: Rigidbody, animator: Animator, input: Input) {
         super(gameObject);
 
         this.rb = rb;
         this.animator = animator;
+        this.input = input;
 
-        Input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space, KeyCode.Backspace], (event) => this.onKeyDown(event));
-        Input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
+        this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space, KeyCode.Backspace], (event) => this.onKeyDown(event));
+        this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
 
         this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, 2);
         this.runLeftAnimation = new Animation(TrumpRun, 6, 4, 0.075, 4);
@@ -68,7 +70,7 @@ export class PlayerPhysicsMotor extends Component {
             this.rb.addForce(Vector2.down.multiplyScalar(this.speed));
         }
 
-        this.transform.lookAt(Input.canvasMousePosition);
+        this.transform.lookAt(this.input.canvasMousePosition);
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -119,7 +121,7 @@ export class PlayerPhysicsMotor extends Component {
             this.movingDown = false;
         }
 
-        if (!Input.getKey(KeyCode.W) && !Input.getKey(KeyCode.A) && !Input.getKey(KeyCode.S) && !Input.getKey(KeyCode.D)) {
+        if (!this.input.getKey(KeyCode.W) && !this.input.getKey(KeyCode.A) && !this.input.getKey(KeyCode.S) && !this.input.getKey(KeyCode.D)) {
             this.animator.setAnimation(this.idleAnimation);
         }
     }

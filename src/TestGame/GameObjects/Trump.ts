@@ -30,7 +30,7 @@ export class Trump extends GameObject {
         const animator = new Animator(this, 75, 75, initialAnimation);
         components.push(animator);
 
-        components.push(new NavTester(this, navAgent, animator));
+        components.push(new NavTester(this, navAgent, animator, gameEngine.apis.input));
 
         return components;
     }
