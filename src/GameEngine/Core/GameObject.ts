@@ -2,12 +2,10 @@ import { Transform } from '../Components/Transform';
 import { Component } from '../Components/Component';
 import { GameEngine } from './GameEngine';
 import { Layer } from './Enums/Layer';
-import { Renderable } from './Interfaces/Renderable';
 import { PrefabSettings } from './Interfaces/PrefabSettings';
-import { Rigidbody } from '../Components/Rigidbody';
-import { RectangleCollider } from '../Components/RectangleCollider';
-import { RenderableGUI } from './Interfaces/RenderableGUI';
-import { RenderableGizmo } from './Interfaces/RenderableGizmo';
+import { APIs } from './Interfaces/APIs';
+import { ComponentAnalyzer } from './Helpers/ComponentAnalyzer';
+
 
 export abstract class GameObject {
 
@@ -19,12 +17,12 @@ export abstract class GameObject {
     private isEnabled: boolean;
     private readonly updatableComponents: Component[] = [];
     private readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
-    private readonly gameEngine: GameEngine;
+    private readonly componentAnalyzer: ComponentAnalyzer;
 
 
-    public constructor(gameEngine: GameEngine, id?: string, x?: number, y?: number, rotation?: number, tag?: string, layer?: Layer) {
-        this.gameEngine = gameEngine;
+    public constructor(apis: APIs, id?: string, x?: number, y?: number, rotation?: number, tag?: string, layer?: Layer) {
         this.isEnabled = true;
+        this.componentAnalyzer = apis.componentAnalyzer;
 
         const prefabSettings = this.getPrefabSettings();
         
@@ -34,11 +32,11 @@ export abstract class GameObject {
         this.tag = tag ? tag : prefabSettings.tag;
         this.layer = layer ? layer : prefabSettings.layer;
 
-        const initialComponents = this.buildInitialComponents(gameEngine);
+        const initialComponents = this.buildInitialComponents(apis);
         initialComponents.push(this.transform);
 
         this.setComponents(initialComponents);
-        this.buildChildGameObjects(gameEngine);
+        this.buildChildGameObjects(apis);
     }
 
     public get enabled(): boolean {
@@ -187,7 +185,7 @@ export abstract class GameObject {
             this.componentMap.set(newComponent.constructor.name, [newComponent]);
         }
 
-        this.extractRenderablesCollidersAndRigidbodies(newComponent);
+        this.componentAnalyzer.extractRenderablesCollidersAndRigidbodies(newComponent);
         
         newComponent.enabled = true;
         newComponent.start();
@@ -210,7 +208,7 @@ export abstract class GameObject {
      * 
      * @param gameEngine The game engine
      */
-    protected buildChildGameObjects(gameEngine: GameEngine): void {}
+    protected buildChildGameObjects(apis: APIs): void {}
 
     /**
      * Meant to be overridden by subclasses to define prefab settings. These settings are overridden by 
@@ -238,28 +236,9 @@ export abstract class GameObject {
                 this.componentMap.set(component.constructor.name, [component]);
             }
 
-            this.extractRenderablesCollidersAndRigidbodies(component);
+            this.componentAnalyzer.extractRenderablesCollidersAndRigidbodies(component);
         }
     }
 
-    private extractRenderablesCollidersAndRigidbodies(component: Component): void {
-        if (component instanceof Rigidbody) {
-            this.gameEngine.physicsEngine.addRigidbody(component);
-        }
-        else if (component instanceof RectangleCollider) {
-            this.gameEngine.physicsEngine.addCollider(component);
-        }
-
-        if (typeof (component as unknown as Renderable).render === 'function') {
-            this.gameEngine.renderingEngine.addRenderableObject(component as unknown as Renderable);
-        }
-        else if (typeof (component as unknown as RenderableGUI).renderGUI === 'function') {
-            this.gameEngine.renderingEngine.addRenderableGUIElement(component as unknown as RenderableGUI);
-        }
-        else if (typeof (component as unknown as RenderableGizmo).renderGizmo === 'function') {
-            this.gameEngine.renderingEngine.addRenderableGizmo(component as unknown as RenderableGizmo);
-        }
-    }
-
-    protected abstract buildInitialComponents(gameEngine: GameEngine): Component[];
+    protected abstract buildInitialComponents(apis: APIs): Component[];
 }

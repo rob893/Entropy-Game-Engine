@@ -6,11 +6,11 @@ import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
+import { APIs } from '../../GameEngine/Core/Interfaces/APIs';
 
 export class TrumpRB extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected buildInitialComponents(apis: APIs): Component[] {
         const components: Component[] = [];
 
         const rb = new Rigidbody(this);

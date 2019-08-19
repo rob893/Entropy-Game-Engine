@@ -8,18 +8,18 @@ import { Scene } from './Interfaces/Scene';
 import { Input } from './Helpers/Input';
 import { ObjectManager } from './Helpers/ObjectManager';
 import { APIs } from './Interfaces/APIs';
+import { ComponentAnalyzer } from './Helpers/ComponentAnalyzer';
 
 export class GameEngine {
 
-    private _physicsEngine: PhysicsEngine;
-    private _renderingEngine: RenderingEngine;
+    private physicsEngine: PhysicsEngine;
+    private renderingEngine: RenderingEngine;
     private loadedScene: Scene = null;
     private gameLoopId: number = null;
     private gameInitialized: boolean = false;
     private paused: boolean = false;
     private gameObjects: GameObject[] = [];
-    private _terrain: Terrain = null;
-    private _apis: APIs;
+    private apis: APIs;
     private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
@@ -29,27 +29,9 @@ export class GameEngine {
 
     private constructor(gameCanvas: HTMLCanvasElement, physicsEngine: PhysicsEngine, renderingEngine: RenderingEngine) {
         this.gameCanvas = gameCanvas;
-        this._physicsEngine = physicsEngine;
-        this._renderingEngine = renderingEngine;
-        this._renderingEngine.renderGizmos = true;
-
-        //Input.initialize(this.gameCanvas);
-    }
-
-    public get terrain(): Terrain {
-        return this._terrain;
-    }
-
-    public get apis(): APIs {
-        return this._apis;
-    }
-
-    public get physicsEngine(): PhysicsEngine {
-        return this._physicsEngine;
-    }
-
-    public get renderingEngine(): RenderingEngine {
-        return this._renderingEngine;
+        this.physicsEngine = physicsEngine;
+        this.renderingEngine = renderingEngine;
+        this.renderingEngine.renderGizmos = true;
     }
 
     public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
@@ -77,7 +59,7 @@ export class GameEngine {
 
         this.endCurrentScene();
 
-        this.createAPIs();
+        this.createEnginesAndAPIs();
 
         const scene = this.scenes.get(loadOrderOrName);
 
@@ -139,15 +121,11 @@ export class GameEngine {
         return this.tagMap.get(tag);
     }
 
-    public getGameCanvas(): HTMLCanvasElement {
-        return this.gameCanvas;
-    }
-
     public printGameData(): void {
         console.log(this);
         console.log('Time since game start ' + Time.TotalTime + 's');
-        console.log(this._renderingEngine);
-        console.log(this._physicsEngine);
+        console.log(this.renderingEngine);
+        console.log(this.physicsEngine);
         this.gameObjects.forEach(go => console.log(go));
     }
 
@@ -209,41 +187,48 @@ export class GameEngine {
         this.gameObjectNumMap.clear();
         this.gameObjects.length = 0;
         this.loadedScene = null;
-        this._terrain = null;
-        this._physicsEngine = PhysicsEngine.buildPhysicsEngine(this.gameCanvas);
-
-        const renderGizmos = this._renderingEngine.renderGizmos;
-
-        this._renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
-        this._renderingEngine.renderGizmos = renderGizmos;
     }
 
     private async initializeScene(scene: Scene): Promise<void> {
+        if (this.apis === undefined || this.apis === null) {
+            throw new Error('There was an error initializing the scene. The APIs object must be created before initialization.');
+        }
+
         const terrainSpec = scene.terrainSpec;
         let gameObjects: GameObject[] = [];
 
         if (terrainSpec !== null) {
             const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
-            const terrain = await terrianBuilder.buildTerrain(this, terrainSpec);
+            const terrain = await terrianBuilder.buildTerrain(this.apis, terrainSpec);
             
             gameObjects.push(terrain);
 
-            this._renderingEngine.terrain = terrain;
-            this._terrain = terrain;
+            this.renderingEngine.terrain = terrain;
+            this.apis.terrain = terrain;
         }
 
-        gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this)];
+        gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this.apis)];
 
         this.setGameObjects(gameObjects);
-        this._renderingEngine.background = scene.getSkybox(this.gameCanvas);
+        this.renderingEngine.background = scene.getSkybox(this.gameCanvas);
 
         this.gameInitialized = true;
     }
 
-    private createAPIs(): void {
-        this._apis = {
+    private createEnginesAndAPIs(): void {
+        this.physicsEngine = PhysicsEngine.buildPhysicsEngine(this.gameCanvas);
+
+        const renderGizmos = this.renderingEngine.renderGizmos;
+
+        this.renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
+        this.renderingEngine.renderGizmos = renderGizmos;
+        
+        this.apis = {
             input: new Input(this.gameCanvas),
-            objectManager: new ObjectManager(this)
+            objectManager: new ObjectManager(this),
+            terrain: null,
+            componentAnalyzer: new ComponentAnalyzer(this.physicsEngine, this.renderingEngine),
+            gameCanvas: this.gameCanvas
         };
     }
 
@@ -279,7 +264,7 @@ export class GameEngine {
         }
 
         Time.updateTime();
-        this._physicsEngine.updatePhysics();
+        this.physicsEngine.updatePhysics();
         
         for (const gameObject of this.gameObjects) {
             if (gameObject.enabled) {
@@ -287,7 +272,7 @@ export class GameEngine {
             }
         }
 
-        this._renderingEngine.renderScene();
+        this.renderingEngine.renderScene();
     }
 
     private gameLoop(): void {

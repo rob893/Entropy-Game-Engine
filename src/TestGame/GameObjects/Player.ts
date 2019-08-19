@@ -7,13 +7,13 @@ import { Animator } from '../../GameEngine/Components/Animator';
 import MarioSprite from '../Assets/Images/mario.png';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { PlayerHealth } from '../Components/PlayerHealth';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
+import { APIs } from '../../GameEngine/Core/Interfaces/APIs';
 
 export class Player extends GameObject {
 
-    protected buildInitialComponents(gameEngine: GameEngine): Component[] {
+    protected buildInitialComponents(apis: APIs): Component[] {
         const playerComponents: Component[] = [];
 
         const rb = new Rigidbody(this);
@@ -22,13 +22,13 @@ export class Player extends GameObject {
         const collider = new RectangleCollider(this, rb, 50, 50);
         playerComponents.push(collider);
         
-        playerComponents.push(new PlayerHealth(this, gameEngine.apis.objectManager));
+        playerComponents.push(new PlayerHealth(this, apis.objectManager));
         
         const initialAnimation = new Animation(MarioSprite, 4, 1, 0.1);
         const animator = new Animator(this, 50, 50, initialAnimation);
         playerComponents.push(animator);
 
-        playerComponents.push(new PlayerMotor(this, gameEngine.getGameCanvas(), collider, rb, animator, gameEngine.apis.input));
+        playerComponents.push(new PlayerMotor(this, apis.gameCanvas, collider, rb, animator, apis.input));
 
         return playerComponents;
     }

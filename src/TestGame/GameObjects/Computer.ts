@@ -6,17 +6,18 @@ import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
+import { APIs } from '../../GameEngine/Core/Interfaces/APIs';
 
 
 export class Computer extends GameObject {
 
-    protected buildInitialComponents(gameEngine: GameEngine): Component[] {
+    protected buildInitialComponents(apis: APIs): Component[] {
         const computerComponents: Component[] = [];
         
         const collider = new RectangleCollider(this, null, 10, 50);
         computerComponents.push(collider);
 
-        computerComponents.push(new ComputerMotor(this, gameEngine.getGameCanvas(), collider, gameEngine.apis.objectManager));
+        computerComponents.push(new ComputerMotor(this, apis.gameCanvas, collider, apis.objectManager));
         computerComponents.push(new RectangleRenderer(this, 10, 50, 'white'));
 
         return computerComponents;

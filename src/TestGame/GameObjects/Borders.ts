@@ -1,14 +1,13 @@
 import { GameObject } from '../../GameEngine/Core/GameObject';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { Component } from '../../GameEngine/Components/Component';
+import { APIs } from '../../GameEngine/Core/Interfaces/APIs';
 
 export class Borders extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected buildInitialComponents(apis: APIs): Component[] {
         const rb = new Rigidbody(this, 100000, true);
 
         const colliders: RectangleCollider[] = [];

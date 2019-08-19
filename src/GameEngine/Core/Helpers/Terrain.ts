@@ -5,8 +5,8 @@ import { GameObject } from '../GameObject';
 import { Vector2 } from './Vector2';
 import { Layer } from '../Enums/Layer';
 import { Component } from '../../Components/Component';
-import { GameEngine } from '../GameEngine';
 import { PrefabSettings } from '../Interfaces/PrefabSettings';
+import { APIs } from '../Interfaces/APIs';
 
 export class Terrain extends GameObject implements RenderableBackground {
     
@@ -14,8 +14,8 @@ export class Terrain extends GameObject implements RenderableBackground {
     public readonly navGrid: NavGrid;
 
 
-    public constructor(gameEngine: GameEngine, terrainImage: HTMLImageElement, navGrid: NavGrid, colliderPositions: Vector2[]) {
-        super(gameEngine);
+    public constructor(apis: APIs, terrainImage: HTMLImageElement, navGrid: NavGrid, colliderPositions: Vector2[]) {
+        super(apis);
         
         this.terrainImage = terrainImage;
         this.navGrid = navGrid;

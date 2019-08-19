@@ -4,15 +4,13 @@ import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider
 import TrumpIdleSprite from '../Assets/Images/trump_idle.png';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
-//import { TrumpMotor } from '../Components/TrumpMotor';
-//import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { Player2Motor } from '../Components/Player2Motor';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { APIs } from '../../GameEngine/Core/Interfaces/APIs';
 
 export class Player2 extends GameObject {
 
-    protected buildInitialComponents(gameEngine: GameEngine): Component[] {
+    protected buildInitialComponents(apis: APIs): Component[] {
         const components: Component[] = [];
         
         const collider = new RectangleCollider(this, null, 35, 35, 0, -5);
@@ -22,9 +20,8 @@ export class Player2 extends GameObject {
         const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
         const animator = new Animator(this, 75, 75, initialAnimation);
         components.push(animator);
-        //components.push(new AudioSource(this));
 
-        components.push(new Player2Motor(this, gameEngine.getGameCanvas(), collider, animator, gameEngine.apis.input));
+        components.push(new Player2Motor(this, apis.gameCanvas, collider, animator, apis.input));
 
         return components;
     }

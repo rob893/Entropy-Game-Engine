@@ -16,25 +16,22 @@ export class GameManager extends Component implements RenderableGUI {
     private messageColor: string = '';
     private messageTimer: number = 0;
     private messageLength: number = 0;
-    private gameOver: boolean = false;
-    private readonly gameEngine: GameEngine;
+    private readonly gameOver: boolean = false; //to get es lint to shut up
 
 
-    public constructor(gameObject: GameObject, gameEngine: GameEngine, input: Input) {
+    public constructor(gameObject: GameObject, input: Input) {
         super(gameObject);
 
-        this.gameEngine = gameEngine;
-
-        input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.gameEngine.loadScene(1));
-        input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.gameEngine.loadScene(2));
-        input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await this.gameEngine.loadScene(3));
-        input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
+        // input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.gameEngine.loadScene(1));
+        // input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.gameEngine.loadScene(2));
+        // input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await this.gameEngine.loadScene(3));
+        // input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
     }
 
-    public endGame(): void {
-        this.togglePause();
-        this.gameOver = true;
-    }
+    // public endGame(): void {
+    //     this.togglePause();
+    //     this.gameOver = true;
+    // }
 
     public showMessage(message: string, lengthInSeconds: number, color: string): void {
         this.sceneMessage = message;
@@ -67,13 +64,13 @@ export class GameManager extends Component implements RenderableGUI {
         }
     }
 
-    private togglePause(): void {
-        this.gameEngine.togglePause();
-    }
+    // private togglePause(): void {
+    //     this.gameEngine.togglePause();
+    // }
 
-    private printGameData(): void {
-        this.gameEngine.printGameData();
-    }
+    // private printGameData(): void {
+    //     this.gameEngine.printGameData();
+    // }
 
     private testInstantiate(): void {
         //GameEngine.instance.instantiate(new Ball('ball2'));

@@ -44,7 +44,7 @@ export class PlayerHealth extends Component implements Damageable {
 
     public die(): void {
         this._isDead = true;
-        this.gameManager.endGame();
+        //this.gameManager.endGame();
         console.log('You are dead!');
     }
 }

@@ -15,6 +15,7 @@ import { Borders } from './GameObjects/Borders';
 import { TrumpRB } from './GameObjects/TrumpRB';
 import { GameEngine } from '../GameEngine/Core/GameEngine';
 import { Layer } from '../GameEngine/Core/Enums/Layer';
+import { APIs } from '../GameEngine/Core/Interfaces/APIs';
 
 
 export const scene1: Scene = {
@@ -26,11 +27,11 @@ export const scene1: Scene = {
         return new RectangleBackground(gameCanvas, Color.Black);
     },
 
-    getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
+    getStartingGameObjects(apis: APIs): GameObject[] {
         return [
-            new GameManagerObject(gameEngine, 'gameManager'),
-            new Trump(gameEngine, 'trump'),
-            new Player2(gameEngine, 'player', 400, 250)
+            new GameManagerObject(apis, 'gameManager'),
+            new Trump(apis, 'trump'),
+            new Player2(apis, 'player', 400, 250)
         ];
     }
 };
@@ -44,10 +45,10 @@ export const scene2: Scene = {
         return new ImageBackground(gameCanvas, Scene2Background);
     },
     
-    getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
+    getStartingGameObjects(apis: APIs): GameObject[] {
         return [
-            new GameManagerObject(gameEngine, 'gameManager'),
-            new Player(gameEngine, 'player')
+            new GameManagerObject(apis, 'gameManager'),
+            new Player(apis, 'player')
         ];
     }
 };
@@ -61,11 +62,11 @@ export const scene3: Scene = {
         return new RectangleBackground(gameCanvas, Color.Black);
     },
     
-    getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
+    getStartingGameObjects(apis: APIs): GameObject[] {
         return [
-            new GameManagerObject(gameEngine, 'gameManager'),
-            new PlayerRB(gameEngine, 'player'),
-            new Borders(gameEngine, 'borders', 0, 0, 0, 'borders', Layer.Terrain),
+            new GameManagerObject(apis, 'gameManager'),
+            new PlayerRB(apis, 'player'),
+            new Borders(apis, 'borders', 0, 0, 0, 'borders', Layer.Terrain),
             //new TrumpRB('trump', 500, 670),
             //new TrumpRB('trump', 570, 670),
             //new TrumpRB('trump', 640, 670),
