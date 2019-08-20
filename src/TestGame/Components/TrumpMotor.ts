@@ -19,19 +19,20 @@ export class TrumpMotor extends Motor {
     private player: GameObject;
     private playerTransform: Transform;
     private playerHealth: Damageable;
+    private isMovingLeft: boolean = false;
+    private isMovingRight: boolean = false;
+    private isIdle: boolean = true;
+    private damageTimer: number = 0;
     private readonly idleAnimation: Animation;
     private readonly runRightAnimation: Animation;
     private readonly runLeftAnimation: Animation;
     private readonly animator: Animator;
     private readonly audioSource: AudioSource;
     private readonly objectManager: ObjectManager;
-    private isMovingLeft: boolean = false;
-    private isMovingRight: boolean = false;
-    private isIdle: boolean = true;
-    private damageTimer: number = 0;
+    private readonly time: Time;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, animator: Animator, audioSource: AudioSource, objectManager: ObjectManager) {
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, animator: Animator, audioSource: AudioSource, objectManager: ObjectManager, time: Time) {
         super(gameObject, gameCanvas);
 
         this.animator = animator;
@@ -74,7 +75,7 @@ export class TrumpMotor extends Motor {
             this.animator.setAnimation(this.idleAnimation);
         }
         
-        this.damageTimer += Time.DeltaTime;
+        this.damageTimer += this.time.deltaTime;
 
         if (this.damageTimer > 1.5 && Vector2.distance(this.transform.position, this.playerTransform.position) < 15) {
             this.damagePlayer();

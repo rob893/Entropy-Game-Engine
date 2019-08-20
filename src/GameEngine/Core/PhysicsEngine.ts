@@ -17,40 +17,17 @@ export class PhysicsEngine {
     private readonly rigidbodies: Rigidbody[];
     private readonly collisionDetector: CollisionDetector;
     private readonly collisionResolver: CollisionResolver;
-    private readonly layerCollisionMatrix = new Map<Layer, Set<Layer>>();
+    private readonly time: Time;
 
 
-    private constructor(collisionDetector: CollisionDetector, collisionResolver: CollisionResolver) {
+    public constructor(collisionDetector: CollisionDetector, collisionResolver: CollisionResolver, time: Time) {
         this.rigidbodies = [];
         this.gravity = 665;
         this.collisionDetector = collisionDetector;
         this.collisionResolver = collisionResolver;
         this.collisionDetector.onCollisionDetected.add((manifold) => this.resolveCollisions(manifold));
 
-        const layers = Object.keys(Layer).filter(c => typeof Layer[c as any] === 'number').map(k => Number(Layer[k as any]));
-
-        for (const layer of layers) {
-            this.layerCollisionMatrix.set(layer, new Set(layers));
-        }
-    }
-
-    public static buildPhysicsEngine(gameCanvas: HTMLCanvasElement): PhysicsEngine {
-        const layerCollisionMatrix = new Map<Layer, Set<Layer>>();
-
-        const layers = Object.keys(Layer).filter(c => typeof Layer[c as any] === 'number').map(k => Number(Layer[k as any]));
-        
-        for (const layer of layers) {
-            layerCollisionMatrix.set(layer, new Set(layers));
-        }
-
-        layerCollisionMatrix.get(Layer.Terrain).delete(Layer.Terrain);
-
-        const collisionDetector = new SpatialHashCollisionDetector(gameCanvas.width, gameCanvas.height, layerCollisionMatrix, 100);
-        const collisionResolver = new ImpulseCollisionResolver();
-
-        const engine = new PhysicsEngine(collisionDetector, collisionResolver);
-        
-        return engine;
+        this.time = time;
     }
 
     public get colliders(): RectangleCollider[] {
@@ -60,7 +37,7 @@ export class PhysicsEngine {
     public updatePhysics(): void {
         this.collisionDetector.detectCollisions();
         this.rigidbodies.forEach(rb => {
-            rb.addForce(Vector2.down.multiplyScalar(this.gravity).multiplyScalar(Time.DeltaTime)); //add gravity
+            rb.addForce(Vector2.down.multiplyScalar(this.gravity).multiplyScalar(this.time.deltaTime)); //add gravity
             rb.updatePhysics();
         });
     }

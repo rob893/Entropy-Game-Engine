@@ -8,6 +8,7 @@ import { Time } from '../../GameEngine/Core/Time';
 import { Input } from '../../GameEngine/Core/Helpers/Input';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
+import { SceneManager } from '../../GameEngine/Core/Helpers/SceneManager';
 
 export class GameManager extends Component implements RenderableGUI {
 
@@ -17,15 +18,18 @@ export class GameManager extends Component implements RenderableGUI {
     private messageTimer: number = 0;
     private messageLength: number = 0;
     private readonly gameOver: boolean = false; //to get es lint to shut up
+    private readonly time: Time;
 
 
-    public constructor(gameObject: GameObject, input: Input) {
+    public constructor(gameObject: GameObject, input: Input, time: Time, sceneManager: SceneManager) {
         super(gameObject);
 
-        // input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.gameEngine.loadScene(1));
-        // input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.gameEngine.loadScene(2));
-        // input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await this.gameEngine.loadScene(3));
-        // input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
+        this.time = time;
+
+        input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await sceneManager.loadScene(1));
+        input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await sceneManager.loadScene(2));
+        input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await sceneManager.loadScene(3));
+        //input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
     }
 
     // public endGame(): void {
@@ -52,7 +56,7 @@ export class GameManager extends Component implements RenderableGUI {
 
     private renderMessage(context: CanvasRenderingContext2D): void {
         if (this.sceneMessage !== '') {
-            this.messageTimer += Time.DeltaTime;
+            this.messageTimer += this.time.deltaTime;
             context.fillStyle = this.messageColor;
             context.fillText(this.sceneMessage, 250, 250);
 

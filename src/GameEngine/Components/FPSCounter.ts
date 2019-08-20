@@ -1,17 +1,25 @@
 import { Component } from './Component';
 import { Time } from '../Core/Time';
 import { RenderableGUI } from '../Core/Interfaces/RenderableGUI';
-import { GameEngine } from '../Core/GameEngine';
+import { GameObject } from '../Core/GameObject';
+
 
 export class FPSCounter extends Component implements RenderableGUI {
 
     private numFrames: number = 0;
     private timer: number = 0;
     private FPS: number = 0;
+    private readonly time: Time;
     
 
+    public constructor(gameObject: GameObject, time: Time) {
+        super(gameObject);
+        
+        this.time = time;
+    }
+
     public renderGUI(context: CanvasRenderingContext2D): void {
-        this.timer += Time.DeltaTime;
+        this.timer += this.time.deltaTime;
         this.numFrames++;
 
         if (this.timer >= 0.5) {

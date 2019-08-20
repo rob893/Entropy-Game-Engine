@@ -7,8 +7,12 @@ import { TerrainBuilder } from './Helpers/TerrainBuilder';
 import { Scene } from './Interfaces/Scene';
 import { Input } from './Helpers/Input';
 import { ObjectManager } from './Helpers/ObjectManager';
-import { APIs } from './Interfaces/APIs';
+import { GameEngineAPIs } from './Interfaces/GameEngineAPIs';
 import { ComponentAnalyzer } from './Helpers/ComponentAnalyzer';
+import { SceneManager } from './Helpers/SceneManager';
+import { Layer } from './Enums/Layer';
+import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDetector';
+import { ImpulseCollisionResolver } from './Physics/ImpulseCollisionResolver';
 
 export class GameEngine {
 
@@ -19,7 +23,7 @@ export class GameEngine {
     private gameInitialized: boolean = false;
     private paused: boolean = false;
     private gameObjects: GameObject[] = [];
-    private apis: APIs;
+    private gameEngineAPIs: GameEngineAPIs;
     private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
@@ -27,46 +31,8 @@ export class GameEngine {
     private readonly gameCanvas: HTMLCanvasElement;
 
 
-    private constructor(gameCanvas: HTMLCanvasElement, physicsEngine: PhysicsEngine, renderingEngine: RenderingEngine) {
+    public constructor(gameCanvas: HTMLCanvasElement) {
         this.gameCanvas = gameCanvas;
-        this.physicsEngine = physicsEngine;
-        this.renderingEngine = renderingEngine;
-        this.renderingEngine.renderGizmos = true;
-    }
-
-    public static buildGameEngine(gameCanvas: HTMLCanvasElement): GameEngine {
-        const physicsEngine = PhysicsEngine.buildPhysicsEngine(gameCanvas);
-        const renderingEngine = new RenderingEngine(gameCanvas.getContext('2d'));
-        
-        return new GameEngine(gameCanvas, physicsEngine, renderingEngine);
-    }
-
-    public setScenes(scenes: Scene[]): void {
-        for (const scene of scenes) {
-            if (this.scenes.has(scene.loadOrder) || this.scenes.has(scene.name)) {
-                console.error('Duplicate scene load orders or name detected ' + scene.loadOrder + ' ' + scene.name);
-            }
-
-            this.scenes.set(scene.loadOrder, scene);
-            this.scenes.set(scene.name, scene);
-        }
-    }
-
-    public async loadScene(loadOrderOrName: number | string): Promise<void> {
-        if (!this.scenes.has(loadOrderOrName)) {
-            throw new Error('Scene ' + loadOrderOrName + ' not found.');
-        }
-
-        this.endCurrentScene();
-
-        this.createEnginesAndAPIs();
-
-        const scene = this.scenes.get(loadOrderOrName);
-
-        await this.initializeScene(scene);
-
-        this.loadedScene = scene;
-        this.startGame();
     }
 
     public instantiate(newGameObject: GameObject): GameObject {
@@ -123,7 +89,7 @@ export class GameEngine {
 
     public printGameData(): void {
         console.log(this);
-        console.log('Time since game start ' + Time.TotalTime + 's');
+        console.log('Time since game start ' + this.gameEngineAPIs.time.totalTime + 's');
         console.log(this.renderingEngine);
         console.log(this.physicsEngine);
         this.gameObjects.forEach(go => console.log(go));
@@ -131,6 +97,112 @@ export class GameEngine {
 
     public togglePause(): void {
         this.paused = !this.paused;
+    }
+
+    public setScenes(scenes: Scene[]): void {
+        for (const scene of scenes) {
+            if (this.scenes.has(scene.loadOrder) || this.scenes.has(scene.name)) {
+                console.error('Duplicate scene load orders or name detected ' + scene.loadOrder + ' ' + scene.name);
+            }
+
+            this.scenes.set(scene.loadOrder, scene);
+            this.scenes.set(scene.name, scene);
+        }
+    }
+
+    public async loadScene(loadOrderOrName: number | string): Promise<void> {
+        if (!this.scenes.has(loadOrderOrName)) {
+            throw new Error('Scene ' + loadOrderOrName + ' not found.');
+        }
+
+        this.endCurrentScene();
+
+        this.createEnginesAndAPIs();
+
+        const scene = this.scenes.get(loadOrderOrName);
+
+        await this.initializeScene(scene);
+
+        this.loadedScene = scene;
+        this.startGame();
+    }
+
+    private endCurrentScene(): void {
+        if (this.loadedScene === null) {
+            return;
+        }
+
+        if (this.gameLoopId !== null) {
+            cancelAnimationFrame(this.gameLoopId);
+            this.gameLoopId = null;
+        }
+
+        this.gameEngineAPIs.input.clearListeners();
+        this.tagMap.clear();
+        this.gameObjectMap.clear();
+        this.gameObjectNumMap.clear();
+        this.gameObjects.length = 0;
+        this.loadedScene = null;
+    }
+
+    private async initializeScene(scene: Scene): Promise<void> {
+        if (this.gameEngineAPIs === undefined || this.gameEngineAPIs === null) {
+            throw new Error('There was an error initializing the scene. The APIs object must be created before initialization.');
+        }
+
+        const terrainSpec = scene.terrainSpec;
+        let gameObjects: GameObject[] = [];
+
+        if (terrainSpec !== null) {
+            const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
+            const terrain = await terrianBuilder.buildTerrain(this.gameEngineAPIs, terrainSpec);
+            
+            gameObjects.push(terrain);
+
+            this.renderingEngine.terrain = terrain;
+            this.gameEngineAPIs.terrain = terrain;
+        }
+
+        gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this.gameEngineAPIs)];
+
+        this.setGameObjects(gameObjects);
+        this.renderingEngine.background = scene.getSkybox(this.gameCanvas);
+
+        this.gameInitialized = true;
+    }
+
+    private createEnginesAndAPIs(): void {
+        const time = new Time();
+        
+        const layerCollisionMatrix = new Map<Layer, Set<Layer>>();
+
+        const layers = Object.keys(Layer).filter(c => typeof Layer[c as any] === 'number').map(k => Number(Layer[k as any]));
+        
+        for (const layer of layers) {
+            layerCollisionMatrix.set(layer, new Set(layers));
+        }
+
+        layerCollisionMatrix.get(Layer.Terrain).delete(Layer.Terrain);
+
+        const collisionDetector = new SpatialHashCollisionDetector(this.gameCanvas.width, this.gameCanvas.height, layerCollisionMatrix, 100);
+        const collisionResolver = new ImpulseCollisionResolver();
+
+        this.physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver, time);
+
+        const renderGizmos = this.renderingEngine.renderGizmos;
+
+        this.renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
+        this.renderingEngine.renderGizmos = renderGizmos;
+        
+        this.gameEngineAPIs = {
+            input: new Input(this.gameCanvas),
+            objectManager: new ObjectManager(this),
+            terrain: null,
+            componentAnalyzer: new ComponentAnalyzer(this.physicsEngine, this.renderingEngine),
+            gameCanvas: this.gameCanvas,
+            sceneManager: new SceneManager(this),
+            time: time
+        };
     }
 
     private setGameObjects(gameObjects: GameObject[]): void {
@@ -171,74 +243,13 @@ export class GameEngine {
         }
     }
 
-    private endCurrentScene(): void {
-        if (this.loadedScene === null) {
-            return;
-        }
-
-        if (this.gameLoopId !== null) {
-            cancelAnimationFrame(this.gameLoopId);
-            this.gameLoopId = null;
-        }
-
-        this.apis.input.clearListeners();
-        this.tagMap.clear();
-        this.gameObjectMap.clear();
-        this.gameObjectNumMap.clear();
-        this.gameObjects.length = 0;
-        this.loadedScene = null;
-    }
-
-    private async initializeScene(scene: Scene): Promise<void> {
-        if (this.apis === undefined || this.apis === null) {
-            throw new Error('There was an error initializing the scene. The APIs object must be created before initialization.');
-        }
-
-        const terrainSpec = scene.terrainSpec;
-        let gameObjects: GameObject[] = [];
-
-        if (terrainSpec !== null) {
-            const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
-            const terrain = await terrianBuilder.buildTerrain(this.apis, terrainSpec);
-            
-            gameObjects.push(terrain);
-
-            this.renderingEngine.terrain = terrain;
-            this.apis.terrain = terrain;
-        }
-
-        gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this.apis)];
-
-        this.setGameObjects(gameObjects);
-        this.renderingEngine.background = scene.getSkybox(this.gameCanvas);
-
-        this.gameInitialized = true;
-    }
-
-    private createEnginesAndAPIs(): void {
-        this.physicsEngine = PhysicsEngine.buildPhysicsEngine(this.gameCanvas);
-
-        const renderGizmos = this.renderingEngine.renderGizmos;
-
-        this.renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
-        this.renderingEngine.renderGizmos = renderGizmos;
-        
-        this.apis = {
-            input: new Input(this.gameCanvas),
-            objectManager: new ObjectManager(this),
-            terrain: null,
-            componentAnalyzer: new ComponentAnalyzer(this.physicsEngine, this.renderingEngine),
-            gameCanvas: this.gameCanvas
-        };
-    }
-
     private startGame(): void {
 
         if(!this.gameInitialized) {
             throw new Error('The game is not initialized yet!');
         }
 
-        Time.start();
+        this.gameEngineAPIs.time.start();
         this.paused = false;
 
         this.gameObjects.forEach(go => {
@@ -263,7 +274,7 @@ export class GameEngine {
             return;
         }
 
-        Time.updateTime();
+        this.gameEngineAPIs.time.updateTime();
         this.physicsEngine.updatePhysics();
         
         for (const gameObject of this.gameObjects) {

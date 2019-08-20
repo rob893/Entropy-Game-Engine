@@ -15,10 +15,13 @@ export class ComputerMotor extends Motor {
     private midFieldY: number;
     private readonly collider: RectangleCollider;
     private readonly objectManager: ObjectManager;
+    private readonly time: Time;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, objectManager: ObjectManager) {
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, objectManager: ObjectManager, time: Time) {
         super(gameObject, gameCanvas);
+
+        this.time = time;
 
         this.objectManager = objectManager;
         this.collider = collider;
@@ -55,7 +58,7 @@ export class ComputerMotor extends Motor {
             }
         }
         else {
-            this.timer += Time.DeltaTime;
+            this.timer += this.time.deltaTime;
 
             if(this.timer > 0.15) {
                 if(this.collider.center.y < this.ballTransform.position.y - 10) {

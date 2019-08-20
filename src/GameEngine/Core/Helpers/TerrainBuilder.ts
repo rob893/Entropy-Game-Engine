@@ -3,7 +3,7 @@ import { NavGrid } from './NavGrid';
 import { Vector2 } from './Vector2';
 import { Terrain } from './Terrain';
 import { TerrainSpec } from '../Interfaces/TerrainSpec';
-import { APIs } from '../Interfaces/APIs';
+import { GameEngineAPIs } from '../Interfaces/GameEngineAPIs';
 
 export class TerrainBuilder {
 
@@ -21,7 +21,7 @@ export class TerrainBuilder {
         this.context = this.canvas.getContext('2d');
     }
 
-    public async buildTerrain(apis: APIs, terrainSpec: TerrainSpec): Promise<Terrain> {
+    public async buildTerrain(apis: GameEngineAPIs, terrainSpec: TerrainSpec): Promise<Terrain> {
 
         await this.using(terrainSpec.spriteSheetUrl);
 

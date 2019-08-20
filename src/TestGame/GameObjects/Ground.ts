@@ -5,11 +5,11 @@ import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer
 import { Component } from '../../GameEngine/Components/Component';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { APIs } from '../../GameEngine/Core/Interfaces/APIs';
+import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
 
 export class Ground extends GameObject {
 
-    protected buildInitialComponents(apis: APIs): Component[] {
+    protected buildInitialComponents(gameEngineAPIs: GameEngineAPIs): Component[] {
         return [new RectangleCollider(this, null, 20, 20), new RectangleRenderer(this, 20, 20, Color.Brown)];
     }
 

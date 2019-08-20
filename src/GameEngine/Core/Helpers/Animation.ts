@@ -75,12 +75,12 @@ export class Animation {
         return this.frames[this.frameIndex];
     }
 
-    public updateAnimation(): void {
+    public updateAnimation(deltaTime: number): void {
         if (!this.loop && this.frameIndex === this.frames.length - 1) {
             return;
         }
 
-        this.timer += Time.DeltaTime;
+        this.timer += deltaTime;
 
         if (this.timer < this.delay) {
             return;

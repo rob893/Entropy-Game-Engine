@@ -9,7 +9,7 @@ const main = async (): Promise<void> => {
     bodyElement.style.backgroundColor = Color.BlueGrey;
 
     const gameCanvas = document.getElementById('game-canvas') as HTMLCanvasElement;
-    const gameEngine = GameEngine.buildGameEngine(gameCanvas);
+    const gameEngine = new GameEngine(gameCanvas);
 
     //gameEngine.renderingEngine.renderGizmos = true;
 

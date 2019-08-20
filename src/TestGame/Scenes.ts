@@ -15,7 +15,7 @@ import { Borders } from './GameObjects/Borders';
 import { TrumpRB } from './GameObjects/TrumpRB';
 import { GameEngine } from '../GameEngine/Core/GameEngine';
 import { Layer } from '../GameEngine/Core/Enums/Layer';
-import { APIs } from '../GameEngine/Core/Interfaces/APIs';
+import { GameEngineAPIs } from '../GameEngine/Core/Interfaces/GameEngineAPIs';
 
 
 export const scene1: Scene = {
@@ -27,7 +27,7 @@ export const scene1: Scene = {
         return new RectangleBackground(gameCanvas, Color.Black);
     },
 
-    getStartingGameObjects(apis: APIs): GameObject[] {
+    getStartingGameObjects(apis: GameEngineAPIs): GameObject[] {
         return [
             new GameManagerObject(apis, 'gameManager'),
             new Trump(apis, 'trump'),
@@ -45,7 +45,7 @@ export const scene2: Scene = {
         return new ImageBackground(gameCanvas, Scene2Background);
     },
     
-    getStartingGameObjects(apis: APIs): GameObject[] {
+    getStartingGameObjects(apis: GameEngineAPIs): GameObject[] {
         return [
             new GameManagerObject(apis, 'gameManager'),
             new Player(apis, 'player')
@@ -62,7 +62,7 @@ export const scene3: Scene = {
         return new RectangleBackground(gameCanvas, Color.Black);
     },
     
-    getStartingGameObjects(apis: APIs): GameObject[] {
+    getStartingGameObjects(apis: GameEngineAPIs): GameObject[] {
         return [
             new GameManagerObject(apis, 'gameManager'),
             new PlayerRB(apis, 'player'),

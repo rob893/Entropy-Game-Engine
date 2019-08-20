@@ -3,7 +3,7 @@ import { Component } from '../Components/Component';
 import { GameEngine } from './GameEngine';
 import { Layer } from './Enums/Layer';
 import { PrefabSettings } from './Interfaces/PrefabSettings';
-import { APIs } from './Interfaces/APIs';
+import { GameEngineAPIs } from './Interfaces/GameEngineAPIs';
 import { ComponentAnalyzer } from './Helpers/ComponentAnalyzer';
 
 
@@ -20,9 +20,9 @@ export abstract class GameObject {
     private readonly componentAnalyzer: ComponentAnalyzer;
 
 
-    public constructor(apis: APIs, id?: string, x?: number, y?: number, rotation?: number, tag?: string, layer?: Layer) {
+    public constructor(gameEngineAPIs: GameEngineAPIs, id?: string, x?: number, y?: number, rotation?: number, tag?: string, layer?: Layer) {
         this.isEnabled = true;
-        this.componentAnalyzer = apis.componentAnalyzer;
+        this.componentAnalyzer = gameEngineAPIs.componentAnalyzer;
 
         const prefabSettings = this.getPrefabSettings();
         
@@ -32,11 +32,11 @@ export abstract class GameObject {
         this.tag = tag ? tag : prefabSettings.tag;
         this.layer = layer ? layer : prefabSettings.layer;
 
-        const initialComponents = this.buildInitialComponents(apis);
+        const initialComponents = this.buildInitialComponents(gameEngineAPIs);
         initialComponents.push(this.transform);
 
         this.setComponents(initialComponents);
-        this.buildChildGameObjects(apis);
+        this.buildChildGameObjects(gameEngineAPIs);
     }
 
     public get enabled(): boolean {
@@ -208,7 +208,7 @@ export abstract class GameObject {
      * 
      * @param gameEngine The game engine
      */
-    protected buildChildGameObjects(apis: APIs): void {}
+    protected buildChildGameObjects(gameEngineAPIs: GameEngineAPIs): void {}
 
     /**
      * Meant to be overridden by subclasses to define prefab settings. These settings are overridden by 
@@ -240,5 +240,5 @@ export abstract class GameObject {
         }
     }
 
-    protected abstract buildInitialComponents(apis: APIs): Component[];
+    protected abstract buildInitialComponents(gameEngineAPIs: GameEngineAPIs): Component[];
 }

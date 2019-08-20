@@ -9,25 +9,25 @@ import { NavTester } from '../Components/NavTester';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { APIs } from '../../GameEngine/Core/Interfaces/APIs';
+import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
 
 export class Trump extends GameObject {
 
-    protected buildInitialComponents(apis: APIs): Component[] {
+    protected buildInitialComponents(gameEngineAPIs: GameEngineAPIs): Component[] {
         const components: Component[] = [];
 
         const collider = new RectangleCollider(this, null, 60, 60, 0, -5);
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
 
-        const navAgent = new NavAgent(this, apis.terrain.navGrid);
+        const navAgent = new NavAgent(this, gameEngineAPIs.terrain.navGrid);
         components.push(navAgent);
 
         const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
-        const animator = new Animator(this, 75, 75, initialAnimation);
+        const animator = new Animator(this, 75, 75, initialAnimation, gameEngineAPIs.time);
         components.push(animator);
 
-        components.push(new NavTester(this, navAgent, animator, apis.input));
+        components.push(new NavTester(this, navAgent, animator, gameEngineAPIs.input));
 
         return components;
     }

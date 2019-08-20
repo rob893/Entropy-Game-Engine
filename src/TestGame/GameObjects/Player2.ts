@@ -6,11 +6,11 @@ import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
 import { Player2Motor } from '../Components/Player2Motor';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { APIs } from '../../GameEngine/Core/Interfaces/APIs';
+import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
 
 export class Player2 extends GameObject {
 
-    protected buildInitialComponents(apis: APIs): Component[] {
+    protected buildInitialComponents(gameEngineAPIs: GameEngineAPIs): Component[] {
         const components: Component[] = [];
         
         const collider = new RectangleCollider(this, null, 35, 35, 0, -5);
@@ -18,10 +18,10 @@ export class Player2 extends GameObject {
         components.push(collider);
         
         const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
-        const animator = new Animator(this, 75, 75, initialAnimation);
+        const animator = new Animator(this, 75, 75, initialAnimation, gameEngineAPIs.time);
         components.push(animator);
 
-        components.push(new Player2Motor(this, apis.gameCanvas, collider, animator, apis.input));
+        components.push(new Player2Motor(this, gameEngineAPIs.gameCanvas, collider, animator, gameEngineAPIs.input));
 
         return components;
     }
