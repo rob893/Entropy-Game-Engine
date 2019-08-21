@@ -6,6 +6,10 @@ import { Input } from '../../GameEngine/Core/Helpers/Input';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
 import { SceneManager } from '../../GameEngine/Core/Helpers/SceneManager';
+import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
+import { TrumpRB } from '../GameObjects/TrumpRB';
+import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
+import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 
 export class GameManager extends Component implements RenderableGUI {
 
@@ -17,18 +21,21 @@ export class GameManager extends Component implements RenderableGUI {
     private gameOver: boolean = false;
     private readonly time: Time;
     private readonly sceneManager: SceneManager;
+    private readonly objectManager: ObjectManager;
 
 
-    public constructor(gameObject: GameObject, input: Input, time: Time, sceneManager: SceneManager) {
+    public constructor(gameObject: GameObject, input: Input, time: Time, sceneManager: SceneManager, objectManager: ObjectManager) {
         super(gameObject);
 
         this.time = time;
         this.sceneManager = sceneManager;
+        this.objectManager = objectManager;
 
         input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await sceneManager.loadScene(1));
         input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await sceneManager.loadScene(2));
         input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await sceneManager.loadScene(3));
         input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
+        input.addKeyListener(EventType.KeyDown, KeyCode.I, () => this.testInstantiate());
     }
 
     public endGame(): void {
@@ -76,6 +83,10 @@ export class GameManager extends Component implements RenderableGUI {
     }
 
     private testInstantiate(): void {
-        //GameEngine.instance.instantiate(new Ball('ball2'));
+        const obj = this.objectManager.instantiate(TrumpRB);
+        if (obj.hasComponent(Rigidbody)) {
+            obj.getComponent(Rigidbody)
+                .addForce(new Vector2((Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500), (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500)));
+        }
     }
 }

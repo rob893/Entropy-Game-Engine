@@ -39,36 +39,22 @@ export class GameEngine {
         this.gameCanvas = gameCanvas;
     }
 
-    public instantiate<T extends GameObject>(type: new (...args: any[]) => T, position: Vector2 = Vector2.zero, rotation: number = 0, parent: Transform = null): GameObject {
+    public instantiate<T extends GameObject>(type: new (...args: any[]) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
         const newGameObject = new type(this.gameEngineAPIs);
         
-        newGameObject.transform.setPosition(position.x, position.y);
-        newGameObject.transform.rotation = rotation;
-        newGameObject.transform.parent = parent;
-        
-        if (this.gameObjectMap.has(newGameObject.id)) {
-            const originalId = newGameObject.id;
-            newGameObject.id += ' Clone(' + this.gameObjectNumMap.get(originalId) + ')';
-            this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
-        }
-        else {
-            this.gameObjectNumMap.set(newGameObject.id, 1);
-        }
-
-        if (this.tagMap.has(newGameObject.tag)) {
-            this.tagMap.get(newGameObject.tag).push(newGameObject);
-        }
-        else {
-            this.tagMap.set(newGameObject.tag, [newGameObject]);
+        if (position !== undefined) {
+            newGameObject.transform.setPosition(position.x, position.y);
         }
         
-        this.gameObjectMap.set(newGameObject.id, newGameObject);
-        this.gameObjects.push(newGameObject);
-        newGameObject.start();
-
-        for (const child of newGameObject.transform.children) {
-            this.instantiate(child.gameObject);
+        if (rotation !== undefined) {
+            newGameObject.transform.rotation = rotation;
         }
+        
+        if (parent !== undefined) {
+            newGameObject.transform.parent = parent;
+        }
+        
+        this.registerGameObject(newGameObject);
         
         return newGameObject;
     }
@@ -135,6 +121,32 @@ export class GameEngine {
 
         this.loadedScene = scene;
         this.startGame();
+    }
+
+    private registerGameObject(newGameObject: GameObject): void {
+        if (this.gameObjectMap.has(newGameObject.id)) {
+            const originalId = newGameObject.id;
+            newGameObject.id += ' Clone(' + this.gameObjectNumMap.get(originalId) + ')';
+            this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
+        }
+        else {
+            this.gameObjectNumMap.set(newGameObject.id, 1);
+        }
+
+        if (this.tagMap.has(newGameObject.tag)) {
+            this.tagMap.get(newGameObject.tag).push(newGameObject);
+        }
+        else {
+            this.tagMap.set(newGameObject.tag, [newGameObject]);
+        }
+        
+        this.gameObjectMap.set(newGameObject.id, newGameObject);
+        this.gameObjects.push(newGameObject);
+        newGameObject.start();
+
+        for (const child of newGameObject.transform.children) {
+            this.registerGameObject(child.gameObject);
+        }
     }
 
     private endCurrentScene(): void {

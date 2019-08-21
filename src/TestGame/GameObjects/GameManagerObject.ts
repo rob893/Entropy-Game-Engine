@@ -10,7 +10,7 @@ export class GameManagerObject extends GameObject {
     protected buildInitialComponents(gameEngineAPIs: GameEngineAPIs): Component[] {
         const gameManagerComponents: Component[] = [];
         
-        gameManagerComponents.push(new GameManager(this, gameEngineAPIs.input, gameEngineAPIs.time, gameEngineAPIs.sceneManager));
+        gameManagerComponents.push(new GameManager(this, gameEngineAPIs.input, gameEngineAPIs.time, gameEngineAPIs.sceneManager, gameEngineAPIs.objectManager));
         gameManagerComponents.push(new FPSCounter(this, gameEngineAPIs.time));
 
         return gameManagerComponents;

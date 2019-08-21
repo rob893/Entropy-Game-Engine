@@ -7,6 +7,8 @@ import { Animator } from '../../GameEngine/Components/Animator';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
+import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
+import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class TrumpRB extends GameObject {
 
@@ -25,5 +27,16 @@ export class TrumpRB extends GameObject {
         components.push(new Animator(this, 75, 75, initialAnimation, gameEngineAPIs.time));
 
         return components;
+    }
+
+    protected getPrefabSettings(): PrefabSettings {
+        return {
+            x: 400,
+            y: 250,
+            rotation: 0,
+            id: 'trumpRB',
+            tag: 'trumpRB',
+            layer: Layer.Default
+        };
     }
 }
