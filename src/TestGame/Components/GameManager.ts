@@ -1,8 +1,5 @@
 import { Component } from '../../GameEngine/Components/Component';
 import { GameObject } from '../../GameEngine/Core/GameObject';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
-import { Ball } from '../GameObjects/Ball';
-import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { RenderableGUI } from '../../GameEngine/Core/Interfaces/RenderableGUI';
 import { Time } from '../../GameEngine/Core/Time';
 import { Input } from '../../GameEngine/Core/Helpers/Input';
@@ -17,25 +14,27 @@ export class GameManager extends Component implements RenderableGUI {
     private messageColor: string = '';
     private messageTimer: number = 0;
     private messageLength: number = 0;
-    private readonly gameOver: boolean = false; //to get es lint to shut up
+    private gameOver: boolean = false;
     private readonly time: Time;
+    private readonly sceneManager: SceneManager;
 
 
     public constructor(gameObject: GameObject, input: Input, time: Time, sceneManager: SceneManager) {
         super(gameObject);
 
         this.time = time;
+        this.sceneManager = sceneManager;
 
         input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await sceneManager.loadScene(1));
         input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await sceneManager.loadScene(2));
         input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await sceneManager.loadScene(3));
-        //input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
+        input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
     }
 
-    // public endGame(): void {
-    //     this.togglePause();
-    //     this.gameOver = true;
-    // }
+    public endGame(): void {
+        this.togglePause();
+        this.gameOver = true;
+    }
 
     public showMessage(message: string, lengthInSeconds: number, color: string): void {
         this.sceneMessage = message;
@@ -68,13 +67,13 @@ export class GameManager extends Component implements RenderableGUI {
         }
     }
 
-    // private togglePause(): void {
-    //     this.gameEngine.togglePause();
-    // }
+    private togglePause(): void {
+        this.sceneManager.togglePause();
+    }
 
-    // private printGameData(): void {
-    //     this.gameEngine.printGameData();
-    // }
+    private printGameData(): void {
+        this.sceneManager.printGameData();
+    }
 
     private testInstantiate(): void {
         //GameEngine.instance.instantiate(new Ball('ball2'));

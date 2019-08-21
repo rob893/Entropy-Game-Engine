@@ -24,11 +24,7 @@ export class ObjectManager {
         return this.gameEngine.findGameObjectsWithTag(tag);
     }
 
-    public instantiate(newGameObject: GameObject, position: Vector2 = Vector2.zero, rotation: number = 0, parent: Transform = null): GameObject {
-        newGameObject.transform.setPosition(position.x, position.y);
-        newGameObject.transform.rotation = rotation;
-        newGameObject.transform.parent = parent;
-        
-        return this.gameEngine.instantiate(newGameObject);
+    public instantiate<T extends GameObject>(type: new (...args: any[]) => T, position: Vector2 = Vector2.zero, rotation: number = 0, parent: Transform = null): GameObject {
+        return this.gameEngine.instantiate(type, position, rotation, parent);
     }
 }

@@ -1,4 +1,4 @@
-import { GameEngine } from "../GameEngine";
+import { GameEngine } from '../GameEngine';
 
 export class SceneManager {
 
@@ -11,5 +11,13 @@ export class SceneManager {
 
     public async loadScene(loadOrderOrName: number | string): Promise<void> {
         await this.gameEngine.loadScene(loadOrderOrName);
+    }
+
+    public togglePause(): void {
+        this.gameEngine.togglePause();
+    }
+
+    public printGameData(): void {
+        this.gameEngine.printGameData();
     }
 }

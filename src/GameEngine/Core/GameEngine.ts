@@ -2,7 +2,6 @@ import { PhysicsEngine } from './PhysicsEngine';
 import { GameObject } from './GameObject';
 import { Time } from './Time';
 import { RenderingEngine } from './RenderingEngine';
-import { Terrain } from './Helpers/Terrain';
 import { TerrainBuilder } from './Helpers/TerrainBuilder';
 import { Scene } from './Interfaces/Scene';
 import { Input } from './Helpers/Input';
@@ -13,9 +12,14 @@ import { SceneManager } from './Helpers/SceneManager';
 import { Layer } from './Enums/Layer';
 import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDetector';
 import { ImpulseCollisionResolver } from './Physics/ImpulseCollisionResolver';
+import { Physics } from './Physics/Physics';
+import { Vector2 } from './Helpers/Vector2';
+import { Transform } from '../Components/Transform';
 
 export class GameEngine {
 
+    public developmentMode: boolean = true;
+    
     private physicsEngine: PhysicsEngine;
     private renderingEngine: RenderingEngine;
     private loadedScene: Scene = null;
@@ -35,7 +39,13 @@ export class GameEngine {
         this.gameCanvas = gameCanvas;
     }
 
-    public instantiate(newGameObject: GameObject): GameObject {
+    public instantiate<T extends GameObject>(type: new (...args: any[]) => T, position: Vector2 = Vector2.zero, rotation: number = 0, parent: Transform = null): GameObject {
+        const newGameObject = new type(this.gameEngineAPIs);
+        
+        newGameObject.transform.setPosition(position.x, position.y);
+        newGameObject.transform.rotation = rotation;
+        newGameObject.transform.parent = parent;
+        
         if (this.gameObjectMap.has(newGameObject.id)) {
             const originalId = newGameObject.id;
             newGameObject.id += ' Clone(' + this.gameObjectNumMap.get(originalId) + ')';
@@ -138,6 +148,7 @@ export class GameEngine {
         }
 
         this.gameEngineAPIs.input.clearListeners();
+        this.gameEngineAPIs = null;
         this.tagMap.clear();
         this.gameObjectMap.clear();
         this.gameObjectNumMap.clear();
@@ -189,10 +200,8 @@ export class GameEngine {
 
         this.physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver, time);
 
-        const renderGizmos = this.renderingEngine.renderGizmos;
-
         this.renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
-        this.renderingEngine.renderGizmos = renderGizmos;
+        this.renderingEngine.renderGizmos = this.developmentMode;
         
         this.gameEngineAPIs = {
             input: new Input(this.gameCanvas),
@@ -201,7 +210,8 @@ export class GameEngine {
             componentAnalyzer: new ComponentAnalyzer(this.physicsEngine, this.renderingEngine),
             gameCanvas: this.gameCanvas,
             sceneManager: new SceneManager(this),
-            time: time
+            time: time,
+            physics: new Physics(this.physicsEngine)
         };
     }
 

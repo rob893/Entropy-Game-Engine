@@ -4,6 +4,7 @@ import { Terrain } from '../Helpers/Terrain';
 import { ComponentAnalyzer } from '../Helpers/ComponentAnalyzer';
 import { SceneManager } from '../Helpers/SceneManager';
 import { Time } from '../Time';
+import { Physics } from '../Physics/Physics';
 
 export interface GameEngineAPIs {
     input: Input;
@@ -13,4 +14,5 @@ export interface GameEngineAPIs {
     gameCanvas: HTMLCanvasElement;
     sceneManager: SceneManager;
     time: Time;
+    physics: Physics;
 }

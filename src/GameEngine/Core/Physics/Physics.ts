@@ -1,13 +1,20 @@
 import { Vector2 } from '../Helpers/Vector2';
 import { RectangleCollider } from '../../Components/RectangleCollider';
 import { Geometry } from '../Helpers/Geometry';
-import { GameEngine } from '../GameEngine';
+import { PhysicsEngine } from '../PhysicsEngine';
 
-export abstract class Physics {
+export class Physics {
     
-    public static raycast(origin: Vector2, direction: Vector2, distance: number): RectangleCollider | null {
+    private readonly physicsEngine: PhysicsEngine;
+
+
+    public constructor(physicsEngine: PhysicsEngine) {
+        this.physicsEngine = physicsEngine;
+    }
+
+    public raycast(origin: Vector2, direction: Vector2, distance: number): RectangleCollider | null {
         let result: RectangleCollider = null;
-        const hitColliders = Physics.raycastAll(origin, direction, distance);
+        const hitColliders = this.raycastAll(origin, direction, distance);
         let closestColliderDistance = -10;
 
         for (const collider of hitColliders) {
@@ -22,22 +29,22 @@ export abstract class Physics {
         return result;
     }
 
-    public static raycastAll(origin: Vector2, direction: Vector2, distance: number): RectangleCollider[] {
+    public raycastAll(origin: Vector2, direction: Vector2, distance: number): RectangleCollider[] {
         const results: RectangleCollider[] = [];
         const terminalPoint = Vector2.add(origin, direction.multiplyScalar(distance));
 
-        // for (const collider of GameEngine.instance.physicsEngine.colliders) {
-        //     if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
-        //         results.push(collider);
-        //     }
-        // }
+        for (const collider of this.physicsEngine.colliders) {
+            if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
+                results.push(collider);
+            }
+        }
 
         return results;
     }
 
-    public static sphereCast(): void {}
+    public sphereCast(): void {}
 
-    public static overlapSphere(): RectangleCollider[] { 
+    public overlapSphere(): RectangleCollider[] { 
         return [];
     }
 }
