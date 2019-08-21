@@ -39,7 +39,7 @@ export class GameEngine {
         this.gameCanvas = gameCanvas;
     }
 
-    public instantiate<T extends GameObject>(type: new (...args: any[]) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
+    public instantiate<T extends GameObject>(type: new (gameEngineAPIs: GameEngineAPIs) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
         const newGameObject = new type(this.gameEngineAPIs);
         
         if (position !== undefined) {
