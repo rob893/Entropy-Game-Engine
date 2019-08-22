@@ -33,9 +33,10 @@ export class PlayerRB extends GameObject {
         return components;
     }
 
-    protected buildChildGameObjects(gameEngineAPIs: GameEngineAPIs): void {
+    protected buildAndReturnChildGameObjects(gameEngineAPIs: GameEngineAPIs): GameObject[] {
         const weapon = new Weapon(gameEngineAPIs, 'weapon');
-        weapon.transform.parent = this.transform;
+        
+        return [weapon];
     }
 
     protected getPrefabSettings(): PrefabSettings {

@@ -36,7 +36,12 @@ export abstract class GameObject {
         initialComponents.push(this.transform);
 
         this.setComponents(initialComponents);
-        this.buildChildGameObjects(gameEngineAPIs);
+
+        const childGameObjects = this.buildAndReturnChildGameObjects(gameEngineAPIs);
+
+        for (const child of childGameObjects) {
+            child.transform.parent = this.transform;
+        }
     }
 
     public get enabled(): boolean {
@@ -208,7 +213,7 @@ export abstract class GameObject {
      * 
      * @param gameEngine The game engine
      */
-    protected buildChildGameObjects(gameEngineAPIs: GameEngineAPIs): void {}
+    protected buildAndReturnChildGameObjects(gameEngineAPIs: GameEngineAPIs): GameObject[] { return [] }
 
     /**
      * Meant to be overridden by subclasses to define prefab settings. These settings are overridden by 
