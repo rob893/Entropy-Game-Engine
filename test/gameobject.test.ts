@@ -28,7 +28,7 @@ const mockApis: GameEngineAPIs = {
     sceneManager: null,
     time: null,
     physics: null
-}
+};
 
 class TestComponent extends Component {}
 
@@ -107,9 +107,17 @@ test('Tests nesting of game objects', () => {
     expect(testGameObject2.transform.children[0].parent).toBe(testGameObject2.transform);
 });
 
-test('Tests various GameObject function', () => {
+test('Tests various GameObject functions', () => {
     expect(testGameObject.hasComponent(TestComponent)).toBe(true);
     expect(testGameObject.hasComponent(Rigidbody)).toBe(false);
     expect(testGameObject.getComponent(TestComponent)).toBeInstanceOf(TestComponent);
     expect(testGameObject.getComponent(Rigidbody)).toBe(null);
+
+    expect(testGameObject2.getComponentInChildren(TestComponent)).toBeInstanceOf(TestComponent);
+    expect(testGameObject2.getComponentInChildren(TestComponent2)).toBe(null);
+
+    const childGameObject = testGameObject2.transform.children[0].gameObject;
+
+    expect(childGameObject.getComponentInParent(TestComponent2)).toBeInstanceOf(TestComponent2);
+    expect(childGameObject.getComponentInParent(TestComponent2)).toBe(testGameObject2.getComponent(TestComponent2));
 });

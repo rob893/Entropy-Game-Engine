@@ -213,7 +213,7 @@ export abstract class GameObject {
      * 
      * @param gameEngine The game engine
      */
-    protected buildAndReturnChildGameObjects(gameEngineAPIs: GameEngineAPIs): GameObject[] { return [] }
+    protected buildAndReturnChildGameObjects(gameEngineAPIs: GameEngineAPIs): GameObject[] { return []; }
 
     /**
      * Meant to be overridden by subclasses to define prefab settings. These settings are overridden by 

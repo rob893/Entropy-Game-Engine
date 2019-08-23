@@ -10,6 +10,7 @@ export class Transform extends Component {
     public rotation: number;
     //Position is the top left of the agent with width growing right and height growing down.
     public readonly position: Vector2;
+    public readonly localPosition: Vector2;
     public readonly scale: Vector2;
 
     private _parent: Transform = null;
@@ -19,7 +20,9 @@ export class Transform extends Component {
     
     public constructor(gameObject: GameObject, x: number, y: number, rotation: number = 0, parent: Transform = null) {
         super(gameObject);
+
         this.position = new Vector2(x, y);
+        this.localPosition = Vector2.zero;
         this.rotation = rotation;
         this.parent = parent;
         this.scale = Vector2.one;
@@ -42,6 +45,13 @@ export class Transform extends Component {
         if (newParent !== null) {
             newParent._children.push(this);
             newParent.onMoved.add(this.updatePositionBasedOnParent);
+
+            this.localPosition.x = this.position.x - newParent.position.x;
+            this.localPosition.y = this.position.y - newParent.position.y;
+        }
+        else {
+            this.localPosition.x = 0;
+            this.localPosition.y = 0;
         }
 
         this._parent = newParent;
@@ -85,6 +95,6 @@ export class Transform extends Component {
     }
 
     private readonly updatePositionBasedOnParent = (): void => {
-        this.setPosition(this._parent.position.x, this._parent.position.y);
+        this.setPosition(this._parent.position.x + this.localPosition.x, this._parent.position.y + this.localPosition.y);
     }
 }
