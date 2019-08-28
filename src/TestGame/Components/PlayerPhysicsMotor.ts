@@ -10,6 +10,8 @@ import { Input } from '../../GameEngine/Core/Helpers/Input';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { Component } from '../../GameEngine/Components/Component';
 import { Transform } from '../../GameEngine/Components/Transform';
+import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
+import { ThrowableBall } from '../GameObjects/ThrowableBall';
 
 
 export class PlayerPhysicsMotor extends Component {
@@ -21,24 +23,27 @@ export class PlayerPhysicsMotor extends Component {
     private readonly speed: number;
     private readonly animator: Animator;
     private readonly rb: Rigidbody;
-    private weapon: Transform;
+    //private ball: Transform;
     private readonly runRightAnimation: Animation;
     private readonly runLeftAnimation: Animation;
     private readonly runUpAnimation: Animation;
     private readonly runDownAnimation: Animation;
     private readonly idleAnimation: Animation;
     private readonly input: Input;
+    private readonly objectManager: ObjectManager;
 
 
-    public constructor(gameObject: GameObject, rb: Rigidbody, animator: Animator, input: Input) {
+    public constructor(gameObject: GameObject, rb: Rigidbody, animator: Animator, input: Input, objectManager: ObjectManager) {
         super(gameObject);
 
         this.rb = rb;
         this.animator = animator;
         this.input = input;
+        this.objectManager = objectManager;
 
         this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space, KeyCode.Backspace], (event) => this.onKeyDown(event));
         this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
+        this.input.addMouseListener(EventType.MouseDown, 0, () => this.throwBall());
 
         this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, 2);
         this.runLeftAnimation = new Animation(TrumpRun, 6, 4, 0.075, 4);
@@ -52,7 +57,7 @@ export class PlayerPhysicsMotor extends Component {
     public start(): void {
         super.start();
 
-        this.weapon = this.gameObject.getComponentInChildren(Transform);
+        //this.ball = this.gameObject.getComponentInChildren(Transform);
     }
 
     public update(): void {
@@ -70,7 +75,14 @@ export class PlayerPhysicsMotor extends Component {
             this.rb.addForce(Vector2.down.multiplyScalar(this.speed));
         }
 
-        this.transform.lookAt(this.input.canvasMousePosition);
+        //this.transform.lookAt(this.input.canvasMousePosition);
+    }
+
+    private throwBall(): void {
+        const ball = this.objectManager.instantiate(ThrowableBall, new Vector2(this.transform.position.x, this.transform.position.y - 30));
+        const rb = ball.getComponent(Rigidbody);
+
+        rb.addForce(Vector2.direction(this.transform.position, this.input.canvasMousePosition).multiplyScalar(800));
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -101,7 +113,7 @@ export class PlayerPhysicsMotor extends Component {
         }
 
         if (event.keyCode === KeyCode.Backspace) {
-            this.weapon.parent = this.weapon.parent === null ? this.transform : null;
+            //this.ball.parent = this.ball.parent === null ? this.transform : null;
             //this.rb.isKinomatic = !this.rb.isKinomatic;
         }
     }

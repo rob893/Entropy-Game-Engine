@@ -11,6 +11,7 @@ import { Weapon } from './Weapon';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
+import { ThrowableBall } from './ThrowableBall';
 
 export class PlayerRB extends GameObject {
 
@@ -28,15 +29,18 @@ export class PlayerRB extends GameObject {
         const animator = new Animator(this, 75, 75, initialAnimation, gameEngineAPIs.time);
         components.push(animator);
 
-        components.push(new PlayerPhysicsMotor(this, rb, animator, gameEngineAPIs.input));
+        components.push(new PlayerPhysicsMotor(this, rb, animator, gameEngineAPIs.input, gameEngineAPIs.objectManager));
 
         return components;
     }
 
     protected buildAndReturnChildGameObjects(gameEngineAPIs: GameEngineAPIs): GameObject[] {
-        const weapon = new Weapon(gameEngineAPIs, 'weapon');
+        // const ball = new ThrowableBall(gameEngineAPIs, 'ball');
         
-        return [weapon];
+        // ball.transform.setPosition(this.transform.position.x, this.transform.position.y - 20);
+
+        // return [ball];
+        return [];
     }
 
     protected getPrefabSettings(): PrefabSettings {
