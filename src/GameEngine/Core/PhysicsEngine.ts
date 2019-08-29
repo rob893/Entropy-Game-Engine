@@ -49,6 +49,7 @@ export class PhysicsEngine {
 
         rb.becameKinomatic.add(this.removeKinomaticRigidbody);
         rb.becameNonKinomatic.add(this.addNonKinomaticRigidbody);
+        rb.onDestroyed.add(this.removeKinomaticRigidbody);
     }
 
     public addCollider(collider: RectangleCollider): void {

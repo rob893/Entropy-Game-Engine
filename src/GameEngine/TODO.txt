@@ -10,3 +10,4 @@
 - Continue to move to DI for component dependencies for other components on the game object (dependencies on other game objects (including parent and children) are
     still obtained through the use of start and find/getComponent. This is intentional)
 - Abstract APIs (Input, Physics, SceneManager, etc) into the GameEngine to make them services and have them injected into components.
+- Finish destroy logic (using callbacks to remove objects from things like the physics engine and stuff)

@@ -15,6 +15,7 @@ import { ImpulseCollisionResolver } from './Physics/ImpulseCollisionResolver';
 import { Physics } from './Physics/Physics';
 import { Vector2 } from './Helpers/Vector2';
 import { Transform } from '../Components/Transform';
+import { Component } from '../Components/Component';
 
 export class GameEngine {
 
@@ -57,6 +58,33 @@ export class GameEngine {
         this.registerGameObject(newGameObject);
         
         return newGameObject;
+    }
+
+    public destroy(object: GameObject, time: number = 0): void {
+        setTimeout(() => {
+            if (!this.gameObjectMap.has(object.id)) {
+                console.error(`GameObject with id of ${object.id} not found!`);
+                return;
+            }
+
+            this.gameObjectMap.delete(object.id);
+
+            const index = this.gameObjects.indexOf(object);
+
+            if (index !== -1) {
+                this.gameObjects.splice(index, 1);
+            }
+
+            const tagIndex = this.tagMap.get(object.tag).indexOf(object);
+
+            if (tagIndex !== -1) {
+                this.tagMap.get(object.tag).splice(tagIndex, 1);
+            }
+
+            object.onDestroy();
+            console.log(`destroying ${object.id}`);
+            
+        }, 1000 * time);
     }
 
     public findGameObjectById(id: string): GameObject {

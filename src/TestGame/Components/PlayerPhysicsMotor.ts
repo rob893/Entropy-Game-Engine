@@ -83,6 +83,8 @@ export class PlayerPhysicsMotor extends Component {
         const rb = ball.getComponent(Rigidbody);
 
         rb.addForce(Vector2.direction(this.transform.position, this.input.canvasMousePosition).multiplyScalar(800));
+
+        this.objectManager.destroy(ball, 5);
     }
 
     private onKeyDown(event: KeyboardEvent): void {

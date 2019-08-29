@@ -82,7 +82,7 @@ export abstract class GameObject {
      */
     public removeComponentFromUpdate(component: Component): void {
         if (!this.componentMap.has(component.constructor.name)) {
-            throw new Error('This game object does not have a component of type ' + component.constructor.name);
+            throw new Error(`This game object does not have a component of type ${component.constructor.name}`);
         }
 
         if (!this.updatableComponents.includes(component)) {
@@ -200,12 +200,20 @@ export abstract class GameObject {
 
     public removeComponent(component: Component): void {
         if (!this.componentMap.has(component.constructor.name)) {
-            throw new Error('This object does not have a ' + component.constructor.name + ' component!');
+            throw new Error(`This object does not have a ${component.constructor.name} component!`);
         }
 
         this.updatableComponents.splice(this.updatableComponents.indexOf(component), 1);
         this.componentMap.delete(component.constructor.name);
         component.onDestroy();
+    }
+
+    public onDestroy(): void {
+        for (const componentType of this.componentMap.values()) {
+            for (const component of componentType) {
+                component.onDestroy();
+            }
+        }
     }
 
     /**

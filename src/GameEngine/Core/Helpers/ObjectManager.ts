@@ -28,4 +28,8 @@ export class ObjectManager {
     public instantiate<T extends GameObject>(type: new (gameEngineAPIs: GameEngineAPIs) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
         return this.gameEngine.instantiate(type, position, rotation, parent);
     }
+
+    public destroy(object: GameObject, time: number = 0): void {
+        this.gameEngine.destroy(object, time);
+    }
 }
