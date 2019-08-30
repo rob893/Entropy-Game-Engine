@@ -7,5 +7,6 @@ export interface CollisionDetector {
     readonly colliders: RectangleCollider[];
     detectCollisions(): void;
     addCollider(collider: RectangleCollider): void;
+    removeCollider(collider: RectangleCollider): void;
     addColliders(colliders: RectangleCollider[]): void;
 }

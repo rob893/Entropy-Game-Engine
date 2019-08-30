@@ -76,6 +76,22 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         colliders.forEach(c => this.addCollider(c));
     }
 
+    public removeCollider(collider: RectangleCollider): void {
+        const index = this._colliders.indexOf(collider);
+
+        if (index !== -1) {
+            this._colliders.splice(index, 1);
+
+            const keys = this.colliderSpacialMapKeys.get(collider);
+
+            for (const key of keys) {
+                this.spatialMap.get(key).delete(collider);
+            }
+
+            this.colliderSpacialMapKeys.delete(collider);
+        }
+    }
+
     private getMapKey(position: Vector2): string;
     private getMapKey(x: number, y: number): string;
 

@@ -1,11 +1,14 @@
 import { GameObject } from '../Core/GameObject';
 import { Transform } from './Transform';
+import { LiteEvent } from '../Core/Helpers/LiteEvent';
+import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 
 export abstract class Component {
 
     public readonly gameObject: GameObject;
 
     private isEnabled: boolean;
+    private readonly _onDestroyed = new LiteEvent<Component>();
 
 
     public constructor(gameObject: GameObject, enabled: boolean = true) {
@@ -48,6 +51,10 @@ export abstract class Component {
         return this.gameObject.transform;
     }
 
+    public get onDestroyed(): CustomLiteEvent<Component> {
+        return this._onDestroyed.expose();
+    }
+
     public onEnabled(): void {}
 
     public start(): void {}
@@ -62,5 +69,7 @@ export abstract class Component {
 
     public onDisable(): void {}
 
-    public onDestroy(): void {}
+    public onDestroy(): void {
+        this._onDestroyed.trigger(this);
+    }
 }

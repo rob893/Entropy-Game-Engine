@@ -45,6 +45,14 @@ export class SimpleCollisionDetector implements CollisionDetector {
         colliders.forEach(c => this.addCollider(c));
     }
 
+    public removeCollider(collider: RectangleCollider): void {
+        const index = this._colliders.indexOf(collider);
+
+        if (index !== -1) {
+            this._colliders.splice(index, 1);
+        }
+    }
+
     private buildCollisionManifold(colliderA: RectangleCollider, colliderB: RectangleCollider): CollisionManifold {
         const xAxis = Math.abs(colliderA.center.x - colliderB.center.x);
         const yAxis = Math.abs(colliderA.center.y - colliderB.center.y);

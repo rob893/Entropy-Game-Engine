@@ -54,6 +54,7 @@ export class PhysicsEngine {
 
     public addCollider(collider: RectangleCollider): void {
         this.collisionDetector.addCollider(collider);
+        collider.onDestroyed.add(this.removeColliderFromDetector);
     }
 
     private resolveCollisions(collisionManifold: CollisionManifold): void {
@@ -65,8 +66,14 @@ export class PhysicsEngine {
     }
 
     private readonly removeKinomaticRigidbody = (rb: Rigidbody): void => {
-        if (this.rigidbodies.includes(rb)) {
-            this.rigidbodies.splice(this.rigidbodies.indexOf(rb), 1);
+        const index = this.rigidbodies.indexOf(rb);
+
+        if (index !== -1) {
+            this.rigidbodies.splice(index, 1);
         }
+    }
+
+    private readonly removeColliderFromDetector = (collider: RectangleCollider): void => {
+        this.collisionDetector.removeCollider(collider);
     }
 }

@@ -82,8 +82,6 @@ export class GameEngine {
             }
 
             object.onDestroy();
-            console.log(`destroying ${object.id}`);
-            
         }, 1000 * time);
     }
 

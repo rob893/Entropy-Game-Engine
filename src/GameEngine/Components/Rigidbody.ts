@@ -19,7 +19,6 @@ export class Rigidbody extends Component {
     private readonly forces: Vector2[] = [];
     private readonly _becameKinomatic = new LiteEvent<Rigidbody>();
     private readonly _becameNonKinomatic = new LiteEvent<Rigidbody>();
-    private readonly _onDestroyed = new LiteEvent<Rigidbody>();
 
 
     public constructor(gameObject: GameObject, mass: number = 70, isKinomatic: boolean = false) {
@@ -75,10 +74,6 @@ export class Rigidbody extends Component {
         return this._becameNonKinomatic.expose();
     }
 
-    public get onDestroyed(): CustomLiteEvent<Rigidbody> {
-        return this._onDestroyed.expose();
-    }
-
     public updatePhysics(): void {
         this.forces.forEach(force => this.velocity.add(force.divideScalar(this.mass)));
         this.forces.length = 0;
@@ -88,9 +83,5 @@ export class Rigidbody extends Component {
 
     public addForce(force: Vector2): void {
         this.forces.push(force);
-    }
-
-    public onDestroy(): void {
-        this._onDestroyed.trigger(this);
     }
 }

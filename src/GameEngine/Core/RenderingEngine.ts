@@ -3,6 +3,7 @@ import { RenderableGizmo } from './Interfaces/RenderableGizmo';
 import { RenderableGUI } from './Interfaces/RenderableGUI';
 import { RenderableBackground } from './Interfaces/RenderableBackground';
 import { Terrain } from './Helpers/Terrain';
+import { Component } from '../Components/Component';
 
 
 export class RenderingEngine {
@@ -40,14 +41,44 @@ export class RenderingEngine {
 
     public addRenderableObject(object: Renderable): void {
         this.renderableObjects.push(object);
+
+        if (object instanceof Component) {
+            object.onDestroyed.add(() => {
+                const index = this.renderableObjects.indexOf(object);
+
+                if (index !== -1) {
+                    this.renderableObjects.splice(index, 1);
+                }
+            });
+        }
     }
 
     public addRenderableGizmo(gizmo: RenderableGizmo): void {
         this.renderableGizmos.push(gizmo);
+
+        if (gizmo instanceof Component) {
+            gizmo.onDestroyed.add(() => {
+                const index = this.renderableGizmos.indexOf(gizmo);
+
+                if (index !== -1) {
+                    this.renderableGizmos.splice(index, 1);
+                }
+            });
+        }
     }
 
     public addRenderableGUIElement(guiElement: RenderableGUI): void {
         this.renderableGUIElements.push(guiElement);
+
+        if (guiElement instanceof Component) {
+            guiElement.onDestroyed.add(() => {
+                const index = this.renderableGUIElements.indexOf(guiElement);
+
+                if (index !== -1) {
+                    this.renderableGUIElements.splice(index, 1);
+                }
+            });
+        }
     }
 
     public renderScene(): void {
