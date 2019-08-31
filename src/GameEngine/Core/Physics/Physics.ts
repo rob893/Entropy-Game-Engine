@@ -44,7 +44,15 @@ export class Physics {
 
     public sphereCast(): void {}
 
-    public overlapSphere(): RectangleCollider[] { 
-        return [];
+    public overlapSphere(position: Vector2, radius: number): RectangleCollider[] {
+        const colliders: RectangleCollider[] = [];
+        
+        for (const collider of this.physicsEngine.colliders) {
+            if (Vector2.distance(position, collider.transform.position) <= radius) {
+                colliders.push(collider);
+            }
+        }
+
+        return colliders;
     }
 }

@@ -81,6 +81,11 @@ export class GameEngine {
                 this.tagMap.get(object.tag).splice(tagIndex, 1);
             }
 
+            if (this.gameObjectNumMap.has(object.id)) {
+                const numGameObjects = this.gameObjectNumMap.get(object.id) - 1;
+                numGameObjects > 0 ? this.gameObjectNumMap.set(object.id, numGameObjects) : this.gameObjectNumMap.delete(object.id);
+            }
+
             object.onDestroy();
         }, 1000 * time);
     }
@@ -150,6 +155,10 @@ export class GameEngine {
     }
 
     private registerGameObject(newGameObject: GameObject): void {
+        if (newGameObject.id === '') {
+            newGameObject.id = this.generateUniqueId();
+        }
+        
         if (this.gameObjectMap.has(newGameObject.id)) {
             const originalId = newGameObject.id;
             newGameObject.id += ' Clone(' + this.gameObjectNumMap.get(originalId) + ')';
@@ -289,6 +298,10 @@ export class GameEngine {
                 }
             }
         }
+    }
+
+    private generateUniqueId(): string {
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
 
     private startGame(): void {

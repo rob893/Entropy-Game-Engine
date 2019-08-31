@@ -5,19 +5,27 @@ export class Animation {
     public loop: boolean = true;
     public animationReady: boolean = false;
     
-    private readonly frames: HTMLImageElement[] = [];
     private frameIndex: number = 0;
-    private readonly delay: number = 0;
     private timer: number = 0;
+    private readonly frames: HTMLImageElement[] = [];
+    private readonly timeBetweenFrames: number = 0;
     
-
-    public constructor(spriteSheetUrl: string, numFrames: number, numRows: number, delay: number = 0, rowsToAnimate: number[] | number = null, trimEdgesBy: number = 0) {        
-        this.delay = delay;
+    /**
+     * @param spriteSheetUrl The location of the sprite sheet (import it as a variable and then use that)
+     * @param framesPerRow Number of frames per row (if the sprite sheet is 5 by 5 (5 rows with 5 frames per row), then this should be 5)
+     * @param numRows Number of rows the sprite sheet has.
+     * @param timeBetweenFrames Time (in seconds) between each frame
+     * @param rowsToAnimate The specific row(s) to animate. For example, the sprite sheet contains 5 rows of sprites but only the second row should be animated, pass in 2. 
+     * @param trimEdgesBy How many pixals to trim the sprite sheet down by. This is applied to each side.
+     */
+    public constructor(spriteSheetUrl: string, framesPerRow: number, numRows: number, timeBetweenFrames: number = 0, rowsToAnimate: number[] | number = null, trimEdgesBy: number = 0) {        
+        this.timeBetweenFrames = timeBetweenFrames;
+        this.timer = timeBetweenFrames;
 
         const spriteSheet = new Image();
         spriteSheet.src = spriteSheetUrl;
         spriteSheet.onload = () => {
-            const spriteWidth = spriteSheet.width / numFrames;
+            const spriteWidth = spriteSheet.width / framesPerRow;
             const spriteHeight = spriteSheet.height / numRows;
 
             if (typeof rowsToAnimate === 'number') {
@@ -30,7 +38,7 @@ export class Animation {
                         throw new Error('Invalid specificRow argument. It must be greater than 0 and less than or equal to numRows.');
                     }
 
-                    for (let i = 0; i < numFrames; i++) {
+                    for (let i = 0; i < framesPerRow; i++) {
                         this.animationReady = false;
                         const canvas = document.createElement('canvas');
                         
@@ -50,7 +58,7 @@ export class Animation {
             }
             else {
                 for (let i = 0; i < numRows; i++) {
-                    for (let j = 0; j < numFrames; j++) {
+                    for (let j = 0; j < framesPerRow; j++) {
                         this.animationReady = false;
                         const canvas = document.createElement('canvas');
                         
@@ -82,7 +90,7 @@ export class Animation {
 
         this.timer += deltaTime;
 
-        if (this.timer < this.delay) {
+        if (this.timer < this.timeBetweenFrames) {
             return;
         }
 

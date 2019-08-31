@@ -12,6 +12,7 @@ import { Component } from '../../GameEngine/Components/Component';
 import { Transform } from '../../GameEngine/Components/Transform';
 import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
 import { ThrowableBall } from '../GameObjects/ThrowableBall';
+import { Explosion } from '../GameObjects/Explosion';
 
 
 export class PlayerPhysicsMotor extends Component {
@@ -84,7 +85,10 @@ export class PlayerPhysicsMotor extends Component {
 
         rb.addForce(Vector2.direction(this.transform.position, this.input.canvasMousePosition).multiplyScalar(800));
 
-        this.objectManager.destroy(ball, 5);
+        setTimeout(() => {
+            this.objectManager.instantiate(Explosion, ball.transform.position);
+            this.objectManager.destroy(ball);
+        }, 5000);
     }
 
     private onKeyDown(event: KeyboardEvent): void {
