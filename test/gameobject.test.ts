@@ -27,7 +27,8 @@ const mockApis: GameEngineAPIs = {
     gameCanvas: null,
     sceneManager: null,
     time: null,
-    physics: null
+    physics: null,
+    assetPool: null
 };
 
 class TestComponent extends Component {}
