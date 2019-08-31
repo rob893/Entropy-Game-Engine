@@ -49,7 +49,7 @@ export class TrumpMotor extends Motor {
     }
 
     public start(): void {
-        this.audioSource.setClip(YouSuckSound);
+        //this.audioSource.setClip(YouSuckSound);
         this.player = this.objectManager.findGameObjectById('player');
         this.playerTransform = this.player.transform;
         this.playerHealth = this.player.getComponent(PlayerHealth);

@@ -17,7 +17,6 @@ export class TrumpRB extends GameObject {
         const components: Component[] = [];
 
         const rb = new Rigidbody(this);
-        //rb.addForce(new Vector2(Math.random(), Math.random()).multiplyScalar(1000));
         components.push(rb);
 
         const collider = new RectangleCollider(this, rb, 60, 60, 0, -5);

@@ -13,6 +13,9 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
 import { ThrowableBall } from './ThrowableBall';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
+import { AudioSource } from '../../GameEngine/Components/AudioSource';
+import { AudioClip } from '../../GameEngine/Core/Helpers/AudioClip';
+import { PlayerHealth } from '../Components/PlayerHealth';
 
 export class PlayerRB extends GameObject {
 
@@ -31,6 +34,11 @@ export class PlayerRB extends GameObject {
         const initialAnimation = new Animation(trumpIdleFrames, 0.1);
         const animator = new Animator(this, 75, 75, initialAnimation, gameEngineAPIs.time);
         components.push(animator);
+
+        const audioSource = new AudioSource(this, gameEngineAPIs.assetPool.getAsset<AudioClip>('hurtSound'));
+        components.push(audioSource);
+
+        components.push(new PlayerHealth(this, gameEngineAPIs.objectManager, audioSource));
 
         components.push(new PlayerPhysicsMotor(this, rb, animator, gameEngineAPIs.input, gameEngineAPIs.objectManager, gameEngineAPIs.assetPool));
 

@@ -3,6 +3,7 @@ import { Damageable } from '../Interfaces/Damageable';
 import { GameObject } from '../../GameEngine/Core/GameObject';
 import { GameManager } from './GameManager';
 import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
+import { AudioSource } from '../../GameEngine/Components/AudioSource';
 
 export class PlayerHealth extends Component implements Damageable {
 
@@ -10,14 +11,16 @@ export class PlayerHealth extends Component implements Damageable {
     private _isDead: boolean;
     private gameManager: GameManager;
     private readonly objectManager: ObjectManager;
+    private readonly audioSource: AudioSource;
     
 
-    public constructor(gameObject: GameObject, objectManager: ObjectManager, health: number = 100) {
+    public constructor(gameObject: GameObject, objectManager: ObjectManager, audioSource: AudioSource, health: number = 100) {
         super(gameObject);
 
         this._health = health;
         this.objectManager = objectManager;
         this._isDead = false;
+        this.audioSource = audioSource;
     }
 
     public start(): void {
@@ -30,6 +33,10 @@ export class PlayerHealth extends Component implements Damageable {
 
     public get isDead(): boolean {
         return this._isDead;
+    }
+
+    public sayOuch(): void {
+        this.audioSource.play();
     }
 
     public takeDamage(amount: number): void {

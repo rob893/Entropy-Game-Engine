@@ -18,6 +18,9 @@ import { SpriteSheet } from '../GameEngine/Core/Helpers/SpriteSheet';
 import TrumpIdle from './Assets/Images/trump_idle.png';
 import TrumpRun from './Assets/Images/trump_run.png';
 import Explosion from './Assets/Images/explosion.png';
+import ExplosionSound from './Assets/Sounds/explosion.mp3';
+import HurtSound from './Assets/Sounds/fat_1_male_hit_1.wav';
+import { AudioClip } from '../GameEngine/Core/Helpers/AudioClip';
 
 
 export const scene1: Scene = {
@@ -105,6 +108,12 @@ export const scene3: Scene = {
 
         const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
         assets.set('explosionSpriteSheet', explosionSpriteSheet);
+
+        const explosionSound = await AudioClip.buildAudioClipAsync(ExplosionSound, 5);
+        assets.set('explosionSound', explosionSound);
+
+        const hurtSound = await AudioClip.buildAudioClipAsync(HurtSound, 5);
+        assets.set('hurtSound', hurtSound);
 
         return new AssetPool(assets);
     }

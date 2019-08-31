@@ -1,73 +1,40 @@
 import { Component } from './Component';
 import { GameObject } from '../Core/GameObject';
+import { AudioClip } from '../Core/Helpers/AudioClip';
 
 export class AudioSource extends Component {
 
     private audioClip: HTMLAudioElement;
-    private ready: boolean = false;
 
 
-    public constructor(gameObject: GameObject, audioURL?: string) {
+    public constructor(gameObject: GameObject, audioClip: AudioClip) {
         super(gameObject);
 
-        const audioClip = new Audio(audioURL);
-        audioClip.onloadeddata = () => {
-            this.audioClip = audioClip;
-            this.ready = true;
-        };
+        this.audioClip = audioClip.clip;
     }
 
     public get isPlaying(): boolean {
-        if (!this.ready) {
-            return false;
-        }
-
         return !(this.audioClip.paused);
     }
 
     public set loop(loop: boolean) {
-        if (!this.ready) {
-            setTimeout(() => this.loop = loop, 250);
-            return;
-        }
-
         this.audioClip.loop = loop;
     }
 
     public set playOnStart(playOnStart: boolean) {
-        if (!this.ready) {
-            setTimeout(() => this.playOnStart = playOnStart, 250);
-            return;
-        }
-        
         this.audioClip.autoplay = playOnStart;
     }
 
 
-    public setClip(audioURL: string): void {
-        this.ready = false;
-        const newClip = new Audio(audioURL);
-        newClip.onloadeddata = () => {
-            this.audioClip = newClip;
-            this.ready = true;
-        };
+    public setClip(audioClip: AudioClip): void {
+        this.audioClip = audioClip.clip;
     }
 
     public async play(): Promise<void> {
-        if (!this.ready) {
-            setTimeout(async () => await this.play(), 250);
-            return;
-        }
-
         await this.audioClip.play();
     }
 
     public pause(): void {
-        if (!this.ready) {
-            setTimeout(() => this.pause(), 250);
-            return;
-        }
-
         this.audioClip.pause();
     }
 }
