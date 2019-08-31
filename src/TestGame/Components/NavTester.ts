@@ -6,10 +6,10 @@ import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { Input } from '../../GameEngine/Core/Helpers/Input';
 import { CanvasMouseEvent } from '.../../GameEngine/Core/Interfaces/CanvasMouseEvent';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
-import TrumpRun from '../Assets/Images/trump_run.png';
-import TrumpIdle from '../Assets/Images/trump_idle.png';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
+import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
+import { AssetPool } from '../../GameEngine/Core/Helpers/AssetPool';
 
 export class NavTester extends Component {
 
@@ -22,7 +22,7 @@ export class NavTester extends Component {
     private readonly idleAnimation: Animation;
 
 
-    public constructor(gameObject: GameObject, navAgent: NavAgent, animator: Animator, input: Input) {
+    public constructor(gameObject: GameObject, navAgent: NavAgent, animator: Animator, input: Input, assetPool: AssetPool) {
         super(gameObject);
 
         this.navAgent = navAgent;
@@ -34,11 +34,14 @@ export class NavTester extends Component {
         input.addMouseListener(EventType.Click, 0, (event) => this.onClick(event));
         input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, (event) => this.onKeyDown(event));
 
-        this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, 2);
-        this.runLeftAnimation = new Animation(TrumpRun, 6, 4, 0.075, 4);
-        this.runUpAnimation = new Animation(TrumpRun, 6, 4, 0.075, 1);
-        this.runDownAnimation = new Animation(TrumpRun, 6, 4, 0.075, 3);
-        this.idleAnimation = new Animation(TrumpIdle, 10, 4, 0.1, 1);
+        const trumpRunSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
+        const trumpIdleSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
+
+        this.runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
+        this.runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
+        this.runUpAnimation = new Animation(trumpRunSpriteSheet.getFrames(3), 0.075);
+        this.runDownAnimation = new Animation(trumpRunSpriteSheet.getFrames(1), 0.075);
+        this.idleAnimation = new Animation(trumpIdleSpriteSheet.getFrames(1), 0.1);
     }
 
     private onKeyDown(event: KeyboardEvent): void {

@@ -9,6 +9,7 @@ import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial
 import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
+import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 export class TrumpRB extends GameObject {
 
@@ -23,7 +24,9 @@ export class TrumpRB extends GameObject {
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
 
-        const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [1]);
+        const trumpIdleFrames = gameEngineAPIs.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
+
+        const initialAnimation = new Animation(trumpIdleFrames, 0.1);
         components.push(new Animator(this, 75, 75, initialAnimation, gameEngineAPIs.time));
 
         return components;

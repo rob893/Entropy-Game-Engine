@@ -1,18 +1,17 @@
 import { Motor } from './Motor';
 import { GameObject } from '../../GameEngine/Core/GameObject';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { Transform } from '../../GameEngine/Components/Transform';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
-import TrumpRun from '../../assets/images/trump_run.png';
-import TrumpIdle from '../../assets/images/trump_idle.png';
 import YouSuckSound from '../../assets/sounds/suck.mp3';
 import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { Damageable } from '../Interfaces/Damageable';
 import { PlayerHealth } from './PlayerHealth';
 import { Time } from '../../GameEngine/Core/Time';
 import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
+import { AssetPool } from '../../GameEngine/Core/Helpers/AssetPool';
+import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 export class TrumpMotor extends Motor {
     
@@ -32,17 +31,21 @@ export class TrumpMotor extends Motor {
     private readonly time: Time;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, animator: Animator, audioSource: AudioSource, objectManager: ObjectManager, time: Time) {
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, animator: Animator, audioSource: AudioSource, objectManager: ObjectManager, time: Time, assetPool: AssetPool) {
         super(gameObject, gameCanvas);
 
         this.animator = animator;
         this.audioSource = audioSource;
         this.objectManager = objectManager;
+        this.time = time;
 
         this.speed = 2;
-        this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, [2]);
-        this.runLeftAnimation = new Animation(TrumpRun, 6, 4, 0.075, [4]);
-        this.idleAnimation = new Animation(TrumpIdle, 10, 4, 0.1, [1]);
+        const trumpRunSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
+        const trumpIdleSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
+
+        this.runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
+        this.runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
+        this.idleAnimation = new Animation(trumpIdleSpriteSheet.getFrames(1), 0.1);
     }
 
     public start(): void {

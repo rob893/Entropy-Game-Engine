@@ -16,6 +16,7 @@ import { Physics } from './Physics/Physics';
 import { Vector2 } from './Helpers/Vector2';
 import { Transform } from '../Components/Transform';
 import { Component } from '../Components/Component';
+import { AssetPool } from './Helpers/AssetPool';
 
 export class GameEngine {
 
@@ -221,6 +222,8 @@ export class GameEngine {
             this.gameEngineAPIs.terrain = terrain;
         }
 
+        this.gameEngineAPIs.assetPool = await scene.getAssetPool();
+
         gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this.gameEngineAPIs)];
 
         this.setGameObjects(gameObjects);
@@ -258,7 +261,8 @@ export class GameEngine {
             gameCanvas: this.gameCanvas,
             sceneManager: new SceneManager(this),
             time: time,
-            physics: new Physics(this.physicsEngine)
+            physics: new Physics(this.physicsEngine),
+            assetPool: null
         };
     }
 

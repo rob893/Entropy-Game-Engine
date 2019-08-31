@@ -11,6 +11,8 @@ import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider
 import { Input } from '../../GameEngine/Core/Helpers/Input';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { CollisionManifold } from '../../GameEngine/Core/Helpers/CollisionManifold';
+import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
+import { AssetPool } from '../../GameEngine/Core/Helpers/AssetPool';
 
 
 export class Player2Motor extends Motor {
@@ -29,7 +31,7 @@ export class Player2Motor extends Motor {
     private readonly input: Input;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, animator: Animator, input: Input) {
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, animator: Animator, input: Input, assetPool: AssetPool) {
         super(gameObject, gameCanvas);
 
         this.collider = collider;
@@ -41,11 +43,14 @@ export class Player2Motor extends Motor {
         this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyDown(event));
         this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
 
-        this.runRightAnimation = new Animation(TrumpRun, 6, 4, 0.075, 2);
-        this.runLeftAnimation = new Animation(TrumpRun, 6, 4, 0.075, 4);
-        this.runUpAnimation = new Animation(TrumpRun, 6, 4, 0.075, 3);
-        this.runDownAnimation = new Animation(TrumpRun, 6, 4, 0.075, 1);
-        this.idleAnimation = new Animation(TrumpIdle, 10, 4, 0.1, 1);
+        const trumpRunSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
+        const trumpIdleSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
+
+        this.runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
+        this.runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
+        this.runUpAnimation = new Animation(trumpRunSpriteSheet.getFrames(3), 0.075);
+        this.runDownAnimation = new Animation(trumpRunSpriteSheet.getFrames(1), 0.075);
+        this.idleAnimation = new Animation(trumpIdleSpriteSheet.getFrames(1), 0.1);
 
         this.speed = 2;
     }

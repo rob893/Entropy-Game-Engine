@@ -32,10 +32,6 @@ export class Animator extends Component implements Renderable {
     }
 
     public render(context: CanvasRenderingContext2D): void {
-        if (!this.animation.animationReady) {
-            return;
-        }
-
         context.translate(this.transform.position.x, this.transform.position.y - this.halfRHeight);
         context.rotate(this.transform.rotation);
 

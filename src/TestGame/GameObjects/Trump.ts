@@ -10,6 +10,7 @@ import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
+import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 export class Trump extends GameObject {
 
@@ -22,12 +23,14 @@ export class Trump extends GameObject {
 
         const navAgent = new NavAgent(this, gameEngineAPIs.terrain.navGrid);
         components.push(navAgent);
+        
+        const trumpIdleFrames = gameEngineAPIs.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
 
-        const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
+        const initialAnimation = new Animation(trumpIdleFrames, 0.1);
         const animator = new Animator(this, 75, 75, initialAnimation, gameEngineAPIs.time);
         components.push(animator);
 
-        components.push(new NavTester(this, navAgent, animator, gameEngineAPIs.input));
+        components.push(new NavTester(this, navAgent, animator, gameEngineAPIs.input, gameEngineAPIs.assetPool));
 
         return components;
     }

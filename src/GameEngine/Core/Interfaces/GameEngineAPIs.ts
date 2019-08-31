@@ -5,6 +5,7 @@ import { ComponentAnalyzer } from '../Helpers/ComponentAnalyzer';
 import { SceneManager } from '../Helpers/SceneManager';
 import { Time } from '../Time';
 import { Physics } from '../Physics/Physics';
+import { AssetPool } from '../Helpers/AssetPool';
 
 export interface GameEngineAPIs {
     input: Input;
@@ -15,4 +16,5 @@ export interface GameEngineAPIs {
     sceneManager: SceneManager;
     time: Time;
     physics: Physics;
+    assetPool: AssetPool;
 }

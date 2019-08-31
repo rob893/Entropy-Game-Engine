@@ -6,16 +6,18 @@ import { RectangleBackground } from '../GameEngine/Core/Helpers/RectangleBackgro
 import { Color } from '../GameEngine/Core/Enums/Color';
 import { GameManagerObject } from './GameObjects/GameManagerObject';
 import { Trump } from './GameObjects/Trump';
-import { Player } from './GameObjects/Player';
 import { Player2 } from './GameObjects/Player2';
 import { ImageBackground } from '../GameEngine/Core/Helpers/ImageBackground';
 import Scene2Background from './Assets/Images/background.png';
 import { PlayerRB } from './GameObjects/PlayerRB';
 import { Borders } from './GameObjects/Borders';
-import { TrumpRB } from './GameObjects/TrumpRB';
-import { GameEngine } from '../GameEngine/Core/GameEngine';
 import { Layer } from '../GameEngine/Core/Enums/Layer';
 import { GameEngineAPIs } from '../GameEngine/Core/Interfaces/GameEngineAPIs';
+import { AssetPool } from '../GameEngine/Core/Helpers/AssetPool';
+import { SpriteSheet } from '../GameEngine/Core/Helpers/SpriteSheet';
+import TrumpIdle from './Assets/Images/trump_idle.png';
+import TrumpRun from './Assets/Images/trump_run.png';
+import Explosion from './Assets/Images/explosion.png';
 
 
 export const scene1: Scene = {
@@ -33,6 +35,21 @@ export const scene1: Scene = {
             new Trump(apis, 'trump'),
             new Player2(apis, 'player', 400, 250)
         ];
+    },
+
+    async getAssetPool(): Promise<AssetPool> {
+        const assets = new Map<string, any>();
+
+        const trumpIdleSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpIdle, 10, 4);
+        assets.set('trumpIdleSpriteSheet', trumpIdleSpriteSheet);
+
+        const trumpRunSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpRun, 6, 4);
+        assets.set('trumpRunSpriteSheet', trumpRunSpriteSheet);
+
+        const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
+        assets.set('explosionSpriteSheet', explosionSpriteSheet);
+
+        return new AssetPool(assets);
     }
 };
 
@@ -47,9 +64,12 @@ export const scene2: Scene = {
     
     getStartingGameObjects(apis: GameEngineAPIs): GameObject[] {
         return [
-            new GameManagerObject(apis, 'gameManager'),
-            new Player(apis, 'player')
+            new GameManagerObject(apis, 'gameManager')
         ];
+    },
+
+    async getAssetPool(): Promise<AssetPool> {
+        return new Promise(res => res(new AssetPool(new Map()))); 
     }
 };
 
@@ -72,5 +92,20 @@ export const scene3: Scene = {
             //new TrumpRB('trump', 640, 670),
             //new TrumpRB('trump', 710, 670)
         ];
+    },
+
+    async getAssetPool(): Promise<AssetPool> {
+        const assets = new Map<string, any>();
+
+        const trumpIdleSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpIdle, 10, 4);
+        assets.set('trumpIdleSpriteSheet', trumpIdleSpriteSheet);
+
+        const trumpRunSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpRun, 6, 4);
+        assets.set('trumpRunSpriteSheet', trumpRunSpriteSheet);
+
+        const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
+        assets.set('explosionSpriteSheet', explosionSpriteSheet);
+
+        return new AssetPool(assets);
     }
 };

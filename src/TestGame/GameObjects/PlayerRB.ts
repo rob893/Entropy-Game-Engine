@@ -12,6 +12,7 @@ import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings'
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
 import { ThrowableBall } from './ThrowableBall';
+import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 export class PlayerRB extends GameObject {
 
@@ -25,11 +26,13 @@ export class PlayerRB extends GameObject {
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
 
-        const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
+        const trumpIdleFrames = gameEngineAPIs.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
+
+        const initialAnimation = new Animation(trumpIdleFrames, 0.1);
         const animator = new Animator(this, 75, 75, initialAnimation, gameEngineAPIs.time);
         components.push(animator);
 
-        components.push(new PlayerPhysicsMotor(this, rb, animator, gameEngineAPIs.input, gameEngineAPIs.objectManager));
+        components.push(new PlayerPhysicsMotor(this, rb, animator, gameEngineAPIs.input, gameEngineAPIs.objectManager, gameEngineAPIs.assetPool));
 
         return components;
     }

@@ -7,6 +7,7 @@ import { Animator } from '../../GameEngine/Components/Animator';
 import { Player2Motor } from '../Components/Player2Motor';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
+import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 export class Player2 extends GameObject {
 
@@ -17,11 +18,13 @@ export class Player2 extends GameObject {
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
         
-        const initialAnimation = new Animation(TrumpIdleSprite, 10, 4, 0.1, [4]);
+        const trumpIdleFrames = gameEngineAPIs.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
+
+        const initialAnimation = new Animation(trumpIdleFrames, 0.1);
         const animator = new Animator(this, 75, 75, initialAnimation, gameEngineAPIs.time);
         components.push(animator);
 
-        components.push(new Player2Motor(this, gameEngineAPIs.gameCanvas, collider, animator, gameEngineAPIs.input));
+        components.push(new Player2Motor(this, gameEngineAPIs.gameCanvas, collider, animator, gameEngineAPIs.input, gameEngineAPIs.assetPool));
 
         return components;
     }
