@@ -5,6 +5,12 @@ import { Layer } from './Enums/Layer';
 import { PrefabSettings } from './Interfaces/PrefabSettings';
 import { GameEngineAPIs } from './Interfaces/GameEngineAPIs';
 import { ComponentAnalyzer } from './Helpers/ComponentAnalyzer';
+import { Input } from './Helpers/Input';
+import { Physics } from './Physics/Physics';
+import { SceneManager } from './Helpers/SceneManager';
+import { AssetPool } from './Helpers/AssetPool';
+import { Time } from './Time';
+import { Vector2 } from './Helpers/Vector2';
 
 
 export abstract class GameObject {
@@ -18,11 +24,12 @@ export abstract class GameObject {
     private readonly updatableComponents: Component[] = [];
     private readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
     private readonly componentAnalyzer: ComponentAnalyzer;
+    private readonly gameEngine: GameEngine;
 
 
-    public constructor(gameEngineAPIs: GameEngineAPIs, id?: string, x?: number, y?: number, rotation?: number, tag?: string, layer?: Layer) {
+    public constructor(gameEngine: GameEngine, id?: string, x?: number, y?: number, rotation?: number, tag?: string, layer?: Layer) {
         this.isEnabled = true;
-        this.componentAnalyzer = gameEngineAPIs.componentAnalyzer;
+        this.componentAnalyzer = gameEngine.componentAnalyzer;
 
         const prefabSettings = this.getPrefabSettings();
         
@@ -32,12 +39,12 @@ export abstract class GameObject {
         this.tag = tag ? tag : prefabSettings.tag;
         this.layer = layer ? layer : prefabSettings.layer;
 
-        const initialComponents = this.buildInitialComponents(gameEngineAPIs);
+        const initialComponents = this.buildInitialComponents(); //move this into prefab settings
         initialComponents.push(this.transform);
 
         this.setComponents(initialComponents);
 
-        const childGameObjects = this.buildAndReturnChildGameObjects(gameEngineAPIs);
+        const childGameObjects = this.buildAndReturnChildGameObjects(gameEngine);
 
         for (const child of childGameObjects) {
             child.transform.parent = this.transform;
@@ -62,6 +69,26 @@ export abstract class GameObject {
         }
     }
 
+    public get input(): Input {
+        return this.gameEngine.input;
+    }
+
+    public get physics(): Physics {
+        return this.gameEngine.physics;
+    }
+
+    public get sceneManager(): SceneManager {
+        return this.gameEngine.sceneManager;
+    }
+
+    public get assetPool(): AssetPool {
+        return this.gameEngine.assetPool;
+    }
+
+    public get time(): Time {
+        return this.gameEngine.time;
+    }
+
     public start(): void {
         this.updatableComponents.forEach(c => c.start());
     }
@@ -72,6 +99,26 @@ export abstract class GameObject {
                 component.update();
             }
         }
+    }
+
+    public findGameObjectById(id: string): GameObject {
+        return this.gameEngine.findGameObjectById(id);
+    }
+
+    public findGameObjectWithTag(tag: string): GameObject {
+        return this.gameEngine.findGameObjectWithTag(tag);
+    }
+
+    public findGameObjectsWithTag(tag: string): GameObject[] {
+        return this.gameEngine.findGameObjectsWithTag(tag);
+    }
+
+    public instantiate<T extends GameObject>(type: new (gameEngine: GameEngine) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
+        return this.gameEngine.instantiate(type, position, rotation, parent);
+    }
+
+    public destroy(object: GameObject, time: number = 0): void {
+        this.gameEngine.destroy(object, time);
     }
 
     /**
@@ -221,7 +268,7 @@ export abstract class GameObject {
      * 
      * @param gameEngine The game engine
      */
-    protected buildAndReturnChildGameObjects(gameEngineAPIs: GameEngineAPIs): GameObject[] { return []; }
+    protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] { return []; }
 
     /**
      * Meant to be overridden by subclasses to define prefab settings. These settings are overridden by 
@@ -253,5 +300,5 @@ export abstract class GameObject {
         }
     }
 
-    protected abstract buildInitialComponents(gameEngineAPIs: GameEngineAPIs): Component[];
+    protected abstract buildInitialComponents(): Component[];
 }

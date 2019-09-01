@@ -17,6 +17,7 @@ import { Vector2 } from './Helpers/Vector2';
 import { Transform } from '../Components/Transform';
 import { Component } from '../Components/Component';
 import { AssetPool } from './Helpers/AssetPool';
+import { Terrain } from './Helpers/Terrain';
 
 export class GameEngine {
 
@@ -29,7 +30,13 @@ export class GameEngine {
     private gameInitialized: boolean = false;
     private paused: boolean = false;
     private gameObjects: GameObject[] = [];
-    private gameEngineAPIs: GameEngineAPIs;
+    private _input: Input;
+    private _physics: Physics;
+    private _assetPool: AssetPool;
+    private _time: Time;
+    private _sceneManager: SceneManager;
+    private _terrain: Terrain;
+    private _componentAnalyzer: ComponentAnalyzer;
     private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
@@ -41,8 +48,36 @@ export class GameEngine {
         this.gameCanvas = gameCanvas;
     }
 
-    public instantiate<T extends GameObject>(type: new (gameEngineAPIs: GameEngineAPIs) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
-        const newGameObject = new type(this.gameEngineAPIs);
+    public get input(): Input {
+        return this._input;
+    }
+
+    public get physics(): Physics {
+        return this._physics;
+    }
+
+    public get time(): Time {
+        return this._time;
+    }
+
+    public get componentAnalyzer(): ComponentAnalyzer {
+        return this._componentAnalyzer;
+    }
+
+    public get sceneManager(): SceneManager {
+        return this._sceneManager;
+    }
+
+    public get terrain(): Terrain {
+        return this._terrain;
+    }
+
+    public get assetPool(): AssetPool {
+        return this._assetPool;
+    }
+
+    public instantiate<T extends GameObject>(type: new (gameEngine: GameEngine) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
+        const newGameObject = new type(this);
         
         if (position !== undefined) {
             newGameObject.transform.setPosition(position.x, position.y);
@@ -117,7 +152,7 @@ export class GameEngine {
 
     public printGameData(): void {
         console.log(this);
-        console.log('Time since game start ' + this.gameEngineAPIs.time.totalTime + 's');
+        console.log('Time since game start ' + this.time.totalTime + 's');
         console.log(this.renderingEngine);
         console.log(this.physicsEngine);
         this.gameObjects.forEach(go => console.log(go));
@@ -195,8 +230,7 @@ export class GameEngine {
             this.gameLoopId = null;
         }
 
-        this.gameEngineAPIs.input.clearListeners();
-        this.gameEngineAPIs = null;
+        this._input.clearListeners();
         this.tagMap.clear();
         this.gameObjectMap.clear();
         this.gameObjectNumMap.clear();
@@ -205,9 +239,6 @@ export class GameEngine {
     }
 
     private async initializeScene(scene: Scene): Promise<void> {
-        if (this.gameEngineAPIs === undefined || this.gameEngineAPIs === null) {
-            throw new Error('There was an error initializing the scene. The APIs object must be created before initialization.');
-        }
 
         const terrainSpec = scene.terrainSpec;
         let gameObjects: GameObject[] = [];
@@ -219,10 +250,10 @@ export class GameEngine {
             gameObjects.push(terrain);
 
             this.renderingEngine.terrain = terrain;
-            this.gameEngineAPIs.terrain = terrain;
+            this._terrain = terrain;
         }
 
-        this.gameEngineAPIs.assetPool = await scene.getAssetPool();
+        this._assetPool = await scene.getAssetPool();
 
         gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this.gameEngineAPIs)];
 
@@ -252,18 +283,12 @@ export class GameEngine {
 
         this.renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
         this.renderingEngine.renderGizmos = this.developmentMode;
-        
-        this.gameEngineAPIs = {
-            input: new Input(this.gameCanvas),
-            objectManager: new ObjectManager(this),
-            terrain: null,
-            componentAnalyzer: new ComponentAnalyzer(this.physicsEngine, this.renderingEngine),
-            gameCanvas: this.gameCanvas,
-            sceneManager: new SceneManager(this),
-            time: time,
-            physics: new Physics(this.physicsEngine),
-            assetPool: null
-        };
+
+        this._input = new Input(this.gameCanvas);
+        this._componentAnalyzer = new ComponentAnalyzer(this.physicsEngine, this.renderingEngine);
+        this._sceneManager = new SceneManager(this);
+        this._time = time;
+        this._physics = new Physics(this.physicsEngine);
     }
 
     private setGameObjects(gameObjects: GameObject[]): void {
@@ -314,7 +339,7 @@ export class GameEngine {
             throw new Error('The game is not initialized yet!');
         }
 
-        this.gameEngineAPIs.time.start();
+        this._time.start();
         this.paused = false;
 
         this.gameObjects.forEach(go => {
@@ -339,7 +364,7 @@ export class GameEngine {
             return;
         }
 
-        this.gameEngineAPIs.time.updateTime();
+        this._time.updateTime();
         this.physicsEngine.updatePhysics();
         
         for (const gameObject of this.gameObjects) {
