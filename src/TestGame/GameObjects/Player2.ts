@@ -24,7 +24,7 @@ export class Player2 extends GameObject {
         const animator = new Animator(this, 75, 75, initialAnimation, gameEngineAPIs.time);
         components.push(animator);
 
-        components.push(new Player2Motor(this, gameEngineAPIs.gameCanvas, collider, animator, gameEngineAPIs.input, gameEngineAPIs.assetPool));
+        components.push(new Player2Motor(this, gameEngineAPIs.gameCanvas, collider, animator, gameEngineAPIs.input, gameEngineAPIs.assetPool, gameEngineAPIs.objectManager));
 
         return components;
     }

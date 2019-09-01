@@ -4,37 +4,44 @@ import { AudioClip } from '../Core/Helpers/AudioClip';
 
 export class AudioSource extends Component {
 
-    private audioClip: HTMLAudioElement;
+    private audioElement: HTMLAudioElement;
+    private audioClip: AudioClip;
 
 
     public constructor(gameObject: GameObject, audioClip: AudioClip) {
         super(gameObject);
 
-        this.audioClip = audioClip.clip;
+        this.audioElement = audioClip.clip;
+        this.audioClip = audioClip;
     }
 
     public get isPlaying(): boolean {
-        return !(this.audioClip.paused);
+        return !(this.audioElement.paused);
     }
 
     public set loop(loop: boolean) {
-        this.audioClip.loop = loop;
+        this.audioElement.loop = loop;
     }
 
     public set playOnStart(playOnStart: boolean) {
-        this.audioClip.autoplay = playOnStart;
+        this.audioElement.autoplay = playOnStart;
     }
 
 
     public setClip(audioClip: AudioClip): void {
-        this.audioClip = audioClip.clip;
+        this.audioElement = audioClip.clip;
+        this.audioClip = audioClip;
     }
 
-    public async play(): Promise<void> {
-        await this.audioClip.play();
+    public play(): void {
+        this.audioElement.play();
+    }
+
+    public playOneShot(): void {
+        this.audioClip.clip.play();
     }
 
     public pause(): void {
-        this.audioClip.pause();
+        this.audioElement.pause();
     }
 }

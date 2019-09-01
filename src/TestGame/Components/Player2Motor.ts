@@ -13,6 +13,9 @@ import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { CollisionManifold } from '../../GameEngine/Core/Helpers/CollisionManifold';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 import { AssetPool } from '../../GameEngine/Core/Helpers/AssetPool';
+import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
+import { Fireball } from '../GameObjects/Fireball';
+import { FireballBehavior } from './FireballBehavior';
 
 
 export class Player2Motor extends Motor {
@@ -29,18 +32,20 @@ export class Player2Motor extends Motor {
     private readonly runDownAnimation: Animation;
     private readonly idleAnimation: Animation;
     private readonly input: Input;
+    private readonly objectManager: ObjectManager;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, animator: Animator, input: Input, assetPool: AssetPool) {
+    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, animator: Animator, input: Input, assetPool: AssetPool, objectManager: ObjectManager) {
         super(gameObject, gameCanvas);
 
         this.collider = collider;
         this.animator = animator;
         this.input = input;
+        this.objectManager = objectManager;
 
         this.collider.onCollided.add((manifold) => this.handleCollisions(manifold));
 
-        this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyDown(event));
+        this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.R], (event) => this.onKeyDown(event));
         this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
 
         const trumpRunSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
@@ -90,6 +95,11 @@ export class Player2Motor extends Motor {
 
     private handleCollisions(collisionManifold: CollisionManifold): void {
         const other = collisionManifold.getOtherCollider(this.collider);
+
+        if (other.isTrigger) {
+            return;
+        }
+
         const normal = collisionManifold.getCollisionNormalForCollider(this.collider);
 
         while (this.collider.detectCollision(other)) {
@@ -118,6 +128,11 @@ export class Player2Motor extends Motor {
             this.movingUp = false;
             this.movingDown = true;
             this.animator.setAnimation(this.runDownAnimation);
+        }
+
+        if (event.keyCode === KeyCode.R) {
+            const fireball = this.objectManager.instantiate(Fireball, new Vector2(this.transform.position.x, this.transform.position.y - 20));
+            fireball.getComponent(FireballBehavior).movementDirection = Vector2.direction(this.transform.position, this.input.canvasMousePosition);
         }
     }
 

@@ -13,7 +13,7 @@ async function main(): Promise<void> {
 
     gameEngine.setScenes([scene1, scene2, scene3]);
 
-    await gameEngine.loadScene(3);
+    await gameEngine.loadScene(1);
 }
 
 window.onload = () => {

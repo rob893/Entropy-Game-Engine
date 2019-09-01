@@ -36,7 +36,7 @@ export class PlayerHealth extends Component implements Damageable {
     }
 
     public sayOuch(): void {
-        this.audioSource.play();
+        this.audioSource.playOneShot();
     }
 
     public takeDamage(amount: number): void {

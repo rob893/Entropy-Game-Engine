@@ -114,8 +114,14 @@ export class Vector2 {
         return (point1.x * point2.x) + (point1.y * point2.y);
     }
 
-    public static direction(point1: Vector2, point2: Vector2): Vector2 {
-        return new Vector2(point2.x - point1.x, point2.y - point1.y).normalized;
+    /**
+     * Returns a normalized vector from point 'from' to point 'to.'
+     * 
+     * @param from The starting position of the direction vector
+     * @param to The position the direction vector is pointing to
+     */
+    public static direction(from: Vector2, to: Vector2): Vector2 {
+        return new Vector2(to.x - from.x, to.y - from.y).normalized;
     }
 
     /**
