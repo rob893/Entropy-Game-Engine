@@ -2,8 +2,6 @@ import { Component } from './Component';
 import { GameObject } from '../Core/GameObject';
 import { Animation } from '../Core/Helpers/Animation';
 import { Renderable } from '../Core/Interfaces/Renderable';
-import { GameEngine } from '../Core/GameEngine';
-import { Time } from '../Core/Time';
 
 export class Animator extends Component implements Renderable {
 
@@ -12,13 +10,10 @@ export class Animator extends Component implements Renderable {
     private readonly renderHeight: number;
     private readonly halfRWidth: number;
     private readonly halfRHeight: number;
-    private readonly time: Time;
 
 
-    public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, initialAnimation: Animation, time: Time) {
+    public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, initialAnimation: Animation) {
         super(gameObject);
-
-        this.time = time;
         
         this.renderWidth = renderWidth;
         this.halfRWidth = renderWidth / 2;

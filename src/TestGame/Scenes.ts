@@ -12,7 +12,6 @@ import Scene2Background from './Assets/Images/background.png';
 import { PlayerRB } from './GameObjects/PlayerRB';
 import { Borders } from './GameObjects/Borders';
 import { Layer } from '../GameEngine/Core/Enums/Layer';
-import { GameEngineAPIs } from '../GameEngine/Core/Interfaces/GameEngineAPIs';
 import { AssetPool } from '../GameEngine/Core/Helpers/AssetPool';
 import { SpriteSheet } from '../GameEngine/Core/Helpers/SpriteSheet';
 import TrumpIdle from './Assets/Images/trump_idle.png';
@@ -22,6 +21,7 @@ import RedFireball from './Assets/Images/redFireball.png';
 import ExplosionSound from './Assets/Sounds/explosion.mp3';
 import HurtSound from './Assets/Sounds/fat_1_male_hit_1.wav';
 import { AudioClip } from '../GameEngine/Core/Helpers/AudioClip';
+import { GameEngine } from '../GameEngine/Core/GameEngine';
 
 
 export const scene1: Scene = {
@@ -33,11 +33,11 @@ export const scene1: Scene = {
         return new RectangleBackground(gameCanvas, Color.Black);
     },
 
-    getStartingGameObjects(apis: GameEngineAPIs): GameObject[] {
+    getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
-            new GameManagerObject(apis, 'gameManager'),
-            new Trump(apis, 'trump'),
-            new Player2(apis, 'player', 400, 250)
+            new GameManagerObject(gameEngine, 'gameManager'),
+            new Trump(gameEngine, 'trump'),
+            new Player2(gameEngine, 'player', 400, 250)
         ];
     },
 
@@ -75,9 +75,9 @@ export const scene2: Scene = {
         return new ImageBackground(gameCanvas, Scene2Background);
     },
     
-    getStartingGameObjects(apis: GameEngineAPIs): GameObject[] {
+    getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
-            new GameManagerObject(apis, 'gameManager')
+            new GameManagerObject(gameEngine, 'gameManager')
         ];
     },
 
@@ -95,11 +95,11 @@ export const scene3: Scene = {
         return new RectangleBackground(gameCanvas, Color.Black);
     },
     
-    getStartingGameObjects(apis: GameEngineAPIs): GameObject[] {
+    getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
-            new GameManagerObject(apis, 'gameManager'),
-            new PlayerRB(apis, 'player'),
-            new Borders(apis, 'borders', 0, 0, 0, 'borders', Layer.Terrain),
+            new GameManagerObject(gameEngine, 'gameManager'),
+            new PlayerRB(gameEngine, 'player'),
+            new Borders(gameEngine, 'borders', 0, 0, 0, 'borders', Layer.Terrain),
             //new TrumpRB('trump', 500, 670),
             //new TrumpRB('trump', 570, 670),
             //new TrumpRB('trump', 640, 670),

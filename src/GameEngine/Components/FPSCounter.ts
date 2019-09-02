@@ -1,7 +1,5 @@
 import { Component } from './Component';
-import { Time } from '../Core/Time';
 import { RenderableGUI } from '../Core/Interfaces/RenderableGUI';
-import { GameObject } from '../Core/GameObject';
 
 
 export class FPSCounter extends Component implements RenderableGUI {
@@ -9,14 +7,7 @@ export class FPSCounter extends Component implements RenderableGUI {
     private numFrames: number = 0;
     private timer: number = 0;
     private FPS: number = 0;
-    private readonly time: Time;
     
-
-    public constructor(gameObject: GameObject, time: Time) {
-        super(gameObject);
-        
-        this.time = time;
-    }
 
     public renderGUI(context: CanvasRenderingContext2D): void {
         this.timer += this.time.deltaTime;

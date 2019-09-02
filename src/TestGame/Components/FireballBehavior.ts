@@ -1,27 +1,20 @@
 import { Component } from '../../GameEngine/Components/Component';
 import { GameObject } from '../../GameEngine/Core/GameObject';
-import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { Explosion } from '../GameObjects/Explosion';
 import { CollisionManifold } from '../../GameEngine/Core/Helpers/CollisionManifold';
-import { Input } from '../../GameEngine/Core/Helpers/Input';
 
 export class FireballBehavior extends Component {
     
     private _movementDirection: Vector2 = Vector2.zero;
-    private readonly objectManager: ObjectManager;
     private readonly collider: RectangleCollider;
-    private readonly input: Input;
 
 
-    public constructor(gameObject: GameObject, objectManager: ObjectManager, collider: RectangleCollider, input: Input) {
+    public constructor(gameObject: GameObject, collider: RectangleCollider) {
         super(gameObject);
 
-        this.objectManager = objectManager;
         this.collider = collider;
-        this.input = input;
-
         this.collider.onCollided.add((manifold) => this.hit(manifold));
     }
 
@@ -44,7 +37,7 @@ export class FireballBehavior extends Component {
             return;
         }
 
-        this.objectManager.instantiate(Explosion, this.transform.position);
-        this.objectManager.destroy(this.gameObject);
+        this.instantiate(Explosion, this.transform.position);
+        this.destroy(this.gameObject);
     }
 }

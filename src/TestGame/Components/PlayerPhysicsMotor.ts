@@ -2,18 +2,12 @@ import { GameObject } from '../../GameEngine/Core/GameObject';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
-import TrumpRun from '../Assets/Images/trump_run.png';
-import TrumpIdle from '../Assets/Images/trump_idle.png';
 import { Animator } from '../../GameEngine/Components/Animator';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
-import { Input } from '../../GameEngine/Core/Helpers/Input';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { Component } from '../../GameEngine/Components/Component';
-import { Transform } from '../../GameEngine/Components/Transform';
-import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
 import { ThrowableBall } from '../GameObjects/ThrowableBall';
 import { Explosion } from '../GameObjects/Explosion';
-import { AssetPool } from '../../GameEngine/Core/Helpers/AssetPool';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 
@@ -26,30 +20,25 @@ export class PlayerPhysicsMotor extends Component {
     private readonly speed: number;
     private readonly animator: Animator;
     private readonly rb: Rigidbody;
-    //private ball: Transform;
     private readonly runRightAnimation: Animation;
     private readonly runLeftAnimation: Animation;
     private readonly runUpAnimation: Animation;
     private readonly runDownAnimation: Animation;
     private readonly idleAnimation: Animation;
-    private readonly input: Input;
-    private readonly objectManager: ObjectManager;
 
 
-    public constructor(gameObject: GameObject, rb: Rigidbody, animator: Animator, input: Input, objectManager: ObjectManager, assetPool: AssetPool) {
+    public constructor(gameObject: GameObject, rb: Rigidbody, animator: Animator) {
         super(gameObject);
 
         this.rb = rb;
         this.animator = animator;
-        this.input = input;
-        this.objectManager = objectManager;
 
         this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space, KeyCode.Backspace], (event) => this.onKeyDown(event));
         this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
         this.input.addMouseListener(EventType.MouseDown, 0, () => this.throwBall());
 
-        const trumpRunSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
-        const trumpIdleSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
+        const trumpRunSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
+        const trumpIdleSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
 
         this.runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
         this.runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
@@ -80,20 +69,12 @@ export class PlayerPhysicsMotor extends Component {
         else if (this.movingDown) {
             this.rb.addForce(Vector2.down.multiplyScalar(this.speed));
         }
-
-        //this.transform.lookAt(this.input.canvasMousePosition);
     }
 
     private throwBall(): void {
-        const ball = this.objectManager.instantiate(ThrowableBall, new Vector2(this.transform.position.x, this.transform.position.y - 30));
+        const ball = this.instantiate(ThrowableBall, new Vector2(this.transform.position.x, this.transform.position.y - 30));
         const rb = ball.getComponent(Rigidbody);
-
         rb.addForce(Vector2.direction(this.transform.position, this.input.canvasMousePosition).multiplyScalar(800));
-
-        setTimeout(() => {
-            this.objectManager.instantiate(Explosion, ball.transform.position);
-            this.objectManager.destroy(ball);
-        }, 5000);
     }
 
     private onKeyDown(event: KeyboardEvent): void {

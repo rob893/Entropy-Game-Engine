@@ -1,7 +1,6 @@
 import { Component } from './Component';
 import { GameObject } from '../Core/GameObject';
 import { Renderable } from '../Core/Interfaces/Renderable';
-import { GameEngine } from '../Core/GameEngine';
 
 export class RectangleRenderer extends Component implements Renderable {
 
@@ -9,14 +8,13 @@ export class RectangleRenderer extends Component implements Renderable {
     public renderHeight: number;
     public color: string;
 
+
     public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, color: string) {
         super(gameObject);
 
         this.renderWidth = renderWidth;
         this.renderHeight = renderHeight;
         this.color = color;
-
-        //GameEngine.instance.renderingEngine.addRenderableObject(this);
     }
 
     public setColor(color: string): void {

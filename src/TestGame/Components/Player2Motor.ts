@@ -2,18 +2,12 @@ import { Motor } from './Motor';
 import { GameObject } from '../../GameEngine/Core/GameObject';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
-import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
-import TrumpRun from '../Assets/Images/trump_run.png';
-import TrumpIdle from '../Assets/Images/trump_idle.png';
 import { Animator } from '../../GameEngine/Components/Animator';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
-import { Input } from '../../GameEngine/Core/Helpers/Input';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { CollisionManifold } from '../../GameEngine/Core/Helpers/CollisionManifold';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
-import { AssetPool } from '../../GameEngine/Core/Helpers/AssetPool';
-import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
 import { Fireball } from '../GameObjects/Fireball';
 import { FireballBehavior } from './FireballBehavior';
 
@@ -31,25 +25,21 @@ export class Player2Motor extends Motor {
     private readonly runUpAnimation: Animation;
     private readonly runDownAnimation: Animation;
     private readonly idleAnimation: Animation;
-    private readonly input: Input;
-    private readonly objectManager: ObjectManager;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, animator: Animator, input: Input, assetPool: AssetPool, objectManager: ObjectManager) {
-        super(gameObject, gameCanvas);
+    public constructor(gameObject: GameObject, collider: RectangleCollider, animator: Animator) {
+        super(gameObject);
 
         this.collider = collider;
         this.animator = animator;
-        this.input = input;
-        this.objectManager = objectManager;
 
         this.collider.onCollided.add((manifold) => this.handleCollisions(manifold));
 
         this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.R], (event) => this.onKeyDown(event));
         this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
 
-        const trumpRunSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
-        const trumpIdleSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
+        const trumpRunSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
+        const trumpIdleSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
 
         this.runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
         this.runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
@@ -131,7 +121,7 @@ export class Player2Motor extends Motor {
         }
 
         if (event.keyCode === KeyCode.R) {
-            const fireball = this.objectManager.instantiate(Fireball, new Vector2(this.transform.position.x, this.transform.position.y - 20));
+            const fireball = this.instantiate(Fireball, new Vector2(this.transform.position.x, this.transform.position.y - 20));
             fireball.getComponent(FireballBehavior).movementDirection = Vector2.direction(this.transform.position, this.input.canvasMousePosition);
         }
     }

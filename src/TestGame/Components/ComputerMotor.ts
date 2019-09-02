@@ -1,11 +1,8 @@
 import { Motor } from './Motor';
 import { Transform } from '../../GameEngine/Components/Transform';
 import { GameObject } from '../../GameEngine/Core/GameObject';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
-import { Time } from '../../GameEngine/Core/Time';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
-import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
 
 export class ComputerMotor extends Motor {
 
@@ -14,16 +11,11 @@ export class ComputerMotor extends Motor {
     private quarterFieldX: number;
     private midFieldY: number;
     private readonly collider: RectangleCollider;
-    private readonly objectManager: ObjectManager;
-    private readonly time: Time;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider, objectManager: ObjectManager, time: Time) {
-        super(gameObject, gameCanvas);
+    public constructor(gameObject: GameObject, collider: RectangleCollider) {
+        super(gameObject);
 
-        this.time = time;
-
-        this.objectManager = objectManager;
         this.collider = collider;
         this.yVelocity = 1;
     }
@@ -31,7 +23,7 @@ export class ComputerMotor extends Motor {
     public start(): void {
         super.start();
 
-        this.ballTransform = this.objectManager.findGameObjectById('ball').transform;
+        this.ballTransform = this.findGameObjectById('ball').transform;
         this.quarterFieldX = this.gameCanvas.width / 4;
         this.midFieldY = this.gameCanvas.height / 2;
     }

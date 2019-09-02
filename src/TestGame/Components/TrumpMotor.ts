@@ -4,13 +4,9 @@ import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { Transform } from '../../GameEngine/Components/Transform';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
-import YouSuckSound from '../../assets/sounds/suck.mp3';
 import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { Damageable } from '../Interfaces/Damageable';
 import { PlayerHealth } from './PlayerHealth';
-import { Time } from '../../GameEngine/Core/Time';
-import { ObjectManager } from '../../GameEngine/Core/Helpers/ObjectManager';
-import { AssetPool } from '../../GameEngine/Core/Helpers/AssetPool';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 export class TrumpMotor extends Motor {
@@ -27,21 +23,17 @@ export class TrumpMotor extends Motor {
     private readonly runLeftAnimation: Animation;
     private readonly animator: Animator;
     private readonly audioSource: AudioSource;
-    private readonly objectManager: ObjectManager;
-    private readonly time: Time;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, animator: Animator, audioSource: AudioSource, objectManager: ObjectManager, time: Time, assetPool: AssetPool) {
-        super(gameObject, gameCanvas);
+    public constructor(gameObject: GameObject, animator: Animator, audioSource: AudioSource) {
+        super(gameObject);
 
         this.animator = animator;
         this.audioSource = audioSource;
-        this.objectManager = objectManager;
-        this.time = time;
 
         this.speed = 2;
-        const trumpRunSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
-        const trumpIdleSpriteSheet = assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
+        const trumpRunSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
+        const trumpIdleSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
 
         this.runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
         this.runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
@@ -49,8 +41,7 @@ export class TrumpMotor extends Motor {
     }
 
     public start(): void {
-        //this.audioSource.setClip(YouSuckSound);
-        this.player = this.objectManager.findGameObjectById('player');
+        this.player = this.findGameObjectById('player');
         this.playerTransform = this.player.transform;
         this.playerHealth = this.player.getComponent(PlayerHealth);
     }

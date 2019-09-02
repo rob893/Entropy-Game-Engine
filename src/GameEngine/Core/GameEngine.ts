@@ -5,8 +5,6 @@ import { RenderingEngine } from './RenderingEngine';
 import { TerrainBuilder } from './Helpers/TerrainBuilder';
 import { Scene } from './Interfaces/Scene';
 import { Input } from './Helpers/Input';
-import { ObjectManager } from './Helpers/ObjectManager';
-import { GameEngineAPIs } from './Interfaces/GameEngineAPIs';
 import { ComponentAnalyzer } from './Helpers/ComponentAnalyzer';
 import { SceneManager } from './Helpers/SceneManager';
 import { Layer } from './Enums/Layer';
@@ -15,7 +13,6 @@ import { ImpulseCollisionResolver } from './Physics/ImpulseCollisionResolver';
 import { Physics } from './Physics/Physics';
 import { Vector2 } from './Helpers/Vector2';
 import { Transform } from '../Components/Transform';
-import { Component } from '../Components/Component';
 import { AssetPool } from './Helpers/AssetPool';
 import { Terrain } from './Helpers/Terrain';
 
@@ -41,11 +38,12 @@ export class GameEngine {
     private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
     private readonly scenes: Map<number | string, Scene> = new Map<number | string, Scene>();
-    private readonly gameCanvas: HTMLCanvasElement;
+    private readonly _gameCanvas: HTMLCanvasElement;
+    private readonly destroyTimeouts: Set<number> = new Set<number>();
 
 
     public constructor(gameCanvas: HTMLCanvasElement) {
-        this.gameCanvas = gameCanvas;
+        this._gameCanvas = gameCanvas;
     }
 
     public get input(): Input {
@@ -76,6 +74,10 @@ export class GameEngine {
         return this._assetPool;
     }
 
+    public get gameCanvas(): HTMLCanvasElement {
+        return this._gameCanvas;
+    }
+
     public instantiate<T extends GameObject>(type: new (gameEngine: GameEngine) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
         const newGameObject = new type(this);
         
@@ -97,7 +99,7 @@ export class GameEngine {
     }
 
     public destroy(object: GameObject, time: number = 0): void {
-        setTimeout(() => {
+        const destroyFunc = (): void => {
             if (!this.gameObjectMap.has(object.id)) {
                 console.error(`GameObject with id of ${object.id} not found!`);
                 return;
@@ -123,7 +125,19 @@ export class GameEngine {
             }
 
             object.onDestroy();
-        }, 1000 * time);
+        };
+
+        if (time === 0) {
+            destroyFunc();
+        }
+        else {
+            const timeout = window.setTimeout(() => {
+                destroyFunc();
+                this.destroyTimeouts.delete(timeout);
+            }, 1000 * time);
+
+            this.destroyTimeouts.add(timeout);
+        }
     }
 
     public findGameObjectById(id: string): GameObject {
@@ -230,12 +244,26 @@ export class GameEngine {
             this.gameLoopId = null;
         }
 
+        for (const timeout of this.destroyTimeouts) {
+            window.clearTimeout(timeout);
+        }
+
+        this.destroyTimeouts.clear();
+
         this._input.clearListeners();
         this.tagMap.clear();
         this.gameObjectMap.clear();
         this.gameObjectNumMap.clear();
         this.gameObjects.length = 0;
+        
         this.loadedScene = null;
+        this._assetPool = null;
+        this._componentAnalyzer = null;
+        this._input = null;
+        this._physics = null;
+        this._sceneManager = null;
+        this._terrain = null;
+        this._time = null;
     }
 
     private async initializeScene(scene: Scene): Promise<void> {
@@ -244,8 +272,8 @@ export class GameEngine {
         let gameObjects: GameObject[] = [];
 
         if (terrainSpec !== null) {
-            const terrianBuilder = new TerrainBuilder(this.gameCanvas.width, this.gameCanvas.height);
-            const terrain = await terrianBuilder.buildTerrain(this.gameEngineAPIs, terrainSpec);
+            const terrianBuilder = new TerrainBuilder(this._gameCanvas.width, this._gameCanvas.height);
+            const terrain = await terrianBuilder.buildTerrain(this, terrainSpec);
             
             gameObjects.push(terrain);
 
@@ -255,10 +283,10 @@ export class GameEngine {
 
         this._assetPool = await scene.getAssetPool();
 
-        gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this.gameEngineAPIs)];
+        gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this)];
 
         this.setGameObjects(gameObjects);
-        this.renderingEngine.background = scene.getSkybox(this.gameCanvas);
+        this.renderingEngine.background = scene.getSkybox(this._gameCanvas);
 
         this.gameInitialized = true;
     }
@@ -276,15 +304,15 @@ export class GameEngine {
 
         layerCollisionMatrix.get(Layer.Terrain).delete(Layer.Terrain);
 
-        const collisionDetector = new SpatialHashCollisionDetector(this.gameCanvas.width, this.gameCanvas.height, layerCollisionMatrix, 100);
+        const collisionDetector = new SpatialHashCollisionDetector(this._gameCanvas.width, this._gameCanvas.height, layerCollisionMatrix, 100);
         const collisionResolver = new ImpulseCollisionResolver();
 
         this.physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver, time);
 
-        this.renderingEngine = new RenderingEngine(this.gameCanvas.getContext('2d'));
+        this.renderingEngine = new RenderingEngine(this._gameCanvas.getContext('2d'));
         this.renderingEngine.renderGizmos = this.developmentMode;
 
-        this._input = new Input(this.gameCanvas);
+        this._input = new Input(this._gameCanvas);
         this._componentAnalyzer = new ComponentAnalyzer(this.physicsEngine, this.renderingEngine);
         this._sceneManager = new SceneManager(this);
         this._time = time;

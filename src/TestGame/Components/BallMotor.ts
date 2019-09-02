@@ -9,8 +9,8 @@ export class BallMotor extends Motor {
     private ready: boolean = true;
 
 
-    public constructor(gameObject: GameObject, gameCanvas: HTMLCanvasElement, collider: RectangleCollider) {
-        super(gameObject, gameCanvas);
+    public constructor(gameObject: GameObject, collider: RectangleCollider) {
+        super(gameObject);
 
         this.collider = collider;
 

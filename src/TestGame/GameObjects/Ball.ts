@@ -5,17 +5,16 @@ import { BallMotor } from '../Components/BallMotor';
 import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { GameEngineAPIs } from '../../GameEngine/Core/Interfaces/GameEngineAPIs';
 
 export class Ball extends GameObject {
 
-    protected buildInitialComponents(gameEngineAPIs: GameEngineAPIs): Component[] {
+    protected buildInitialComponents(): Component[] {
         const ballComponents: Component[] = [];
         
         const collider =new RectangleCollider(this, null, 10, 10);
         ballComponents.push(collider);
 
-        ballComponents.push(new BallMotor(this, gameEngineAPIs.gameCanvas, collider));
+        ballComponents.push(new BallMotor(this, collider));
         ballComponents.push(new RectangleRenderer(this, 10, 10, 'white'));
 
         return ballComponents;

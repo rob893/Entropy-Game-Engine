@@ -3,7 +3,6 @@ import { Component } from '../Components/Component';
 import { GameEngine } from './GameEngine';
 import { Layer } from './Enums/Layer';
 import { PrefabSettings } from './Interfaces/PrefabSettings';
-import { GameEngineAPIs } from './Interfaces/GameEngineAPIs';
 import { ComponentAnalyzer } from './Helpers/ComponentAnalyzer';
 import { Input } from './Helpers/Input';
 import { Physics } from './Physics/Physics';
@@ -11,6 +10,7 @@ import { SceneManager } from './Helpers/SceneManager';
 import { AssetPool } from './Helpers/AssetPool';
 import { Time } from './Time';
 import { Vector2 } from './Helpers/Vector2';
+import { Terrain } from './Helpers/Terrain';
 
 
 export abstract class GameObject {
@@ -28,6 +28,7 @@ export abstract class GameObject {
 
 
     public constructor(gameEngine: GameEngine, id?: string, x?: number, y?: number, rotation?: number, tag?: string, layer?: Layer) {
+        this.gameEngine = gameEngine;
         this.isEnabled = true;
         this.componentAnalyzer = gameEngine.componentAnalyzer;
 
@@ -87,6 +88,14 @@ export abstract class GameObject {
 
     public get time(): Time {
         return this.gameEngine.time;
+    }
+
+    public get gameCanvas(): HTMLCanvasElement {
+        return this.gameEngine.gameCanvas;
+    }
+
+    public get terrain(): Terrain {
+        return this.gameEngine.terrain;
     }
 
     public start(): void {
