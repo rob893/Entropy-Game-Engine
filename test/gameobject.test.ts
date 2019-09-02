@@ -1,35 +1,17 @@
+import 'jest-canvas-mock';
 import { GameObject } from '../src/GameEngine/Core/GameObject';
-import { GameEngineAPIs } from '../src/GameEngine/Core/Interfaces/GameEngineAPIs';
 import { Component } from '../src/GameEngine/Components/Component';
-import { Input } from '../src/GameEngine/Core/Helpers/Input';
-import { ObjectManager } from '../src/GameEngine/Core/Helpers/ObjectManager';
-import { Terrain } from '../src/GameEngine/Core/Helpers/Terrain';
-import { ComponentAnalyzer } from '../src/GameEngine/Core/Helpers/ComponentAnalyzer';
-import { SceneManager } from '../src/GameEngine/Core/Helpers/SceneManager';
-import { Time } from '../src/GameEngine/Core/Time';
-import { Physics } from '../src/GameEngine/Core/Physics/Physics';
 import { Rigidbody } from '../src/GameEngine/Components/Rigidbody';
 import { Layer } from '../src/GameEngine/Core/Enums/Layer';
 import { PrefabSettings } from '../src/GameEngine/Core/Interfaces/PrefabSettings';
 import { Transform } from '../src/GameEngine/Components/Transform';
 import { Vector2 } from '../src/GameEngine/Core/Helpers/Vector2';
+import { GameEngine } from '../src/GameEngine/Core/GameEngine';
+import { Scene } from '../src/GameEngine/Core/Interfaces/Scene';
+import { AssetPool } from '../src/GameEngine/Core/Helpers/AssetPool';
+import { RectangleBackground } from '../src/GameEngine/Core/Helpers/RectangleBackground';
 
-jest.mock('../src/GameEngine/Core/Helpers/Input');
-jest.mock('../src/GameEngine/Core/Helpers/ObjectManager');
-jest.mock('../src/GameEngine/Core/Helpers/Terrain');
-jest.mock('../src/GameEngine/Core/Helpers/ComponentAnalyzer');
-
-const mockApis: GameEngineAPIs = {
-    input: null,
-    objectManager: null,
-    terrain: null,
-    componentAnalyzer: new ComponentAnalyzer(null, null),
-    gameCanvas: null,
-    sceneManager: null,
-    time: null,
-    physics: null,
-    assetPool: null
-};
+jest.mock('../src/GameEngine/Core/GameEngine');
 
 class TestComponent extends Component {}
 
@@ -46,18 +28,29 @@ class TestComponent2 extends Component {
 }
 
 class TestGameObject extends GameObject {
-    protected buildInitialComponents(gameEngineAPIs: GameEngineAPIs): Component[] {
+    protected buildInitialComponents(): Component[] {
         return [new TestComponent(this)];
+    }
+
+    protected getPrefabSettings(): PrefabSettings {
+        return {
+            x: 0,
+            y: 0,
+            rotation: 0,
+            id: 'test1',
+            tag: '',
+            layer: Layer.Default
+        };
     }
 }
 
 class TestGameObject2 extends GameObject {
-    protected buildInitialComponents(gameEngineAPIs: GameEngineAPIs): Component[] {
+    protected buildInitialComponents(): Component[] {
         return [new TestComponent2(this)];
     }
 
-    protected buildAndReturnChildGameObjects(gameEngineAPIs: GameEngineAPIs): GameObject[] {
-        return [new TestGameObject(gameEngineAPIs)];
+    protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
+        return [new TestGameObject(gameEngine)];
     }
 
     protected getPrefabSettings(): PrefabSettings {
@@ -72,12 +65,44 @@ class TestGameObject2 extends GameObject {
     }
 }
 
-const testGameObject = new TestGameObject(mockApis);
-const testGameObject2 = new TestGameObject2(mockApis);
+const scene1: Scene = {
+    name: 'Scene1',
+    loadOrder: 1,
+    terrainSpec: null,
+
+    getSkybox(gameCanvas: HTMLCanvasElement): RectangleBackground {
+        return null;
+    },
+
+    getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
+        return [
+            new TestGameObject(gameEngine),
+            new TestGameObject2(gameEngine)
+        ];
+    },
+
+    async getAssetPool(): Promise<AssetPool> {
+        return null;
+    }
+};
+
+let testGameObject: GameObject = null
+let testGameObject2: GameObject = null;
+
+beforeAll(async () => {
+    const canvas = document.createElement('canvas');
+
+    const gameEngine = new GameEngine(canvas);
+    gameEngine.setScenes([scene1]);
+    await gameEngine.loadScene(1);
+
+    testGameObject = gameEngine.findGameObjectById('test1');
+    testGameObject2 = gameEngine.findGameObjectById('test');
+});
 
 test('Tests the creation of a game object.', () => {
     expect(testGameObject).toBeInstanceOf(GameObject);
-    expect(testGameObject.id).toBe('');
+    expect(testGameObject.id).toBe('test1');
     expect(testGameObject.tag).toBe('');
     expect(testGameObject.enabled).toBe(true);
     expect(testGameObject.layer).toBe(Layer.Default);

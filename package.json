@@ -19,6 +19,7 @@
         "file-loader": "^4.2.0",
         "html-webpack-plugin": "^3.2.0",
         "jest": "^24.9.0",
+        "jest-canvas-mock": "^2.1.1",
         "jest-matcher-deep-close-to": "^1.3.0",
         "ts-jest": "^24.0.2",
         "ts-loader": "^6.0.4",
@@ -35,6 +36,9 @@
         "build": "webpack --config webpack.prod.js",
         "lint": "./node_modules/.bin/eslint src/**/*.ts test/**/*.ts",
         "lint-fix": "./node_modules/.bin/eslint --fix src/**/*.ts test/**/*.ts"
+    },
+    "jest": {
+        "setupFiles": ["jest-canvas-mock"]
     },
     "repository": {
         "type": "git",
