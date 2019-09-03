@@ -8,9 +8,12 @@ import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
+import { Transform } from '../../GameEngine/Components/Transform';
 
 export class NavTester extends Component {
 
+    private playerTransform: Transform;
+    private timer: number = 0;
     private readonly navAgent: NavAgent;
     private readonly animator: Animator;
     private readonly runRightAnimation: Animation;
@@ -42,6 +45,25 @@ export class NavTester extends Component {
         this.idleAnimation = new Animation(trumpIdleSpriteSheet.getFrames(1), 0.1);
     }
 
+    public start(): void {
+        this.playerTransform = this.findGameObjectById('player').transform;
+    }
+
+    public update(): void {
+        this.timer += this.time.deltaTime;
+        
+        if (this.timer > 1) {
+            if (Vector2.distance(this.transform.position, this.playerTransform.position) < 100) {
+                this.navAgent.resetPath();
+                this.animator.setAnimation(this.idleAnimation);
+                return;
+            }
+
+            this.navAgent.setDestination(this.playerTransform.position);
+            this.timer = 0;
+        }
+    }
+
     private onKeyDown(event: KeyboardEvent): void {
         if (event.keyCode === KeyCode.Space) {
             this.navAgent.setDestination(new Vector2(400, 300));
@@ -53,7 +75,7 @@ export class NavTester extends Component {
     }
 
     private onClick(event: CanvasMouseEvent): void {
-        this.navAgent.setDestination(event.cursorPositionOnCanvas);
+        //this.navAgent.setDestination(event.cursorPositionOnCanvas);
     }
 
     private changeAnimation(newDirection: Vector2): void {

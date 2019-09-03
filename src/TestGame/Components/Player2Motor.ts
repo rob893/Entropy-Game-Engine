@@ -37,6 +37,7 @@ export class Player2Motor extends Motor {
 
         this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.R], (event) => this.onKeyDown(event));
         this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
+        this.input.addMouseListener(EventType.MouseDown, 0, () => this.fireball());
 
         const trumpRunSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
         const trumpIdleSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
@@ -97,6 +98,11 @@ export class Player2Motor extends Motor {
         }
     }
 
+    private fireball(): void {
+        const fireball = this.instantiate(Fireball, new Vector2(this.transform.position.x, this.transform.position.y - 20));
+        fireball.getComponent(FireballBehavior).movementDirection = Vector2.direction(this.transform.position, this.input.canvasMousePosition);
+    }
+
     private onKeyDown(event: KeyboardEvent): void {
         if (event.keyCode === KeyCode.D) {
             this.movingRight = true;
@@ -118,11 +124,6 @@ export class Player2Motor extends Motor {
             this.movingUp = false;
             this.movingDown = true;
             this.animator.setAnimation(this.runDownAnimation);
-        }
-
-        if (event.keyCode === KeyCode.R) {
-            const fireball = this.instantiate(Fireball, new Vector2(this.transform.position.x, this.transform.position.y - 20));
-            fireball.getComponent(FireballBehavior).movementDirection = Vector2.direction(this.transform.position, this.input.canvasMousePosition);
         }
     }
 
