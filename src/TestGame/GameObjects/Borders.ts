@@ -8,7 +8,7 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Borders extends GameObject {
 
-    protected getPrefabSettings(): PrefabSettings {
+    protected buildInitialComponents(): Component[] {
         const rb = new Rigidbody(this, 100000, true);
 
         const colliders: RectangleCollider[] = [];
@@ -32,16 +32,17 @@ export class Borders extends GameObject {
             collider.physicalMaterial = PhysicalMaterial.metal;
         }
 
-        const components: Component[] = [rb, ...colliders];
-        
+        return [rb, ...colliders];
+    }
+    
+    protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,
             y: 0,
             rotation: 0,
             id: 'borders',
             tag: 'borders',
-            layer: Layer.Terrain,
-            components: components
+            layer: Layer.Terrain
         };
     }
 }

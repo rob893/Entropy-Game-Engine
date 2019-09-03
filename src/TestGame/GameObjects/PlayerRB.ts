@@ -16,7 +16,7 @@ import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class PlayerRB extends GameObject {
 
-    protected getPrefabSettings(): PrefabSettings {
+    protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
 
         const rb = new Rigidbody(this);
@@ -39,15 +39,17 @@ export class PlayerRB extends GameObject {
 
         components.push(new PlayerPhysicsMotor(this, rb, animator));
 
-        
+        return components;
+    }
+
+    protected getPrefabSettings(): PrefabSettings {
         return {
             x: 400,
             y: 250,
             rotation: 0,
             id: 'player',
             tag: 'player',
-            layer: Layer.Default,
-            components: components
+            layer: Layer.Default
         };
     }
     

@@ -31,9 +31,4 @@ export interface PrefabSettings {
      * The collision layer the object belongs to.
      */
     layer: Layer;
-
-    /**
-     * Gets the initial components on the game object.
-     */
-    getComponents(): Component[];
 }

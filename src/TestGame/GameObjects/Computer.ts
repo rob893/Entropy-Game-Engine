@@ -9,7 +9,7 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Computer extends GameObject {
 
-    protected getPrefabSettings(): PrefabSettings {
+    protected buildInitialComponents(): Component[] {
         const computerComponents: Component[] = [];
         
         const collider = new RectangleCollider(this, null, 10, 50);
@@ -18,14 +18,17 @@ export class Computer extends GameObject {
         computerComponents.push(new ComputerMotor(this, collider));
         computerComponents.push(new RectangleRenderer(this, 10, 50, 'white'));
         
+        return computerComponents;
+    }
+
+    protected getPrefabSettings(): PrefabSettings {
         return {
             x: 688,
             y: 175,
             rotation: 0,
             id: 'computer',
             tag: '',
-            layer: Layer.Default,
-            components: computerComponents
+            layer: Layer.Default
         };
     }
 }

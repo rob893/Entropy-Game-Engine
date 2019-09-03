@@ -51,6 +51,8 @@ export class Terrain extends GameObject implements RenderableBackground {
         context.drawImage(this.terrainImage, 0, 0);
     }
 
+    protected buildInitialComponents(): Component[] { return []; }
+
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,
@@ -58,8 +60,7 @@ export class Terrain extends GameObject implements RenderableBackground {
             rotation: 0,
             id: 'terrain',
             tag: 'terrain',
-            layer: Layer.Terrain,
-            components: []
+            layer: Layer.Terrain
         };
     }
 }

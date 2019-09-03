@@ -40,7 +40,7 @@ export abstract class GameObject {
         this.tag = tag ? tag : prefabSettings.tag;
         this.layer = layer ? layer : prefabSettings.layer;
 
-        const initialComponents = prefabSettings.getComponents(); //move this into prefab settings
+        const initialComponents = this.buildInitialComponents(); //move this into prefab settings
         initialComponents.push(this.transform);
 
         this.setComponents(initialComponents);
@@ -298,4 +298,5 @@ export abstract class GameObject {
      * These settings are overridden by non-default constructor values.
      */
     protected abstract getPrefabSettings(): PrefabSettings;
+    protected abstract buildInitialComponents(): Component[];
 }

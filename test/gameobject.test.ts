@@ -26,6 +26,11 @@ class TestComponent2 extends Component {
 }
 
 class TestGameObject extends GameObject {
+    
+    protected buildInitialComponents(): Component[] {
+        return [new TestComponent(this)];
+    }
+    
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,
@@ -33,15 +38,16 @@ class TestGameObject extends GameObject {
             rotation: 0,
             id: 'test1',
             tag: '',
-            layer: Layer.Default,
-            getComponents() { 
-                return [new TestComponent(this)]; 
-            }
+            layer: Layer.Default
         };
     }
 }
 
 class TestGameObject2 extends GameObject {
+    protected buildInitialComponents(): Component[] {
+        return [new TestComponent2(this)];
+    }
+    
     protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
         return [new TestGameObject(gameEngine)];
     }
@@ -53,10 +59,7 @@ class TestGameObject2 extends GameObject {
             rotation: 0,
             id: 'test',
             tag: 'testTag',
-            layer: Layer.Friendly,
-            getComponents() { 
-                return [new TestComponent2(this)]; 
-            }
+            layer: Layer.Friendly
         };
     }
 }
