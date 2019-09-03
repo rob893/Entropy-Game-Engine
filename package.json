@@ -38,7 +38,9 @@
         "lint-fix": "./node_modules/.bin/eslint --fix src/**/*.ts test/**/*.ts"
     },
     "jest": {
-        "setupFiles": ["jest-canvas-mock"]
+        "setupFiles": [
+            "jest-canvas-mock"
+        ]
     },
     "repository": {
         "type": "git",

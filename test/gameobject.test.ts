@@ -11,8 +11,6 @@ import { Scene } from '../src/GameEngine/Core/Interfaces/Scene';
 import { AssetPool } from '../src/GameEngine/Core/Helpers/AssetPool';
 import { RectangleBackground } from '../src/GameEngine/Core/Helpers/RectangleBackground';
 
-jest.mock('../src/GameEngine/Core/GameEngine');
-
 class TestComponent extends Component {}
 
 class TestComponent2 extends Component {
