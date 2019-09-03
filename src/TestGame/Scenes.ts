@@ -99,11 +99,7 @@ export const scene3: Scene = {
         return [
             new GameManagerObject(gameEngine, 'gameManager'),
             new PlayerRB(gameEngine, 'player'),
-            new Borders(gameEngine, 'borders', 0, 0, 0, 'borders', Layer.Terrain),
-            //new TrumpRB('trump', 500, 670),
-            //new TrumpRB('trump', 570, 670),
-            //new TrumpRB('trump', 640, 670),
-            //new TrumpRB('trump', 710, 670)
+            new Borders(gameEngine, 'borders', 0, 0, 0, 'borders', Layer.Terrain)
         ];
     },
 

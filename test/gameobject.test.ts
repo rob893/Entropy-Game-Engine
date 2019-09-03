@@ -26,10 +26,6 @@ class TestComponent2 extends Component {
 }
 
 class TestGameObject extends GameObject {
-    protected buildInitialComponents(): Component[] {
-        return [new TestComponent(this)];
-    }
-
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,
@@ -37,16 +33,15 @@ class TestGameObject extends GameObject {
             rotation: 0,
             id: 'test1',
             tag: '',
-            layer: Layer.Default
+            layer: Layer.Default,
+            getComponents() { 
+                return [new TestComponent(this)]; 
+            }
         };
     }
 }
 
 class TestGameObject2 extends GameObject {
-    protected buildInitialComponents(): Component[] {
-        return [new TestComponent2(this)];
-    }
-
     protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
         return [new TestGameObject(gameEngine)];
     }
@@ -58,7 +53,10 @@ class TestGameObject2 extends GameObject {
             rotation: 0,
             id: 'test',
             tag: 'testTag',
-            layer: Layer.Friendly
+            layer: Layer.Friendly,
+            getComponents() { 
+                return [new TestComponent2(this)]; 
+            }
         };
     }
 }
@@ -75,17 +73,19 @@ const scene1: Scene = {
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
             new TestGameObject(gameEngine),
+            new TestGameObject(gameEngine, 'test2', 5, 5, 5, 'testTag2', Layer.Water),
             new TestGameObject2(gameEngine)
         ];
     },
 
     async getAssetPool(): Promise<AssetPool> {
-        return null;
+        return await null;
     }
 };
 
-let testGameObject: GameObject = null
+let testGameObject: GameObject = null;
 let testGameObject2: GameObject = null;
+let testGameObject3: GameObject = null;
 
 beforeAll(async () => {
     const canvas = document.createElement('canvas');
@@ -96,6 +96,7 @@ beforeAll(async () => {
 
     testGameObject = gameEngine.findGameObjectById('test1');
     testGameObject2 = gameEngine.findGameObjectById('test');
+    testGameObject3 = gameEngine.findGameObjectById('test2');
 });
 
 test('Tests the creation of a game object.', () => {
@@ -120,6 +121,17 @@ test('Tests the creation of a game object.', () => {
     expect(testGameObject2.transform.position.x).toBe(50);
     expect(testGameObject2.transform.position.y).toBe(75);
     expect(testGameObject2.transform.rotation).toBe(0);
+
+    expect(testGameObject3).toBeInstanceOf(GameObject);
+    expect(testGameObject3.id).toBe('test2');
+    expect(testGameObject3.tag).toBe('testTag2');
+    expect(testGameObject3.enabled).toBe(true);
+    expect(testGameObject3.layer).toBe(Layer.Water);
+    expect(testGameObject3.transform).toBeInstanceOf(Transform);
+    expect(testGameObject3.transform.position).toBeInstanceOf(Vector2);
+    expect(testGameObject3.transform.position.x).toBe(5);
+    expect(testGameObject3.transform.position.y).toBe(5);
+    expect(testGameObject3.transform.rotation).toBe(5);
 });
 
 test('Tests nesting of game objects', () => {

@@ -12,7 +12,7 @@ import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 export class Trump extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected getPrefabSettings(): PrefabSettings {
         const components: Component[] = [];
 
         const collider = new RectangleCollider(this, null, 60, 60, 0, -5);
@@ -29,18 +29,15 @@ export class Trump extends GameObject {
         components.push(animator);
 
         components.push(new NavTester(this, navAgent, animator));
-
-        return components;
-    }
-
-    protected getPrefabSettings(): PrefabSettings {
+        
         return {
             x: 200,
             y: 300,
             rotation: 0,
             id: 'trump',
             tag: '',
-            layer: Layer.Default
+            layer: Layer.Default,
+            components: components
         };
     }
 }

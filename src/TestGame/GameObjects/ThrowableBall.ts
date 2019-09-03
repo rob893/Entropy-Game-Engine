@@ -10,7 +10,7 @@ import { Grenade } from '../Components/Grenade';
 
 export class ThrowableBall extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected getPrefabSettings(): PrefabSettings {
         const components: Component[] = [];
 
         components.push(new RectangleRenderer(this, 15, 15, 'white'));
@@ -23,17 +23,14 @@ export class ThrowableBall extends GameObject {
         components.push(collider);
         components.push(new Grenade(this));
         
-        return components;
-    }
-
-    protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,
             y: 0,
             rotation: 0,
             id: 'throwableBall',
             tag: '',
-            layer: Layer.Default
+            layer: Layer.Default,
+            components: components
         };
     }
 }

@@ -16,7 +16,7 @@ import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class PlayerRB extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected getPrefabSettings(): PrefabSettings {
         const components: Component[] = [];
 
         const rb = new Rigidbody(this);
@@ -39,9 +39,18 @@ export class PlayerRB extends GameObject {
 
         components.push(new PlayerPhysicsMotor(this, rb, animator));
 
-        return components;
+        
+        return {
+            x: 400,
+            y: 250,
+            rotation: 0,
+            id: 'player',
+            tag: 'player',
+            layer: Layer.Default,
+            components: components
+        };
     }
-
+    
     protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
         // const ball = new ThrowableBall(gameEngineAPIs, 'ball');
         
@@ -49,16 +58,5 @@ export class PlayerRB extends GameObject {
 
         // return [ball];
         return [];
-    }
-
-    protected getPrefabSettings(): PrefabSettings {
-        return {
-            x: 400,
-            y: 250,
-            rotation: 0,
-            id: 'player',
-            tag: 'player',
-            layer: Layer.Default
-        };
     }
 }

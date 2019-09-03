@@ -3,10 +3,12 @@ import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { Component } from '../../GameEngine/Components/Component';
+import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
+import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Borders extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected getPrefabSettings(): PrefabSettings {
         const rb = new Rigidbody(this, 100000, true);
 
         const colliders: RectangleCollider[] = [];
@@ -30,6 +32,16 @@ export class Borders extends GameObject {
             collider.physicalMaterial = PhysicalMaterial.metal;
         }
 
-        return [rb, ...colliders];
+        const components: Component[] = [rb, ...colliders];
+        
+        return {
+            x: 0,
+            y: 0,
+            rotation: 0,
+            id: 'borders',
+            tag: 'borders',
+            layer: Layer.Terrain,
+            components: components
+        };
     }
 }

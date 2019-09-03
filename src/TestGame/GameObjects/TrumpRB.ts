@@ -11,7 +11,7 @@ import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 export class TrumpRB extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected getPrefabSettings(): PrefabSettings {
         const components: Component[] = [];
 
         const rb = new Rigidbody(this);
@@ -25,18 +25,15 @@ export class TrumpRB extends GameObject {
 
         const initialAnimation = new Animation(trumpIdleFrames, 0.1);
         components.push(new Animator(this, 75, 75, initialAnimation));
-
-        return components;
-    }
-
-    protected getPrefabSettings(): PrefabSettings {
+        
         return {
             x: 400,
             y: 250,
             rotation: 0,
             id: 'trumpRB',
             tag: 'trumpRB',
-            layer: Layer.Default
+            layer: Layer.Default,
+            components: components
         };
     }
 }

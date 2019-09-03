@@ -1,4 +1,5 @@
 import { Layer } from '../Enums/Layer';
+import { Component } from '../../Components/Component';
 
 export interface PrefabSettings {
     /**
@@ -30,4 +31,9 @@ export interface PrefabSettings {
      * The collision layer the object belongs to.
      */
     layer: Layer;
+
+    /**
+     * Gets the initial components on the game object.
+     */
+    getComponents(): Component[];
 }

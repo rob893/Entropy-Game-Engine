@@ -6,10 +6,12 @@ import { Animator } from '../../GameEngine/Components/Animator';
 import { Player2Motor } from '../Components/Player2Motor';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
+import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
+import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Player2 extends GameObject {
 
-    protected buildInitialComponents(): Component[] {
+    protected getPrefabSettings(): PrefabSettings {
         const components: Component[] = [];
         
         const collider = new RectangleCollider(this, null, 35, 35, 0, -5);
@@ -23,7 +25,15 @@ export class Player2 extends GameObject {
         components.push(animator);
 
         components.push(new Player2Motor(this, collider, animator));
-
-        return components;
+        
+        return {
+            x: 0,
+            y: 0,
+            rotation: 0,
+            id: 'player',
+            tag: 'player',
+            layer: Layer.Friendly,
+            components: components
+        };
     }
 }

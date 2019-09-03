@@ -40,7 +40,7 @@ export abstract class GameObject {
         this.tag = tag ? tag : prefabSettings.tag;
         this.layer = layer ? layer : prefabSettings.layer;
 
-        const initialComponents = this.buildInitialComponents(); //move this into prefab settings
+        const initialComponents = prefabSettings.getComponents(); //move this into prefab settings
         initialComponents.push(this.transform);
 
         this.setComponents(initialComponents);
@@ -279,21 +279,6 @@ export abstract class GameObject {
      */
     protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] { return []; }
 
-    /**
-     * Meant to be overridden by subclasses to define prefab settings. These settings are overridden by 
-     * non-default constructor values.
-     */
-    protected getPrefabSettings(): PrefabSettings { 
-        return {
-            x: 0,
-            y: 0,
-            rotation: 0,
-            id: '',
-            tag: '',
-            layer: Layer.Default
-        }; 
-    }
-
     private setComponents(components: Component[]): void {
         for (const component of components) {
             this.updatableComponents.push(component);
@@ -309,5 +294,8 @@ export abstract class GameObject {
         }
     }
 
-    protected abstract buildInitialComponents(): Component[];
+    /**
+     * These settings are overridden by non-default constructor values.
+     */
+    protected abstract getPrefabSettings(): PrefabSettings;
 }
