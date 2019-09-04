@@ -40,6 +40,8 @@ export class GameEngine {
     private readonly scenes: Map<number | string, Scene> = new Map<number | string, Scene>();
     private readonly _gameCanvas: HTMLCanvasElement;
     private readonly destroyTimeouts: Set<number> = new Set<number>();
+    private readonly gameObjectsMarkedForDelete: GameObject[] = [];
+    private readonly gameObjectsMarkedForCreate: GameObject[] = [];
 
 
     public constructor(gameCanvas: HTMLCanvasElement) {
@@ -93,46 +95,18 @@ export class GameEngine {
             newGameObject.transform.parent = parent;
         }
         
-        this.registerGameObject(newGameObject);
+        this.gameObjectsMarkedForCreate.push(newGameObject); //TODO: rethink this. It may cause issues (ie, game object is returned immediatly. Not started and new id not set)
         
         return newGameObject;
     }
 
     public destroy(object: GameObject, time: number = 0): void {
-        const destroyFunc = (): void => {
-            if (!this.gameObjectMap.has(object.id)) {
-                console.error(`GameObject with id of ${object.id} not found!`);
-                return;
-            }
-
-            this.gameObjectMap.delete(object.id);
-
-            const index = this.gameObjects.indexOf(object);
-
-            if (index !== -1) {
-                this.gameObjects.splice(index, 1);
-            }
-
-            const tagIndex = this.tagMap.get(object.tag).indexOf(object);
-
-            if (tagIndex !== -1) {
-                this.tagMap.get(object.tag).splice(tagIndex, 1);
-            }
-
-            if (this.gameObjectNumMap.has(object.id)) {
-                const numGameObjects = this.gameObjectNumMap.get(object.id) - 1;
-                numGameObjects > 0 ? this.gameObjectNumMap.set(object.id, numGameObjects) : this.gameObjectNumMap.delete(object.id);
-            }
-
-            object.onDestroy();
-        };
-
         if (time === 0) {
-            destroyFunc();
+            this.gameObjectsMarkedForDelete.push(object);
         }
         else {
             const timeout = window.setTimeout(() => {
-                destroyFunc();
+                this.gameObjectsMarkedForDelete.push(object);
                 this.destroyTimeouts.delete(timeout);
             }, 1000 * time);
 
@@ -179,7 +153,7 @@ export class GameEngine {
     public setScenes(scenes: Scene[]): void {
         for (const scene of scenes) {
             if (this.scenes.has(scene.loadOrder) || this.scenes.has(scene.name)) {
-                console.error('Duplicate scene load orders or name detected ' + scene.loadOrder + ' ' + scene.name);
+                console.error(`Duplicate scene load orders or name detected ${scene.loadOrder} ${scene.name}`);
             }
 
             this.scenes.set(scene.loadOrder, scene);
@@ -189,7 +163,7 @@ export class GameEngine {
 
     public async loadScene(loadOrderOrName: number | string): Promise<void> {
         if (!this.scenes.has(loadOrderOrName)) {
-            throw new Error('Scene ' + loadOrderOrName + ' not found.');
+            throw new Error(`Scene ${loadOrderOrName} not found.`);
         }
 
         this.endCurrentScene();
@@ -202,6 +176,34 @@ export class GameEngine {
 
         this.loadedScene = scene;
         this.startGame();
+    }
+
+    private removeReferencesToGameObject(object: GameObject): void {
+        if (!this.gameObjectMap.has(object.id)) {
+            console.error(`GameObject with id of ${object.id} not found!`);
+            return;
+        }
+
+        this.gameObjectMap.delete(object.id);
+
+        const index = this.gameObjects.indexOf(object);
+
+        if (index !== -1) {
+            this.gameObjects.splice(index, 1);
+        }
+
+        const tagIndex = this.tagMap.get(object.tag).indexOf(object);
+
+        if (tagIndex !== -1) {
+            this.tagMap.get(object.tag).splice(tagIndex, 1);
+        }
+
+        if (this.gameObjectNumMap.has(object.id)) {
+            const numGameObjects = this.gameObjectNumMap.get(object.id) - 1;
+            numGameObjects > 0 ? this.gameObjectNumMap.set(object.id, numGameObjects) : this.gameObjectNumMap.delete(object.id);
+        }
+
+        object.onDestroy();
     }
 
     private registerGameObject(newGameObject: GameObject): void {
@@ -255,6 +257,8 @@ export class GameEngine {
         this.gameObjectMap.clear();
         this.gameObjectNumMap.clear();
         this.gameObjects.length = 0;
+        this.gameObjectsMarkedForCreate.length = 0;
+        this.gameObjectsMarkedForDelete.length = 0;
         
         this.loadedScene = null;
         this._assetPool = null;
@@ -390,6 +394,16 @@ export class GameEngine {
     private update(): void {
         if (this.paused) {
             return;
+        }
+
+        while (this.gameObjectsMarkedForDelete.length > 0) {
+            const gameObject = this.gameObjectsMarkedForDelete.pop();
+            this.removeReferencesToGameObject(gameObject);
+        }
+
+        while (this.gameObjectsMarkedForCreate.length > 0) {
+            const gameObject = this.gameObjectsMarkedForCreate.pop();
+            this.registerGameObject(gameObject);
         }
 
         this._time.updateTime();
