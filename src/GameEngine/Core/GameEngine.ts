@@ -41,7 +41,6 @@ export class GameEngine {
     private readonly _gameCanvas: HTMLCanvasElement;
     private readonly destroyTimeouts: Set<number> = new Set<number>();
     private readonly gameObjectsMarkedForDelete: GameObject[] = [];
-    private readonly gameObjectsMarkedForCreate: GameObject[] = [];
 
 
     public constructor(gameCanvas: HTMLCanvasElement) {
@@ -95,8 +94,8 @@ export class GameEngine {
             newGameObject.transform.parent = parent;
         }
         
-        this.gameObjectsMarkedForCreate.push(newGameObject); //TODO: rethink this. It may cause issues (ie, game object is returned immediatly. Not started and new id not set)
-        
+        this.registerGameObject(newGameObject);
+
         return newGameObject;
     }
 
@@ -257,7 +256,6 @@ export class GameEngine {
         this.gameObjectMap.clear();
         this.gameObjectNumMap.clear();
         this.gameObjects.length = 0;
-        this.gameObjectsMarkedForCreate.length = 0;
         this.gameObjectsMarkedForDelete.length = 0;
         
         this.loadedScene = null;
@@ -399,11 +397,6 @@ export class GameEngine {
         while (this.gameObjectsMarkedForDelete.length > 0) {
             const gameObject = this.gameObjectsMarkedForDelete.pop();
             this.removeReferencesToGameObject(gameObject);
-        }
-
-        while (this.gameObjectsMarkedForCreate.length > 0) {
-            const gameObject = this.gameObjectsMarkedForCreate.pop();
-            this.registerGameObject(gameObject);
         }
 
         this._time.updateTime();
