@@ -128,4 +128,12 @@ export abstract class Component {
     protected destroy(object: GameObject, time: number = 0): void {
         this.gameObject.destroy(object, time);
     }
+
+    protected invoke(funcToInvoke: () => void, time: number): void {
+        this.gameObject.invoke(funcToInvoke, time);
+    }
+
+    protected invokeRepeating(funcToInvoke: () => void, repeatRate: number): void {
+        this.gameObject.invokeRepeating(funcToInvoke, repeatRate);
+    }
 }

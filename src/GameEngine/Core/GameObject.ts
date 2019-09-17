@@ -130,6 +130,14 @@ export abstract class GameObject {
         this.gameEngine.destroy(object, time);
     }
 
+    public invoke(funcToInvoke: () => void, time: number): void {
+        this.gameEngine.invoke(funcToInvoke, time);
+    }
+
+    public invokeRepeating(funcToInvoke: () => void, repeatRate: number): void {
+        this.gameEngine.invokeRepeating(funcToInvoke, repeatRate);
+    }
+
     /**
      * Use this function to remove one of a game object's components from the update loop. This is used by empty update functions to reduce 
      * the amount of update calls per frame (no point in calling empty update functions).

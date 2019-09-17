@@ -39,7 +39,7 @@ export class GameEngine {
     private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
     private readonly scenes: Map<number | string, Scene> = new Map<number | string, Scene>();
     private readonly _gameCanvas: HTMLCanvasElement;
-    private readonly destroyTimeouts: Set<number> = new Set<number>();
+    private readonly invokeTimeouts: Set<number> = new Set<number>();
     private readonly gameObjectsMarkedForDelete: GameObject[] = [];
 
 
@@ -104,13 +104,27 @@ export class GameEngine {
             this.gameObjectsMarkedForDelete.push(object);
         }
         else {
-            const timeout = window.setTimeout(() => {
+            this.invoke(() => {
                 this.gameObjectsMarkedForDelete.push(object);
-                this.destroyTimeouts.delete(timeout);
-            }, 1000 * time);
-
-            this.destroyTimeouts.add(timeout);
+            }, time);
         }
+    }
+
+    public invoke(funcToInvoke: () => void, time: number): void {
+        const timeout = window.setTimeout(() => {
+            funcToInvoke();
+            this.invokeTimeouts.delete(timeout);
+        }, 1000 * time);
+
+        this.invokeTimeouts.add(timeout);
+    }
+
+    public invokeRepeating(funcToInvoke: () => void, repeatRate: number): void {
+        this.invoke(() => {
+            funcToInvoke();
+
+            this.invokeRepeating(funcToInvoke, repeatRate);
+        }, repeatRate);
     }
 
     public findGameObjectById(id: string): GameObject {
@@ -245,11 +259,11 @@ export class GameEngine {
             this.gameLoopId = null;
         }
 
-        for (const timeout of this.destroyTimeouts) {
+        for (const timeout of this.invokeTimeouts) {
             window.clearTimeout(timeout);
         }
 
-        this.destroyTimeouts.clear();
+        this.invokeTimeouts.clear();
 
         this._input.clearListeners();
         this.tagMap.clear();
