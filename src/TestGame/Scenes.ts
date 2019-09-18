@@ -44,23 +44,19 @@ export const scene1: Scene = {
     async getAssetPool(): Promise<AssetPool> {
         const assets = new Map<string, any>();
 
-        const trumpIdleSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpIdle, 10, 4);
-        assets.set('trumpIdleSpriteSheet', trumpIdleSpriteSheet);
+        const trumpIdleSpriteSheet = SpriteSheet.buildSpriteSheetAsync(TrumpIdle, 10, 4);
+        const trumpRunSpriteSheet = SpriteSheet.buildSpriteSheetAsync(TrumpRun, 6, 4);
+        const explosionSpriteSheet = SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
+        const fireballSpriteSheet = SpriteSheet.buildSpriteSheetAsync(RedFireball, 3, 2);
+        const explosionSound = AudioClip.buildAudioClipAsync(ExplosionSound, 5);
+        const hurtSound = AudioClip.buildAudioClipAsync(HurtSound, 5);
 
-        const trumpRunSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpRun, 6, 4);
-        assets.set('trumpRunSpriteSheet', trumpRunSpriteSheet);
-
-        const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
-        assets.set('explosionSpriteSheet', explosionSpriteSheet);
-
-        const fireballSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(RedFireball, 3, 2);
-        assets.set('redFireball', fireballSpriteSheet);
-
-        const explosionSound = await AudioClip.buildAudioClipAsync(ExplosionSound, 5);
-        assets.set('explosionSound', explosionSound);
-
-        const hurtSound = await AudioClip.buildAudioClipAsync(HurtSound, 5);
-        assets.set('hurtSound', hurtSound);
+        assets.set('trumpIdleSpriteSheet', await trumpIdleSpriteSheet);
+        assets.set('trumpRunSpriteSheet', await trumpRunSpriteSheet);
+        assets.set('explosionSpriteSheet', await explosionSpriteSheet);
+        assets.set('redFireball', await fireballSpriteSheet);
+        assets.set('explosionSound', await explosionSound);
+        assets.set('hurtSound', await hurtSound);
 
         return new AssetPool(assets);
     }
@@ -106,20 +102,17 @@ export const scene3: Scene = {
     async getAssetPool(): Promise<AssetPool> {
         const assets = new Map<string, any>();
 
-        const trumpIdleSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpIdle, 10, 4);
-        assets.set('trumpIdleSpriteSheet', trumpIdleSpriteSheet);
+        const trumpIdleSpriteSheet = SpriteSheet.buildSpriteSheetAsync(TrumpIdle, 10, 4);
+        const trumpRunSpriteSheet = SpriteSheet.buildSpriteSheetAsync(TrumpRun, 6, 4);
+        const explosionSpriteSheet = SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
+        const explosionSound = AudioClip.buildAudioClipAsync(ExplosionSound, 5);
+        const hurtSound = AudioClip.buildAudioClipAsync(HurtSound, 5);
 
-        const trumpRunSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpRun, 6, 4);
-        assets.set('trumpRunSpriteSheet', trumpRunSpriteSheet);
-
-        const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
-        assets.set('explosionSpriteSheet', explosionSpriteSheet);
-
-        const explosionSound = await AudioClip.buildAudioClipAsync(ExplosionSound, 5);
-        assets.set('explosionSound', explosionSound);
-
-        const hurtSound = await AudioClip.buildAudioClipAsync(HurtSound, 5);
-        assets.set('hurtSound', hurtSound);
+        assets.set('trumpIdleSpriteSheet', await trumpIdleSpriteSheet);
+        assets.set('trumpRunSpriteSheet', await trumpRunSpriteSheet);
+        assets.set('explosionSpriteSheet', await explosionSpriteSheet);
+        assets.set('explosionSound', await explosionSound);
+        assets.set('hurtSound', await hurtSound);
 
         return new AssetPool(assets);
     }

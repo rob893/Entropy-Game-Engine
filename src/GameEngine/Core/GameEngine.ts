@@ -81,7 +81,7 @@ export class GameEngine {
 
     public instantiate<T extends GameObject>(type: new (gameEngine: GameEngine) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
         const newGameObject = new type(this);
-        
+
         if (position !== undefined) {
             newGameObject.transform.setPosition(position.x, position.y);
         }
@@ -192,12 +192,9 @@ export class GameEngine {
     }
 
     private removeReferencesToGameObject(object: GameObject): void {
-        if (!this.gameObjectMap.has(object.id)) {
-            console.error(`GameObject with id of ${object.id} not found!`);
-            return;
+        if (this.gameObjectMap.has(object.id)) {
+            this.gameObjectMap.delete(object.id);
         }
-
-        this.gameObjectMap.delete(object.id);
 
         const index = this.gameObjects.indexOf(object);
 
@@ -210,7 +207,8 @@ export class GameEngine {
         if (tagIndex !== -1) {
             this.tagMap.get(object.tag).splice(tagIndex, 1);
         }
-
+        //TODO: This still has a bug. Sometimes object ids are still not working correctly when creating and destroying objects (the old bug that used to console errors).
+        //For some reason, the id is being set here before being called a 'clone'.
         if (this.gameObjectNumMap.has(object.id)) {
             const numGameObjects = this.gameObjectNumMap.get(object.id) - 1;
             numGameObjects > 0 ? this.gameObjectNumMap.set(object.id, numGameObjects) : this.gameObjectNumMap.delete(object.id);
@@ -284,6 +282,7 @@ export class GameEngine {
 
     private async initializeScene(scene: Scene): Promise<void> {
 
+        const assetPoolPromise = scene.getAssetPool();
         const terrainSpec = scene.terrainSpec;
         let gameObjects: GameObject[] = [];
 
@@ -297,7 +296,7 @@ export class GameEngine {
             this._terrain = terrain;
         }
 
-        this._assetPool = await scene.getAssetPool();
+        this._assetPool = await assetPoolPromise;
 
         gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this)];
 
