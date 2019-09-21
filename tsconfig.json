@@ -1,16 +1,22 @@
 {
     "compilerOptions": {
         "noImplicitAny": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "strictBindCallApply": true,
+        "strictNullChecks": false,
+        "strictFunctionTypes": false,
+        "strictPropertyInitialization": false,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "allowUnreachableCode": false,
+        "forceConsistentCasingInFileNames": true,
         "removeComments": true,
         "preserveConstEnums": true,
         "outDir": "./compiled/",
         "sourceMap": true,
         "target": "es2017",
-        "pretty": true,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitReturns": true,
-        "allowUnreachableCode": false,
-        "forceConsistentCasingInFileNames": true
+        "pretty": true
     },
     "include": [
         "src/**/*.ts"
