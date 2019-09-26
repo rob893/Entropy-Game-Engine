@@ -10,7 +10,7 @@ export class RenderingEngine {
 
     public renderGizmos: boolean;
 
-    private _background: RenderableBackground;
+    private _background: RenderableBackground | null;
     private _terrain: Terrain | null;
     private readonly renderableObjects: Renderable[];
     private readonly renderableGizmos: RenderableGizmo[];
@@ -25,6 +25,7 @@ export class RenderingEngine {
         this.renderableGUIElements = [];
         this.renderGizmos = false;
         this._terrain = null;
+        this._background = null;
     }
 
     public set terrain(terrain: Terrain) {
@@ -82,7 +83,9 @@ export class RenderingEngine {
     }
 
     public renderScene(): void {
-        this._background.renderBackground(this._canvasContext);
+        if (this._background !== null) {
+            this._background.renderBackground(this._canvasContext);
+        }
 
         if (this._terrain !== null) {
             this._terrain.renderBackground(this._canvasContext);

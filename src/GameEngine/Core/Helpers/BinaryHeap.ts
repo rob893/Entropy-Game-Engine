@@ -128,6 +128,10 @@ export class BinaryHeap<T extends Comparable> {
 
         const tail = this.heapArray.pop();
 
+        if (tail === undefined) {
+            throw new Error('Error in binary heap');
+        }
+
         if (this.count > 0) {
             this.heapArray[0] = tail;
             this.heapifyDown();

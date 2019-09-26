@@ -48,8 +48,9 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
 
             for (const other of this.getPossibleCollisions(collider)) {
                 if (collider.detectCollision(other)) {
-                    if (this.collisionMap.has(collider)) {
-                        this.collisionMap.get(collider).add(other);
+                    const collisions = this.collisionMap.get(collider);
+                    if (collisions !== undefined) {
+                        collisions.add(other);
                     }
                     else {
                         this.collisionMap.set(collider, new Set([other]));
@@ -84,8 +85,18 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
 
             const keys = this.colliderSpacialMapKeys.get(collider);
 
+            if (keys === undefined) {
+                throw new Error('Keys not found for collider');
+            }
+
             for (const key of keys) {
-                this.spatialMap.get(key).delete(collider);
+                const collidersInCell = this.spatialMap.get(key);
+
+                if (collidersInCell === undefined) {
+                    throw new Error('Invalid cell key');
+                }
+
+                collidersInCell.delete(collider);
             }
 
             this.colliderSpacialMapKeys.delete(collider);
@@ -97,6 +108,10 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
 
     private getMapKey(positionOrX: Vector2|number, y?: number): string {
         if (typeof positionOrX === 'number') {
+            if (y === undefined) {
+                throw new Error('y cannot be undefined when using x, y arguments.');
+            }
+
             return Math.floor(positionOrX / this.cellSize) * this.cellSize + ',' + Math.floor(y / this.cellSize) * this.cellSize;
         }
 
@@ -126,6 +141,10 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         }
 
         const previousKeys = this.colliderSpacialMapKeys.get(collider);
+
+        if (previousKeys === undefined) {
+            throw new Error('Keys not found');
+        }
         
         let movedCells = false;
 
@@ -146,15 +165,22 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         }
         
         for (const key of previousKeys) {
-            this.spatialMap.get(key).delete(collider);
+            const collidersInCell = this.spatialMap.get(key);
+
+            if (collidersInCell === undefined) {
+                throw new Error('Cell not found for given key.');
+            }
+
+            collidersInCell.delete(collider);
         }
 
         previousKeys.clear();
         
         // If all 4 points are in the same cell.
         if (tlKey === brKey) {
-            if (this.spatialMap.has(tlKey)) {
-                this.spatialMap.get(tlKey).add(collider);
+            const cellColliders = this.spatialMap.get(tlKey);
+            if (cellColliders !== undefined) {
+                cellColliders.add(collider);
             }
             else {
                 this.spatialMap.set(tlKey, new Set([collider]));
@@ -172,9 +198,9 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         for (let x = tlx; x <= xDiff + tlx; x += this.cellSize) {
             for (let y = tly; y <= yDiff + tly; y += this.cellSize) {
                 const key = this.getMapKey(x, y);
-                
-                if (this.spatialMap.has(key)) {
-                    this.spatialMap.get(key).add(collider);
+                const cellColliders = this.spatialMap.get(key);
+                if (cellColliders !== undefined) {
+                    cellColliders.add(collider);
                 }
                 else {
                     this.spatialMap.set(key, new Set([collider]));
@@ -187,10 +213,29 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
     private getPossibleCollisions(collider: RectangleCollider): Set<RectangleCollider> {
         const possibleCollisions: Set<RectangleCollider> = new Set<RectangleCollider>();
 
-        for (const key of this.colliderSpacialMapKeys.get(collider)) {
-            for (const other of this.spatialMap.get(key)) {
-                if (other !== collider && this.layerCollisionMatrix.get(collider.gameObject.layer).has(other.gameObject.layer)) {
-                    if (this.collisionMap.has(other) && this.collisionMap.get(other).has(collider)) {
+        const keys = this.colliderSpacialMapKeys.get(collider);
+
+        if (keys === undefined) {
+            return possibleCollisions;
+        }
+
+        for (const key of keys) {
+            const otherCollidersInCell = this.spatialMap.get(key);
+
+            if (otherCollidersInCell === undefined) {
+                continue;
+            }
+
+            for (const other of otherCollidersInCell) {
+                const collidingLayers = this.layerCollisionMatrix.get(collider.gameObject.layer);
+
+                if (collidingLayers === undefined) {
+                    throw new Error('Layer not found');
+                }
+
+                if (other !== collider && collidingLayers.has(other.gameObject.layer)) {
+                    const collidersAlreadyCollidedWith = this.collisionMap.get(other);
+                    if (collidersAlreadyCollidedWith !== undefined && collidersAlreadyCollidedWith.has(collider)) {
                         continue;
                     }
 
