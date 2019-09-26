@@ -3,8 +3,6 @@ import { RenderableGizmo } from '../Core/Interfaces/RenderableGizmo';
 import { Vector2 } from '../Core/Helpers/Vector2';
 import { Color } from '../Core/Enums/Color';
 import { NavGrid } from '../Core/Helpers/NavGrid';
-import { WeightedGraphCell } from '../Core/Interfaces/WeightedGraphCell';
-import { GameEngine } from '../Core/GameEngine';
 import { AStarSearch } from '../Core/Helpers/AStarSearch';
 import { GameObject } from '../Core/GameObject';
 import { LiteEvent } from '../Core/Helpers/LiteEvent';
@@ -14,8 +12,8 @@ export class NavAgent extends Component implements RenderableGizmo {
     
     public speed: number = 1;
     
-    private path: Vector2[] = null;
-    private nextPosition: Vector2 = null;
+    private path: Vector2[] | null = null;
+    private nextPosition: Vector2 | null = null;
     private pathIndex: number = 0;
     private readonly navGrid: NavGrid;
     private readonly onChangeDirection = new LiteEvent<Vector2>();
@@ -36,7 +34,7 @@ export class NavAgent extends Component implements RenderableGizmo {
         return this.onPathComplete.expose();
     }
 
-    public get heading(): Vector2 {
+    public get heading(): Vector2 | null {
         if (this.nextPosition === null) {
             return null;
         }
@@ -49,7 +47,7 @@ export class NavAgent extends Component implements RenderableGizmo {
     }
 
     public get destination(): Vector2 | null {
-        if (!this.hasPath) {
+        if (this.path === null) {
             return null;
         }
 
@@ -57,7 +55,7 @@ export class NavAgent extends Component implements RenderableGizmo {
     }
 
     public update(): void {
-        if (this.nextPosition === null) {
+        if (this.nextPosition === null || this.path === null) {
             return;
         }
 
@@ -71,7 +69,10 @@ export class NavAgent extends Component implements RenderableGizmo {
             }
 
             this.nextPosition = this.path[this.pathIndex];
-            this.onChangeDirection.trigger(this.heading);
+
+            if (this.heading !== null) {
+                this.onChangeDirection.trigger(this.heading);
+            }
         }
 
         this.transform.translate(Vector2.direction(this.transform.position, this.nextPosition).multiplyScalar(this.speed));

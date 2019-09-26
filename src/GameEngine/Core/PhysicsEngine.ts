@@ -8,6 +8,7 @@ import { Layer } from './Enums/Layer';
 import { CollisionManifold } from './Helpers/CollisionManifold';
 import { Vector2 } from './Helpers/Vector2';
 import { Time } from './Time';
+import { Component } from '../Components/Component';
 
 
 export class PhysicsEngine {
@@ -61,11 +62,17 @@ export class PhysicsEngine {
         this.collisionResolver.resolveCollisions(collisionManifold);
     }
 
+
     private readonly addNonKinomaticRigidbody = (rb: Rigidbody): void => {
         this.rigidbodies.push(rb);
     }
 
-    private readonly removeKinomaticRigidbody = (rb: Rigidbody): void => {
+    private readonly removeKinomaticRigidbody = (rb: Component): void => {
+        if (!(rb instanceof Rigidbody)) {
+            console.error('Invalid component passed in');
+            return;
+        }
+        
         const index = this.rigidbodies.indexOf(rb);
 
         if (index !== -1) {
@@ -73,7 +80,12 @@ export class PhysicsEngine {
         }
     }
 
-    private readonly removeColliderFromDetector = (collider: RectangleCollider): void => {
+    private readonly removeColliderFromDetector = (collider: Component): void => {
+        if (!(collider instanceof RectangleCollider)) {
+            console.error('Invalid component. Expecting RectangleCollider');
+            return;
+        }
+        
         this.collisionDetector.removeCollider(collider);
     }
 }

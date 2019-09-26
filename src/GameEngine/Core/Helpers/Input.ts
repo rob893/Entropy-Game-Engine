@@ -145,7 +145,12 @@ export class Input {
         }
     }
 
-    private readonly invokeKeyHandlers = (event: KeyboardEvent): void => {
+    private readonly invokeKeyHandlers = (event: Event): void => {
+        if (!(event instanceof KeyboardEvent)) {
+            console.error('Invalid event');
+            return;
+        }
+
         const eventType = event.type as EventType.KeyUp | EventType.KeyDown;
         
         if (!this.keyMap.has(eventType)) {
@@ -157,7 +162,12 @@ export class Input {
         }
     }
 
-    private readonly invokeMouseHandlers = (event: MouseEvent): void => {
+    private readonly invokeMouseHandlers = (event: Event): void => {
+        if (!(event instanceof MouseEvent)) {
+            console.log('Invalid event.');
+            return;
+        }
+
         const eventType = event.type as EventType.MouseDown | EventType.MouseUp | EventType.Click;
         
         if (!this.mouseMap.has(eventType)) {

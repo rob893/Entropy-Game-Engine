@@ -13,12 +13,12 @@ export class Transform extends Component {
     public readonly localPosition: Vector2;
     public readonly scale: Vector2;
 
-    private _parent: Transform = null;
+    private _parent: Transform | null = null;
     private readonly _children: Transform[] = [];
     private readonly onMove = new LiteEvent<void>();
 
     
-    public constructor(gameObject: GameObject, x: number, y: number, rotation: number = 0, parent: Transform = null) {
+    public constructor(gameObject: GameObject, x: number, y: number, rotation: number = 0, parent: Transform | null = null) {
         super(gameObject);
 
         this.position = new Vector2(x, y);
@@ -32,7 +32,7 @@ export class Transform extends Component {
         return this.onMove.expose(); 
     }
 
-    public get parent(): Transform {
+    public get parent(): Transform | null {
         return this._parent;
     }
 
@@ -95,6 +95,10 @@ export class Transform extends Component {
     }
 
     private readonly updatePositionBasedOnParent = (): void => {
+        if (this._parent === null) {
+            return;
+        }
+        
         this.setPosition(this._parent.position.x + this.localPosition.x, this._parent.position.y + this.localPosition.y);
     }
 }

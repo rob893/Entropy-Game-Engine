@@ -1,7 +1,6 @@
 import { Vector2 } from './Vector2';
 import { WeightedGraph } from '../Interfaces/WeightedGraph';
 import { PriorityQueue } from './PriorityQueue';
-import { WeightedGraphCell } from '../Interfaces/WeightedGraphCell';
 
 export class AStarSearch {
 
@@ -34,9 +33,15 @@ export class AStarSearch {
             }
 
             for (const next of graph.neighbors(current)) {
-                const newCost = costSoFar.get(current) + graph.cost(current, next.position);
+                const currentCost = costSoFar.get(current);
 
-                if (!costSoFar.has(next.position) || newCost < costSoFar.get(next.position)) {
+                if (currentCost === undefined) {
+                    continue;
+                }
+
+                const newCost = currentCost + graph.cost(current, next.position);
+
+                if (!costSoFar.has(next.position) || newCost < costSoFar.get(next.position)!) {
                     costSoFar.set(next.position, newCost);
                     const priority = newCost + this.heuristic(next.position, goal);
                     frontier.enqueue(next.position, priority);
@@ -67,7 +72,7 @@ export class AStarSearch {
         }
 
         while (cameFrom.has(current) && current !== start) {
-            current = cameFrom.get(current);
+            current = cameFrom.get(current)!;
             path.push(current);
         }
 
