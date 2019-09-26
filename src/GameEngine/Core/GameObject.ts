@@ -110,11 +110,11 @@ export abstract class GameObject {
         }
     }
 
-    public findGameObjectById(id: string): GameObject {
+    public findGameObjectById(id: string): GameObject | null {
         return this.gameEngine.findGameObjectById(id);
     }
 
-    public findGameObjectWithTag(tag: string): GameObject {
+    public findGameObjectWithTag(tag: string): GameObject | null {
         return this.gameEngine.findGameObjectWithTag(tag);
     }
 

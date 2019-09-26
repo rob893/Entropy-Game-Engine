@@ -33,7 +33,13 @@ export class SpriteSheet {
                     continue;
                 }
 
-                frames = [...frames, ...this.frames.get(row)];
+                const framesInRow = this.frames.get(row);
+
+                if (framesInRow === undefined) {
+                    throw new Error('Error getting frames');
+                }
+
+                frames = [...frames, ...framesInRow];
             }
         }
         else {
@@ -61,14 +67,20 @@ export class SpriteSheet {
                         canvas.height = spriteHeight;
 
                         const context = canvas.getContext('2d');
+
+                        if (context === null) {
+                            throw new Error('Error making context');
+                        }
+
                         context.drawImage(spriteSheet, (j * spriteWidth) + trimEdgesBy, (i * spriteHeight) + trimEdgesBy, spriteWidth - trimEdgesBy, spriteHeight - trimEdgesBy, 0, 0, canvas.width, canvas.height);
                         const frame = new Image();
                         frame.src = canvas.toDataURL();
                         frame.onload = () => {
                             const row = i + 1;
 
-                            if (this.frames.has(row)) {
-                                this.frames.get(row).push(frame);
+                            const framesInRow = this.frames.get(row);
+                            if (framesInRow !== undefined) {
+                                framesInRow.push(frame);
                             }
                             else {
                                 this.frames.set(row, [frame]);

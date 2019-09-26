@@ -18,7 +18,13 @@ export class TerrainBuilder {
         this.canvas = document.createElement('canvas');
         this.canvas.width = width;
         this.canvas.height = height;
-        this.context = this.canvas.getContext('2d');
+        const context = this.canvas.getContext('2d');
+
+        if (context === null) {
+            throw new Error('Bad context');
+        }
+
+        this.context = context;
     }
 
     public async buildTerrain(gameEngine: GameEngine, terrainSpec: TerrainSpec): Promise<Terrain> {

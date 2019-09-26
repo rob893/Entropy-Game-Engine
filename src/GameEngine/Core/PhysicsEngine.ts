@@ -1,10 +1,7 @@
 import { Rigidbody } from '../Components/Rigidbody';
 import { RectangleCollider } from '../Components/RectangleCollider';
 import { CollisionDetector } from './Interfaces/CollisionDetector';
-import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDetector';
 import { CollisionResolver } from './Interfaces/CollisionResolver';
-import { ImpulseCollisionResolver } from './Physics/ImpulseCollisionResolver';
-import { Layer } from './Enums/Layer';
 import { CollisionManifold } from './Helpers/CollisionManifold';
 import { Vector2 } from './Helpers/Vector2';
 import { Time } from './Time';
@@ -58,19 +55,26 @@ export class PhysicsEngine {
         collider.onDestroyed.add(this.removeColliderFromDetector);
     }
 
-    private resolveCollisions(collisionManifold: CollisionManifold): void {
+    private resolveCollisions(collisionManifold: CollisionManifold | undefined): void {
+        if (collisionManifold === undefined) {
+            throw new Error('Invalid');
+        }
+        
         this.collisionResolver.resolveCollisions(collisionManifold);
     }
 
 
-    private readonly addNonKinomaticRigidbody = (rb: Rigidbody): void => {
+    private readonly addNonKinomaticRigidbody = (rb: Rigidbody | undefined): void => {
+        if (rb === undefined) {
+            throw new Error('Invalid input');
+        }
+        
         this.rigidbodies.push(rb);
     }
 
-    private readonly removeKinomaticRigidbody = (rb: Component): void => {
+    private readonly removeKinomaticRigidbody = (rb: Component | undefined): void => {
         if (!(rb instanceof Rigidbody)) {
-            console.error('Invalid component passed in');
-            return;
+            throw new Error('Invalid component passed in');
         }
         
         const index = this.rigidbodies.indexOf(rb);
@@ -80,7 +84,7 @@ export class PhysicsEngine {
         }
     }
 
-    private readonly removeColliderFromDetector = (collider: Component): void => {
+    private readonly removeColliderFromDetector = (collider: Component | undefined): void => {
         if (!(collider instanceof RectangleCollider)) {
             console.error('Invalid component. Expecting RectangleCollider');
             return;
