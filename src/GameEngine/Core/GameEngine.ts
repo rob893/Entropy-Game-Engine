@@ -20,20 +20,20 @@ export class GameEngine {
 
     public developmentMode: boolean = true;
     
-    private physicsEngine: PhysicsEngine;
-    private renderingEngine: RenderingEngine;
-    private loadedScene: Scene = null;
-    private gameLoopId: number = null;
+    private _physicsEngine: PhysicsEngine | null = null;
+    private _renderingEngine: RenderingEngine | null = null;
+    private loadedScene: Scene | null = null;
+    private gameLoopId: number | null = null;
     private gameInitialized: boolean = false;
     private paused: boolean = false;
     private gameObjects: GameObject[] = [];
-    private _input: Input;
-    private _physics: Physics;
-    private _assetPool: AssetPool;
-    private _time: Time;
-    private _sceneManager: SceneManager;
-    private _terrain: Terrain;
-    private _componentAnalyzer: ComponentAnalyzer;
+    private _input: Input | null = null;
+    private _physics: Physics | null = null;
+    private _assetPool: AssetPool | null = null;
+    private _time: Time | null = null;
+    private _sceneManager: SceneManager | null = null;
+    private _terrain: Terrain | null = null;
+    private _componentAnalyzer: ComponentAnalyzer | null = null;
     private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
     private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
     private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
@@ -47,31 +47,69 @@ export class GameEngine {
         this._gameCanvas = gameCanvas;
     }
 
+    public get canvasContext(): CanvasRenderingContext2D {
+        const context = this.gameCanvas.getContext('2d');
+
+        if (context === null) {
+            throw new Error('No context!');
+        }
+
+        return context;
+    }
+
     public get input(): Input {
+        if (this._input === null) {
+            throw new Error('Input is null');
+        }
+
         return this._input;
     }
 
     public get physics(): Physics {
+        if (this._physics === null) {
+            throw new Error('Physics is null');
+        }
+
         return this._physics;
     }
 
     public get time(): Time {
+        if (this._time === null) {
+            throw new Error('Time is null');
+        }
+
         return this._time;
     }
 
     public get componentAnalyzer(): ComponentAnalyzer {
+        if (this._componentAnalyzer === null) {
+            throw new Error('Component Analyzer is null');
+        }
+        
         return this._componentAnalyzer;
     }
 
     public get sceneManager(): SceneManager {
+        if (this._sceneManager === null) {
+            throw new Error('Scene Manager Analyzer is null');
+        }
+
         return this._sceneManager;
     }
 
     public get terrain(): Terrain {
+        if (this._terrain === null) {
+            throw new Error('Terrain is null');
+        }
+
         return this._terrain;
     }
 
     public get assetPool(): AssetPool {
+        if (this._assetPool === null) {
+            throw new Error('Asset pool is null');
+        }
+
         return this._assetPool;
     }
 
@@ -127,28 +165,34 @@ export class GameEngine {
         }, repeatRate);
     }
 
-    public findGameObjectById(id: string): GameObject {
-        if (!this.gameObjectMap.has(id)) {
+    public findGameObjectById(id: string): GameObject | null {
+        const gameObject = this.gameObjectMap.get(id);
+        
+        if (gameObject === undefined) {
             return null;
         }
 
-        return this.gameObjectMap.get(id);
+        return gameObject;
     }
 
-    public findGameObjectWithTag(tag: string): GameObject {
-        if (!this.tagMap.has(tag)) {
+    public findGameObjectWithTag(tag: string): GameObject | null {
+        const gameObjects = this.tagMap.get(tag);
+        
+        if (gameObjects === undefined || gameObjects.length === 0) {
             return null;
         }
 
-        return this.tagMap.get(tag)[0];
+        return gameObjects[0];
     }
 
     public findGameObjectsWithTag(tag: string): GameObject[] {
-        if (!this.tagMap.has(tag)) {
+        const gameObjects = this.tagMap.get(tag);
+        
+        if (gameObjects === undefined) {
             return [];
         }
 
-        return this.tagMap.get(tag);
+        return gameObjects;
     }
 
     public printGameData(): void {
@@ -175,7 +219,9 @@ export class GameEngine {
     }
 
     public async loadScene(loadOrderOrName: number | string): Promise<void> {
-        if (!this.scenes.has(loadOrderOrName)) {
+        const scene = this.scenes.get(loadOrderOrName);
+        
+        if (scene === undefined) {
             throw new Error(`Scene ${loadOrderOrName} not found.`);
         }
 
@@ -183,12 +229,26 @@ export class GameEngine {
 
         this.createEnginesAndAPIs();
 
-        const scene = this.scenes.get(loadOrderOrName);
-
         await this.initializeScene(scene);
 
         this.loadedScene = scene;
         this.startGame();
+    }
+
+    private get physicsEngine(): PhysicsEngine {
+        if (this._physicsEngine === null) {
+            throw new Error('Physics Engine is null');
+        }
+        
+        return this._physicsEngine;
+    }
+
+    private get renderingEngine(): RenderingEngine {
+        if (this._renderingEngine === null) {
+            throw new Error('Rendering Engine is null');
+        }
+        
+        return this._renderingEngine;
     }
 
     private removeReferencesToGameObject(object: GameObject): void {
@@ -202,16 +262,21 @@ export class GameEngine {
             this.gameObjects.splice(index, 1);
         }
 
-        const tagIndex = this.tagMap.get(object.tag).indexOf(object);
+        const gameObjectsWithTag = this.tagMap.get(object.tag);
 
-        if (tagIndex !== -1) {
-            this.tagMap.get(object.tag).splice(tagIndex, 1);
+        if (gameObjectsWithTag !== undefined) {
+            const tagIndex = gameObjectsWithTag.indexOf(object);
+
+            if (tagIndex !== -1) {
+                gameObjectsWithTag.splice(tagIndex, 1);
+            }
         }
+        
         //TODO: This still has a bug. Sometimes object ids are still not working correctly when creating and destroying objects (the old bug that used to console errors).
         //For some reason, the id is being set here before being called a 'clone'.
-        if (this.gameObjectNumMap.has(object.id)) {
-            const numGameObjects = this.gameObjectNumMap.get(object.id) - 1;
-            numGameObjects > 0 ? this.gameObjectNumMap.set(object.id, numGameObjects) : this.gameObjectNumMap.delete(object.id);
+        const numGameObjects = this.gameObjectNumMap.get(object.id);
+        if (numGameObjects !== undefined) {
+            numGameObjects > 1 ? this.gameObjectNumMap.set(object.id, numGameObjects - 1) : this.gameObjectNumMap.delete(object.id);
         }
 
         object.onDestroy();
@@ -224,15 +289,22 @@ export class GameEngine {
         
         if (this.gameObjectMap.has(newGameObject.id)) {
             const originalId = newGameObject.id;
-            newGameObject.id += ' Clone(' + this.gameObjectNumMap.get(originalId) + ')';
-            this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
+            const numOfSameGameObject = this.gameObjectNumMap.get(originalId);
+
+            if (numOfSameGameObject === undefined) {
+                throw new Error('Error in regitering the new game object');
+            }
+
+            newGameObject.id += ` Clone(${numOfSameGameObject})`;
+            this.gameObjectNumMap.set(originalId, numOfSameGameObject + 1);
         }
         else {
             this.gameObjectNumMap.set(newGameObject.id, 1);
         }
 
-        if (this.tagMap.has(newGameObject.tag)) {
-            this.tagMap.get(newGameObject.tag).push(newGameObject);
+        const gameObjectsWithTag = this.tagMap.get(newGameObject.tag);
+        if (gameObjectsWithTag !== undefined) {
+            gameObjectsWithTag.push(newGameObject);
         }
         else {
             this.tagMap.set(newGameObject.tag, [newGameObject]);
@@ -263,7 +335,7 @@ export class GameEngine {
 
         this.invokeTimeouts.clear();
 
-        this._input.clearListeners();
+        this.input.clearListeners();
         this.tagMap.clear();
         this.gameObjectMap.clear();
         this.gameObjectNumMap.clear();
@@ -317,14 +389,20 @@ export class GameEngine {
             layerCollisionMatrix.set(layer, new Set(layers));
         }
 
-        layerCollisionMatrix.get(Layer.Terrain).delete(Layer.Terrain);
+        const collidingLayers = layerCollisionMatrix.get(Layer.Terrain);
+
+        if (collidingLayers === undefined) {
+            throw new Error('Error with layers');
+        }
+
+        collidingLayers.delete(Layer.Terrain);
 
         const collisionDetector = new SpatialHashCollisionDetector(this._gameCanvas.width, this._gameCanvas.height, layerCollisionMatrix, 100);
         const collisionResolver = new ImpulseCollisionResolver();
 
-        this.physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver, time);
+        this._physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver, time);
 
-        this.renderingEngine = new RenderingEngine(this._gameCanvas.getContext('2d'));
+        this._renderingEngine = new RenderingEngine(this.canvasContext);
         this.renderingEngine.renderGizmos = this.developmentMode;
 
         this._input = new Input(this._gameCanvas);
@@ -341,8 +419,14 @@ export class GameEngine {
 
             if (this.gameObjectMap.has(gameObject.id)) {
                 const originalId = gameObject.id;
-                gameObject.id += ' Clone(' + this.gameObjectNumMap.get(originalId) + ')';
-                this.gameObjectNumMap.set(originalId, this.gameObjectNumMap.get(originalId) + 1);
+                const numGameObjects = this.gameObjectNumMap.get(originalId);
+
+                if (numGameObjects === undefined) {
+                    throw new Error('Error setting up initial game objects.');
+                }
+
+                gameObject.id += ` Clone(${numGameObjects})`;
+                this.gameObjectNumMap.set(originalId, numGameObjects + 1);
             }
             else {
                 this.gameObjectNumMap.set(gameObject.id, 1);
@@ -350,8 +434,9 @@ export class GameEngine {
 
             this.gameObjectMap.set(gameObject.id, gameObject);
 
-            if (this.tagMap.has(gameObject.tag)) {
-                this.tagMap.get(gameObject.tag).push(gameObject);
+            const gameObjectsWithTag = this.tagMap.get(gameObject.tag);
+            if (gameObjectsWithTag !== undefined) {
+                gameObjectsWithTag.push(gameObject);
             }
             else {
                 this.tagMap.set(gameObject.tag, [gameObject]);
@@ -362,6 +447,10 @@ export class GameEngine {
 
             while (children.length > 0) {
                 const child = children.pop();
+
+                if (child === undefined) {
+                    throw new Error('Error getting child');
+                }
 
                 this.gameObjects.push(child.gameObject);
 
@@ -382,7 +471,7 @@ export class GameEngine {
             throw new Error('The game is not initialized yet!');
         }
 
-        this._time.start();
+        this.time.start();
         this.paused = false;
 
         this.gameObjects.forEach(go => {
@@ -391,6 +480,11 @@ export class GameEngine {
 
             while (children.length > 0) {
                 const child = children.pop();
+
+                if (child === undefined) {
+                    throw new Error('Error getting child');
+                }
+
                 child.gameObject.start();
 
                 for (const childsChild of child.children) {
@@ -409,10 +503,15 @@ export class GameEngine {
 
         while (this.gameObjectsMarkedForDelete.length > 0) {
             const gameObject = this.gameObjectsMarkedForDelete.pop();
+
+            if (gameObject === undefined) {
+                throw new Error('Error deleting game object');
+            }
+
             this.removeReferencesToGameObject(gameObject);
         }
 
-        this._time.updateTime();
+        this.time.updateTime();
         this.physicsEngine.updatePhysics();
         
         for (const gameObject of this.gameObjects) {

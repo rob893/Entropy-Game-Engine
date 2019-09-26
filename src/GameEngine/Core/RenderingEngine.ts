@@ -11,7 +11,7 @@ export class RenderingEngine {
     public renderGizmos: boolean;
 
     private _background: RenderableBackground;
-    private _terrain: Terrain;
+    private _terrain: Terrain | null;
     private readonly renderableObjects: Renderable[];
     private readonly renderableGizmos: RenderableGizmo[];
     private readonly renderableGUIElements: RenderableGUI[];

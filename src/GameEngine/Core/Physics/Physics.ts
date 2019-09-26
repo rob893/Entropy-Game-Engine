@@ -13,7 +13,7 @@ export class Physics {
     }
 
     public raycast(origin: Vector2, direction: Vector2, distance: number): RectangleCollider | null {
-        let result: RectangleCollider = null;
+        let result: RectangleCollider | null = null;
         const hitColliders = this.raycastAll(origin, direction, distance);
         let closestColliderDistance = -10;
 

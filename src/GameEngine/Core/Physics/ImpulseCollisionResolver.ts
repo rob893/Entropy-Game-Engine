@@ -1,5 +1,4 @@
 import { CollisionResolver } from '../Interfaces/CollisionResolver';
-import { RectangleCollider } from '../../Components/RectangleCollider';
 import { Vector2 } from '../Helpers/Vector2';
 import { Rigidbody } from '../../Components/Rigidbody';
 import { CollisionManifold } from '../Helpers/CollisionManifold';
