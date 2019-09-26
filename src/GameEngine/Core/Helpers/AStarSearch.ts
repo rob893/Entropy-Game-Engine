@@ -36,12 +36,18 @@ export class AStarSearch {
                 const currentCost = costSoFar.get(current);
 
                 if (currentCost === undefined) {
-                    continue;
+                    throw new Error('Error in A*');
                 }
 
                 const newCost = currentCost + graph.cost(current, next.position);
 
-                if (!costSoFar.has(next.position) || newCost < costSoFar.get(next.position)!) {
+                const nextCost = costSoFar.get(next.position);
+
+                if (nextCost === undefined) {
+                    throw new Error('Error in A*');
+                }
+
+                if (!costSoFar.has(next.position) || newCost < nextCost) {
                     costSoFar.set(next.position, newCost);
                     const priority = newCost + this.heuristic(next.position, goal);
                     frontier.enqueue(next.position, priority);
@@ -72,7 +78,13 @@ export class AStarSearch {
         }
 
         while (cameFrom.has(current) && current !== start) {
-            current = cameFrom.get(current)!;
+            const next = cameFrom.get(current);
+
+            if (next === undefined) {
+                throw new Error('Error constructing A* path.');
+            }
+            
+            current = next;
             path.push(current);
         }
 

@@ -95,12 +95,22 @@ export class Input {
         if (!this.mouseMap.has(type)) {
             this.mouseMap.set(type, new Map<number, ((event: CanvasMouseEvent) => void)[]>());
         }
+
+        const mouseButtonMap = this.mouseMap.get(type);
+
+        if (mouseButtonMap === undefined) {
+            throw new Error('Missing type');
+        }
     
-        if (this.mouseMap.get(type).has(mouseButton)) {
-            this.mouseMap.get(type).get(mouseButton).push(handler);
+        if (mouseButtonMap.has(mouseButton)) {
+            const handlers = mouseButtonMap.get(mouseButton);
+
+            if (handlers !== undefined) {
+                handlers.push(handler);
+            }
         }
         else {
-            this.mouseMap.get(type).set(mouseButton, [handler]);
+            mouseButtonMap.set(mouseButton, [handler]);
         }
     }
 
