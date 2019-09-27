@@ -15,7 +15,7 @@ export abstract class Component {
 
     public readonly gameObject: GameObject;
 
-    private isEnabled: boolean;
+    private isEnabled: boolean = true;
     private readonly _onDestroyed = new LiteEvent<Component>();
 
 
@@ -109,11 +109,11 @@ export abstract class Component {
         return this.gameObject.terrain;
     }
 
-    protected findGameObjectById(id: string): GameObject {
+    protected findGameObjectById(id: string): GameObject | null {
         return this.gameObject.findGameObjectById(id);
     }
 
-    protected findGameObjectWithTag(tag: string): GameObject {
+    protected findGameObjectWithTag(tag: string): GameObject | null {
         return this.gameObject.findGameObjectWithTag(tag);
     }
 

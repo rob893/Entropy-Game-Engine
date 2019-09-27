@@ -41,8 +41,9 @@ export class Input {
             return;
         }
 
-        if (this.genericEventMap.has(eventType)) {
-            this.genericEventMap.get(eventType).push(handler);
+        const handlers = this.genericEventMap.get(eventType);
+        if (handlers !== undefined) {
+            handlers.push(handler);
         }
         else {
             if (!this.currentListeners.has(eventType)) {
@@ -67,13 +68,20 @@ export class Input {
         if (typeof keyCodes === 'number') {
             keyCodes = [keyCodes];
         }
-        
+         
         for (const key of keyCodes) {
-            if (this.keyMap.get(type).has(key)) {
-                this.keyMap.get(type).get(key).push(handler);
+            const keyCodeMap = this.keyMap.get(type);
+
+            if (keyCodeMap === undefined) {
+                throw new Error('Invalid key');
+            }
+
+            const handlers = keyCodeMap.get(key);
+            if (handlers !== undefined) {
+                handlers.push(handler);
             }
             else {
-                this.keyMap.get(type).set(key, [handler]);
+                keyCodeMap.set(key, [handler]);
             }
         }
     }
@@ -150,8 +158,9 @@ export class Input {
     }
 
     private readonly invokeGenericHandlers = (event: Event): void => {
-        if (this.genericEventMap.has(event.type as EventType)) {
-            this.genericEventMap.get(event.type as EventType).forEach(handler => handler(event));
+        const handlers =  this.genericEventMap.get(event.type as EventType);
+        if (handlers !== undefined) {
+            handlers.forEach(handler => handler(event));
         }
     }
 
@@ -167,8 +176,15 @@ export class Input {
             return;
         }
 
-        if (this.keyMap.get(eventType).has(event.keyCode)) {
-            this.keyMap.get(eventType).get(event.keyCode).forEach(handler => handler(event));
+        const keyMap = this.keyMap.get(eventType);
+
+        if (keyMap === undefined) {
+            throw new Error('Invalid event type.');
+        }
+
+        const handlers = keyMap.get(event.keyCode);
+        if (handlers !== undefined) {
+            handlers.forEach(handler => handler(event));
         }
     }
 
@@ -188,8 +204,15 @@ export class Input {
         this.updateCursorPosition(event);
         canvasMouseEvent.cursorPositionOnCanvas = this.canvasMousePosition;
 
-        if (this.mouseMap.get(eventType).has(event.button)) {
-            this.mouseMap.get(eventType).get(event.button).forEach(handler => handler(canvasMouseEvent));
+        const mouseButtonMap = this.mouseMap.get(eventType);
+
+        if (mouseButtonMap === undefined) {
+            throw new Error('Invalid event type');
+        }
+
+        const handlers = mouseButtonMap.get(event.button);
+        if (handlers !== undefined) {
+            handlers.forEach(handler => handler(canvasMouseEvent));
         }
     }
 

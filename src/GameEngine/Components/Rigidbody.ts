@@ -22,7 +22,8 @@ export class Rigidbody extends Component {
     public constructor(gameObject: GameObject, mass: number = 70, isKinomatic: boolean = false) {
         super(gameObject);
 
-        this.mass = mass;
+        this._mass = mass;
+        this._inverseMass = mass !== 0 ? 1 / mass : 0;
         this.isKinomatic = isKinomatic;
     }
 
