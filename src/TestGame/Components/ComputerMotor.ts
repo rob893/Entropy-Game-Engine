@@ -6,10 +6,10 @@ import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider
 
 export class ComputerMotor extends Motor {
 
-    private ballTransform: Transform;
+    private ballTransform: Transform | null = null;
     private timer: number = 0;
-    private quarterFieldX: number;
-    private midFieldY: number;
+    private quarterFieldX: number = 0;
+    private midFieldY: number = 0;
     private readonly collider: RectangleCollider;
 
 
@@ -23,7 +23,13 @@ export class ComputerMotor extends Motor {
     public start(): void {
         super.start();
 
-        this.ballTransform = this.findGameObjectById('ball').transform;
+        const ball = this.findGameObjectById('ball');
+
+        if (ball === null) {
+            throw new Error('Could not find ball');
+        }
+
+        this.ballTransform = ball.transform;
         this.quarterFieldX = this.gameCanvas.width / 4;
         this.midFieldY = this.gameCanvas.height / 2;
     }
@@ -38,11 +44,15 @@ export class ComputerMotor extends Motor {
     }
 
     protected move(): void {
-        if(this.ballTransform.position.x < this.quarterFieldX) {
-            if(this.transform.position.y > this.midFieldY + 5) {
+        if (this.ballTransform === null) {
+            return;
+        }
+
+        if (this.ballTransform.position.x < this.quarterFieldX) {
+            if (this.transform.position.y > this.midFieldY + 5) {
                 this.yVelocity = -1;
             }
-            else if(this.transform.position.y < this.midFieldY - 5) {
+            else if (this.transform.position.y < this.midFieldY - 5) {
                 this.yVelocity = 1;
             }
             else {

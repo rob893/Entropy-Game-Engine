@@ -8,7 +8,7 @@ export class PlayerHealth extends Component implements Damageable {
 
     private _health: number;
     private _isDead: boolean;
-    private gameManager: GameManager;
+    private gameManager: GameManager | null = null;
     private readonly audioSource: AudioSource;
     
 
@@ -21,7 +21,13 @@ export class PlayerHealth extends Component implements Damageable {
     }
 
     public start(): void {
-        this.gameManager = this.findGameObjectById('gameManager').getComponent(GameManager);
+        const gm = this.findGameObjectById('gameManager');
+
+        if (gm === null) {
+            throw new Error('Cound not find game manager');
+        }
+
+        this.gameManager = gm.getComponent(GameManager);
     }
 
     public get health(): number {
@@ -39,7 +45,9 @@ export class PlayerHealth extends Component implements Damageable {
     public takeDamage(amount: number): void {
         this._health -= amount;
 
-        this.gameManager.showMessage('You were hit for ' + amount + ' damage!', 1, 'red');
+        if (this.gameManager !== null) {
+            this.gameManager.showMessage('You were hit for ' + amount + ' damage!', 1, 'red'); 
+        }
 
         if (this._health <= 0) {
             this.die();

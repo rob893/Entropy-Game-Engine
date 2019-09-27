@@ -74,7 +74,10 @@ export class PlayerPhysicsMotor extends Component {
     private throwBall(): void {
         const ball = this.instantiate(ThrowableBall, new Vector2(this.transform.position.x, this.transform.position.y - 30));
         const rb = ball.getComponent(Rigidbody);
-        rb.addForce(Vector2.direction(this.transform.position, this.input.canvasMousePosition).multiplyScalar(800));
+
+        if (rb !== null) {
+            rb.addForce(Vector2.direction(this.transform.position, this.input.canvasMousePosition).multiplyScalar(800));
+        }
     }
 
     private onKeyDown(event: KeyboardEvent): void {

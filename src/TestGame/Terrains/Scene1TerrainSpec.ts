@@ -27,7 +27,7 @@ export class Scene1TerrainSpec implements TerrainSpec {
         this.scale = scale;
     }
 
-    public getSpec(): TerrainCell[][] {
+    public getSpec(): (TerrainCell | null)[][] {
         const tw: TerrainCell = { spriteData: this.topWall, passable: false, weight: 0 };
         const mw: TerrainCell = { spriteData: this.midWall, passable: false, weight: 0 };
         const rw: TerrainCell = { spriteData: this.rightWall, passable: false, weight: 0 };
@@ -39,7 +39,7 @@ export class Scene1TerrainSpec implements TerrainSpec {
         const er: TerrainCell = { spriteData: this.sideWallEndRight, passable: false, weight: 0 };
         const el: TerrainCell = { spriteData: this.sideWallEndLeft, passable: false, weight: 0 };
         const hl: TerrainCell = { spriteData: this.floorHole, passable: false, weight: 0 };
-        const nl: TerrainCell = null;
+        const nl: TerrainCell | null = null;
         
         return [
             [nl, nl, nl, tw, tw, tw, tw, tw, tw, tw, tw, tw, tw, nl],

@@ -26,6 +26,10 @@ test('Test the a star path finding', (): void => {
 
     let path = AStarSearch.findPath(graph, new Vector2(1, 0), new Vector2(3, 0));
 
+    if (path === null) {
+        throw new Error('Path is null');
+    }
+    
     expect(path.length).toBe(3);
     expect(path[0]).toEqual(new Vector2(1, 0));
     expect(path[1]).toEqual(new Vector2(2, 0));

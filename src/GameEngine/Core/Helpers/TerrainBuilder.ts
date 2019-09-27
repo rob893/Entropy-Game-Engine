@@ -11,7 +11,7 @@ export class TerrainBuilder {
     private readonly spriteSheetSet: Set<string> = new Set<string>();
     private readonly context: CanvasRenderingContext2D;
     private readonly canvas: HTMLCanvasElement;
-    private currentSpriteSheet: HTMLImageElement;
+    private currentSpriteSheet: HTMLImageElement | null = null;
 
 
     public constructor(width: number = 1024, height: number = 576) {
@@ -57,6 +57,10 @@ export class TerrainBuilder {
                     }
                     
                     const c = gridCell.spriteData;
+
+                    if (this.currentSpriteSheet === null) {
+                        throw new Error('Error building terrain.');
+                    }
 
                     this.context.drawImage(this.currentSpriteSheet, c.sliceX, c.sliceY, c.sliceWidth, c.sliceHeight, x, y, c.sliceWidth * scale, c.sliceHeight * scale);
                     x = j === terrainGrid[i].length - 1 ? 0 : x + (c.sliceWidth * scale);

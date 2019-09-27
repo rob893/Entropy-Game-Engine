@@ -11,9 +11,9 @@ import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 export class TrumpMotor extends Motor {
     
-    private player: GameObject;
-    private playerTransform: Transform;
-    private playerHealth: Damageable;
+    private player: GameObject | null = null;
+    private playerTransform: Transform | null = null;
+    private playerHealth: Damageable | null = null;
     private isMovingLeft: boolean = false;
     private isMovingRight: boolean = false;
     private isIdle: boolean = true;
@@ -42,11 +42,20 @@ export class TrumpMotor extends Motor {
 
     public start(): void {
         this.player = this.findGameObjectById('player');
+
+        if (this.player === null) {
+            throw new Error('Could not find player');
+        }
+
         this.playerTransform = this.player.transform;
         this.playerHealth = this.player.getComponent(PlayerHealth);
     }
 
     protected move(): void {
+        if (this.playerTransform === null) {
+            return;
+        }
+
         const direction = Vector2.direction(this.transform.position, this.playerTransform.position);
         direction.y = 0;
 
@@ -85,6 +94,8 @@ export class TrumpMotor extends Motor {
     }
 
     private damagePlayer(): void {
-        this.playerHealth.takeDamage(15);
+        if (this.playerHealth !== null) {
+            this.playerHealth.takeDamage(15);
+        }
     }
 }

@@ -72,9 +72,9 @@ export class GameManager extends Component implements RenderableGUI {
 
     private testInstantiate(): void {
         const obj = this.instantiate(TrumpRB);
-        if (obj.hasComponent(Rigidbody)) {
-            obj.getComponent(Rigidbody)
-                .addForce(new Vector2((Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500), (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500)));
+        const rb = obj.getComponent(Rigidbody);
+        if (rb !== null) {
+            rb.addForce(new Vector2((Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500), (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500)));
         }
     }
 }

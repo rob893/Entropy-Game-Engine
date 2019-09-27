@@ -84,7 +84,11 @@ export class Player2Motor extends Motor {
     protected handleOutOfBounds(): void {
     }
 
-    private handleCollisions(collisionManifold: CollisionManifold): void {
+    private handleCollisions(collisionManifold: CollisionManifold | undefined): void {
+        if (collisionManifold === undefined) {
+            throw new Error();
+        }
+
         const other = collisionManifold.getOtherCollider(this.collider);
 
         if (other.isTrigger) {
@@ -100,7 +104,13 @@ export class Player2Motor extends Motor {
 
     private fireball(): void {
         const fireball = this.instantiate(Fireball, new Vector2(this.transform.position.x, this.transform.position.y - 20));
-        fireball.getComponent(FireballBehavior).movementDirection = Vector2.direction(this.transform.position, this.input.canvasMousePosition);
+        const fbBehaviour = fireball.getComponent(FireballBehavior);
+
+        if (fbBehaviour === null) {
+            throw new Error('Invalid fb');
+        }
+
+        fbBehaviour.movementDirection = Vector2.direction(this.transform.position, this.input.canvasMousePosition);
     }
 
     private onKeyDown(event: KeyboardEvent): void {

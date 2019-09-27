@@ -29,8 +29,9 @@ export class NavGrid<T extends WeightedGraphCell = WeightedGraphCell> implements
         for (const direction of this.directions) {
             const key = this.getMapKey(id.x + direction.x, id.y + direction.y);
             
-            if (!this.unpassableCells.has(key) && this.cells.has(key)) {
-                yield this.cells.get(key);
+            const cell = this.cells.get(key);
+            if (!this.unpassableCells.has(key) && cell !== undefined) {
+                yield cell;
             }
         }
     }
@@ -38,11 +39,12 @@ export class NavGrid<T extends WeightedGraphCell = WeightedGraphCell> implements
     public cost(a: Vector2, b: Vector2): number {
         const key = this.getMapKey(b);
         
-        if (!this.cells.has(key)) {
+        const cell = this.cells.get(key);
+        if (cell === undefined) {
             throw new Error('Cell does not exist');
         }
 
-        return this.cells.get(key).weight;
+        return cell.weight;
     }
 
     public addCell(cell: T): void {
@@ -74,6 +76,11 @@ export class NavGrid<T extends WeightedGraphCell = WeightedGraphCell> implements
 
     private getMapKey(positionOrX: Vector2|number, y?: number): string {
         if (typeof positionOrX === 'number') {
+
+            if (y === undefined) {
+                throw new Error('y must not be undefined.');
+            }
+            
             return Math.floor(positionOrX / this.cellSize) * this.cellSize + ',' + Math.floor(y / this.cellSize) * this.cellSize;
         }
 

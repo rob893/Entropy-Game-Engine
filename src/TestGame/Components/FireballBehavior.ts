@@ -32,7 +32,11 @@ export class FireballBehavior extends Component {
         this.transform.translate(this.movementDirection.multiplyScalar(5));
     }
 
-    private hit(manifold: CollisionManifold): void {
+    private hit(manifold: CollisionManifold | undefined): void {
+        if (manifold === undefined) {
+            return;
+        }
+        
         if (manifold.getOtherCollider(this.collider).gameObject.id === 'player') {
             return;
         }

@@ -23,19 +23,27 @@ export class Terrain extends GameObject implements RenderableBackground {
         const colliderRows = new Map<number, Map<number, [Vector2, number]>>();
 
         for (const position of colliderPositions) {
-            if (!colliderRows.has(position.y)) {
+            const rows = colliderRows.get(position.y);
+            if (rows === undefined) {
                 colliderRows.set(position.y, new Map<number, [Vector2, number]>());
-                colliderRows.get(position.y).set(position.x, [position, navGrid.cellSize]);
+                
+                const rowsAfterSet = colliderRows.get(position.y); //All this to get the strict null checker to be quiet...
+                if (rowsAfterSet === undefined) {
+                    throw new Error('Something went horribly wrong.');
+                }
+
+                rowsAfterSet.set(position.x, [position, navGrid.cellSize]);
             }
             else {
-                if (colliderRows.get(position.y).has(position.x - navGrid.cellSize)) {
-                    const newWidth = colliderRows.get(position.y).get(position.x - navGrid.cellSize)[1] + navGrid.cellSize;
-                    const offset = colliderRows.get(position.y).get(position.x - navGrid.cellSize)[0];
-                    colliderRows.get(position.y).delete(position.x - navGrid.cellSize);
-                    colliderRows.get(position.y).set(position.x, [offset, newWidth]);
+                const touple = rows.get(position.x - navGrid.cellSize);
+                if (touple !== undefined) {
+                    const newWidth = touple[1] + navGrid.cellSize;
+                    const offset = touple[0];
+                    rows.delete(position.x - navGrid.cellSize);
+                    rows.set(position.x, [offset, newWidth]);
                 }
                 else {
-                    colliderRows.get(position.y).set(position.x, [position, navGrid.cellSize]);
+                    rows.set(position.x, [position, navGrid.cellSize]);
                 }
             }
         }

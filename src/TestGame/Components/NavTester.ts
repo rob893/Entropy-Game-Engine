@@ -12,7 +12,7 @@ import { Transform } from '../../GameEngine/Components/Transform';
 
 export class NavTester extends Component {
 
-    private playerTransform: Transform;
+    private playerTransform: Transform | null = null;
     private timer: number = 0;
     private readonly navAgent: NavAgent;
     private readonly animator: Animator;
@@ -46,10 +46,20 @@ export class NavTester extends Component {
     }
 
     public start(): void {
-        this.playerTransform = this.findGameObjectById('player').transform;
+        const player = this.findGameObjectById('player');
+
+        if (player === null) {
+            throw new Error('player not found');
+
+        }
+        this.playerTransform = player.transform;
     }
 
     public update(): void {
+        if (this.playerTransform === null) {
+            return;
+        }
+        
         this.timer += this.time.deltaTime;
         
         if (this.timer > 1) {
@@ -78,7 +88,11 @@ export class NavTester extends Component {
         //this.navAgent.setDestination(event.cursorPositionOnCanvas);
     }
 
-    private changeAnimation(newDirection: Vector2): void {
+    private changeAnimation(newDirection: Vector2 | undefined): void {
+        if (newDirection === undefined) {
+            throw new Error('Error');
+        }
+
         if (Math.abs(newDirection.x) > Math.abs(newDirection.y)) {
             if (newDirection.x > 0.5) {
                 this.animator.setAnimation(this.runRightAnimation);

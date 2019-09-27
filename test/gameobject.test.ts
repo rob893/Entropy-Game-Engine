@@ -70,7 +70,7 @@ const scene1: Scene = {
     terrainSpec: null,
 
     getSkybox(gameCanvas: HTMLCanvasElement): RectangleBackground {
-        return null;
+        return null!;
     },
 
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
@@ -82,13 +82,13 @@ const scene1: Scene = {
     },
 
     async getAssetPool(): Promise<AssetPool> {
-        return await null;
+        return await null!;
     }
 };
 
-let testGameObject: GameObject = null;
-let testGameObject2: GameObject = null;
-let testGameObject3: GameObject = null;
+let testGameObject: GameObject = null!;
+let testGameObject2: GameObject = null!;
+let testGameObject3: GameObject = null!;
 
 beforeAll(async () => {
     const canvas = document.createElement('canvas');
@@ -97,9 +97,13 @@ beforeAll(async () => {
     gameEngine.setScenes([scene1]);
     await gameEngine.loadScene(1);
 
-    testGameObject = gameEngine.findGameObjectById('test1');
-    testGameObject2 = gameEngine.findGameObjectById('test');
-    testGameObject3 = gameEngine.findGameObjectById('test2');
+    testGameObject = gameEngine.findGameObjectById('test1')!;
+    testGameObject2 = gameEngine.findGameObjectById('test')!;
+    testGameObject3 = gameEngine.findGameObjectById('test2')!;
+
+    if (testGameObject === null || testGameObject2 === null || testGameObject3 === null) {
+        throw new Error('Error setting up game objects.');
+    }
 });
 
 test('Tests the creation of a game object.', () => {

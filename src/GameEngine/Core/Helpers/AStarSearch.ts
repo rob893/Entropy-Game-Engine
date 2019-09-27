@@ -43,11 +43,7 @@ export class AStarSearch {
 
                 const nextCost = costSoFar.get(next.position);
 
-                if (nextCost === undefined) {
-                    throw new Error('Error in A*');
-                }
-
-                if (!costSoFar.has(next.position) || newCost < nextCost) {
+                if (nextCost === undefined || newCost < nextCost) {
                     costSoFar.set(next.position, newCost);
                     const priority = newCost + this.heuristic(next.position, goal);
                     frontier.enqueue(next.position, priority);
