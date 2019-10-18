@@ -15,9 +15,11 @@
         "preserveConstEnums": true,
         "outDir": "./compiled/",
         "sourceMap": true,
-        "declaration": true,
+        "declaration": false,
         "target": "es2017",
-        "pretty": true
+        "pretty": true,
+        "moduleResolution": "node",
+        "module": "es2015"
     },
     "include": [
         "src/**/*.ts",
