@@ -15,6 +15,7 @@
         "preserveConstEnums": true,
         "outDir": "./compiled/",
         "sourceMap": true,
+        "declaration": true,
         "target": "es2017",
         "pretty": true
     },
