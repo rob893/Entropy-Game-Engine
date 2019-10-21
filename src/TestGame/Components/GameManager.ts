@@ -36,7 +36,7 @@ export class GameManager extends Component implements RenderableGUI {
             return;
         }
 
-        this.hubConnection = new HubConnectionBuilder().withUrl('https://rwherber.com:92/test').build();
+        this.hubConnection = new HubConnectionBuilder().withUrl('https://rwherber.com/api/gameserver/test').build();
 
         this.hubConnection.on('messageReceived', (username: string, message: string) => {
             console.log(`${username} says ${message}`);
