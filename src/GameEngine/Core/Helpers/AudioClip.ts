@@ -21,13 +21,16 @@ export class AudioClip {
     }
 
     private async initializeAudioClip(audioURL: string, numberOfClones: number): Promise<void> {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => reject(new Error('Timeout when waiting on audio to load.')), 5000);
+
             for (let i = 0; i < numberOfClones; i++) {
                 const audioClip = new Audio(audioURL);
                 audioClip.onloadeddata = () => {
                     this.audioElements.push(audioClip);
 
                     if (i === numberOfClones - 1) {
+                        clearTimeout(timer);
                         resolve();
                     }
                 };

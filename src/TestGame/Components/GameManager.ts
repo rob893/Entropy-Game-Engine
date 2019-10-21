@@ -6,6 +6,9 @@ import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
 import { TrumpRB } from '../GameObjects/TrumpRB';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
+import { HubConnectionBuilder, HubConnection, HubConnectionState } from '@aspnet/signalr';
+import { Player2Motor } from './Player2Motor';
+import { Transform } from '../../GameEngine/Components/Transform';
 
 export class GameManager extends Component implements RenderableGUI {
 
@@ -14,6 +17,8 @@ export class GameManager extends Component implements RenderableGUI {
     private messageTimer: number = 0;
     private messageLength: number = 0;
     private gameOver: boolean = false;
+    private playerTransform: Transform | null = null;
+    private hubConnection: HubConnection | null = null;
 
 
     public constructor(gameObject: GameObject) {
@@ -24,6 +29,40 @@ export class GameManager extends Component implements RenderableGUI {
         this.input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await this.sceneManager.loadScene(3));
         this.input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
         this.input.addKeyListener(EventType.KeyDown, KeyCode.I, () => this.testInstantiate());
+    }
+
+    public start(): void {
+        if (this.sceneManager.loadedSceneId !== 1) {
+            return;
+        }
+
+        this.hubConnection = new HubConnectionBuilder().withUrl('https://rwherber.com:92/test').build();
+
+        this.hubConnection.on('messageReceived', (username: string, message: string) => {
+            console.log(`${username} says ${message}`);
+        });
+
+        this.hubConnection.on('playerMoved', (x: number, y: number) => this.movePlayer(x, y));
+
+        this.hubConnection.start();
+
+        this.input.addKeyListener(EventType.KeyDown, KeyCode.T, () => this.send());
+
+        const player = this.findGameObjectById('player');
+
+        if (player === null) { 
+            throw new Error('could not find player'); 
+        }
+
+        const playerTransform = player.getComponent(Transform);
+
+        if (playerTransform === null) {
+            throw new Error();
+        }
+
+        this.playerTransform = playerTransform;
+
+        playerTransform.onMoved.add(() => this.playerMoved());
     }
 
     public endGame(): void {
@@ -76,5 +115,30 @@ export class GameManager extends Component implements RenderableGUI {
         if (rb !== null) {
             rb.addForce(new Vector2((Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500), (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500)));
         }
+    }
+
+    private movePlayer(x: number, y: number): void {
+        if (this.playerTransform === null) {
+            return;
+        }
+
+        this.playerTransform.position.x = x;
+        this.playerTransform.position.y = y;
+    }
+
+    private playerMoved(): void {
+        if (this.playerTransform === null || this.hubConnection === null || this.hubConnection.state !== HubConnectionState.Connected) {
+            return;
+        }
+
+        this.hubConnection.send('movedPlayer', this.playerTransform.position.x, this.playerTransform.position.y);
+    }
+
+    private send(): void {
+        if (this.hubConnection === null || this.hubConnection.state !== HubConnectionState.Connected) {
+            return;
+        }
+
+        this.hubConnection.send('newMessage', 'test username', 'test message').then(() => console.log('wat'));
     }
 }

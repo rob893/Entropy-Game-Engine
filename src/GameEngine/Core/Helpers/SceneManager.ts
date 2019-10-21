@@ -3,7 +3,10 @@ import { GameEngine } from '../GameEngine';
 export class SceneManager {
 
     private readonly gameEngine: GameEngine;
-
+    
+    public get loadedSceneId(): number {
+        return this.gameEngine.loadedSceneId;
+    }
 
     public constructor(gameEngine: GameEngine) {
         this.gameEngine = gameEngine;

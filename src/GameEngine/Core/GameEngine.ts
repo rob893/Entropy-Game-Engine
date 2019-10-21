@@ -117,6 +117,14 @@ export class GameEngine {
         return this._gameCanvas;
     }
 
+    public get loadedSceneId(): number {
+        if (this.loadedScene === null) {
+            throw new Error('No scene is currently loaded!');
+        }
+
+        return this.loadedScene.loadOrder;
+    }
+
     public instantiate<T extends GameObject>(type: new (gameEngine: GameEngine) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
         const newGameObject = new type(this);
 
@@ -354,7 +362,7 @@ export class GameEngine {
 
     private async initializeScene(scene: Scene): Promise<void> {
 
-        const assetPoolPromise = scene.getAssetPool();
+        this._assetPool = await scene.getAssetPool();
         const terrainSpec = scene.terrainSpec;
         let gameObjects: GameObject[] = [];
 
@@ -367,8 +375,6 @@ export class GameEngine {
             this.renderingEngine.terrain = terrain;
             this._terrain = terrain;
         }
-
-        this._assetPool = await assetPoolPromise;
 
         gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this)];
 
