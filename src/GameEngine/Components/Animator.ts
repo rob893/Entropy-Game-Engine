@@ -22,7 +22,15 @@ export class Animator extends Component implements Renderable {
         this.animation = initialAnimation;
     }
 
+    public get currentAnimation(): Animation {
+        return this.animation;
+    }
+
     public setAnimation(animation: Animation): void {
+        if (this.animation.playToFinish && !this.animation.isComplete) {
+            return;
+        }
+        
         this.animation = animation;
     }
 

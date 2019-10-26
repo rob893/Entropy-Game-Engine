@@ -6,7 +6,7 @@ import { RectangleBackground } from '../GameEngine/Core/Helpers/RectangleBackgro
 import { Color } from '../GameEngine/Core/Enums/Color';
 import { GameManagerObject } from './GameObjects/GameManagerObject';
 import { Trump } from './GameObjects/Trump';
-import { Player2 } from './GameObjects/Player2';
+import { Player } from './GameObjects/Player';
 import { ImageBackground } from '../GameEngine/Core/Helpers/ImageBackground';
 import Scene2Background from './Assets/Images/background.png';
 import { PlayerRB } from './GameObjects/PlayerRB';
@@ -14,6 +14,7 @@ import { Borders } from './GameObjects/Borders';
 import { Layer } from '../GameEngine/Core/Enums/Layer';
 import { AssetPool } from '../GameEngine/Core/Helpers/AssetPool';
 import { SpriteSheet } from '../GameEngine/Core/Helpers/SpriteSheet';
+import KnightSheet from './Assets/Images/knight.png';
 import TrumpIdle from './Assets/Images/trump_idle.png';
 import TrumpRun from './Assets/Images/trump_run.png';
 import Explosion from './Assets/Images/explosion.png';
@@ -37,7 +38,7 @@ export const scene1: Scene = {
         return [
             new GameManagerObject(gameEngine, 'gameManager'),
             new Trump(gameEngine, 'trump'),
-            new Player2(gameEngine, 'player', 400, 250)
+            new Player(gameEngine, 'player', 400, 250)
         ];
     },
 
@@ -45,6 +46,17 @@ export const scene1: Scene = {
         const assets = new Map<string, any>();
         
         //Need to await all assets here because edge breaks if we try to load them all at the same time.
+        const knightMapping = new Map<number, number>([
+            [5, 5],
+            [6, 5],
+            [7, 3],
+            [8, 3],
+            [9, 3],
+            [10, 3],
+            [11, 5],
+            [12, 5]
+        ]);
+        const knightSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(KnightSheet, 6, 16, 0, knightMapping);
         const trumpIdleSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpIdle, 10, 4);
         const trumpRunSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpRun, 6, 4);
         const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
@@ -52,6 +64,7 @@ export const scene1: Scene = {
         const explosionSound = await AudioClip.buildAudioClipAsync(ExplosionSound, 5);
         const hurtSound = await AudioClip.buildAudioClipAsync(HurtSound, 5);
 
+        assets.set('knightSpriteSheet', knightSpriteSheet);
         assets.set('trumpIdleSpriteSheet', trumpIdleSpriteSheet);
         assets.set('trumpRunSpriteSheet', trumpRunSpriteSheet);
         assets.set('explosionSpriteSheet', explosionSpriteSheet);

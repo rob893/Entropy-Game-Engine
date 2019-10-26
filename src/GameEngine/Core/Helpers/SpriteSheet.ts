@@ -11,10 +11,11 @@ export class SpriteSheet {
      * @param numRows Number of rows the sprite sheet has.
      * @param trimEdgesBy How many pixals to trim the sprite sheet down by. This is applied to each side.
      */
-    public static async buildSpriteSheetAsync(spriteSheetUrl: string, framesPerRow: number, numRows: number, trimEdgesBy: number = 0): Promise<SpriteSheet> {
+    public static async buildSpriteSheetAsync(spriteSheetUrl: string, framesPerRow: number, numRows: number, 
+        trimEdgesBy: number = 0, rowFrameMap: Map<number, number> = new Map()): Promise<SpriteSheet> {
         const spriteSheet = new SpriteSheet();
 
-        await spriteSheet.initializeSpriteSheet(spriteSheetUrl, framesPerRow, numRows, trimEdgesBy);
+        await spriteSheet.initializeSpriteSheet(spriteSheetUrl, framesPerRow, numRows, trimEdgesBy, rowFrameMap);
 
         return spriteSheet;
     }
@@ -51,8 +52,24 @@ export class SpriteSheet {
         return frames;
     }
 
-    private async initializeSpriteSheet(spriteSheetUrl: string, framesPerRow: number, numRows: number, trimEdgesBy: number): Promise<void> {
-        return new Promise(resolve => {
+    private async initializeSpriteSheet(spriteSheetUrl: string, framesPerRow: number, numRows: number, trimEdgesBy: number, rowFrameMap: Map<number, number>): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => reject(new Error('Timeout when waiting on spritesheet to load.')), 5000);
+
+            let totalNumberOfFramesForSheet = 0;
+            for (let i = 1; i <= numRows; i++) {
+                const framesForRow = rowFrameMap.get(i);
+
+                if (framesForRow !== undefined) {
+                    totalNumberOfFramesForSheet += framesForRow;
+                }
+                else {
+                    totalNumberOfFramesForSheet += framesPerRow;
+                }
+            }
+
+            let totalFramesCreated = 0;
+
             const spriteSheet = new Image();
             spriteSheet.src = spriteSheetUrl;
             spriteSheet.onload = () => {
@@ -60,7 +77,13 @@ export class SpriteSheet {
                 const spriteHeight = spriteSheet.height / numRows;
                 
                 for (let i = 0; i < numRows; i++) {
-                    for (let j = 0; j < framesPerRow; j++) {
+                    let numFramesInRow = rowFrameMap.get(i + 1); //rows are defined as starting at index 1, not 0. So add 1
+
+                    if (numFramesInRow === undefined) {
+                        numFramesInRow = framesPerRow;
+                    }
+
+                    for (let j = 0; j < numFramesInRow; j++) {
                         const canvas = document.createElement('canvas');
                         
                         canvas.width = spriteWidth;
@@ -85,8 +108,11 @@ export class SpriteSheet {
                             else {
                                 this.frames.set(row, [frame]);
                             }
-
-                            if (i === numRows - 1 && j === framesPerRow - 1) {
+                            
+                            totalFramesCreated++;
+                            //if (i === numRows - 1 && j === framesPerRow - 1) {
+                            if (totalFramesCreated === totalNumberOfFramesForSheet) {
+                                clearTimeout(timer);
                                 resolve();
                             }
                         };

@@ -6,6 +6,7 @@ import { CanvasMouseEvent } from '../Interfaces/CanvasMouseEvent';
 export class Input {
 
     private boundingRect: ClientRect | DOMRect;
+    private previousKeyHandled: number | null = null;
     private readonly gameCanvas: HTMLCanvasElement;
     private readonly keyMap = new Map<EventType.KeyDown | EventType.KeyUp, Map<KeyCode, ((event: KeyboardEvent) => void)[]>>();
     private readonly mouseMap = new Map<EventType.Click | EventType.MouseDown | EventType.MouseUp, Map<number, ((event: CanvasMouseEvent) => void)[]>>();
@@ -171,6 +172,17 @@ export class Input {
         }
 
         const eventType = event.type as EventType.KeyUp | EventType.KeyDown;
+
+        if (eventType === EventType.KeyDown) { //Handle autofiring of event when key is held down. We want to only fire once per keydown.
+            if (this.previousKeyHandled === event.keyCode) {
+                return;
+            }
+    
+            this.previousKeyHandled = event.keyCode;
+        }
+        else {
+            this.previousKeyHandled = null;
+        }
         
         if (!this.keyMap.has(eventType)) {
             return;

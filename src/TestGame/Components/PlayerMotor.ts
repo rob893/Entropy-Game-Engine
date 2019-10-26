@@ -1,33 +1,31 @@
-import { Motor } from './Motor';
 import { GameObject } from '../../GameEngine/Core/GameObject';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
-import { Animator } from '../../GameEngine/Components/Animator';
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { CollisionManifold } from '../../GameEngine/Core/Helpers/CollisionManifold';
-import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 import { Fireball } from '../GameObjects/Fireball';
 import { FireballBehavior } from './FireballBehavior';
+import { Component } from '../../GameEngine/Components/Component';
+import { PlayerAnimator } from './PlayerAnimator';
 
 
-export class Player2Motor extends Motor {
+export class PlayerMotor extends Component {
 
+    public speed: number = 5
+    
+    private xVelocity: number = 0;
+    private yVelocity: number = 0;
     private movingRight: boolean = false;
     private movingLeft: boolean = false;
     private movingUp: boolean = false;
     private movingDown: boolean = false;
-    private readonly animator: Animator;
+    private jumping: boolean = false;
+    private readonly animator: PlayerAnimator;
     private readonly collider: RectangleCollider;
-    private readonly runRightAnimation: Animation;
-    private readonly runLeftAnimation: Animation;
-    private readonly runUpAnimation: Animation;
-    private readonly runDownAnimation: Animation;
-    private readonly idleAnimation: Animation;
 
 
-    public constructor(gameObject: GameObject, collider: RectangleCollider, animator: Animator) {
+    public constructor(gameObject: GameObject, collider: RectangleCollider, animator: PlayerAnimator) {
         super(gameObject);
 
         this.collider = collider;
@@ -35,31 +33,28 @@ export class Player2Motor extends Motor {
 
         this.collider.onCollided.add((manifold) => this.handleCollisions(manifold));
 
-        this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.R], (event) => this.onKeyDown(event));
+        this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.R, KeyCode.Space], (event) => this.onKeyDown(event));
         this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
         this.input.addMouseListener(EventType.MouseDown, 0, () => this.fireball());
-
-        const trumpRunSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
-        const trumpIdleSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
-
-        this.runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
-        this.runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
-        this.runUpAnimation = new Animation(trumpRunSpriteSheet.getFrames(3), 0.075);
-        this.runDownAnimation = new Animation(trumpRunSpriteSheet.getFrames(1), 0.075);
-        this.idleAnimation = new Animation(trumpIdleSpriteSheet.getFrames(1), 0.1);
 
         this.speed = 2;
     }
 
-    public get isMoving(): boolean { 
+    public update(): void {
+        this.move();
+    }
+
+    public get isMoving(): boolean {
         return this.xVelocity !== 0 || this.yVelocity !== 0;
     }
 
     protected move(): void {
         if (this.movingRight) {
+            this.animator.playRunAnimation(true);
             this.xVelocity = 1;
         }
         else if (this.movingLeft) {
+            this.animator.playRunAnimation(false);
             this.xVelocity = -1;
         }
         else {
@@ -67,21 +62,23 @@ export class Player2Motor extends Motor {
         }
 
         if (this.movingUp) {
+            this.animator.playRunAnimation();
             this.yVelocity = -1;
         }
         else if (this.movingDown) {
+            this.animator.playRunAnimation();
             this.yVelocity = 1;
         }
         else {
             this.yVelocity = 0;
         }
-        
+
         if (this.isMoving) {
             this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
         }
-    }
-
-    protected handleOutOfBounds(): void {
+        else {
+            this.animator.playIdleAnimation();
+        }
     }
 
     private handleCollisions(collisionManifold: CollisionManifold | undefined): void {
@@ -103,6 +100,7 @@ export class Player2Motor extends Motor {
     }
 
     private fireball(): void {
+        this.animator.playRandomAttackAnimation();
         const fireball = this.instantiate(Fireball, new Vector2(this.transform.position.x, this.transform.position.y - 20));
         const fbBehaviour = fireball.getComponent(FireballBehavior);
 
@@ -113,27 +111,33 @@ export class Player2Motor extends Motor {
         fbBehaviour.movementDirection = Vector2.direction(this.transform.position, this.input.canvasMousePosition);
     }
 
+    private jump(): void {
+        this.jumping = true;
+        this.animator.playJumpAnimation();
+    }
+
     private onKeyDown(event: KeyboardEvent): void {
         if (event.keyCode === KeyCode.D) {
             this.movingRight = true;
             this.movingLeft = false;
-            this.animator.setAnimation(this.runRightAnimation);
+            
         }
         else if (event.keyCode === KeyCode.A) {
             this.movingRight = false;
             this.movingLeft = true;
-            this.animator.setAnimation(this.runLeftAnimation);
         }
 
         if (event.keyCode === KeyCode.W) {
             this.movingUp = true;
             this.movingDown = false;
-            this.animator.setAnimation(this.runUpAnimation);
         }
         else if (event.keyCode === KeyCode.S) {
             this.movingUp = false;
             this.movingDown = true;
-            this.animator.setAnimation(this.runDownAnimation);
+        }
+
+        if (event.keyCode === KeyCode.Space) {
+            this.jump();
         }
     }
 
@@ -150,10 +154,6 @@ export class Player2Motor extends Motor {
         }
         else if (event.keyCode == KeyCode.S) {
             this.movingDown = false;
-        }
-
-        if (!this.input.getKey(KeyCode.W) && !this.input.getKey(KeyCode.A) && !this.input.getKey(KeyCode.S) && !this.input.getKey(KeyCode.D)) {
-            this.animator.setAnimation(this.idleAnimation);
         }
     }
 }

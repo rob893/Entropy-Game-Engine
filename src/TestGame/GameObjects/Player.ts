@@ -3,13 +3,14 @@ import { Component } from '../../GameEngine/Components/Component';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
-import { Player2Motor } from '../Components/Player2Motor';
+import { PlayerMotor } from '../Components/PlayerMotor';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
+import { PlayerAnimator } from '../Components/PlayerAnimator';
 
-export class Player2 extends GameObject {
+export class Player extends GameObject {
 
     protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
@@ -18,13 +19,16 @@ export class Player2 extends GameObject {
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
         
-        const trumpIdleFrames = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
+        const idleFrames = this.assetPool.getAsset<SpriteSheet>('knightSpriteSheet').getFrames(9);
 
-        const initialAnimation = new Animation(trumpIdleFrames, 0.1);
+        const initialAnimation = new Animation(idleFrames, 0.2);
         const animator = new Animator(this, 75, 75, initialAnimation);
         components.push(animator);
 
-        components.push(new Player2Motor(this, collider, animator));
+        const playerAnimator = new PlayerAnimator(this, animator);
+        components.push(playerAnimator);
+
+        components.push(new PlayerMotor(this, collider, playerAnimator));
 
         return components;
     }
