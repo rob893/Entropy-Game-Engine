@@ -7,9 +7,9 @@ export class Animation {
     public playToFinish: boolean = false;
     
     private frameIndex: number = 0;
-    private timer: number;
+    private timer: number = 0;
     private computedTimeBetweenFrames: number;
-    private obtainedFinalFrame: boolean = false;
+    private finalFrameComplete: boolean = false;
     private readonly frames: HTMLImageElement[];
     private readonly timeBetweenFrames: number;
     private readonly onCompleted = new LiteEvent<void>();
@@ -19,7 +19,6 @@ export class Animation {
         this.frames = frames;
         this.timeBetweenFrames = timeBetweenFrames;
         this.computedTimeBetweenFrames = timeBetweenFrames;
-        this.timer = this.computedTimeBetweenFrames;
     }
 
     public get onAnimationComplete(): CustomLiteEvent<void> {
@@ -27,15 +26,11 @@ export class Animation {
     }
 
     public get currentFrame(): HTMLImageElement {
-        if (this.frameIndex === this.frames.length - 1) {
-            this.obtainedFinalFrame = true;
-        }
-
         return this.frames[this.frameIndex];
     }
 
     public get isComplete(): boolean {
-        return !this.loop && this.frameIndex === this.frames.length - 1 && this.obtainedFinalFrame;
+        return !this.loop && this.finalFrameComplete;
     }
 
     public get speedPercentage(): number {
@@ -48,8 +43,8 @@ export class Animation {
 
     public reset(): void {
         this.frameIndex = 0;
-        this.timer = this.computedTimeBetweenFrames;
-        this.obtainedFinalFrame = false;
+        this.timer = 0;
+        this.finalFrameComplete = false;
     }
 
     public updateAnimation(deltaTime: number): void {
@@ -65,6 +60,11 @@ export class Animation {
         }
 
         this.timer = 0;
+
+        if (!this.loop && this.frameIndex === this.frames.length - 1) {
+            this.finalFrameComplete = true;
+            return;
+        }
 
         this.frameIndex = (this.frameIndex + 1) % this.frames.length;
     }

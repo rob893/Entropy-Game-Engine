@@ -49,10 +49,10 @@ export class PlayerAnimator extends Component {
         this.idleRightAnimation = new Animation(knightSheet.getFrames(9), 0.2);
         this.idleLeftAnimation = new Animation(knightSheet.getFrames(10), 0.2);
 
-        this.jumpLeftAnimation = new Animation(knightSheet.getFrames(11), 0.5);
+        this.jumpLeftAnimation = new Animation(knightSheet.getFrames(11), 0.1);
         this.jumpLeftAnimation.loop = false;
         this.jumpLeftAnimation.playToFinish = true;
-        this.jumpRightAnimation = new Animation(knightSheet.getFrames(12), 0.5);
+        this.jumpRightAnimation = new Animation(knightSheet.getFrames(12), 0.1);
         this.jumpRightAnimation.loop = false;
         this.jumpRightAnimation.playToFinish = true;
 
