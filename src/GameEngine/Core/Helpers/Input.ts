@@ -177,11 +177,8 @@ export class Input {
             if (this.previousKeyHandled === event.keyCode) {
                 return;
             }
-    
+
             this.previousKeyHandled = event.keyCode;
-        }
-        else {
-            this.previousKeyHandled = null;
         }
         
         if (!this.keyMap.has(eventType)) {
@@ -238,6 +235,7 @@ export class Input {
             this.keyDownSet.add(event.keyCode);
         }
         else if (event.type === 'keyup') {
+            this.previousKeyHandled = null;
             this.keyDownSet.delete(event.keyCode);
         }
     }

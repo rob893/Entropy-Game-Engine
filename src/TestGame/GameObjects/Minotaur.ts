@@ -12,43 +12,41 @@ import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 import { CharacterAnimator } from '../Components/CharacterAnimator';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 
-export class Trump extends GameObject {
+export class Minotaur extends GameObject {
 
     protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
 
-        const collider = new RectangleCollider(this, null, 60, 60, 0, -5);
+        const collider = new RectangleCollider(this, null, 30, 30, 0, 0);
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
 
         const navAgent = new NavAgent(this, this.terrain.navGrid);
         components.push(navAgent);
         
-        const trumpIdleFrames = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
+        const minotaurSpriteSheet = this.assetPool.getAsset<SpriteSheet>('minotaurSpriteSheet');
 
-        const initialAnimation = new Animation(trumpIdleFrames, 0.1);
-        const animator = new Animator(this, 75, 75, initialAnimation);
-        components.push(animator);
+        const attack1R = new Animation(minotaurSpriteSheet.getFrames(4), 0.075);
+        const attack2R = new Animation(minotaurSpriteSheet.getFrames(7), 0.075);
 
-        const trumpRunSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
-        const trumpIdleSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
-
-        const runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
-        const runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
-        const idleAnimation = new Animation(trumpIdleSpriteSheet.getFrames(1), 0.1);
+        const attack1L = new Animation(minotaurSpriteSheet.getFrames(14), 0.075);
+        const attack2L = new Animation(minotaurSpriteSheet.getFrames(17), 0.075);
 
         const animations: CharacterAnimations = {
-            rightAttackAnimations: [idleAnimation],
-            leftAttackAnimations: [idleAnimation],
-            runLeftAnimation: runLeftAnimation,
-            runRightAnimation: runRightAnimation,
-            idleLeftAnimation: idleAnimation,
-            idleRightAnimation: idleAnimation,
-            jumpLeftAnimation: idleAnimation,
-            jumpRightAnimation: idleAnimation,
-            dieLeftAnimation: idleAnimation,
-            dieRightAnimation: idleAnimation
+            rightAttackAnimations: [attack1R, attack2R],
+            leftAttackAnimations: [attack1L, attack2L],
+            runLeftAnimation: new Animation(minotaurSpriteSheet.getFrames(12), 0.075),
+            runRightAnimation: new Animation(minotaurSpriteSheet.getFrames(2), 0.075),
+            idleLeftAnimation: new Animation(minotaurSpriteSheet.getFrames(11), 0.075),
+            idleRightAnimation: new Animation(minotaurSpriteSheet.getFrames(1), 0.075),
+            jumpLeftAnimation: new Animation(minotaurSpriteSheet.getFrames(14), 0.075),
+            jumpRightAnimation: new Animation(minotaurSpriteSheet.getFrames(14), 0.075),
+            dieLeftAnimation: new Animation(minotaurSpriteSheet.getFrames(20), 0.075),
+            dieRightAnimation: new Animation(minotaurSpriteSheet.getFrames(10), 0.075)
         };
+
+        const animator = new Animator(this, 85, 85, animations.idleRightAnimation);
+        components.push(animator);
 
         const characterAnimator = new CharacterAnimator(this, animator, animations);
         components.push(characterAnimator);

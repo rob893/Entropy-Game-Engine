@@ -12,4 +12,3 @@
 - Abstract APIs (Input, Physics, SceneManager, etc) into the GameEngine to make them services and have them injected into components.
 - Finish destroy logic (using callbacks to remove objects from things like the physics engine and stuff)
 - Make destroy and instantiate do their stuff in update for predictable results
-- Fix animations to where last frame of non-loop gets played for its full length.

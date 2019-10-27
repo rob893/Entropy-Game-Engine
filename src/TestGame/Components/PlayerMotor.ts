@@ -7,7 +7,7 @@ import { CollisionManifold } from '../../GameEngine/Core/Helpers/CollisionManifo
 import { Fireball } from '../GameObjects/Fireball';
 import { FireballBehavior } from './FireballBehavior';
 import { Component } from '../../GameEngine/Components/Component';
-import { PlayerAnimator } from './PlayerAnimator';
+import { CharacterAnimator } from './CharacterAnimator';
 
 
 export class PlayerMotor extends Component {
@@ -16,16 +16,12 @@ export class PlayerMotor extends Component {
     
     private xVelocity: number = 0;
     private yVelocity: number = 0;
-    private movingRight: boolean = false;
-    private movingLeft: boolean = false;
-    private movingUp: boolean = false;
-    private movingDown: boolean = false;
     private jumping: boolean = false;
-    private readonly animator: PlayerAnimator;
+    private readonly animator: CharacterAnimator;
     private readonly collider: RectangleCollider;
 
 
-    public constructor(gameObject: GameObject, collider: RectangleCollider, animator: PlayerAnimator) {
+    public constructor(gameObject: GameObject, collider: RectangleCollider, animator: CharacterAnimator) {
         super(gameObject);
 
         this.collider = collider;
@@ -33,9 +29,9 @@ export class PlayerMotor extends Component {
 
         this.collider.onCollided.add((manifold) => this.handleCollisions(manifold));
 
-        this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.R, KeyCode.Space], (event) => this.onKeyDown(event));
-        this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
-        this.input.addMouseListener(EventType.MouseDown, 0, () => this.fireball());
+        this.input.addKeyListener(EventType.KeyDown, KeyCode.Space, () => this.jump());
+        this.input.addKeyListener(EventType.KeyDown, KeyCode.R, () => this.fireball());
+        this.input.addMouseListener(EventType.MouseDown, 0, () => this.animator.playRandomAttackAnimation());
 
         this.speed = 2;
     }
@@ -49,11 +45,11 @@ export class PlayerMotor extends Component {
     }
 
     protected move(): void {
-        if (this.movingRight) {
+        if (this.input.getKey(KeyCode.D)) {
             this.animator.playRunAnimation(true);
             this.xVelocity = 1;
         }
-        else if (this.movingLeft) {
+        else if (this.input.getKey(KeyCode.A)) {
             this.animator.playRunAnimation(false);
             this.xVelocity = -1;
         }
@@ -61,11 +57,11 @@ export class PlayerMotor extends Component {
             this.xVelocity = 0;
         }
 
-        if (this.movingUp) {
+        if (this.input.getKey(KeyCode.W)) {
             this.animator.playRunAnimation();
             this.yVelocity = -1;
         }
-        else if (this.movingDown) {
+        else if (this.input.getKey(KeyCode.S)) {
             this.animator.playRunAnimation();
             this.yVelocity = 1;
         }
@@ -114,46 +110,5 @@ export class PlayerMotor extends Component {
     private jump(): void {
         this.jumping = true;
         this.animator.playJumpAnimation();
-    }
-
-    private onKeyDown(event: KeyboardEvent): void {
-        if (event.keyCode === KeyCode.D) {
-            this.movingRight = true;
-            this.movingLeft = false;
-            
-        }
-        else if (event.keyCode === KeyCode.A) {
-            this.movingRight = false;
-            this.movingLeft = true;
-        }
-
-        if (event.keyCode === KeyCode.W) {
-            this.movingUp = true;
-            this.movingDown = false;
-        }
-        else if (event.keyCode === KeyCode.S) {
-            this.movingUp = false;
-            this.movingDown = true;
-        }
-
-        if (event.keyCode === KeyCode.Space) {
-            this.jump();
-        }
-    }
-
-    private onKeyUp(event: KeyboardEvent): void {
-        if (event.keyCode == KeyCode.D) {
-            this.movingRight = false;
-        }
-        else if (event.keyCode == KeyCode.A) {
-            this.movingLeft = false;
-        }
-
-        if (event.keyCode == KeyCode.W) {
-            this.movingUp = false;
-        }
-        else if (event.keyCode == KeyCode.S) {
-            this.movingDown = false;
-        }
     }
 }
