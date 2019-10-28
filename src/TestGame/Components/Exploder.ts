@@ -3,7 +3,7 @@ import { GameObject } from '../../GameEngine/Core/GameObject';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { AudioSource } from '../../GameEngine/Components/AudioSource';
-import { PlayerHealth } from './PlayerHealth';
+import { PlayerHealth } from './Characters/Player/PlayerHealth';
 
 export class Exploder extends Component {
 

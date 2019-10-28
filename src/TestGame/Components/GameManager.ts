@@ -7,7 +7,7 @@ import { TrumpRB } from '../GameObjects/TrumpRB';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { HubConnectionBuilder, HubConnection, HubConnectionState } from '@aspnet/signalr';
-import { PlayerMotor } from './PlayerMotor';
+import { PlayerMotor } from './Characters/Player/PlayerMotor';
 import { Transform } from '../../GameEngine/Components/Transform';
 
 export class GameManager extends Component implements RenderableGUI {

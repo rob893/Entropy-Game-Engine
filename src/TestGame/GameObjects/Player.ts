@@ -3,12 +3,12 @@ import { Component } from '../../GameEngine/Components/Component';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
-import { PlayerMotor } from '../Components/PlayerMotor';
+import { PlayerMotor } from '../Components/Characters/Player/PlayerMotor';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { CharacterAnimator } from '../Components/CharacterAnimator';
+import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 
 export class Player extends GameObject {

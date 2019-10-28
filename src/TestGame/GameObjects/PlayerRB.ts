@@ -5,13 +5,13 @@ import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { PlayerPhysicsMotor } from '../Components/PlayerPhysicsMotor';
+import { PlayerPhysicsMotor } from '../Components/Characters/Player/PlayerPhysicsMotor';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { AudioClip } from '../../GameEngine/Core/Helpers/AudioClip';
-import { PlayerHealth } from '../Components/PlayerHealth';
+import { PlayerHealth } from '../Components/Characters/Player/PlayerHealth';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class PlayerRB extends GameObject {

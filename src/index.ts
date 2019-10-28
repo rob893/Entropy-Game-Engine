@@ -11,7 +11,7 @@ async function main(): Promise<void> {
     const gameCanvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     const gameEngine = new GameEngine(gameCanvas);
 
-    gameEngine.developmentMode = true;
+    gameEngine.developmentMode = false;
 
     gameEngine.setScenes([scene1, scene3]);
 

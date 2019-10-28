@@ -1,8 +1,8 @@
-import { Component } from '../../GameEngine/Components/Component';
-import { GameObject } from '../../GameEngine/Core/GameObject';
-import { Animator } from '../../GameEngine/Components/Animator';
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
-import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
+import { Component } from '../../../GameEngine/Components/Component';
+import { GameObject } from '../../../GameEngine/Core/GameObject';
+import { Animator } from '../../../GameEngine/Components/Animator';
+import { Animation } from '../../../GameEngine/Core/Helpers/Animation';
+import { CharacterAnimations } from '../../Interfaces/CharacterAnimations';
 
 export class CharacterAnimator extends Component {
     
@@ -103,6 +103,14 @@ export class CharacterAnimator extends Component {
             this.animations.dieLeftAnimation.reset();
             this.setAnimation(this.animations.dieLeftAnimation);
         }
+    }
+
+    public faceRight(): void {
+        this.facingRight = true;
+    }
+
+    public faceLeft(): void {
+        this.facingRight = false;
     }
 
     private setAnimation(anim: Animation): void {

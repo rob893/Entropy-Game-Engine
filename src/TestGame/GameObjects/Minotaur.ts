@@ -4,13 +4,16 @@ import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
 import { NavAgent } from '../../GameEngine/Components/NavAgent';
-import { EnemyMotor } from '../Components/EnemyMotor';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
-import { CharacterAnimator } from '../Components/CharacterAnimator';
+import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
+import { NPCController } from '../Components/Characters/NPC/NPCController';
+import { SearchingState } from '../Components/Characters/NPC/SearchingState';
+import { ChaseState } from '../Components/Characters/NPC/ChaseState';
+import { AttackState } from '../Components/Characters/NPC/AttackState';
 
 export class Minotaur extends GameObject {
 
@@ -51,7 +54,10 @@ export class Minotaur extends GameObject {
         const characterAnimator = new CharacterAnimator(this, animator, animations);
         components.push(characterAnimator);
 
-        components.push(new EnemyMotor(this, navAgent, characterAnimator));
+        components.push(new NPCController(this));
+        components.push(new SearchingState(this, characterAnimator));
+        components.push(new ChaseState(this, navAgent, characterAnimator));
+        components.push(new AttackState(this, characterAnimator));
 
         return components;
     }

@@ -1,14 +1,14 @@
-import { GameObject } from '../../GameEngine/Core/GameObject';
-import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
-import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
-import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
-import { Animator } from '../../GameEngine/Components/Animator';
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
-import { EventType } from '../../GameEngine/Core/Enums/EventType';
-import { Component } from '../../GameEngine/Components/Component';
-import { ThrowableBall } from '../GameObjects/ThrowableBall';
-import { Explosion } from '../GameObjects/Explosion';
-import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
+import { GameObject } from '../../../../GameEngine/Core/GameObject';
+import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
+import { KeyCode } from '../../../../GameEngine/Core/Enums/KeyCode';
+import { Rigidbody } from '../../../../GameEngine/Components/Rigidbody';
+import { Animator } from '../../../../GameEngine/Components/Animator';
+import { Animation } from '../../../../GameEngine/Core/Helpers/Animation';
+import { EventType } from '../../../../GameEngine/Core/Enums/EventType';
+import { Component } from '../../../../GameEngine/Components/Component';
+import { ThrowableBall } from '../../../GameObjects/ThrowableBall';
+import { Explosion } from '../../../GameObjects/Explosion';
+import { SpriteSheet } from '../../../../GameEngine/Core/Helpers/SpriteSheet';
 
 
 export class PlayerPhysicsMotor extends Component {

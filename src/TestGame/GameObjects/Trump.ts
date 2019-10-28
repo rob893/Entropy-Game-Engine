@@ -4,12 +4,12 @@ import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { Animator } from '../../GameEngine/Components/Animator';
 import { NavAgent } from '../../GameEngine/Components/NavAgent';
-import { EnemyMotor } from '../Components/EnemyMotor';
+import { EnemyMotor } from '../Components/Characters/NPC/EnemyMotor';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
-import { CharacterAnimator } from '../Components/CharacterAnimator';
+import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 
 export class Trump extends GameObject {

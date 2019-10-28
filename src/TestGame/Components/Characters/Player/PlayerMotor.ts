@@ -1,13 +1,13 @@
-import { GameObject } from '../../GameEngine/Core/GameObject';
-import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
-import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
-import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
-import { EventType } from '../../GameEngine/Core/Enums/EventType';
-import { CollisionManifold } from '../../GameEngine/Core/Helpers/CollisionManifold';
-import { Fireball } from '../GameObjects/Fireball';
-import { FireballBehavior } from './FireballBehavior';
-import { Component } from '../../GameEngine/Components/Component';
-import { CharacterAnimator } from './CharacterAnimator';
+import { GameObject } from '../../../../GameEngine/Core/GameObject';
+import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
+import { KeyCode } from '../../../../GameEngine/Core/Enums/KeyCode';
+import { RectangleCollider } from '../../../../GameEngine/Components/RectangleCollider';
+import { EventType } from '../../../../GameEngine/Core/Enums/EventType';
+import { CollisionManifold } from '../../../../GameEngine/Core/Helpers/CollisionManifold';
+import { Fireball } from '../../../GameObjects/Fireball';
+import { FireballBehavior } from '../../FireballBehavior';
+import { Component } from '../../../../GameEngine/Components/Component';
+import { CharacterAnimator } from '../CharacterAnimator';
 
 
 export class PlayerMotor extends Component {
@@ -31,7 +31,16 @@ export class PlayerMotor extends Component {
 
         this.input.addKeyListener(EventType.KeyDown, KeyCode.Space, () => this.jump());
         this.input.addKeyListener(EventType.KeyDown, KeyCode.R, () => this.fireball());
-        this.input.addMouseListener(EventType.MouseDown, 0, () => this.animator.playRandomAttackAnimation());
+        this.input.addMouseListener(EventType.MouseDown, 0, () => {
+            if (this.input.canvasMousePosition.x < this.transform.position.x) {
+                this.animator.faceLeft();
+            }
+            else {
+                this.animator.faceRight();
+            }
+            
+            this.animator.playRandomAttackAnimation();
+        });
 
         this.speed = 2;
     }

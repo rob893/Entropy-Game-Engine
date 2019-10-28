@@ -1,8 +1,8 @@
-import { Component } from '../../GameEngine/Components/Component';
-import { Damageable } from '../Interfaces/Damageable';
-import { GameObject } from '../../GameEngine/Core/GameObject';
-import { GameManager } from './GameManager';
-import { AudioSource } from '../../GameEngine/Components/AudioSource';
+import { Component } from '../../../../GameEngine/Components/Component';
+import { Damageable } from '../../../Interfaces/Damageable';
+import { GameObject } from '../../../../GameEngine/Core/GameObject';
+import { GameManager } from '../../GameManager';
+import { AudioSource } from '../../../../GameEngine/Components/AudioSource';
 
 export class PlayerHealth extends Component implements Damageable {
 

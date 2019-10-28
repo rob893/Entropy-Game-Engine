@@ -76,7 +76,7 @@ export const scene1: Scene = {
             [20, 6]
         ]);
         const knightSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(KnightSheet, 6, 16, {bottom: 5, top: 0, left: 0, right: 0}, knightMapping);
-        const minotaurSheet = await SpriteSheet.buildSpriteSheetAsync(MinotaurSheet, 9, 20, {bottom: 30, top: 0, left: 0, right: 0}, minotaurMapping);
+        const minotaurSheet = await SpriteSheet.buildSpriteSheetAsync(MinotaurSheet, 9, 20, {bottom: 25, top: 0, left: 0, right: 0}, minotaurMapping);
         const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
         const fireballSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(RedFireball, 3, 2);
         const explosionSound = await AudioClip.buildAudioClipAsync(ExplosionSound, 5);

@@ -1,15 +1,9 @@
-import { Component } from '../../GameEngine/Components/Component';
-import { GameObject } from '../../GameEngine/Core/GameObject';
-import { NavAgent } from '../../GameEngine/Components/NavAgent';
-import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
-import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
-import { EventType } from '../../GameEngine/Core/Enums/EventType';
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
-import { Animator } from '../../GameEngine/Components/Animator';
-import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
-import { Transform } from '../../GameEngine/Components/Transform';
-import { CanvasMouseEvent } from '../../GameEngine/Core/Interfaces/CanvasMouseEvent';
-import { CharacterAnimator } from './CharacterAnimator';
+import { Component } from '../../../../GameEngine/Components/Component';
+import { GameObject } from '../../../../GameEngine/Core/GameObject';
+import { NavAgent } from '../../../../GameEngine/Components/NavAgent';
+import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
+import { Transform } from '../../../../GameEngine/Components/Transform';
+import { CharacterAnimator } from '../CharacterAnimator';
 
 export class EnemyMotor extends Component {
 
