@@ -81,4 +81,8 @@ export abstract class Geometry {
         
         return false;
     }
+
+    public static rectangleContainsPoint(recTopLeft: Vector2, recBottomRight: Vector2, point: Vector2): boolean {
+        return point.x >= recTopLeft.x && point.x <= recBottomRight.x && point.y >= recTopLeft.y && point.y <= recBottomRight.y;
+    }
 } 

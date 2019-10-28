@@ -32,6 +32,10 @@ export class PhysicsEngine {
         return this.collisionDetector.colliders;
     }
 
+    public getPossibleColliders(origin: Vector2, radius: number): RectangleCollider[] {
+        return [];
+    }
+
     public updatePhysics(): void {
         this.collisionDetector.detectCollisions();
         this.rigidbodies.forEach(rb => {

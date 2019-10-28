@@ -67,9 +67,9 @@ export class Minotaur extends GameObject {
             x: 200,
             y: 300,
             rotation: 0,
-            id: 'trump',
+            id: 'minotaur',
             tag: '',
-            layer: Layer.Default
+            layer: Layer.Hostile
         };
     }
 }

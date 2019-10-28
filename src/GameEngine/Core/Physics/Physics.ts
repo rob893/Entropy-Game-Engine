@@ -12,6 +12,16 @@ export class Physics {
         this.physicsEngine = physicsEngine;
     }
 
+    public pointRaycastToScreen(point: Vector2): RectangleCollider | null {
+        for (const collider of this.physicsEngine.colliders) {
+            if (Geometry.rectangleContainsPoint(collider.topLeft, collider.bottomRight, point)) {
+                return collider;
+            }
+        }
+        
+        return null;
+    }
+
     public raycast(origin: Vector2, direction: Vector2, distance: number): RectangleCollider | null {
         let result: RectangleCollider | null = null;
         const hitColliders = this.raycastAll(origin, direction, distance);

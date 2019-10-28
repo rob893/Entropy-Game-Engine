@@ -8,6 +8,7 @@ import { Fireball } from '../../../GameObjects/Fireball';
 import { FireballBehavior } from '../../FireballBehavior';
 import { Component } from '../../../../GameEngine/Components/Component';
 import { CharacterAnimator } from '../CharacterAnimator';
+import { ClickedOnDetector } from '../../../../GameEngine/Components/ClickedOnDetector';
 
 
 export class PlayerMotor extends Component {
