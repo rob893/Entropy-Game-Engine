@@ -21,8 +21,10 @@ import ExplosionSound from './Assets/Sounds/explosion.mp3';
 import HurtSound from './Assets/Sounds/fat_1_male_hit_1.wav';
 import { AudioClip } from '../GameEngine/Core/Helpers/AudioClip';
 import { GameEngine } from '../GameEngine/Core/GameEngine';
-import { Stopwatch } from '../GameEngine/Core/Helpers/Stopwatch';
 import { Minotaur } from './GameObjects/Minotaur';
+import { Box } from './GameObjects/Box';
+import { RectangleRenderer } from '../GameEngine/Components/RectangleRenderer';
+import { RectangleCollider } from '../GameEngine/Components/RectangleCollider';
 
 
 export const scene1: Scene = {
@@ -103,10 +105,19 @@ export const scene3: Scene = {
     },
     
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
+        //const topBorder = new Box(gameEngine, 1280 / 2, 50, 1280, 50);//Box.buildBox(gameEngine, 1280 / 2, 50, 1280, 50);
+        //const bottomBorder = Box.buildBox(gameEngine, 1280 / 2, 720, 1280, 50);
+        //const leftBorder = Box.buildBox(gameEngine, 25, 720, 50, 720);
+        //const rightBorder = Box.buildBox(gameEngine, 1280 - 25, 720, 50, 720);
+        
         return [
             new GameManagerObject(gameEngine, 'gameManager'),
             new PlayerRB(gameEngine, 'player'),
             new Borders(gameEngine, 'borders', 0, 0, 0, 'borders', Layer.Terrain)
+            //topBorder,
+            //bottomBorder,
+            //leftBorder,
+            //rightBorder
         ];
     },
 

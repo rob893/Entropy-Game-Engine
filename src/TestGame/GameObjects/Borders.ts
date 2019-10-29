@@ -5,6 +5,8 @@ import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial
 import { Component } from '../../GameEngine/Components/Component';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
+import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
+import { Color } from '../../GameEngine/Core/Enums/Color';
 
 export class Borders extends GameObject {
 
