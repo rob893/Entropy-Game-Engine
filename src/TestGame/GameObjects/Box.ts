@@ -11,48 +11,35 @@ import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class Box extends GameObject {
 
-    private readonly w: number;
-    private readonly h: number;
-    private readonly color: Color;
+    public static buildBox(gameEngine: GameEngine, x: number, y: number, w: number, h: number, id: string, tag: string, color: Color = Color.Grey): Box {
+        const box = new Box(gameEngine, id, x, y, 0, tag, Layer.Terrain);
+        const renderer = box.getComponent(RectangleRenderer);
 
+        if (renderer === null) {
+            throw new Error('Error building box');
+        }
 
-    public constructor(gameEngine: GameEngine, x: number, y: number, w: number, h: number, color: Color = Color.Grey) {
-        super(gameEngine, 'box', x, y, 0, 'box', Layer.Terrain);
+        renderer.renderWidth = w;
+        renderer.renderHeight = h;
+        renderer.color = color;
 
-        this.w = w;
-        this.h = h;
-        this.color = color;
+        const collider = box.getComponent(RectangleCollider);
+
+        if (collider === null) {
+            throw new Error('Error building box');
+        }
+
+        collider.width = w;
+        collider.height = h;
+        collider.physicalMaterial = PhysicalMaterial.metal;
+
+        return box;
     }
-    
-    // public static buildBox(gameEngine: GameEngine, x: number, y: number, w: number, h: number, color: Color = Color.Grey): Box {
-    //     const box = new Box(gameEngine, 'box', x, y, 0, 'box', Layer.Terrain);
-    //     const renderer = box.getComponent(RectangleRenderer);
-
-    //     if (renderer === null) {
-    //         throw new Error('Error building box');
-    //     }
-
-    //     renderer.renderWidth = w;
-    //     renderer.renderHeight = h;
-    //     renderer.color = color;
-
-    //     const collider = box.getComponent(RectangleCollider);
-
-    //     if (collider === null) {
-    //         throw new Error('Error building box');
-    //     }
-
-    //     collider.width = w;
-    //     collider.height = h;
-    //     collider.physicalMaterial = PhysicalMaterial.metal;
-
-    //     return box;
-    // }
     
     protected buildInitialComponents(): Component[] {
         const rb = new Rigidbody(this, 100000, true);
 
-        const collider = new RectangleCollider(this, rb, this.w, this.h);
+        const collider = new RectangleCollider(this, rb, 50, 50);
 
         const renderer = new RectangleRenderer(this, 50, 50, Color.Grey);
 

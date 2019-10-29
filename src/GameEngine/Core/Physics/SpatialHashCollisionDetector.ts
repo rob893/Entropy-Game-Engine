@@ -69,6 +69,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
 
     public addCollider(collider: RectangleCollider): void {
         collider.transform.onMoved.add(() => this.updateColliderSpatialMapping(collider));
+        collider.onResized.add(() => this.updateColliderSpatialMapping(collider));
         this._colliders.push(collider);
         this.updateColliderSpatialMapping(collider);
     }

@@ -1,6 +1,6 @@
-import { Component } from "../../../GameEngine/Components/Component";
-import { CharacterAnimator } from "./CharacterAnimator";
-import { GameObject } from "../../../GameEngine/Core/GameObject";
+import { Component } from '../../../GameEngine/Components/Component';
+import { CharacterAnimator } from './CharacterAnimator';
+import { GameObject } from '../../../GameEngine/Core/GameObject';
 
 export class CharacterStats extends Component {
 

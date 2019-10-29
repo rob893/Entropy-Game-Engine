@@ -4,11 +4,8 @@ import { Scene1TerrainSpec } from './Terrains/Scene1TerrainSpec';
 import { RectangleBackground } from '../GameEngine/Core/Helpers/RectangleBackground';
 import { Color } from '../GameEngine/Core/Enums/Color';
 import { GameManagerObject } from './GameObjects/GameManagerObject';
-import { Trump } from './GameObjects/Trump';
 import { Player } from './GameObjects/Player';
 import { PlayerRB } from './GameObjects/PlayerRB';
-import { Borders } from './GameObjects/Borders';
-import { Layer } from '../GameEngine/Core/Enums/Layer';
 import { AssetPool } from '../GameEngine/Core/Helpers/AssetPool';
 import { SpriteSheet } from '../GameEngine/Core/Helpers/SpriteSheet';
 import KnightSheet from './Assets/Images/knight.png';
@@ -23,8 +20,6 @@ import { AudioClip } from '../GameEngine/Core/Helpers/AudioClip';
 import { GameEngine } from '../GameEngine/Core/GameEngine';
 import { Minotaur } from './GameObjects/Minotaur';
 import { Box } from './GameObjects/Box';
-import { RectangleRenderer } from '../GameEngine/Components/RectangleRenderer';
-import { RectangleCollider } from '../GameEngine/Components/RectangleCollider';
 
 
 export const scene1: Scene = {
@@ -105,19 +100,20 @@ export const scene3: Scene = {
     },
     
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
-        //const topBorder = new Box(gameEngine, 1280 / 2, 50, 1280, 50);//Box.buildBox(gameEngine, 1280 / 2, 50, 1280, 50);
-        //const bottomBorder = Box.buildBox(gameEngine, 1280 / 2, 720, 1280, 50);
-        //const leftBorder = Box.buildBox(gameEngine, 25, 720, 50, 720);
-        //const rightBorder = Box.buildBox(gameEngine, 1280 - 25, 720, 50, 720);
+        const topBorder = Box.buildBox(gameEngine, 1280 / 2, 50, 1280, 50, 'topBorder', 'border');
+        const bottomBorder = Box.buildBox(gameEngine, 1280 / 2, 720, 1280, 50,'bottomBorder', 'border', Color.Green);
+        const leftBorder = Box.buildBox(gameEngine, 25, 720, 50, 720, 'leftBorder', 'border');
+        const rightBorder = Box.buildBox(gameEngine, 1280 - 25, 720, 50, 720, 'rightBorder', 'border');
+        const midBox = Box.buildBox(gameEngine, 640, 520, 150, 20, 'midBox', 'border', Color.Brown);
         
         return [
             new GameManagerObject(gameEngine, 'gameManager'),
             new PlayerRB(gameEngine, 'player'),
-            new Borders(gameEngine, 'borders', 0, 0, 0, 'borders', Layer.Terrain)
-            //topBorder,
-            //bottomBorder,
-            //leftBorder,
-            //rightBorder
+            topBorder,
+            bottomBorder,
+            leftBorder,
+            rightBorder,
+            midBox
         ];
     },
 
