@@ -134,8 +134,8 @@ export abstract class GameObject {
         this.gameEngine.invoke(funcToInvoke, time);
     }
 
-    public invokeRepeating(funcToInvoke: () => void, repeatRate: number): void {
-        this.gameEngine.invokeRepeating(funcToInvoke, repeatRate);
+    public invokeRepeating(funcToInvoke: () => void, repeatRate: number, cancelToken?: { cancel: boolean }): void {
+        this.gameEngine.invokeRepeating(funcToInvoke, repeatRate, cancelToken);
     }
 
     /**

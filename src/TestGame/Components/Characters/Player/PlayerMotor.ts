@@ -11,6 +11,7 @@ import { CharacterAnimator } from '../CharacterAnimator';
 import { ClickedOnDetector } from '../../../../GameEngine/Components/ClickedOnDetector';
 import { CharacterStats } from '../CharacterStats';
 import { Layer } from '../../../../GameEngine/Core/Enums/Layer';
+import { Spawner } from '../../Spawner';
 
 
 export class PlayerMotor extends Component {
@@ -39,6 +40,14 @@ export class PlayerMotor extends Component {
         this.input.addMouseListener(EventType.MouseDown, 0, () => this.meleeAttack());
 
         this.speed = 2;
+    }
+
+    public start(): void {
+        const spawer = this.getComponent(Spawner);
+
+        if (spawer !== null) {
+            this.input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, () => spawer.toggleSpawn());
+        }
     }
 
     public update(): void {

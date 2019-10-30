@@ -170,7 +170,7 @@ export abstract class Component {
         this.gameObject.invoke(funcToInvoke, time);
     }
 
-    protected invokeRepeating(funcToInvoke: () => void, repeatRate: number): void {
-        this.gameObject.invokeRepeating(funcToInvoke, repeatRate);
+    protected invokeRepeating(funcToInvoke: () => void, repeatRate: number, cancelToken?: { cancel: boolean }): void {
+        this.gameObject.invokeRepeating(funcToInvoke, repeatRate, cancelToken);
     }
 }

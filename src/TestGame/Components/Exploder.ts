@@ -4,6 +4,7 @@ import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { PlayerHealth } from './Characters/Player/PlayerHealth';
+import { CharacterStats } from './Characters/CharacterStats';
 
 export class Exploder extends Component {
 
@@ -28,9 +29,9 @@ export class Exploder extends Component {
                 rb.addForce(Vector2.direction(this.transform.position, collider.transform.position).multiplyScalar(1000));
             }
 
-            const health = collider.getComponent(PlayerHealth);
+            const health = collider.getComponent(CharacterStats);
             if (health !== null) {
-                health.sayOuch();
+                health.takeDamage(10);
             }
         }
     }

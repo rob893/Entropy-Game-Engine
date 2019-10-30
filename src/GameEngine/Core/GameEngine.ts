@@ -165,11 +165,15 @@ export class GameEngine {
         this.invokeTimeouts.add(timeout);
     }
 
-    public invokeRepeating(funcToInvoke: () => void, repeatRate: number): void {
+    public invokeRepeating(funcToInvoke: () => void, repeatRate: number, cancelToken?: { cancel: boolean}): void {
         this.invoke(() => {
+            if (cancelToken !== undefined && cancelToken.cancel) {
+                return;
+            }
+
             funcToInvoke();
 
-            this.invokeRepeating(funcToInvoke, repeatRate);
+            this.invokeRepeating(funcToInvoke, repeatRate, cancelToken);
         }, repeatRate);
     }
 

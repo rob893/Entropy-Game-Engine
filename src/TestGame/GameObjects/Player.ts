@@ -11,6 +11,8 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 import { CharacterStats } from '../Components/Characters/CharacterStats';
+import { Spawner } from '../Components/Spawner';
+import { Minotaur } from './Minotaur';
 
 export class Player extends GameObject {
 
@@ -54,6 +56,7 @@ export class Player extends GameObject {
         components.push(myStats);
 
         components.push(new PlayerMotor(this, collider, playerAnimator, myStats));
+        components.push(new Spawner(this, [Minotaur]));
 
         return components;
     }
