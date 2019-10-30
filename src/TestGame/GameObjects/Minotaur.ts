@@ -14,6 +14,7 @@ import { NPCController } from '../Components/Characters/NPC/NPCController';
 import { SearchingState } from '../Components/Characters/NPC/SearchingState';
 import { ChaseState } from '../Components/Characters/NPC/ChaseState';
 import { AttackState } from '../Components/Characters/NPC/AttackState';
+import { CharacterStats } from '../Components/Characters/CharacterStats';
 
 export class Minotaur extends GameObject {
 
@@ -54,10 +55,19 @@ export class Minotaur extends GameObject {
         const characterAnimator = new CharacterAnimator(this, animator, animations);
         components.push(characterAnimator);
 
-        components.push(new NPCController(this));
-        components.push(new SearchingState(this, characterAnimator));
-        components.push(new ChaseState(this, navAgent, characterAnimator));
-        components.push(new AttackState(this, characterAnimator));
+        const myStats = new CharacterStats(this, characterAnimator);
+        components.push(myStats);
+
+        const searchingState = new SearchingState(this, characterAnimator);
+        components.push(searchingState);
+
+        const chaseState = new ChaseState(this, navAgent, characterAnimator, myStats);
+        components.push(chaseState);
+
+        const attackState = new AttackState(this, characterAnimator, myStats);
+        components.push(attackState);
+
+        components.push(new NPCController(this, myStats, searchingState, chaseState, attackState));
 
         return components;
     }

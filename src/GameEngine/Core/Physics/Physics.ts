@@ -2,6 +2,7 @@ import { Vector2 } from '../Helpers/Vector2';
 import { RectangleCollider } from '../../Components/RectangleCollider';
 import { Geometry } from '../Helpers/Geometry';
 import { PhysicsEngine } from '../PhysicsEngine';
+import { Layer } from '../Enums/Layer';
 
 export class Physics {
     
@@ -54,10 +55,14 @@ export class Physics {
 
     public sphereCast(): void {}
 
-    public overlapSphere(position: Vector2, radius: number): RectangleCollider[] {
+    public overlapSphere(position: Vector2, radius: number, layer?: Layer): RectangleCollider[] {
         const colliders: RectangleCollider[] = [];
         
         for (const collider of this.physicsEngine.colliders) {
+            if (layer !== undefined && collider.gameObject.layer !== layer) {
+                continue;
+            }
+            
             if (Vector2.distance(position, collider.transform.position) <= radius) {
                 colliders.push(collider);
             }

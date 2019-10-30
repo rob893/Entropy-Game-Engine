@@ -9,6 +9,8 @@ import { FireballBehavior } from '../../FireballBehavior';
 import { Component } from '../../../../GameEngine/Components/Component';
 import { CharacterAnimator } from '../CharacterAnimator';
 import { ClickedOnDetector } from '../../../../GameEngine/Components/ClickedOnDetector';
+import { CharacterStats } from '../CharacterStats';
+import { Layer } from '../../../../GameEngine/Core/Enums/Layer';
 
 
 export class PlayerMotor extends Component {
@@ -20,41 +22,36 @@ export class PlayerMotor extends Component {
     private jumping: boolean = false;
     private readonly animator: CharacterAnimator;
     private readonly collider: RectangleCollider;
+    private readonly myStats: CharacterStats;
 
 
-    public constructor(gameObject: GameObject, collider: RectangleCollider, animator: CharacterAnimator) {
+    public constructor(gameObject: GameObject, collider: RectangleCollider, animator: CharacterAnimator, myStats: CharacterStats) {
         super(gameObject);
 
         this.collider = collider;
         this.animator = animator;
+        this.myStats = myStats;
 
         this.collider.onCollided.add((manifold) => this.handleCollisions(manifold));
 
         this.input.addKeyListener(EventType.KeyDown, KeyCode.Space, () => this.jump());
         this.input.addKeyListener(EventType.KeyDown, KeyCode.R, () => this.fireball());
-        this.input.addMouseListener(EventType.MouseDown, 0, () => {
-            if (this.input.canvasMousePosition.x < this.transform.position.x) {
-                this.animator.faceLeft();
-            }
-            else {
-                this.animator.faceRight();
-            }
-            
-            this.animator.playRandomAttackAnimation();
-        });
+        this.input.addMouseListener(EventType.MouseDown, 0, () => this.meleeAttack());
 
         this.speed = 2;
     }
 
     public update(): void {
-        this.move();
+        if (!this.myStats.isDead) {
+            this.move();
+        }
     }
 
     public get isMoving(): boolean {
         return this.xVelocity !== 0 || this.yVelocity !== 0;
     }
 
-    protected move(): void {
+    private move(): void {
         if (this.input.getKey(KeyCode.D)) {
             this.animator.playRunAnimation(true);
             this.xVelocity = 1;
@@ -102,6 +99,27 @@ export class PlayerMotor extends Component {
 
         while (this.collider.detectCollision(other)) {
             this.transform.position.add(normal);
+        }
+    }
+
+    private meleeAttack(): void {
+        if (this.input.canvasMousePosition.x < this.transform.position.x) {
+            this.animator.faceLeft();
+        }
+        else {
+            this.animator.faceRight();
+        }
+        
+        this.animator.playRandomAttackAnimation();
+
+        const colliders = this.physics.overlapSphere(this.transform.position, this.myStats.attackRange, Layer.Hostile);
+
+        for (const collider of colliders) {
+            const hitStats = collider.gameObject.getComponent(CharacterStats);
+
+            if (hitStats !== null) {
+                hitStats.takeDamage(this.myStats.attackPower);
+            }
         }
     }
 

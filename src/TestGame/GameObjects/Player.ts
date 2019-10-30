@@ -10,6 +10,7 @@ import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings'
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
+import { CharacterStats } from '../Components/Characters/CharacterStats';
 
 export class Player extends GameObject {
 
@@ -49,7 +50,10 @@ export class Player extends GameObject {
         const playerAnimator = new CharacterAnimator(this, animator, playerAnimations);
         components.push(playerAnimator);
 
-        components.push(new PlayerMotor(this, collider, playerAnimator));
+        const myStats = new CharacterStats(this, playerAnimator);
+        components.push(myStats);
+
+        components.push(new PlayerMotor(this, collider, playerAnimator, myStats));
 
         return components;
     }
