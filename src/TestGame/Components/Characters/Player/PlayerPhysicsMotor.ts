@@ -52,7 +52,7 @@ export class PlayerPhysicsMotor extends Component {
     public start(): void {
         super.start();
 
-        //this.ball = this.gameObject.getComponentInChildren(Transform);
+        //this.ball = this.getComponentInChildren(Transform);
     }
 
     public update(): void {

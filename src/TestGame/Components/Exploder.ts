@@ -23,12 +23,12 @@ export class Exploder extends Component {
         const hitColliders = this.physics.overlapSphere(this.transform.position, 150);
 
         for (const collider of hitColliders) {
-            const rb = collider.gameObject.getComponent(Rigidbody);
+            const rb = collider.getComponent(Rigidbody);
             if (rb !== null) {
                 rb.addForce(Vector2.direction(this.transform.position, collider.transform.position).multiplyScalar(1000));
             }
 
-            const health = collider.gameObject.getComponent(PlayerHealth);
+            const health = collider.getComponent(PlayerHealth);
             if (health !== null) {
                 health.sayOuch();
             }

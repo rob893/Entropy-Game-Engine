@@ -186,8 +186,8 @@ export abstract class GameObject {
         let parent = this.transform.parent;
 
         while (parent !== null) {
-            if (parent.gameObject.hasComponent(component)) {
-                return parent.gameObject.getComponent(component);
+            if (parent.hasComponent(component)) {
+                return parent.getComponent(component);
             }
 
             parent = parent.parent;
@@ -201,8 +201,8 @@ export abstract class GameObject {
         const components: T[] = [];
 
         while (parent !== null) {
-            if (parent.gameObject.hasComponent(component)) {
-                const parentComponent = parent.gameObject.getComponent(component);
+            if (parent.hasComponent(component)) {
+                const parentComponent = parent.getComponent(component);
 
                 if (parentComponent === null) {
                     throw new Error('Error getting parent component');
@@ -227,8 +227,8 @@ export abstract class GameObject {
                 throw new Error('Error getting child.');
             }
 
-            if (child.gameObject.hasComponent(component)) {
-                return child.gameObject.getComponent(component);
+            if (child.hasComponent(component)) {
+                return child.getComponent(component);
             }
 
             for (const childsChild of child.children) {
@@ -251,7 +251,7 @@ export abstract class GameObject {
             }
 
             if (child.gameObject.hasComponent(component)) {
-                const childComponent = child.gameObject.getComponent(component);
+                const childComponent = child.getComponent(component);
 
                 if (childComponent === null) {
                     throw new Error('Error getting child component.');

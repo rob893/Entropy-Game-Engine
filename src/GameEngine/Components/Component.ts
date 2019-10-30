@@ -81,6 +81,43 @@ export abstract class Component {
         this._onDestroyed.trigger(this);
     }
 
+    //These are simply short cut methods to access the gameObject's functionality from a component quicker.
+    public hasComponent<T extends Component>(component: new (...args: any[]) => T): boolean {
+        return this.gameObject.hasComponent(component);
+    }
+
+    public getComponent<T extends Component>(component: new (...args: any[]) => T): T | null {
+        return this.gameObject.getComponent(component);
+    }
+
+    public getComponents<T extends Component>(component: new (...args: any[]) => T): T[] {
+        return this.gameObject.getComponents(component);
+    }
+
+    public getComponentInParent<T extends Component>(component: new (...args: any[]) => T): T | null {
+        return this.gameObject.getComponentInParent(component);
+    }
+
+    public getComponentsInParent<T extends Component>(component: new (...args: any[]) => T): T[] {
+        return this.gameObject.getComponentsInParent(component);
+    }
+
+    public getComponentInChildren<T extends Component>(component: new (...args: any[]) => T): T | null {
+        return this.gameObject.getComponentInChildren(component);
+    }
+
+    public getComponentsInChildren<T extends Component>(component: new (...args: any[]) => T): T[] {
+        return this.gameObject.getComponentsInChildren(component);
+    }
+
+    public addComponent<T extends Component>(newComponent: Component): T {
+        return this.gameObject.addComponent(newComponent);
+    }
+
+    public removeComponent(component: Component): void {
+        this.gameObject.removeComponent(component);
+    }
+
     protected get input(): Input {
         return this.gameObject.input;
     }

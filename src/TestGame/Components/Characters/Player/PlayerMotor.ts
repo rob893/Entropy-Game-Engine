@@ -103,19 +103,19 @@ export class PlayerMotor extends Component {
     }
 
     private meleeAttack(): void {
-        if (this.input.canvasMousePosition.x < this.transform.position.x) {
-            this.animator.faceLeft();
-        }
-        else {
-            this.animator.faceRight();
-        }
+        // if (this.input.canvasMousePosition.x < this.transform.position.x) {
+        //     this.animator.faceLeft();
+        // }
+        // else {
+        //     this.animator.faceRight();
+        // }
         
         this.animator.playRandomAttackAnimation();
 
         const colliders = this.physics.overlapSphere(this.transform.position, this.myStats.attackRange, Layer.Hostile);
 
         for (const collider of colliders) {
-            const hitStats = collider.gameObject.getComponent(CharacterStats);
+            const hitStats = collider.getComponent(CharacterStats);
 
             if (hitStats !== null) {
                 hitStats.takeDamage(this.myStats.attackPower);

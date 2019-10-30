@@ -57,7 +57,7 @@ export class ChaseState extends Component implements State {
             return;
         }
 
-        this.targetStats = target.gameObject.getComponent(CharacterStats);
+        this.targetStats = target.getComponent(CharacterStats);
     }
 
     public onExit(context: NPCController): void {

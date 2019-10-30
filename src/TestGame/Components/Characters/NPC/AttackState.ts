@@ -55,7 +55,7 @@ export class AttackState extends Component implements State {
             return;
         }
 
-        const targetStats = target.gameObject.getComponent(CharacterStats);
+        const targetStats = target.getComponent(CharacterStats);
 
         if (targetStats === null) {
             context.setState(context.searchingState);
