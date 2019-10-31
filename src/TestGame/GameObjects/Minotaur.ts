@@ -15,6 +15,8 @@ import { SearchingState } from '../Components/Characters/NPC/SearchingState';
 import { ChaseState } from '../Components/Characters/NPC/ChaseState';
 import { AttackState } from '../Components/Characters/NPC/AttackState';
 import { CharacterStats } from '../Components/Characters/CharacterStats';
+import { Healthbar } from './Healthbar';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class Minotaur extends GameObject {
 
@@ -81,5 +83,13 @@ export class Minotaur extends GameObject {
             tag: '',
             layer: Layer.Hostile
         };
+    }
+
+    protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
+        const healthBar = new Healthbar(gameEngine);
+
+        healthBar.transform.setPosition(this.transform.position.x, this.transform.position.y - 70);
+
+        return [healthBar];
     }
 }

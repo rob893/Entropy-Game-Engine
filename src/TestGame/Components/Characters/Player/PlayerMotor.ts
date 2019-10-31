@@ -106,8 +106,14 @@ export class PlayerMotor extends Component {
 
         const normal = collisionManifold.getCollisionNormalForCollider(this.collider);
 
+        let moved = false;
         while (this.collider.detectCollision(other)) {
             this.transform.position.add(normal);
+            moved = true;
+        }
+
+        if (moved) {
+            this.transform.setPosition(this.transform.position.x, this.transform.position.y); //trigger the move event
         }
     }
 

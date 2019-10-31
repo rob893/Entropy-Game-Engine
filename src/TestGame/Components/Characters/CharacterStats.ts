@@ -2,6 +2,7 @@ import { Component } from '../../../GameEngine/Components/Component';
 import { CharacterAnimator } from './CharacterAnimator';
 import { GameObject } from '../../../GameEngine/Core/GameObject';
 import { Damageable } from '../../Interfaces/Damageable';
+import { Slider } from '../../../GameEngine/Components/Slider';
 
 export class CharacterStats extends Component implements Damageable {
     
@@ -10,6 +11,8 @@ export class CharacterStats extends Component implements Damageable {
     private readonly _attackSpeed = 1.25;
     private _isDead = false;
     private _health = 100;
+    private readonly _maxHealth = 100;
+    private healthbar: Slider | null = null;
     private readonly animator: CharacterAnimator;
 
 
@@ -17,6 +20,10 @@ export class CharacterStats extends Component implements Damageable {
         super(gameObject);
 
         this.animator = animator;
+    }
+
+    public start(): void {
+        this.healthbar = this.getComponentInChildren(Slider);
     }
 
     public get attackPower(): number {
@@ -41,6 +48,10 @@ export class CharacterStats extends Component implements Damageable {
 
     public takeDamage(amount: number): void {
         this._health -= amount;
+
+        if (this.healthbar !== null) {
+            this.healthbar.fillAmount = (this._health / this._maxHealth) * 100;
+        }
 
         if (this._health <= 0) {
             this.die();

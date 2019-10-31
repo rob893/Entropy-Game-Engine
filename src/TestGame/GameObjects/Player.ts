@@ -13,6 +13,8 @@ import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 import { CharacterStats } from '../Components/Characters/CharacterStats';
 import { Spawner } from '../Components/Spawner';
 import { Minotaur } from './Minotaur';
+import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { Healthbar } from './Healthbar';
 
 export class Player extends GameObject {
 
@@ -70,5 +72,13 @@ export class Player extends GameObject {
             tag: 'player',
             layer: Layer.Friendly
         };
+    }
+
+    protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
+        const healthBar = new Healthbar(gameEngine);
+
+        healthBar.transform.setPosition(this.transform.position.x, this.transform.position.y - 60);
+
+        return [healthBar];
     }
 }

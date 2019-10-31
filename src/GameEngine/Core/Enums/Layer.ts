@@ -4,5 +4,6 @@ export enum Layer {
     Water = 3,
     Hostile = 4,
     Neutral = 5,
-    Friendly = 6
+    Friendly = 6,
+    UI = 7
 }

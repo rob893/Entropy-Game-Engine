@@ -148,10 +148,42 @@ export class GameEngine {
     public destroy(object: GameObject, time: number = 0): void {
         if (time === 0) {
             this.gameObjectsMarkedForDelete.push(object);
+
+            const children = object.transform.children;
+
+            while (children.length > 0) {
+                const child = children.pop();
+
+                if (child === undefined) {
+                    throw new Error('Error getting child');
+                }
+
+                this.gameObjectsMarkedForDelete.push(child.gameObject);
+
+                for (const childsChild of child.children) {
+                    children.push(childsChild);
+                }
+            }
         }
         else {
             this.invoke(() => {
                 this.gameObjectsMarkedForDelete.push(object);
+
+                const children = object.transform.children;
+
+                while (children.length > 0) {
+                    const child = children.pop();
+
+                    if (child === undefined) {
+                        throw new Error('Error getting child');
+                    }
+
+                    this.gameObjectsMarkedForDelete.push(child.gameObject);
+
+                    for (const childsChild of child.children) {
+                        children.push(childsChild);
+                    }
+                }
             }, time);
         }
     }
