@@ -3,6 +3,8 @@ import { CharacterAnimator } from './CharacterAnimator';
 import { GameObject } from '../../../GameEngine/Core/GameObject';
 import { Damageable } from '../../Interfaces/Damageable';
 import { Slider } from '../../../GameEngine/Components/Slider';
+import { LiteEvent } from '../../../GameEngine/Core/Helpers/LiteEvent';
+import { CustomLiteEvent } from '../../../GameEngine/Core/Interfaces/CustomLiteEvent';
 
 export class CharacterStats extends Component implements Damageable {
     
@@ -14,6 +16,7 @@ export class CharacterStats extends Component implements Damageable {
     private readonly _maxHealth = 100;
     private healthbar: Slider | null = null;
     private readonly animator: CharacterAnimator;
+    private readonly onDie: LiteEvent<void> = new LiteEvent<void>();
 
 
     public constructor(gameObject: GameObject, animator: CharacterAnimator) {
@@ -46,6 +49,10 @@ export class CharacterStats extends Component implements Damageable {
         return this._health;
     }
 
+    public get onDeath(): CustomLiteEvent<void> {
+        return this.onDie.expose();
+    }
+
     public takeDamage(amount: number): void {
         this._health -= amount;
 
@@ -62,5 +69,6 @@ export class CharacterStats extends Component implements Damageable {
         this._isDead = true;
         this.animator.playDeathAnimation();
         this.destroy(this.gameObject, 3);
+        this.onDie.trigger();
     }
 }

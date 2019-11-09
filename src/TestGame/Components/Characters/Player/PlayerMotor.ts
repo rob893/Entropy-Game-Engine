@@ -43,10 +43,11 @@ export class PlayerMotor extends Component {
     }
 
     public start(): void {
-        const spawer = this.getComponent(Spawner);
+        const spawner = this.getComponent(Spawner);
 
-        if (spawer !== null) {
-            this.input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, () => spawer.toggleSpawn());
+        if (spawner !== null) {
+            this.input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, () => spawner.toggleSpawn());
+            this.myStats.onDeath.add(() => spawner.stopSpawning());
         }
     }
 
