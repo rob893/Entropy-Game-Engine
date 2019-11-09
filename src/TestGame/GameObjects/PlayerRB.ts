@@ -13,6 +13,8 @@ import { AudioSource } from '../../GameEngine/Components/AudioSource';
 import { AudioClip } from '../../GameEngine/Core/Helpers/AudioClip';
 import { PlayerHealth } from '../Components/Characters/Player/PlayerHealth';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
+import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 
 export class PlayerRB extends GameObject {
 
@@ -26,18 +28,39 @@ export class PlayerRB extends GameObject {
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
 
-        const trumpIdleFrames = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
+        const minotaurSpriteSheet = this.assetPool.getAsset<SpriteSheet>('minotaurSpriteSheet');
 
-        const initialAnimation = new Animation(trumpIdleFrames, 0.1);
-        const animator = new Animator(this, 75, 75, initialAnimation);
+        const attack1R = new Animation(minotaurSpriteSheet.getFrames(4), 0.075);
+        const attack2R = new Animation(minotaurSpriteSheet.getFrames(7), 0.075);
+
+        const attack1L = new Animation(minotaurSpriteSheet.getFrames(14), 0.075);
+        const attack2L = new Animation(minotaurSpriteSheet.getFrames(17), 0.075);
+
+        const animations: CharacterAnimations = {
+            rightAttackAnimations: [attack1R, attack2R],
+            leftAttackAnimations: [attack1L, attack2L],
+            runLeftAnimation: new Animation(minotaurSpriteSheet.getFrames(12), 0.075),
+            runRightAnimation: new Animation(minotaurSpriteSheet.getFrames(2), 0.075),
+            idleLeftAnimation: new Animation(minotaurSpriteSheet.getFrames(11), 0.075),
+            idleRightAnimation: new Animation(minotaurSpriteSheet.getFrames(1), 0.075),
+            jumpLeftAnimation: new Animation(minotaurSpriteSheet.getFrames(11), 0.075),
+            jumpRightAnimation: new Animation(minotaurSpriteSheet.getFrames(1), 0.075),
+            dieLeftAnimation: new Animation(minotaurSpriteSheet.getFrames(20), 0.075),
+            dieRightAnimation: new Animation(minotaurSpriteSheet.getFrames(10), 0.075)
+        };
+
+        const animator = new Animator(this, 75, 75, animations.idleLeftAnimation);
         components.push(animator);
+
+        const characterAnimator = new CharacterAnimator(this, animator, animations);
+        components.push(characterAnimator);
 
         const audioSource = new AudioSource(this, this.assetPool.getAsset<AudioClip>('hurtSound'));
         components.push(audioSource);
 
         components.push(new PlayerHealth(this, audioSource));
 
-        components.push(new PlayerPhysicsMotor(this, rb, animator));
+        components.push(new PlayerPhysicsMotor(this, rb, characterAnimator));
 
         return components;
     }

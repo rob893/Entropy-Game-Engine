@@ -129,7 +129,13 @@ export class Vector2 {
      * @param vector The vector to normalize. This will change the passed in vector, not return a new one.
      */
     public static normalize(vector: Vector2): Vector2 {
-        return vector.divide(new Vector2(vector.magnitude, vector.magnitude));
+        const magnitude = vector.magnitude;
+
+        if (magnitude === 0) {
+            return Vector2.zero;
+        }
+
+        return vector.divide(new Vector2(magnitude, magnitude));
     }
 
     public get sqrMagnitude(): number {
@@ -141,7 +147,13 @@ export class Vector2 {
     }
 
     public get normalized(): Vector2 {
-        return Vector2.divide(this, new Vector2(this.magnitude, this.magnitude));
+        const magnitude = this.magnitude;
+
+        if (magnitude === 0) {
+            return Vector2.zero;
+        }
+
+        return Vector2.divide(this, new Vector2(magnitude, magnitude));
     }
 
     /**

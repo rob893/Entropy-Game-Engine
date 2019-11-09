@@ -120,12 +120,32 @@ export const scene3: Scene = {
     async getAssetPool(): Promise<AssetPool> {
         const assets = new Map<string, any>();
 
+        const minotaurMapping = new Map<number, number>([
+            [1, 5],
+            [2, 8],
+            [3, 5],
+            [5, 5],
+            [6, 6],
+            [8, 3],
+            [9, 3],
+            [10, 6],
+            [11, 5],
+            [12, 8],
+            [13, 5],
+            [15, 5],
+            [16, 6],
+            [18, 3],
+            [19, 3],
+            [20, 6]
+        ]);
+        const minotaurSheet = await SpriteSheet.buildSpriteSheetAsync(MinotaurSheet, 9, 20, {bottom: 25, top: 0, left: 0, right: 0}, minotaurMapping);
         const trumpIdleSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpIdle, 10, 4);
         const trumpRunSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpRun, 6, 4);
         const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
         const explosionSound = await AudioClip.buildAudioClipAsync(ExplosionSound, 5);
         const hurtSound = await AudioClip.buildAudioClipAsync(HurtSound, 5);
 
+        assets.set('minotaurSpriteSheet', minotaurSheet);
         assets.set('trumpIdleSpriteSheet', trumpIdleSpriteSheet);
         assets.set('trumpRunSpriteSheet', trumpRunSpriteSheet);
         assets.set('explosionSpriteSheet', explosionSpriteSheet);

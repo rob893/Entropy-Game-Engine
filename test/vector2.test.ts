@@ -66,7 +66,7 @@ test('Multiply a vector2 by a scaler.', () => {
 });
 
 test('Get a normalized vector2', () => {
-    expect(Vector2.zero.normalized).toEqual(new Vector2(NaN, NaN));
+    expect(Vector2.zero.normalized).toEqual(new Vector2(0, 0));
     expect(Vector2.one.normalized).toMatchCloseTo(new Vector2(0.7071, 0.7071), 4);
     expect(new Vector2(2, 1).normalized).toMatchCloseTo(new Vector2(0.8944, 0.4472), 4);
 });
