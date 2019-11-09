@@ -110,12 +110,21 @@ export class Vector2 {
         return this.angleInRadians(from, to) * 180 / Math.PI;
     }
 
+    /**
+     * Returns the dot product between point1 and point2.
+     * Neither input vectors will be modified.
+     * 
+     * 
+     * @param point1 
+     * @param point2 
+     */
     public static dot(point1: Vector2, point2: Vector2): number {
         return (point1.x * point2.x) + (point1.y * point2.y);
     }
 
     /**
-     * Returns a normalized vector from point 'from' to point 'to.'
+     * Returns a new normalized vector from point 'from' to point 'to.'
+     * Neither input vectors will be modifed.
      * 
      * @param from The starting position of the direction vector
      * @param to The position the direction vector is pointing to
@@ -125,6 +134,7 @@ export class Vector2 {
     }
 
     /**
+     * Normalizes the passed in vector (modifying it).
      * 
      * @param vector The vector to normalize. This will change the passed in vector, not return a new one.
      */
@@ -132,7 +142,7 @@ export class Vector2 {
         const magnitude = vector.magnitude;
 
         if (magnitude === 0) {
-            return Vector2.zero;
+            return vector;
         }
 
         return vector.divide(new Vector2(magnitude, magnitude));
@@ -146,6 +156,9 @@ export class Vector2 {
         return Math.sqrt(this.sqrMagnitude);
     }
 
+    /**
+     * Return a new normalized copy of the vector. The calling vector will remain unmodified.
+     */
     public get normalized(): Vector2 {
         const magnitude = this.magnitude;
 
@@ -168,6 +181,11 @@ export class Vector2 {
         return this;
     }
 
+    /**
+     * This will subtract the passed in vector from the calling vector. The calling vector will be modified.
+     * 
+     * @param rightOperand 
+     */
     public subtract(rightOperand: Vector2): Vector2 {
         this.x -= rightOperand.x;
         this.y -= rightOperand.y;
@@ -175,6 +193,11 @@ export class Vector2 {
         return this;
     }
 
+    /**
+     * This will multiply the passed in vector to the calling vector. The calling vector will be modified.
+     * 
+     * @param rightOperand 
+     */
     public multiply(rightOperand: Vector2): Vector2 {
         this.x *= rightOperand.x;
         this.y *= rightOperand.y;
@@ -182,6 +205,11 @@ export class Vector2 {
         return this;
     }
 
+    /**
+     * This will divide the calling vector by the passed in vector. The calling vector will be modified.
+     * 
+     * @param rightOperand 
+     */
     public divide(rightOperand: Vector2): Vector2 {
         if (rightOperand.x === 0 || rightOperand.y === 0) {
             console.warn('Attempting to divide by 0!');
@@ -211,6 +239,11 @@ export class Vector2 {
         return closeX && closeY;
     }
 
+    /**
+     * Multiplies the calling vector by the passed in scalar. The calling vector will be modified.
+     * 
+     * @param rightOperand 
+     */
     public multiplyScalar(rightOperand: number): Vector2 {
         this.x *= rightOperand;
         this.y *= rightOperand;
@@ -218,6 +251,11 @@ export class Vector2 {
         return this;
     }
 
+    /**
+     * Divides the calling vector by the passed in scalar. The calling vector will be modified.
+     * 
+     * @param rightOperand 
+     */
     public divideScalar(rightOperand: number): Vector2 {
         if (rightOperand === 0) {
             console.warn('Attempting to divide by 0!');
@@ -229,6 +267,11 @@ export class Vector2 {
         return this;
     }
 
+    /**
+     * Zeros the calling vector. The calling vector will be modified.
+     * 
+     * @param rightOperand 
+     */
     public zero(): Vector2 {
         this.x = 0;
         this.y = 0;
