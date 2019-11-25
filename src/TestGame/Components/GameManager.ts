@@ -29,6 +29,7 @@ export class GameManager extends Component implements RenderableGUI {
         this.input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await this.sceneManager.loadScene(3));
         this.input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
         this.input.addKeyListener(EventType.KeyDown, KeyCode.I, () => this.testInstantiate());
+        this.input.addKeyListener(EventType.KeyDown, KeyCode.Escape, () => this.togglePause());
     }
 
     // public start(): void {

@@ -21,8 +21,8 @@ export class NavGrid<T extends WeightedGraphCell = WeightedGraphCell> implements
         ];
     }
 
-    public get passableCells(): T[] {
-        return Array.from(this.cells.values()).filter(cell => cell.passable);
+    public get graphCells(): T[] {
+        return [...this.cells.values()];
     }
 
     public *neighbors(id: Vector2): Iterable<T> {

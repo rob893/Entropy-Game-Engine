@@ -13,12 +13,11 @@ export class AStarSearch {
         const costSoFar: Map<Vector2, number> = new Map<Vector2, number>();
 
         const frontier = new PriorityQueue<Vector2>();
-        //set to new object to keep from referencing original object
-        const originalGoal = new Vector2(goal.x, goal.y);
 
-        //So that the algorithm does not reference the passed in start vector.
+        //set to new vectors to keep from referencing original vectors (as they are ref types)
+        //We need a copy of both at this point in time as they are likely to move in the future
+        goal = new Vector2(goal.x, goal.y);
         start = new Vector2(start.x, start.y);
-        goal = this.normalizePosition(goal, graph.cellSize);
 
         frontier.enqueue(start, 0);
 
@@ -28,8 +27,8 @@ export class AStarSearch {
         while (frontier.count > 0) {
             const current = frontier.dequeue();
 
-            if (current.equals(goal)) {
-                return this.constructPath(cameFrom, current, start, originalGoal);
+            if (current.isCloseTo(goal, graph.cellSize)) {
+                return this.constructPath(cameFrom, current, start, goal);
             }
 
             for (const next of graph.neighbors(current)) {
@@ -53,13 +52,6 @@ export class AStarSearch {
         }
 
         return null;
-    }
-
-    private static normalizePosition(pos: Vector2, cellSize: number): Vector2 {
-        const x = cellSize * Math.round(pos.x / cellSize);
-        const y = cellSize * Math.round(pos.y / cellSize);
-
-        return new Vector2(x, y);
     }
 
     private static heuristic(a: Vector2, b: Vector2): number {

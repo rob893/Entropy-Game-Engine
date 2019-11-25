@@ -7,6 +7,7 @@ import { Layer } from '../Enums/Layer';
 import { Component } from '../../Components/Component';
 import { PrefabSettings } from '../Interfaces/PrefabSettings';
 import { GameEngine } from '../GameEngine';
+import { WeightedGraphVisualizer } from '../../Components/GraphVisualizer';
 
 export class Terrain extends GameObject implements RenderableBackground {
     
@@ -53,6 +54,9 @@ export class Terrain extends GameObject implements RenderableBackground {
                 this.addComponent(new RectangleCollider(this, null, xTuple[1], navGrid.cellSize, xTuple[0].x + (xTuple[1] / 2), xTuple[0].y + navGrid.cellSize));
             }
         }
+
+        // Uncomment this to have the navgrid drawn in development mode.
+        //this.addComponent(new WeightedGraphVisualizer(this, navGrid));
     }
 
     public renderBackground(context: CanvasRenderingContext2D): void {

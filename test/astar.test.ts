@@ -22,7 +22,7 @@ test('Test the a star path finding', (): void => {
         }
         graphVisual += '\n';
     }
-    console.log(graphVisual);
+    //console.log(graphVisual);
 
     let path = AStarSearch.findPath(graph, new Vector2(1, 0), new Vector2(3, 0));
 
@@ -42,6 +42,39 @@ test('Test the a star path finding', (): void => {
 
     path = AStarSearch.findPath(graph, new Vector2(0, 4), new Vector2(6, 4));
 
+    if (path === null) {
+        throw new Error('Path is null');
+    }
+
     expect(path).not.toBe(null);
-    console.log(path);
+    expect(path.length).toBe(10);
+    expect(path[0]).toEqual(new Vector2(0, 4));
+    expect(path[1]).toEqual(new Vector2(1, 4));
+    expect(path[2]).toEqual(new Vector2(2, 4));
+    expect(path[3]).toEqual(new Vector2(3, 4));
+    expect(path[4]).toEqual(new Vector2(3, 3));
+    expect(path[5]).toEqual(new Vector2(3, 2));
+    expect(path[6]).toEqual(new Vector2(4, 2));
+    expect(path[7]).toEqual(new Vector2(5, 2));
+    expect(path[8]).toEqual(new Vector2(5, 3));
+    expect(path[9]).toEqual(new Vector2(6, 4));
+
+    path = AStarSearch.findPath(graph, new Vector2(0, 5), new Vector2(6, 5));
+
+    if (path === null) {
+        throw new Error('Path is null');
+    }
+
+    expect(path).not.toBe(null);
+    expect(path.length).toBe(10);
+    expect(path[0]).toEqual(new Vector2(0, 5));
+    expect(path[1]).toEqual(new Vector2(1, 5));
+    expect(path[2]).toEqual(new Vector2(2, 5));
+    expect(path[3]).toEqual(new Vector2(3, 5));
+    expect(path[4]).toEqual(new Vector2(3, 6));
+    expect(path[5]).toEqual(new Vector2(3, 7));
+    expect(path[6]).toEqual(new Vector2(4, 7));
+    expect(path[7]).toEqual(new Vector2(5, 7));
+    expect(path[8]).toEqual(new Vector2(5, 6));
+    expect(path[9]).toEqual(new Vector2(6, 5));
 });
