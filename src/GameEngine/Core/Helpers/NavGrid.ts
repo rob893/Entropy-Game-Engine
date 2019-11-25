@@ -35,6 +35,17 @@ export class NavGrid<T extends WeightedGraphCell = WeightedGraphCell> implements
             }
         }
     }
+
+    public getCell(x: number, y: number): T {
+        const key = this.getMapKey(x, y);
+        const cell = this.cells.get(key);
+
+        if (cell === undefined) {
+            throw new Error('Cell does not exist.');
+        }
+        
+        return cell;
+    }
     
     public cost(a: Vector2, b: Vector2): number {
         const key = this.getMapKey(b);

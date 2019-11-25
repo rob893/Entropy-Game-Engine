@@ -12,8 +12,8 @@ test('Test the a star path finding', (): void => {
     for (let y = 0; y < 10; y++) {
         for (let x = 0; x < 10; x++) {
             if (x === 1 && y === 1) {
-                graph.addCell({ passable: true, weight: 10, position: new Vector2(x, y) });
-                graphVisual += 'H ';
+                graph.addCell({ passable: true, weight: 9, position: new Vector2(x, y) });
+                graphVisual += '9 ';
                 continue;
             }
             if (x === 4 && y < 7 && y > 2) {
@@ -22,7 +22,7 @@ test('Test the a star path finding', (): void => {
             }
             else {
                 graph.addCell({ passable: true, weight: 0, position: new Vector2(x, y) });
-                graphVisual += '* ';
+                graphVisual += '0 ';
             }
         }
         graphVisual += '\n';
