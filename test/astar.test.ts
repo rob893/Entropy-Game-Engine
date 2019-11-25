@@ -24,6 +24,7 @@ test('Test the a star path finding', (): void => {
     }
     //console.log(graphVisual);
 
+    //Straight line path
     let path = AStarSearch.findPath(graph, new Vector2(1, 0), new Vector2(3, 0));
 
     if (path === null) {
@@ -40,6 +41,7 @@ test('Test the a star path finding', (): void => {
 
     expect(path).toBe(null);
 
+    //Path goes up and around wall
     path = AStarSearch.findPath(graph, new Vector2(0, 4), new Vector2(6, 4));
 
     if (path === null) {
@@ -59,6 +61,7 @@ test('Test the a star path finding', (): void => {
     expect(path[8]).toEqual(new Vector2(5, 3));
     expect(path[9]).toEqual(new Vector2(6, 4));
 
+    //Path goes down and around wall
     path = AStarSearch.findPath(graph, new Vector2(0, 5), new Vector2(6, 5));
 
     if (path === null) {
