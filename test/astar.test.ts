@@ -11,6 +11,11 @@ test('Test the a star path finding', (): void => {
     let graphVisual = '';
     for (let y = 0; y < 10; y++) {
         for (let x = 0; x < 10; x++) {
+            if (x === 1 && y === 1) {
+                graph.addCell({ passable: true, weight: 10, position: new Vector2(x, y) });
+                graphVisual += 'H ';
+                continue;
+            }
             if (x === 4 && y < 7 && y > 2) {
                 graph.addCell({ passable: false, weight: 0, position: new Vector2(x, y) });
                 graphVisual += 'X ';
@@ -25,16 +30,29 @@ test('Test the a star path finding', (): void => {
     //console.log(graphVisual);
 
     //Straight line path
-    let path = AStarSearch.findPath(graph, new Vector2(1, 0), new Vector2(3, 0));
+    let path = AStarSearch.findPath(graph, new Vector2(0, 0), new Vector2(2, 0));
 
     if (path === null) {
         throw new Error('Path is null');
     }
     
     expect(path.length).toBe(3);
-    expect(path[0]).toEqual(new Vector2(1, 0));
-    expect(path[1]).toEqual(new Vector2(2, 0));
-    expect(path[2]).toEqual(new Vector2(3, 0));
+    expect(path[0]).toEqual(new Vector2(0, 0));
+    expect(path[1]).toEqual(new Vector2(1, 0));
+    expect(path[2]).toEqual(new Vector2(2, 0));
+
+    //Path considering weight. 1, 1 has a heavy weight. This path should go around it
+    path = AStarSearch.findPath(graph, new Vector2(0, 1), new Vector2(2, 1));
+
+    if (path === null) {
+        throw new Error('Path is null');
+    }
+    
+    expect(path.length).toBe(4);
+    expect(path[0]).toEqual(new Vector2(0, 1));
+    expect(path[1]).toEqual(new Vector2(0, 0));
+    expect(path[2]).toEqual(new Vector2(1, 0));
+    expect(path[3]).toEqual(new Vector2(2, 1));
 
     //No path. goal is in a wall.
     path = AStarSearch.findPath(graph, new Vector2(0, 4), new Vector2(4, 4));
