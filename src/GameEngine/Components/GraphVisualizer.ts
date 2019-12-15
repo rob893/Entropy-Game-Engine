@@ -2,8 +2,10 @@ import { Component } from './Component';
 import { RenderableGizmo } from '../Core/Interfaces/RenderableGizmo';
 import { Color } from '../Core/Enums/Color';
 import { GameObject } from '../Core/GameObject';
-import { Graph, WeightedGraph } from '../Core/Interfaces/WeightedGraph';
-import { GraphCell, WeightedGraphCell } from '../Core/Interfaces/WeightedGraphCell';
+import { WeightedGraph } from '../Core/Interfaces/WeightedGraph';
+import { WeightedGraphCell } from '../Core/Interfaces/WeightedGraphCell';
+import { Graph } from '../Core/Interfaces/Graph';
+import { GraphCell } from '../Core/Interfaces/GraphCell';
 
 export class GraphVisualizer extends Component implements RenderableGizmo {
     
