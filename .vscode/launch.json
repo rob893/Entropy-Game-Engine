@@ -10,7 +10,10 @@
             "request": "launch",
             "name": "Jest Test",
             "program": "${workspaceFolder}\\node_modules\\jest\\bin\\jest",
-            "args": ["--runInBand", "--config=${workspaceFolder}\\jest.config.js"],
+            "args": [
+                "--runInBand",
+                "--config=${workspaceFolder}\\jest.config.js"
+            ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
         },
