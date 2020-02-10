@@ -20,6 +20,7 @@ import { AudioClip } from '../GameEngine/Core/Helpers/AudioClip';
 import { GameEngine } from '../GameEngine/Core/GameEngine';
 import { Minotaur } from './GameObjects/Minotaur';
 import { Box } from './GameObjects/Box';
+import { UICanvas } from './GameObjects/UICanvas';
 
 
 export const scene1: Scene = {
@@ -35,7 +36,8 @@ export const scene1: Scene = {
         return [
             new GameManagerObject(gameEngine, 'gameManager'),
             new Minotaur(gameEngine, 'minotaur'),
-            new Player(gameEngine, 'player', 400, 250)
+            new Player(gameEngine, 'player', 400, 250),
+            //new UICanvas(gameEngine, 'ui-canvas')
         ];
     },
 
