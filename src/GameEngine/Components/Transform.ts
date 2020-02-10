@@ -1,7 +1,7 @@
 import { Component } from './Component';
 import { Vector2 } from '../Core/Helpers/Vector2';
 import { LiteEvent } from '../Core/Helpers/LiteEvent';
-import { GameObject } from '../Core/GameObject';
+import { GameObject } from '../GameObjects/GameObject';
 import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 
 export class Transform extends Component {

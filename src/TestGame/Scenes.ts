@@ -1,5 +1,5 @@
 import { Scene } from '../GameEngine/Core/Interfaces/Scene';
-import { GameObject } from '../GameEngine/Core/GameObject';
+import { GameObject } from '../GameEngine/GameObjects/GameObject';
 import { Scene1TerrainSpec } from './Terrains/Scene1TerrainSpec';
 import { RectangleBackground } from '../GameEngine/Core/Helpers/RectangleBackground';
 import { Color } from '../GameEngine/Core/Enums/Color';
@@ -34,9 +34,9 @@ export const scene1: Scene = {
 
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
-            new GameManagerObject(gameEngine, 'gameManager'),
-            new Minotaur(gameEngine, 'minotaur'),
-            new Player(gameEngine, 'player', 400, 250),
+            new GameManagerObject({gameEngine, id: 'gameManager'}),
+            new Minotaur({gameEngine, id: 'minotaur'}),
+            new Player({gameEngine, id: 'player', x: 400, y: 250}),
             //new UICanvas(gameEngine, 'ui-canvas')
         ];
     },
@@ -109,8 +109,8 @@ export const scene3: Scene = {
         const midBox = Box.buildBox(gameEngine, 640, 520, 150, 20, 'midBox', 'border', Color.Brown);
         
         return [
-            new GameManagerObject(gameEngine, 'gameManager'),
-            new PlayerRB(gameEngine, 'player'),
+            new GameManagerObject({gameEngine, id: 'gameManager'}),
+            new PlayerRB({gameEngine, id: 'player'}),
             topBorder,
             bottomBorder,
             leftBorder,

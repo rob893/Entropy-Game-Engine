@@ -1,4 +1,4 @@
-import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameObject } from '../../GameEngine/GameObjects/GameObject';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { Color } from '../../GameEngine/Core/Enums/Color';
 import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';

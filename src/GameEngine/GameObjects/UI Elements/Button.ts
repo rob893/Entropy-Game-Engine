@@ -1,11 +1,11 @@
-import { GameObject } from '../Core/GameObject';
-import { Component } from '../Components/Component';
-import { RectangleCollider } from '../Components/RectangleCollider';
-import { RectangleRenderer } from '../Components/RectangleRenderer';
-import { Color } from '../Core/Enums/Color';
-import { PrefabSettings } from '../Core/Interfaces/PrefabSettings';
-import { Layer } from '../Core/Enums/Layer';
-import { ClickedOnDetector } from '../Components/ClickedOnDetector';
+import { GameObject } from '../GameObject';
+import { Component } from '../../Components/Component';
+import { RectangleCollider } from '../../Components/RectangleCollider';
+import { RectangleRenderer } from '../../Components/RectangleRenderer';
+import { Color } from '../../Core/Enums/Color';
+import { PrefabSettings } from '../../Core/Interfaces/PrefabSettings';
+import { Layer } from '../../Core/Enums/Layer';
+import { ClickedOnDetector } from '../../Components/ClickedOnDetector';
 
 export class Button extends GameObject {
     protected buildInitialComponents(): Component[] {

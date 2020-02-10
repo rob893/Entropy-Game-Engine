@@ -1,5 +1,5 @@
 import { Component } from '../../GameEngine/Components/Component';
-import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameObject } from '../../GameEngine/GameObjects/GameObject';
 import { RenderableGUI } from '../../GameEngine/Core/Interfaces/RenderableGUI';
 import { EventType } from '../../GameEngine/Core/Enums/EventType';
 import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';

@@ -3,7 +3,7 @@ import { Component } from '../../../../GameEngine/Components/Component';
 import { NPCController } from './NPCController';
 import { NavAgent } from '../../../../GameEngine/Components/NavAgent';
 import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
-import { GameObject } from '../../../../GameEngine/Core/GameObject';
+import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
 import { CharacterAnimator } from '../CharacterAnimator';
 import { CharacterStats } from '../CharacterStats';
 

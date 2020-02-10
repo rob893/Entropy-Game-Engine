@@ -2,7 +2,7 @@ import { Renderable } from './Interfaces/Renderable';
 import { RenderableGizmo } from './Interfaces/RenderableGizmo';
 import { RenderableGUI } from './Interfaces/RenderableGUI';
 import { RenderableBackground } from './Interfaces/RenderableBackground';
-import { Terrain } from './Helpers/Terrain';
+import { Terrain } from '../GameObjects/Terrain';
 import { Component } from '../Components/Component';
 
 

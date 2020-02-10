@@ -1,6 +1,6 @@
 import { Component } from './Component';
 import { RectangleCollider } from './RectangleCollider';
-import { GameObject } from '../Core/GameObject';
+import { GameObject } from '../GameObjects/GameObject';
 import { LiteEvent } from '../Core/Helpers/LiteEvent';
 import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 import { Geometry } from '../Core/Helpers/Geometry';

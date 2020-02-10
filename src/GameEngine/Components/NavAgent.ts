@@ -4,7 +4,7 @@ import { Vector2 } from '../Core/Helpers/Vector2';
 import { Color } from '../Core/Enums/Color';
 import { NavGrid } from '../Core/Helpers/NavGrid';
 import { AStarSearch } from '../Core/Helpers/AStarSearch';
-import { GameObject } from '../Core/GameObject';
+import { GameObject } from '../GameObjects/GameObject';
 import { LiteEvent } from '../Core/Helpers/LiteEvent';
 import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 

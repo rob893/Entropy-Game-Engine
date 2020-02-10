@@ -1,4 +1,4 @@
-import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameObject } from '../../GameEngine/GameObjects/GameObject';
 import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
@@ -12,7 +12,7 @@ import { GameEngine } from '../../GameEngine/Core/GameEngine';
 export class Box extends GameObject {
 
     public static buildBox(gameEngine: GameEngine, x: number, y: number, w: number, h: number, id: string, tag: string, color: Color = Color.Grey): Box {
-        const box = new Box(gameEngine, id, x, y, 0, tag, Layer.Terrain);
+        const box = new Box({gameEngine, id, x, y, rotation: 0, tag, layer: Layer.Terrain});
         const renderer = box.getComponent(RectangleRenderer);
 
         if (renderer === null) {

@@ -1,4 +1,4 @@
-import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameObject } from '../../GameEngine/GameObjects/GameObject';
 import { Animator } from '../../GameEngine/Components/Animator';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';

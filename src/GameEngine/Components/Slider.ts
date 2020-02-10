@@ -1,6 +1,6 @@
 import { Component } from './Component';
 import { Color } from '../Core/Enums/Color';
-import { GameObject } from '../Core/GameObject';
+import { GameObject } from '../GameObjects/GameObject';
 import { RenderableGUI } from '../Core/Interfaces/RenderableGUI';
 
 export class Slider extends Component implements RenderableGUI {

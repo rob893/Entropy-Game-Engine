@@ -1,4 +1,4 @@
-import { GameObject } from '../Core/GameObject';
+import { GameObject } from '../GameObjects/GameObject';
 import { Transform } from './Transform';
 import { LiteEvent } from '../Core/Helpers/LiteEvent';
 import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
@@ -9,7 +9,8 @@ import { SceneManager } from '../Core/Helpers/SceneManager';
 import { Physics } from '../Core/Physics/Physics';
 import { GameEngine } from '../Core/GameEngine';
 import { Vector2 } from '../Core/Helpers/Vector2';
-import { Terrain } from '../Core/Helpers/Terrain';
+import { Terrain } from '../GameObjects/Terrain';
+import { GameObjectConstructionParams } from '../Core/Interfaces/GameObjectConstructionParams';
 
 export abstract class Component {
 
@@ -158,7 +159,7 @@ export abstract class Component {
         return this.gameObject.findGameObjectsWithTag(tag);
     }
 
-    protected instantiate<T extends GameObject>(type: new (gameEngine: GameEngine) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
+    protected instantiate<T extends GameObject>(type: new (constructionParams: GameObjectConstructionParams) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
         return this.gameObject.instantiate(type, position, rotation, parent);
     }
 

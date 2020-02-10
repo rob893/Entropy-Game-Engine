@@ -2,7 +2,7 @@ import { State } from '../../../Interfaces/State';
 import { Component } from '../../../../GameEngine/Components/Component';
 import { NPCController } from './NPCController';
 import { CharacterAnimator } from '../CharacterAnimator';
-import { GameObject } from '../../../../GameEngine/Core/GameObject';
+import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
 import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
 import { Transform } from '../../../../GameEngine/Components/Transform';
 import { CharacterStats } from '../CharacterStats';

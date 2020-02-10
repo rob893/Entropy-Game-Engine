@@ -1,5 +1,5 @@
 import { PhysicsEngine } from './PhysicsEngine';
-import { GameObject } from './GameObject';
+import { GameObject } from '../GameObjects/GameObject';
 import { Time } from './Time';
 import { RenderingEngine } from './RenderingEngine';
 import { TerrainBuilder } from './Helpers/TerrainBuilder';
@@ -14,7 +14,8 @@ import { Physics } from './Physics/Physics';
 import { Vector2 } from './Helpers/Vector2';
 import { Transform } from '../Components/Transform';
 import { AssetPool } from './Helpers/AssetPool';
-import { Terrain } from './Helpers/Terrain';
+import { Terrain } from '../GameObjects/Terrain';
+import { GameObjectConstructionParams } from './Interfaces/GameObjectConstructionParams';
 
 export class GameEngine {
 
@@ -125,8 +126,8 @@ export class GameEngine {
         return this.loadedScene.loadOrder;
     }
 
-    public instantiate<T extends GameObject>(type: new (gameEngine: GameEngine) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
-        const newGameObject = new type(this);
+    public instantiate<T extends GameObject>(type: new (constructionParams: GameObjectConstructionParams) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
+        const newGameObject = new type({gameEngine: this});
 
         if (position !== undefined) {
             newGameObject.transform.setPosition(position.x, position.y);

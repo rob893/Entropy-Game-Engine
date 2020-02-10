@@ -1,4 +1,4 @@
-import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameObject } from '../../GameEngine/GameObjects/GameObject';
 import { Component } from '../../GameEngine/Components/Component';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
