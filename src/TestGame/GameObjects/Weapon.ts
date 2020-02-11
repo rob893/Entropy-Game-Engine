@@ -1,4 +1,4 @@
-import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameObject } from '../../GameEngine/GameObjects/GameObject';
 import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';

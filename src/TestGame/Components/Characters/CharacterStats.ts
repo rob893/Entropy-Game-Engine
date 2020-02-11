@@ -1,6 +1,6 @@
 import { Component } from '../../../GameEngine/Components/Component';
 import { CharacterAnimator } from './CharacterAnimator';
-import { GameObject } from '../../../GameEngine/Core/GameObject';
+import { GameObject } from '../../../GameEngine/GameObjects/GameObject';
 import { Damageable } from '../../Interfaces/Damageable';
 import { Slider } from '../../../GameEngine/Components/Slider';
 import { LiteEvent } from '../../../GameEngine/Core/Helpers/LiteEvent';

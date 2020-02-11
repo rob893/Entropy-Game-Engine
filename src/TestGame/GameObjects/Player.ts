@@ -1,4 +1,4 @@
-import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameObject } from '../../GameEngine/GameObjects/GameObject';
 import { Component } from '../../GameEngine/Components/Component';
 import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
 import { Animation } from '../../GameEngine/Core/Helpers/Animation';
@@ -75,7 +75,7 @@ export class Player extends GameObject {
     }
 
     protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
-        const healthBar = new Healthbar(gameEngine);
+        const healthBar = new Healthbar({gameEngine});
 
         healthBar.transform.setPosition(this.transform.position.x, this.transform.position.y - 60);
 

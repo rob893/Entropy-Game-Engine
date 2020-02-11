@@ -1,4 +1,4 @@
-import { GameObject } from '../GameObject';
+import { GameObject } from '../../GameObjects/GameObject';
 import { RenderableBackground } from './RenderableBackground';
 import { TerrainSpec } from './TerrainSpec';
 import { AssetPool } from '../Helpers/AssetPool';

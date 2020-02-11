@@ -1,6 +1,6 @@
 import { Component } from '../../../../GameEngine/Components/Component';
 import { Damageable } from '../../../Interfaces/Damageable';
-import { GameObject } from '../../../../GameEngine/Core/GameObject';
+import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
 import { GameManager } from '../../GameManager';
 import { AudioSource } from '../../../../GameEngine/Components/AudioSource';
 

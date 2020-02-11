@@ -1,7 +1,8 @@
 import { Component } from '../../GameEngine/Components/Component';
-import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameObject } from '../../GameEngine/GameObjects/GameObject';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
+import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class Spawner extends Component {
 
@@ -10,10 +11,10 @@ export class Spawner extends Component {
     public spawnY = 350;
 
     private cancelToken = { cancel: false };
-    private readonly objectsToSpawn: (new (gameEngine: GameEngine) => GameObject)[];
+    private readonly objectsToSpawn: (new (constructionParams: GameObjectConstructionParams) => GameObject)[];
 
     
-    public constructor(gameObject: GameObject, objectsToSpawn: (new (gameEngine: GameEngine) => GameObject)[]) {
+    public constructor(gameObject: GameObject, objectsToSpawn: (new (constructionParams: GameObjectConstructionParams) => GameObject)[]) {
         super(gameObject);
 
         this.objectsToSpawn = objectsToSpawn;

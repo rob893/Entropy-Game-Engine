@@ -1,5 +1,5 @@
 import 'jest-canvas-mock';
-import { GameObject } from '../src/GameEngine/Core/GameObject';
+import { GameObject } from '../src/GameEngine/GameObjects/GameObject';
 import { Component } from '../src/GameEngine/Components/Component';
 import { Rigidbody } from '../src/GameEngine/Components/Rigidbody';
 import { Layer } from '../src/GameEngine/Core/Enums/Layer';
@@ -49,7 +49,7 @@ class TestGameObject2 extends GameObject {
     }
     
     protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
-        return [new TestGameObject(gameEngine)];
+        return [new TestGameObject({gameEngine})];
     }
 
     protected getPrefabSettings(): PrefabSettings {
@@ -75,9 +75,9 @@ const scene1: Scene = {
 
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
-            new TestGameObject(gameEngine),
-            new TestGameObject(gameEngine, 'test2', 5, 5, 5, 'testTag2', Layer.Water),
-            new TestGameObject2(gameEngine)
+            new TestGameObject({gameEngine}),
+            new TestGameObject({gameEngine, id: 'test2', x: 5, y: 5, rotation: 5, tag: 'testTag2', layer: Layer.Water}),
+            new TestGameObject2({gameEngine})
         ];
     },
 

@@ -1,4 +1,4 @@
-import { GameObject } from '../../../../GameEngine/Core/GameObject';
+import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
 import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
 import { KeyCode } from '../../../../GameEngine/Core/Enums/KeyCode';
 import { Rigidbody } from '../../../../GameEngine/Components/Rigidbody';

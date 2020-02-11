@@ -1,13 +1,13 @@
-import { NavGrid } from './NavGrid';
-import { RectangleCollider } from '../../Components/RectangleCollider';
-import { RenderableBackground } from '../Interfaces/RenderableBackground';
-import { GameObject } from '../GameObject';
-import { Vector2 } from './Vector2';
-import { Layer } from '../Enums/Layer';
-import { Component } from '../../Components/Component';
-import { PrefabSettings } from '../Interfaces/PrefabSettings';
-import { GameEngine } from '../GameEngine';
-import { WeightedGraphVisualizer } from '../../Components/GraphVisualizer';
+import { NavGrid } from '../Core/Helpers/NavGrid';
+import { RectangleCollider } from '../Components/RectangleCollider';
+import { RenderableBackground } from '../Core/Interfaces/RenderableBackground';
+import { GameObject } from './GameObject';
+import { Vector2 } from '../Core/Helpers/Vector2';
+import { Layer } from '../Core/Enums/Layer';
+import { Component } from '../Components/Component';
+import { PrefabSettings } from '../Core/Interfaces/PrefabSettings';
+import { GameEngine } from '../Core/GameEngine';
+import { WeightedGraphVisualizer } from '../Components/GraphVisualizer';
 
 export class Terrain extends GameObject implements RenderableBackground {
     
@@ -16,7 +16,7 @@ export class Terrain extends GameObject implements RenderableBackground {
 
 
     public constructor(gameEngine: GameEngine, terrainImage: HTMLImageElement, navGrid: NavGrid, colliderPositions: Vector2[]) {
-        super(gameEngine);
+        super({gameEngine});
         
         this.terrainImage = terrainImage;
         this.navGrid = navGrid;

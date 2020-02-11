@@ -1,16 +1,17 @@
 import { Transform } from '../Components/Transform';
 import { Component } from '../Components/Component';
-import { GameEngine } from './GameEngine';
-import { Layer } from './Enums/Layer';
-import { PrefabSettings } from './Interfaces/PrefabSettings';
-import { ComponentAnalyzer } from './Helpers/ComponentAnalyzer';
-import { Input } from './Helpers/Input';
-import { Physics } from './Physics/Physics';
-import { SceneManager } from './Helpers/SceneManager';
-import { AssetPool } from './Helpers/AssetPool';
-import { Time } from './Time';
-import { Vector2 } from './Helpers/Vector2';
-import { Terrain } from './Helpers/Terrain';
+import { GameEngine } from '../Core/GameEngine';
+import { Layer } from '../Core/Enums/Layer';
+import { PrefabSettings } from '../Core/Interfaces/PrefabSettings';
+import { ComponentAnalyzer } from '../Core/Helpers/ComponentAnalyzer';
+import { Input } from '../Core/Helpers/Input';
+import { Physics } from '../Core/Physics/Physics';
+import { SceneManager } from '../Core/Helpers/SceneManager';
+import { AssetPool } from '../Core/Helpers/AssetPool';
+import { Time } from '../Core/Time';
+import { Vector2 } from '../Core/Helpers/Vector2';
+import { Terrain } from './Terrain';
+import { GameObjectConstructionParams } from '../Core/Interfaces/GameObjectConstructionParams';
 
 
 export abstract class GameObject {
@@ -27,13 +28,13 @@ export abstract class GameObject {
     private readonly gameEngine: GameEngine;
 
 
-    public constructor(gameEngine: GameEngine, id?: string, x?: number, y?: number, rotation?: number, tag?: string, layer?: Layer) {
+    public constructor({ gameEngine, id, x, y, rotation, tag, layer }: GameObjectConstructionParams) {
         this.gameEngine = gameEngine;
         this.isEnabled = true;
         this.componentAnalyzer = gameEngine.componentAnalyzer;
 
         const prefabSettings = this.getPrefabSettings();
-        
+
         this.id = id ? id : prefabSettings.id;
         this.transform = new Transform(this, x ? x : prefabSettings.x, y ? y : prefabSettings.y);
         this.transform.rotation = rotation ? rotation : prefabSettings.rotation;
@@ -122,7 +123,7 @@ export abstract class GameObject {
         return this.gameEngine.findGameObjectsWithTag(tag);
     }
 
-    public instantiate<T extends GameObject>(type: new (gameEngine: GameEngine) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
+    public instantiate<T extends GameObject>(type: new (constructionParams: GameObjectConstructionParams) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
         return this.gameEngine.instantiate(type, position, rotation, parent);
     }
 
@@ -192,7 +193,7 @@ export abstract class GameObject {
 
             parent = parent.parent;
         }
-        
+
         return null;
     }
 
@@ -213,7 +214,7 @@ export abstract class GameObject {
 
             parent = parent.parent;
         }
-        
+
         return components;
     }
 
@@ -235,7 +236,7 @@ export abstract class GameObject {
                 children.push(childsChild);
             }
         }
-        
+
         return null;
     }
 
@@ -264,13 +265,13 @@ export abstract class GameObject {
                 children.push(childsChild);
             }
         }
-        
+
         return components;
     }
 
     public addComponent<T extends Component>(newComponent: Component): T {
         const currentComponents = this.componentMap.get(newComponent.constructor.name);
-        
+
         if (currentComponents !== undefined) {
             currentComponents.push(newComponent);
         }
@@ -279,7 +280,7 @@ export abstract class GameObject {
         }
 
         this.componentAnalyzer.extractRenderablesCollidersAndRigidbodies(newComponent);
-        
+
         newComponent.enabled = true;
         newComponent.start();
 

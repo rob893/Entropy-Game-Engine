@@ -1,5 +1,5 @@
 import { Component } from './Component';
-import { GameObject } from '../Core/GameObject';
+import { GameObject } from '../GameObjects/GameObject';
 import { Renderable } from '../Core/Interfaces/Renderable';
 
 export class RectangleRenderer extends Component implements Renderable {

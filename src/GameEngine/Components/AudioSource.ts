@@ -1,5 +1,5 @@
 import { Component } from './Component';
-import { GameObject } from '../Core/GameObject';
+import { GameObject } from '../GameObjects/GameObject';
 import { AudioClip } from '../Core/Helpers/AudioClip';
 
 export class AudioSource extends Component {

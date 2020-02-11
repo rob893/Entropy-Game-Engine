@@ -1,4 +1,4 @@
-import { GameObject } from '../../GameEngine/Core/GameObject';
+import { GameObject } from '../../GameEngine/GameObjects/GameObject';
 import { FPSCounter } from '../../GameEngine/Components/FPSCounter';
 import { GameManager } from '../Components/GameManager';
 import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';

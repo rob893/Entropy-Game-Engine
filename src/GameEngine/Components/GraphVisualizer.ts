@@ -1,7 +1,7 @@
 import { Component } from './Component';
 import { RenderableGizmo } from '../Core/Interfaces/RenderableGizmo';
 import { Color } from '../Core/Enums/Color';
-import { GameObject } from '../Core/GameObject';
+import { GameObject } from '../GameObjects/GameObject';
 import { WeightedGraph } from '../Core/Interfaces/WeightedGraph';
 import { WeightedGraphCell } from '../Core/Interfaces/WeightedGraphCell';
 import { Graph } from '../Core/Interfaces/Graph';

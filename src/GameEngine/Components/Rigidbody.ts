@@ -1,6 +1,6 @@
 import { Component } from './Component';
 import { Vector2 } from '../Core/Helpers/Vector2';
-import { GameObject } from '../Core/GameObject';
+import { GameObject } from '../GameObjects/GameObject';
 import { LiteEvent } from '../Core/Helpers/LiteEvent';
 import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 
