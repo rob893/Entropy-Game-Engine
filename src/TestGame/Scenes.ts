@@ -37,7 +37,7 @@ export const scene1: Scene = {
             new GameManagerObject({gameEngine, id: 'gameManager'}),
             new Minotaur({gameEngine, id: 'minotaur'}),
             new Player({gameEngine, id: 'player', x: 400, y: 250}),
-            //new UICanvas(gameEngine, 'ui-canvas')
+            new UICanvas({gameEngine, id: 'ui-canvas'})
         ];
     },
 
