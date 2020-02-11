@@ -5,6 +5,7 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { Button } from '../../GameEngine/GameObjects/UI Elements/Button';
 import { ClickedOnDetector } from '../../GameEngine/Components/ClickedOnDetector';
+import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class UICanvas extends GameObject {
     protected buildInitialComponents(): Component[] {
@@ -22,10 +23,10 @@ export class UICanvas extends GameObject {
         };
     }
 
-    protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
-        const button = new Button({gameEngine, id: 'button1', x: 150, y: 150});
+    protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+        const button = new Button({gameEngine: config.gameEngine, id: 'button1', x: 150, y: 150});
 
-        button.getComponent(ClickedOnDetector)?.onClicked.add(() => gameEngine.togglePause());
+        button.getComponent(ClickedOnDetector)?.onClicked.add(() => config.gameEngine.togglePause());
         
         return [button];
     }

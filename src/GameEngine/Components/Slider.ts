@@ -9,6 +9,7 @@ export class Slider extends Component implements RenderableGUI {
     public backgroundColor: Color;
     public renderWidth: number;
     public renderHeight: number;
+    public zIndex: number = 0;
 
     private _fillAmount: number = 100;
 

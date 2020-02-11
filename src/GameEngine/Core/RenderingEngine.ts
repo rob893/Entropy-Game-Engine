@@ -70,6 +70,7 @@ export class RenderingEngine {
 
     public addRenderableGUIElement(guiElement: RenderableGUI): void {
         this.renderableGUIElements.push(guiElement);
+        this.renderableGUIElements.sort(uiElement => uiElement.zIndex || 0);
 
         if (guiElement instanceof Component) {
             guiElement.onDestroyed.add(() => {

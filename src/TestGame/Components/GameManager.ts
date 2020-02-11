@@ -12,6 +12,8 @@ import { Transform } from '../../GameEngine/Components/Transform';
 
 export class GameManager extends Component implements RenderableGUI {
 
+    public zIndex: number = 0;
+
     private sceneMessage: string = '';
     private messageColor: string = '';
     private messageTimer: number = 0;

@@ -15,6 +15,7 @@ import { Spawner } from '../Components/Spawner';
 import { Minotaur } from './Minotaur';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { Healthbar } from './Healthbar';
+import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class Player extends GameObject {
 
@@ -74,8 +75,8 @@ export class Player extends GameObject {
         };
     }
 
-    protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
-        const healthBar = new Healthbar({gameEngine});
+    protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+        const healthBar = new Healthbar(config);
 
         healthBar.transform.setPosition(this.transform.position.x, this.transform.position.y - 60);
 

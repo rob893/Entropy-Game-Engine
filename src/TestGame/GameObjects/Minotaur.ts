@@ -17,6 +17,7 @@ import { AttackState } from '../Components/Characters/NPC/AttackState';
 import { CharacterStats } from '../Components/Characters/CharacterStats';
 import { Healthbar } from './Healthbar';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class Minotaur extends GameObject {
 
@@ -85,8 +86,8 @@ export class Minotaur extends GameObject {
         };
     }
 
-    protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
-        const healthBar = new Healthbar({gameEngine});
+    protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+        const healthBar = new Healthbar(config);
 
         healthBar.transform.setPosition(this.transform.position.x, this.transform.position.y - 70);
 

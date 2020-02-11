@@ -15,6 +15,7 @@ import { PlayerHealth } from '../Components/Characters/Player/PlayerHealth';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
+import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class PlayerRB extends GameObject {
 
@@ -76,7 +77,7 @@ export class PlayerRB extends GameObject {
         };
     }
     
-    protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
+    protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
         // const ball = new ThrowableBall(gameEngineAPIs, 'ball');
         
         // ball.transform.setPosition(this.transform.position.x, this.transform.position.y - 20);

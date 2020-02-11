@@ -4,6 +4,8 @@ import { RenderableGUI } from '../Core/Interfaces/RenderableGUI';
 
 export class FPSCounter extends Component implements RenderableGUI {
 
+    public zIndex: number = 0;
+    
     private numFrames: number = 0;
     private timer: number = 0;
     private FPS: number = 0;

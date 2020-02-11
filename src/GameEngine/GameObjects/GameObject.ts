@@ -14,7 +14,7 @@ import { Terrain } from './Terrain';
 import { GameObjectConstructionParams } from '../Core/Interfaces/GameObjectConstructionParams';
 
 
-export abstract class GameObject {
+export abstract class GameObject<TConfig extends GameObjectConstructionParams = GameObjectConstructionParams> {
 
     public id: string;
     public readonly tag: string;
@@ -28,7 +28,17 @@ export abstract class GameObject {
     private readonly gameEngine: GameEngine;
 
 
-    public constructor({ gameEngine, id, x, y, rotation, tag, layer }: GameObjectConstructionParams) {
+    public constructor(config: TConfig) {
+        const {
+            gameEngine,
+            id,
+            x,
+            y,
+            rotation,
+            tag,
+            layer
+        } = config;
+
         this.gameEngine = gameEngine;
         this.isEnabled = true;
         this.componentAnalyzer = gameEngine.componentAnalyzer;
@@ -41,12 +51,12 @@ export abstract class GameObject {
         this.tag = tag ? tag : prefabSettings.tag;
         this.layer = layer ? layer : prefabSettings.layer;
 
-        const initialComponents = this.buildInitialComponents(); //move this into prefab settings
+        const initialComponents = this.buildInitialComponents(config); //move this into prefab settings
         initialComponents.push(this.transform);
 
         this.setComponents(initialComponents);
 
-        const childGameObjects = this.buildAndReturnChildGameObjects(gameEngine);
+        const childGameObjects = this.buildAndReturnChildGameObjects(config);
 
         for (const child of childGameObjects) {
             child.transform.parent = this.transform;
@@ -93,6 +103,10 @@ export abstract class GameObject {
 
     public get gameCanvas(): HTMLCanvasElement {
         return this.gameEngine.gameCanvas;
+    }
+
+    public get gameCanvasContext(): CanvasRenderingContext2D {
+        return this.gameEngine.canvasContext;
     }
 
     public get terrain(): Terrain {
@@ -310,7 +324,7 @@ export abstract class GameObject {
      * 
      * @param gameEngine The game engine
      */
-    protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] { return []; }
+    protected buildAndReturnChildGameObjects(config: TConfig): GameObject[] { return []; }
 
     private setComponents(components: Component[]): void {
         for (const component of components) {
@@ -332,5 +346,5 @@ export abstract class GameObject {
      * These settings are overridden by non-default constructor values.
      */
     protected abstract getPrefabSettings(): PrefabSettings;
-    protected abstract buildInitialComponents(): Component[];
+    protected abstract buildInitialComponents(config: TConfig): Component[];
 }

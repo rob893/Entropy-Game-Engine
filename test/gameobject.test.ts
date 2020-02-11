@@ -10,6 +10,7 @@ import { GameEngine } from '../src/GameEngine/Core/GameEngine';
 import { Scene } from '../src/GameEngine/Core/Interfaces/Scene';
 import { AssetPool } from '../src/GameEngine/Core/Helpers/AssetPool';
 import { RectangleBackground } from '../src/GameEngine/Core/Helpers/RectangleBackground';
+import { GameObjectConstructionParams } from '../src/GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 class TestComponent extends Component {}
 
@@ -48,8 +49,8 @@ class TestGameObject2 extends GameObject {
         return [new TestComponent2(this)];
     }
     
-    protected buildAndReturnChildGameObjects(gameEngine: GameEngine): GameObject[] {
-        return [new TestGameObject({gameEngine})];
+    protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+        return [new TestGameObject(config)];
     }
 
     protected getPrefabSettings(): PrefabSettings {

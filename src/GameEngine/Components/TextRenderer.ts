@@ -20,6 +20,7 @@ export class TextRenderer extends Component implements RenderableGUI {
     public text: string;
     public x: number;
     public y: number;
+    public zIndex: number = 0;
 
 
     public constructor(gameObject: GameObject, config: TextRendererParams) {

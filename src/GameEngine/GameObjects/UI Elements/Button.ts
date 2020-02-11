@@ -9,31 +9,37 @@ import { ClickedOnDetector } from '../../Components/ClickedOnDetector';
 import { TextRenderer } from '../../Components/TextRenderer';
 import { GameObjectConstructionParams } from '../../Core/Interfaces/GameObjectConstructionParams';
 
-export class Button extends GameObject {
+type ButtonConfig = GameObjectConstructionParams & { height?: number; width?: number };
+
+export class Button extends GameObject<ButtonConfig> {
 
     public height: number;
     public width: number;
 
 
-    public constructor(config: GameObjectConstructionParams & { height?: number, width?: number }) {
+    public constructor(config: ButtonConfig) {
         super(config);
 
         this.height = config.height || 50;
         this.width = config.width || 50;
     }
 
-    protected buildInitialComponents(): Component[] {
-        const collider = new RectangleCollider(this, null, this.width, this.height);
+    protected buildInitialComponents(config: ButtonConfig): Component[] {
+        const w = config.width || 50;
+        const h = config.height || 50;
 
-        const renderer = new RectangleRenderer(this, this.width, this.height, Color.Grey);
+        const collider = new RectangleCollider(this, null, w, h);
+
+        const renderer = new RectangleRenderer(this, w, h, Color.Grey);
 
         const clickedOnDetector = new ClickedOnDetector(this, collider);
 
-        const textRenderer = new TextRenderer(this, { fontColor: Color.Amber, text: 'Button', x: this.transform.position.x, y: this.transform.position.y });
+        const textRenderer = new TextRenderer(this, { fontColor: Color.Amber, text: 'Button', y: this.transform.position.y - h / 2 });
+        textRenderer.x = this.transform.position.x - textRenderer.getTextWidth(this.gameCanvasContext) / 2;
 
         this.transform.onMoved.add(() => {
-            textRenderer.x = this.transform.position.x;
-            textRenderer.y = this.transform.position.y;
+            textRenderer.x = this.transform.position.x - textRenderer.getTextWidth(this.gameCanvasContext) / 2;
+            textRenderer.y = this.transform.position.y - h / 2;
         });
 
         return [renderer, collider, clickedOnDetector, textRenderer];
