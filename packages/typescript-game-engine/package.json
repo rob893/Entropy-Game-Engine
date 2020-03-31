@@ -1,0 +1,37 @@
+{
+    "name": "@rherber/typescript-game-engine",
+    "version": "1.0.0",
+    "description": "Custom 2D game engine written in TypeScript.",
+    "author": "Robert Herber <rwherber@gmail.com>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rob893/TypeScript-Game-Engine.git"
+    },
+    "keywords": [
+        "game",
+        "engine",
+        "typescript"
+    ],
+    "bugs": {
+        "url": "https://github.com/rob893/TypeScript-Game-Engine/issues"
+    },
+    "homepage": "https://github.com/rob893/TypeScript-Game-Engine#readme",
+    "publishConfig": {
+        "access": "public"
+    },
+    "main": "dist/index",
+    "types": "dist/index",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "npm run clean && npm run compile",
+        "clean": "rm -rf ./dist",
+        "compile": "tsc",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "typescript": "^3.8.3"
+    }
+}

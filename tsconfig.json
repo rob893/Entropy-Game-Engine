@@ -13,14 +13,16 @@
         "forceConsistentCasingInFileNames": true,
         "removeComments": true,
         "preserveConstEnums": true,
-        "outDir": "./compiled/",
         "sourceMap": true,
         "declaration": false,
         "target": "es2017",
         "pretty": true,
         "moduleResolution": "node",
-        "module": "es2015"
+        "module": "es2015",
+        "baseUrl": "./packages",
+        "paths": {
+            "@rherber/*": ["*/src"]
+        }
     },
-    "include": ["src/**/*.ts", "**/*.test.ts"],
     "exclude": ["node_modules"]
 }
