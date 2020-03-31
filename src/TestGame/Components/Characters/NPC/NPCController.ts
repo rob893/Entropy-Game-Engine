@@ -5,9 +5,8 @@ import { CharacterStats } from '../CharacterStats';
 import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
 
 export class NPCController extends Component {
-
     public currentTarget: Transform | null = null;
-    
+
     private _currentState: State;
 
     private readonly _searchingState: State;
@@ -15,8 +14,13 @@ export class NPCController extends Component {
     private readonly _attackState: State;
     private readonly _myStats: CharacterStats;
 
-
-    public constructor(gameObject: GameObject, myStats: CharacterStats, searchingState: State, chaseState: State, attackState: State) {
+    public constructor(
+        gameObject: GameObject,
+        myStats: CharacterStats,
+        searchingState: State,
+        chaseState: State,
+        attackState: State
+    ) {
         super(gameObject);
 
         this._myStats = myStats;
@@ -27,11 +31,11 @@ export class NPCController extends Component {
         this._currentState = searchingState;
         searchingState.onEnter(this);
     }
-    
+
     public get currentState(): State {
         return this._currentState;
     }
-    
+
     public get searchingState(): State {
         return this._searchingState;
     }

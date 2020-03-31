@@ -11,7 +11,6 @@ import { PlayerMotor } from './Characters/Player/PlayerMotor';
 import { Transform } from '../../GameEngine/Components/Transform';
 
 export class GameManager extends Component implements RenderableGUI {
-
     public zIndex: number = 0;
 
     private sceneMessage: string = '';
@@ -21,7 +20,6 @@ export class GameManager extends Component implements RenderableGUI {
     private gameOver: boolean = false;
     //private playerTransform: Transform | null = null;
     //private hubConnection: HubConnection | null = null;
-
 
     public constructor(gameObject: GameObject) {
         super(gameObject);
@@ -53,8 +51,8 @@ export class GameManager extends Component implements RenderableGUI {
 
     //     const player = this.findGameObjectById('player');
 
-    //     if (player === null) { 
-    //         throw new Error('could not find player'); 
+    //     if (player === null) {
+    //         throw new Error('could not find player');
     //     }
 
     //     const playerTransform = player.getComponent(Transform);
@@ -116,7 +114,12 @@ export class GameManager extends Component implements RenderableGUI {
         const obj = this.instantiate(TrumpRB);
         const rb = obj.getComponent(Rigidbody);
         if (rb !== null) {
-            rb.addForce(new Vector2((Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500), (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500)));
+            rb.addForce(
+                new Vector2(
+                    (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500),
+                    (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1500)
+                )
+            );
         }
     }
 

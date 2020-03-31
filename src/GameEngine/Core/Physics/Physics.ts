@@ -5,9 +5,7 @@ import { PhysicsEngine } from '../PhysicsEngine';
 import { Layer } from '../Enums/Layer';
 
 export class Physics {
-    
     private readonly physicsEngine: PhysicsEngine;
-
 
     public constructor(physicsEngine: PhysicsEngine) {
         this.physicsEngine = physicsEngine;
@@ -19,7 +17,7 @@ export class Physics {
                 return collider;
             }
         }
-        
+
         return null;
     }
 
@@ -36,7 +34,7 @@ export class Physics {
                 closestColliderDistance = colliderDistance;
             }
         }
-        
+
         return result;
     }
 
@@ -45,7 +43,16 @@ export class Physics {
         const terminalPoint = Vector2.add(origin, direction.multiplyScalar(distance));
 
         for (const collider of this.physicsEngine.colliders) {
-            if (Geometry.doIntersectRectangle(origin, terminalPoint, collider.topLeft, collider.topRight, collider.bottomLeft, collider.bottomRight)) {
+            if (
+                Geometry.doIntersectRectangle(
+                    origin,
+                    terminalPoint,
+                    collider.topLeft,
+                    collider.topRight,
+                    collider.bottomLeft,
+                    collider.bottomRight
+                )
+            ) {
                 results.push(collider);
             }
         }
@@ -57,12 +64,12 @@ export class Physics {
 
     public overlapSphere(position: Vector2, radius: number, layer?: Layer): RectangleCollider[] {
         const colliders: RectangleCollider[] = [];
-        
+
         for (const collider of this.physicsEngine.colliders) {
             if (layer !== undefined && collider.gameObject.layer !== layer) {
                 continue;
             }
-            
+
             if (Vector2.distance(position, collider.transform.position) <= radius) {
                 colliders.push(collider);
             }

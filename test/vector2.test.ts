@@ -1,6 +1,6 @@
 import { Vector2 } from '../src/GameEngine/Core/Helpers/Vector2';
-import {toBeDeepCloseTo, toMatchCloseTo} from 'jest-matcher-deep-close-to';
-expect.extend({toBeDeepCloseTo, toMatchCloseTo});
+import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
+expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
 test('Finds the magnitude of a vector2', () => {
     expect(Vector2.zero.magnitude).toBe(0);

@@ -18,14 +18,13 @@ import { Healthbar } from './Healthbar';
 import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class Player extends GameObject {
-
     protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
-        
+
         const collider = new RectangleCollider(this, null, 30, 30, 0, 0);
         collider.physicalMaterial = PhysicalMaterial.bouncy;
         components.push(collider);
-        
+
         const idleFrames = this.assetPool.getAsset<SpriteSheet>('knightSpriteSheet').getFrames(9);
 
         const initialAnimation = new Animation(idleFrames, 0.2);
@@ -63,7 +62,7 @@ export class Player extends GameObject {
 
         return components;
     }
-    
+
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,

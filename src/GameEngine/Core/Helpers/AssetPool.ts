@@ -1,7 +1,5 @@
 export class AssetPool {
-
     private readonly assetPool: Map<string, any>;
-
 
     public constructor(assetPool: Map<string, any>) {
         this.assetPool = assetPool;

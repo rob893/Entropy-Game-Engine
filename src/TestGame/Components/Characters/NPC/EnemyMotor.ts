@@ -6,12 +6,10 @@ import { Transform } from '../../../../GameEngine/Components/Transform';
 import { CharacterAnimator } from '../CharacterAnimator';
 
 export class EnemyMotor extends Component {
-
     private playerTransform: Transform | null = null;
     private timer: number = 0;
     private readonly navAgent: NavAgent;
     private readonly animator: CharacterAnimator;
-
 
     public constructor(gameObject: GameObject, navAgent: NavAgent, animator: CharacterAnimator) {
         super(gameObject);
@@ -19,7 +17,7 @@ export class EnemyMotor extends Component {
         this.navAgent = navAgent;
         this.animator = animator;
 
-        this.navAgent.onDirectionChanged.add((newDirection) => this.changeAnimation(newDirection));
+        this.navAgent.onDirectionChanged.add(newDirection => this.changeAnimation(newDirection));
         this.navAgent.onPathCompleted.add(() => this.animator.playIdleAnimation());
     }
 
@@ -28,7 +26,6 @@ export class EnemyMotor extends Component {
 
         if (player === null) {
             throw new Error('player not found');
-
         }
         this.playerTransform = player.transform;
     }
@@ -37,9 +34,9 @@ export class EnemyMotor extends Component {
         if (this.playerTransform === null) {
             return;
         }
-        
+
         this.timer += this.time.deltaTime;
-        
+
         if (this.timer > 1) {
             if (Vector2.distance(this.transform.position, this.playerTransform.position) < 75) {
                 this.navAgent.resetPath();
@@ -60,16 +57,13 @@ export class EnemyMotor extends Component {
         if (Math.abs(newDirection.x) > Math.abs(newDirection.y)) {
             if (newDirection.x > 0.5) {
                 this.animator.playRunAnimation(true);
-            }
-            else {
+            } else {
                 this.animator.playRunAnimation(false);
             }
-        }
-        else {
+        } else {
             if (newDirection.y > 0.5) {
                 this.animator.playRunAnimation();
-            }
-            else {
+            } else {
                 this.animator.playRunAnimation();
             }
         }

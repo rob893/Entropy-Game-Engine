@@ -13,12 +13,10 @@ import { Terrain } from '../GameObjects/Terrain';
 import { GameObjectConstructionParams } from '../Core/Interfaces/GameObjectConstructionParams';
 
 export abstract class Component {
-
     public readonly gameObject: GameObject;
 
     private isEnabled: boolean = true;
     private readonly _onDestroyed = new LiteEvent<Component>();
-
 
     public constructor(gameObject: GameObject, enabled: boolean = true) {
         this.gameObject = gameObject;
@@ -34,8 +32,7 @@ export abstract class Component {
 
         if (enabled) {
             this.onEnabled();
-        }
-        else {
+        } else {
             this.onDisable();
         }
     }
@@ -69,7 +66,7 @@ export abstract class Component {
     public start(): void {}
 
     /**
-     * This function is called once every frame. Override this function in derived components if accessing the update loop is needed. 
+     * This function is called once every frame. Override this function in derived components if accessing the update loop is needed.
      * Do not call super() as the original implementaiton will remove itself from the update loop for performance reasons (no point in invoking a bunch of empty update methods).
      */
     public update(): void {
@@ -159,7 +156,12 @@ export abstract class Component {
         return this.gameObject.findGameObjectsWithTag(tag);
     }
 
-    protected instantiate<T extends GameObject>(type: new (constructionParams: GameObjectConstructionParams) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
+    protected instantiate<T extends GameObject>(
+        type: new (constructionParams: GameObjectConstructionParams) => T,
+        position?: Vector2,
+        rotation?: number,
+        parent?: Transform
+    ): GameObject {
         return this.gameObject.instantiate(type, position, rotation, parent);
     }
 

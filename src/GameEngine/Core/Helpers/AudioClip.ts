@@ -1,9 +1,7 @@
 export class AudioClip {
-
     private readonly audioElements: HTMLAudioElement[] = [];
     private index: number = 0;
 
-    
     private constructor() {}
 
     public static async buildAudioClipAsync(audioURL: string, numberOfClones: number = 1): Promise<AudioClip> {

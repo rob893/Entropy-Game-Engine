@@ -27,11 +27,10 @@ class TestComponent2 extends Component {
 }
 
 class TestGameObject extends GameObject {
-    
     protected buildInitialComponents(): Component[] {
         return [new TestComponent(this)];
     }
-    
+
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,
@@ -48,7 +47,7 @@ class TestGameObject2 extends GameObject {
     protected buildInitialComponents(): Component[] {
         return [new TestComponent2(this)];
     }
-    
+
     protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
         return [new TestGameObject(config)];
     }
@@ -76,9 +75,17 @@ const scene1: Scene = {
 
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
-            new TestGameObject({gameEngine}),
-            new TestGameObject({gameEngine, id: 'test2', x: 5, y: 5, rotation: 5, tag: 'testTag2', layer: Layer.Water}),
-            new TestGameObject2({gameEngine})
+            new TestGameObject({ gameEngine }),
+            new TestGameObject({
+                gameEngine,
+                id: 'test2',
+                x: 5,
+                y: 5,
+                rotation: 5,
+                tag: 'testTag2',
+                layer: Layer.Water
+            }),
+            new TestGameObject2({ gameEngine })
         ];
     },
 

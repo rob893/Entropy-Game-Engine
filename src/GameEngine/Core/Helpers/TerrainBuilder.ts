@@ -6,13 +6,14 @@ import { TerrainSpec } from '../Interfaces/TerrainSpec';
 import { GameEngine } from '../GameEngine';
 
 export class TerrainBuilder {
-
-    private readonly builderMap: Map<HTMLImageElement, Map<string, SpriteData[]>> = new Map<HTMLImageElement, Map<string, SpriteData[]>>();
+    private readonly builderMap: Map<HTMLImageElement, Map<string, SpriteData[]>> = new Map<
+        HTMLImageElement,
+        Map<string, SpriteData[]>
+    >();
     private readonly spriteSheetSet: Set<string> = new Set<string>();
     private readonly context: CanvasRenderingContext2D;
     private readonly canvas: HTMLCanvasElement;
     private currentSpriteSheet: HTMLImageElement | null = null;
-
 
     public constructor(width: number = 1024, height: number = 576) {
         this.canvas = document.createElement('canvas');
@@ -28,7 +29,6 @@ export class TerrainBuilder {
     }
 
     public async buildTerrain(gameEngine: GameEngine, terrainSpec: TerrainSpec): Promise<Terrain> {
-
         await this.using(terrainSpec.spriteSheetUrl);
 
         return new Promise(resolve => {
@@ -50,21 +50,35 @@ export class TerrainBuilder {
                         continue;
                     }
 
-                    navGrid.addCell({ passable: gridCell.passable, weight: gridCell.weight, position: new Vector2(x, y) });
+                    navGrid.addCell({
+                        passable: gridCell.passable,
+                        weight: gridCell.weight,
+                        position: new Vector2(x, y)
+                    });
 
                     if (!gridCell.passable) {
                         colliderOffsets.push(new Vector2(x, y));
                     }
-                    
+
                     const c = gridCell.spriteData;
 
                     if (this.currentSpriteSheet === null) {
                         throw new Error('Error building terrain.');
                     }
 
-                    this.context.drawImage(this.currentSpriteSheet, c.sliceX, c.sliceY, c.sliceWidth, c.sliceHeight, x, y, c.sliceWidth * scale, c.sliceHeight * scale);
-                    x = j === terrainGrid[i].length - 1 ? 0 : x + (c.sliceWidth * scale);
-                    y = j === terrainGrid[i].length - 1 ? y + (c.sliceHeight * scale) : y;
+                    this.context.drawImage(
+                        this.currentSpriteSheet,
+                        c.sliceX,
+                        c.sliceY,
+                        c.sliceWidth,
+                        c.sliceHeight,
+                        x,
+                        y,
+                        c.sliceWidth * scale,
+                        c.sliceHeight * scale
+                    );
+                    x = j === terrainGrid[i].length - 1 ? 0 : x + c.sliceWidth * scale;
+                    y = j === terrainGrid[i].length - 1 ? y + c.sliceHeight * scale : y;
                 }
             }
 
@@ -83,7 +97,7 @@ export class TerrainBuilder {
 
         return new Promise(resolve => {
             this.spriteSheetSet.add(spriteSheet);
-        
+
             const spriteSheetImg = new Image();
             spriteSheetImg.src = spriteSheet;
             spriteSheetImg.onload = () => {

@@ -5,7 +5,6 @@ import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
 import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class Spawner extends Component {
-
     public spawnRate = 10;
     public spawnX = 725;
     public spawnY = 350;
@@ -13,8 +12,10 @@ export class Spawner extends Component {
     private cancelToken = { cancel: false };
     private readonly objectsToSpawn: (new (constructionParams: GameObjectConstructionParams) => GameObject)[];
 
-    
-    public constructor(gameObject: GameObject, objectsToSpawn: (new (constructionParams: GameObjectConstructionParams) => GameObject)[]) {
+    public constructor(
+        gameObject: GameObject,
+        objectsToSpawn: (new (constructionParams: GameObjectConstructionParams) => GameObject)[]
+    ) {
         super(gameObject);
 
         this.objectsToSpawn = objectsToSpawn;
@@ -40,8 +41,7 @@ export class Spawner extends Component {
     public toggleSpawn(): void {
         if (this.cancelToken.cancel) {
             this.startSpawning();
-        }
-        else {
+        } else {
             this.stopSpawning();
         }
     }

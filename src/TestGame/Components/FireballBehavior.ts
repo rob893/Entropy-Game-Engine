@@ -6,16 +6,14 @@ import { Explosion } from '../GameObjects/Explosion';
 import { CollisionManifold } from '../../GameEngine/Core/Helpers/CollisionManifold';
 
 export class FireballBehavior extends Component {
-    
     private _movementDirection: Vector2 = Vector2.zero;
     private readonly collider: RectangleCollider;
-
 
     public constructor(gameObject: GameObject, collider: RectangleCollider) {
         super(gameObject);
 
         this.collider = collider;
-        this.collider.onCollided.add((manifold) => this.hit(manifold));
+        this.collider.onCollided.add(manifold => this.hit(manifold));
     }
 
     public get movementDirection(): Vector2 {
@@ -36,7 +34,7 @@ export class FireballBehavior extends Component {
         if (manifold === undefined) {
             return;
         }
-        
+
         if (manifold.getOtherCollider(this.collider).gameObject.id === 'player') {
             return;
         }

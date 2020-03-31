@@ -8,25 +8,28 @@ import { CharacterAnimator } from '../CharacterAnimator';
 import { CharacterStats } from '../CharacterStats';
 
 export class ChaseState extends Component implements State {
-    
     private readonly navAgent: NavAgent;
     private readonly animator: CharacterAnimator;
     private readonly myStats: CharacterStats;
     private timer: number = 0;
     private targetStats: CharacterStats | null = null;
 
-
-    public constructor(gameObject: GameObject, navAgent: NavAgent, animator: CharacterAnimator, myStats: CharacterStats) {
+    public constructor(
+        gameObject: GameObject,
+        navAgent: NavAgent,
+        animator: CharacterAnimator,
+        myStats: CharacterStats
+    ) {
         super(gameObject);
 
         this.navAgent = navAgent;
         this.animator = animator;
         this.myStats = myStats;
 
-        this.navAgent.onDirectionChanged.add((newDirection) => this.changeAnimation(newDirection));
+        this.navAgent.onDirectionChanged.add(newDirection => this.changeAnimation(newDirection));
         this.navAgent.onPathCompleted.add(() => this.animator.playIdleAnimation());
     }
-    
+
     public performBehavior(context: NPCController): void {
         if (context.currentTarget === null || this.targetStats === null || this.targetStats.isDead) {
             context.setState(context.searchingState);
@@ -47,8 +50,8 @@ export class ChaseState extends Component implements State {
         this.timer = 0;
 
         this.navAgent.setDestination(context.currentTarget.position);
-    }    
-    
+    }
+
     public onEnter(context: NPCController): void {
         const target = context.currentTarget;
 
@@ -72,16 +75,13 @@ export class ChaseState extends Component implements State {
         if (Math.abs(newDirection.x) > Math.abs(newDirection.y)) {
             if (newDirection.x > 0.5) {
                 this.animator.playRunAnimation(true);
-            }
-            else {
+            } else {
                 this.animator.playRunAnimation(false);
             }
-        }
-        else {
+        } else {
             if (newDirection.y > 0.5) {
                 this.animator.playRunAnimation();
-            }
-            else {
+            } else {
                 this.animator.playRunAnimation();
             }
         }

@@ -4,7 +4,7 @@
  */
 export enum EventType {
     // Keyboard Events
-    
+
     /** ANY key is pressed */
     KeyDown = 'keydown',
 

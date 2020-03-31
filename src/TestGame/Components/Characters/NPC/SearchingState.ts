@@ -5,24 +5,22 @@ import { CharacterAnimator } from '../CharacterAnimator';
 import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
 
 export class SearchingState extends Component implements State {
-    
     private timer = 0;
     private readonly animator: CharacterAnimator;
-
 
     public constructor(gameObject: GameObject, animator: CharacterAnimator) {
         super(gameObject);
 
         this.animator = animator;
     }
-    
+
     public performBehavior(context: NPCController): void {
         this.timer += this.time.deltaTime;
 
         if (this.timer < 1) {
             return;
         }
-        
+
         const player = this.findGameObjectById('player');
 
         if (player === null) {
@@ -31,8 +29,8 @@ export class SearchingState extends Component implements State {
 
         context.currentTarget = player.transform;
         context.setState(context.chaseState);
-    }    
-    
+    }
+
     public onEnter(context: NPCController): void {
         this.animator.playIdleAnimation();
         this.timer = 0;

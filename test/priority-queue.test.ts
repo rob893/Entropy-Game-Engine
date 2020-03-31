@@ -16,7 +16,7 @@ test('Tests the priority queue', () => {
     q.enqueue('asdf', 3);
 
     expect(q.dequeue()).toBe('world');
-    
+
     for (let i = 0; i < 10; i++) {
         q.enqueue('test' + i, 1);
     }
@@ -24,7 +24,7 @@ test('Tests the priority queue', () => {
     for (let i = 0; i < 10; i++) {
         expect(q.dequeue()).not.toBe('asdf');
     }
-    
+
     expect(q.dequeue()).toBe('asdf');
     expect(q.dequeue()).toBe('hello');
     expect(q.count).toBe(0);

@@ -9,16 +9,14 @@ import { LiteEvent } from '../Core/Helpers/LiteEvent';
 import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 
 export class NavAgent extends Component implements RenderableGizmo {
-    
     public speed: number = 1;
-    
+
     private path: Vector2[] | null = null;
     private nextPosition: Vector2 | null = null;
     private pathIndex: number = 0;
     private readonly navGrid: NavGrid;
     private readonly onChangeDirection = new LiteEvent<Vector2>();
     private readonly onPathComplete = new LiteEvent<Vector2>();
-
 
     public constructor(gameObject: GameObject, navGrid: NavGrid) {
         super(gameObject);
@@ -61,7 +59,7 @@ export class NavAgent extends Component implements RenderableGizmo {
 
         if (this.transform.position.isCloseTo(this.nextPosition)) {
             this.pathIndex++;
-            
+
             if (this.pathIndex >= this.path.length) {
                 this.resetPath();
                 this.onPathComplete.trigger();
@@ -75,12 +73,14 @@ export class NavAgent extends Component implements RenderableGizmo {
             }
         }
 
-        this.transform.translate(Vector2.direction(this.transform.position, this.nextPosition).multiplyScalar(this.speed));
+        this.transform.translate(
+            Vector2.direction(this.transform.position, this.nextPosition).multiplyScalar(this.speed)
+        );
     }
 
     public setDestination(destination: Vector2): void {
         this.resetPath();
-        
+
         this.path = AStarSearch.findPath(this.navGrid, this.transform.position, destination);
 
         if (this.path !== null) {
@@ -111,9 +111,8 @@ export class NavAgent extends Component implements RenderableGizmo {
             }
 
             context.lineTo(nodePos.x, nodePos.y);
-            
         }
-       
+
         context.strokeStyle = Color.Orange;
         context.stroke();
     }

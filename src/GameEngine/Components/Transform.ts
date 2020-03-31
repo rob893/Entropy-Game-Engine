@@ -5,7 +5,6 @@ import { GameObject } from '../GameObjects/GameObject';
 import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 
 export class Transform extends Component {
-
     //Rotation in radians
     public rotation: number;
     //Position is the top left of the agent with width growing right and height growing down.
@@ -17,8 +16,13 @@ export class Transform extends Component {
     private readonly _children: Transform[] = [];
     private readonly onMove = new LiteEvent<void>();
 
-    
-    public constructor(gameObject: GameObject, x: number, y: number, rotation: number = 0, parent: Transform | null = null) {
+    public constructor(
+        gameObject: GameObject,
+        x: number,
+        y: number,
+        rotation: number = 0,
+        parent: Transform | null = null
+    ) {
         super(gameObject);
 
         this.position = new Vector2(x, y);
@@ -28,8 +32,8 @@ export class Transform extends Component {
         this.scale = Vector2.one;
     }
 
-    public get onMoved(): CustomLiteEvent<void> { 
-        return this.onMove.expose(); 
+    public get onMoved(): CustomLiteEvent<void> {
+        return this.onMove.expose();
     }
 
     public get parent(): Transform | null {
@@ -41,15 +45,14 @@ export class Transform extends Component {
             this._parent._children.splice(this._parent._children.indexOf(this), 1);
             this._parent.onMoved.remove(this.updatePositionBasedOnParent);
         }
-        
+
         if (newParent !== null) {
             newParent._children.push(this);
             newParent.onMoved.add(this.updatePositionBasedOnParent);
 
             this.localPosition.x = this.position.x - newParent.position.x;
             this.localPosition.y = this.position.y - newParent.position.y;
-        }
-        else {
+        } else {
             this.localPosition.x = 0;
             this.localPosition.y = 0;
         }
@@ -90,7 +93,7 @@ export class Transform extends Component {
 
             current = current.parent;
         }
-        
+
         return false;
     }
 
@@ -98,7 +101,10 @@ export class Transform extends Component {
         if (this._parent === null) {
             return;
         }
-        
-        this.setPosition(this._parent.position.x + this.localPosition.x, this._parent.position.y + this.localPosition.y);
-    }
+
+        this.setPosition(
+            this._parent.position.x + this.localPosition.x,
+            this._parent.position.y + this.localPosition.y
+        );
+    };
 }

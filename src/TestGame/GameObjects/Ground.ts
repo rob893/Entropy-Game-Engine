@@ -7,7 +7,6 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { Component } from '../../GameEngine/Components/Component';
 
 export class Ground extends GameObject {
-
     protected buildInitialComponents(): Component[] {
         return [new RectangleCollider(this, null, 20, 20), new RectangleRenderer(this, 20, 20, Color.Brown)];
     }

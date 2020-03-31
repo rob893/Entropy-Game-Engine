@@ -10,18 +10,16 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { Component } from '../../GameEngine/Components/Component';
 
 export class Explosion extends GameObject {
-
     protected buildInitialComponents(): Component[] {
-        const explosionAnimation = new Animation(this.assetPool.getAsset<SpriteSheet>('explosionSpriteSheet').getFrames(), 0.04);
+        const explosionAnimation = new Animation(
+            this.assetPool.getAsset<SpriteSheet>('explosionSpriteSheet').getFrames(),
+            0.04
+        );
         explosionAnimation.loop = false;
 
         const audioSource = new AudioSource(this, this.assetPool.getAsset<AudioClip>('explosionSound'));
 
-        return [
-            audioSource,
-            new Animator(this, 75, 75, explosionAnimation), 
-            new Exploder(this, audioSource)
-        ];
+        return [audioSource, new Animator(this, 75, 75, explosionAnimation), new Exploder(this, audioSource)];
     }
 
     protected getPrefabSettings(): PrefabSettings {

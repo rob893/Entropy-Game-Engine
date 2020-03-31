@@ -3,10 +3,8 @@ import { GameObject } from '../GameObjects/GameObject';
 import { AudioClip } from '../Core/Helpers/AudioClip';
 
 export class AudioSource extends Component {
-
     private audioElement: HTMLAudioElement;
     private audioClip: AudioClip;
-
 
     public constructor(gameObject: GameObject, audioClip: AudioClip) {
         super(gameObject);
@@ -16,7 +14,7 @@ export class AudioSource extends Component {
     }
 
     public get isPlaying(): boolean {
-        return !(this.audioElement.paused);
+        return !this.audioElement.paused;
     }
 
     public set loop(loop: boolean) {
@@ -26,7 +24,6 @@ export class AudioSource extends Component {
     public set playOnStart(playOnStart: boolean) {
         this.audioElement.autoplay = playOnStart;
     }
-
 
     public setClip(audioClip: AudioClip): void {
         this.audioElement = audioClip.clip;

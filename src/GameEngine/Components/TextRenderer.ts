@@ -13,7 +13,6 @@ export interface TextRendererParams {
 }
 
 export class TextRenderer extends Component implements RenderableGUI {
-
     public fontSize: number;
     public fontFamily: string;
     public fontColor: Color;
@@ -21,7 +20,6 @@ export class TextRenderer extends Component implements RenderableGUI {
     public x: number;
     public y: number;
     public zIndex: number = 0;
-
 
     public constructor(gameObject: GameObject, config: TextRendererParams) {
         super(gameObject);

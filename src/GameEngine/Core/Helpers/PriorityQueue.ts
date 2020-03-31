@@ -2,10 +2,8 @@ import { BinaryHeap } from './BinaryHeap';
 import { Comparable } from '../Interfaces/Comparable';
 
 class QueueItem<T> implements Comparable {
-
     public readonly item: T;
     public readonly priority: number;
-
 
     public constructor(item: T, priority: number) {
         this.item = item;
@@ -18,9 +16,7 @@ class QueueItem<T> implements Comparable {
 }
 
 export class PriorityQueue<T> {
-    
     private readonly elementsHeap: BinaryHeap<QueueItem<T>>;
-    
 
     public constructor(minPriorityQueue: boolean = true) {
         this.elementsHeap = new BinaryHeap<QueueItem<T>>(minPriorityQueue);

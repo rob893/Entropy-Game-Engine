@@ -5,7 +5,6 @@ import { LiteEvent } from '../Core/Helpers/LiteEvent';
 import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
 
 export class Rigidbody extends Component {
-
     public readonly velocity: Vector2 = Vector2.zero;
 
     /**
@@ -17,7 +16,6 @@ export class Rigidbody extends Component {
     private readonly forces: Vector2[] = [];
     private readonly _becameKinomatic = new LiteEvent<Rigidbody>();
     private readonly _becameNonKinomatic = new LiteEvent<Rigidbody>();
-
 
     public constructor(gameObject: GameObject, mass: number = 70, isKinomatic: boolean = false) {
         super(gameObject);
@@ -55,8 +53,7 @@ export class Rigidbody extends Component {
 
         if (isKinomatic) {
             this._becameKinomatic.trigger(this);
-        }
-        else {
+        } else {
             this._becameNonKinomatic.trigger(this);
         }
     }
@@ -76,7 +73,7 @@ export class Rigidbody extends Component {
     public updatePhysics(): void {
         this.forces.forEach(force => this.velocity.add(force.divideScalar(this.mass)));
         this.forces.length = 0;
-        
+
         this.transform.translate(this.velocity);
     }
 

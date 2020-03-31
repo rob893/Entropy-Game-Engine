@@ -2,7 +2,6 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
-
 module.exports = {
     entry: './src/index.ts',
     module: {
@@ -55,8 +54,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'TypeScript Game Engine',
             template: 'src/index.html',
-            favicon: 'src/TestGame/Assets/Images/favicon.ico',
-            
+            favicon: 'src/TestGame/Assets/Images/favicon.ico'
         }),
         new CircularDependencyPlugin({
             // exclude detection of files based on a RegExp
@@ -67,7 +65,7 @@ module.exports = {
             // e.g. via import(/* webpackMode: "weak" */ './file.js')
             allowAsyncCycles: false,
             // set the current working directory for displaying module paths
-            cwd: process.cwd(),
-          })
+            cwd: process.cwd()
+        })
     ]
 };

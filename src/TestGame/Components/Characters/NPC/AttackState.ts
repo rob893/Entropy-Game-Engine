@@ -8,12 +8,10 @@ import { Transform } from '../../../../GameEngine/Components/Transform';
 import { CharacterStats } from '../CharacterStats';
 
 export class AttackState extends Component implements State {
-    
     private targetStats: CharacterStats | null = null;
     private attackTimer: number = 0;
     private readonly animator: CharacterAnimator;
     private readonly myStats: CharacterStats;
-
 
     public constructor(gameObject: GameObject, animator: CharacterAnimator, myStats: CharacterStats) {
         super(gameObject);
@@ -21,7 +19,7 @@ export class AttackState extends Component implements State {
         this.animator = animator;
         this.myStats = myStats;
     }
-    
+
     public performBehavior(context: NPCController): void {
         if (context.currentTarget === null || this.targetStats === null || this.targetStats.isDead) {
             context.setState(context.searchingState);
@@ -44,8 +42,8 @@ export class AttackState extends Component implements State {
         this.attackTimer = 0;
         this.animator.playRandomAttackAnimation();
         this.targetStats.takeDamage(this.myStats.attackPower);
-    }    
-    
+    }
+
     public onEnter(context: NPCController): void {
         this.attackTimer = 0;
         const target = context.currentTarget;
@@ -72,8 +70,7 @@ export class AttackState extends Component implements State {
     private faceTarget(target: Transform): void {
         if (target.position.x < this.transform.position.x) {
             this.animator.faceLeft();
-        }
-        else {
+        } else {
             this.animator.faceRight();
         }
     }

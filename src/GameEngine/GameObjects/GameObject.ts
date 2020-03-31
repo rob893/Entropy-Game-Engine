@@ -13,9 +13,7 @@ import { Vector2 } from '../Core/Helpers/Vector2';
 import { Terrain } from './Terrain';
 import { GameObjectConstructionParams } from '../Core/Interfaces/GameObjectConstructionParams';
 
-
 export abstract class GameObject<TConfig extends GameObjectConstructionParams = GameObjectConstructionParams> {
-
     public id: string;
     public readonly tag: string;
     public readonly layer: Layer;
@@ -27,17 +25,8 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     private readonly componentAnalyzer: ComponentAnalyzer;
     private readonly gameEngine: GameEngine;
 
-
     public constructor(config: TConfig) {
-        const {
-            gameEngine,
-            id,
-            x,
-            y,
-            rotation,
-            tag,
-            layer
-        } = config;
+        const { gameEngine, id, x, y, rotation, tag, layer } = config;
 
         this.gameEngine = gameEngine;
         this.isEnabled = true;
@@ -137,7 +126,12 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
         return this.gameEngine.findGameObjectsWithTag(tag);
     }
 
-    public instantiate<T extends GameObject>(type: new (constructionParams: GameObjectConstructionParams) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
+    public instantiate<T extends GameObject>(
+        type: new (constructionParams: GameObjectConstructionParams) => T,
+        position?: Vector2,
+        rotation?: number,
+        parent?: Transform
+    ): GameObject {
         return this.gameEngine.instantiate(type, position, rotation, parent);
     }
 
@@ -154,9 +148,9 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     }
 
     /**
-     * Use this function to remove one of a game object's components from the update loop. This is used by empty update functions to reduce 
+     * Use this function to remove one of a game object's components from the update loop. This is used by empty update functions to reduce
      * the amount of update calls per frame (no point in calling empty update functions).
-     * 
+     *
      * @param component the component to be removed from this game object's update loop. It MUST be one of the game object's components.
      */
     public removeComponentFromUpdate(component: Component): void {
@@ -288,8 +282,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
 
         if (currentComponents !== undefined) {
             currentComponents.push(newComponent);
-        }
-        else {
+        } else {
             this.componentMap.set(newComponent.constructor.name, [newComponent]);
         }
 
@@ -321,10 +314,12 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
 
     /**
      * This function is meant to be overridden by subclasses that require child game objects. Not making abstract as not all subclasses need it.
-     * 
+     *
      * @param gameEngine The game engine
      */
-    protected buildAndReturnChildGameObjects(config: TConfig): GameObject[] { return []; }
+    protected buildAndReturnChildGameObjects(config: TConfig): GameObject[] {
+        return [];
+    }
 
     private setComponents(components: Component[]): void {
         for (const component of components) {
@@ -333,8 +328,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
 
             if (currentComponents !== undefined) {
                 currentComponents.push(component);
-            }
-            else {
+            } else {
                 this.componentMap.set(component.constructor.name, [component]);
             }
 

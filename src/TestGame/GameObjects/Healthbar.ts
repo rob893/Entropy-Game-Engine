@@ -6,7 +6,6 @@ import { Color } from '../../GameEngine/Core/Enums/Color';
 import { Layer } from '../../GameEngine/Core/Enums/Layer';
 
 export class Healthbar extends GameObject {
-      
     protected buildInitialComponents(): Component[] {
         return [new Slider(this, 46, 8, Color.Green, Color.Red)];
     }

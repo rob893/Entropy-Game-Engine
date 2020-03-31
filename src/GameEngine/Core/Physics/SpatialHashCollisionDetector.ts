@@ -6,21 +6,29 @@ import { Vector2 } from '../Helpers/Vector2';
 import { Layer } from '../Enums/Layer';
 import { CollisionManifold } from '../Helpers/CollisionManifold';
 
-
 export class SpatialHashCollisionDetector implements CollisionDetector {
-    
     private readonly _colliders: RectangleCollider[];
     private readonly _onCollisionDetected: LiteEvent<CollisionManifold> = new LiteEvent<CollisionManifold>();
-    private readonly colliderSpacialMapKeys: Map<RectangleCollider, Set<string>> = new Map<RectangleCollider, Set<string>>();
+    private readonly colliderSpacialMapKeys: Map<RectangleCollider, Set<string>> = new Map<
+        RectangleCollider,
+        Set<string>
+    >();
     private readonly spatialMap: Map<string, Set<RectangleCollider>> = new Map<string, Set<RectangleCollider>>();
-    private readonly collisionMap: Map<RectangleCollider, Set<RectangleCollider>> = new Map<RectangleCollider, Set<RectangleCollider>>();
+    private readonly collisionMap: Map<RectangleCollider, Set<RectangleCollider>> = new Map<
+        RectangleCollider,
+        Set<RectangleCollider>
+    >();
     private readonly cellSize: number;
     private readonly gameMapWidth: number;
     private readonly gameMapHeight: number;
     private readonly layerCollisionMatrix: Map<Layer, Set<Layer>>;
 
-
-    public constructor(gameMapWidth: number, gameMapHeight: number, layerCollisionMatrix: Map<Layer, Set<Layer>>, cellSize: number = 100) {
+    public constructor(
+        gameMapWidth: number,
+        gameMapHeight: number,
+        layerCollisionMatrix: Map<Layer, Set<Layer>>,
+        cellSize: number = 100
+    ) {
         this._colliders = [];
         this.cellSize = cellSize;
         this.gameMapWidth = gameMapWidth;
@@ -51,8 +59,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
                     const collisions = this.collisionMap.get(collider);
                     if (collisions !== undefined) {
                         collisions.add(other);
-                    }
-                    else {
+                    } else {
                         this.collisionMap.set(collider, new Set([other]));
                     }
 
@@ -107,16 +114,24 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
     private getMapKey(position: Vector2): string;
     private getMapKey(x: number, y: number): string;
 
-    private getMapKey(positionOrX: Vector2|number, y?: number): string {
+    private getMapKey(positionOrX: Vector2 | number, y?: number): string {
         if (typeof positionOrX === 'number') {
             if (y === undefined) {
                 throw new Error('y cannot be undefined when using x, y arguments.');
             }
 
-            return Math.floor(positionOrX / this.cellSize) * this.cellSize + ',' + Math.floor(y / this.cellSize) * this.cellSize;
+            return (
+                Math.floor(positionOrX / this.cellSize) * this.cellSize +
+                ',' +
+                Math.floor(y / this.cellSize) * this.cellSize
+            );
         }
 
-        return Math.floor(positionOrX.x / this.cellSize) * this.cellSize + ',' + Math.floor(positionOrX.y / this.cellSize) * this.cellSize;
+        return (
+            Math.floor(positionOrX.x / this.cellSize) * this.cellSize +
+            ',' +
+            Math.floor(positionOrX.y / this.cellSize) * this.cellSize
+        );
     }
 
     private buildSpatialMapCells(): void {
@@ -146,13 +161,12 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         if (previousKeys === undefined) {
             throw new Error('Keys not found');
         }
-        
+
         let movedCells = false;
 
         if (newKeys.size !== previousKeys.size) {
             movedCells = true;
-        }
-        else {
+        } else {
             for (const newKey of newKeys) {
                 if (!previousKeys.has(newKey)) {
                     movedCells = true;
@@ -164,7 +178,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         if (!movedCells) {
             return;
         }
-        
+
         for (const key of previousKeys) {
             const collidersInCell = this.spatialMap.get(key);
 
@@ -176,14 +190,13 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         }
 
         previousKeys.clear();
-        
+
         // If all 4 points are in the same cell.
         if (tlKey === brKey) {
             const cellColliders = this.spatialMap.get(tlKey);
             if (cellColliders !== undefined) {
                 cellColliders.add(collider);
-            }
-            else {
+            } else {
                 this.spatialMap.set(tlKey, new Set([collider]));
             }
             previousKeys.add(tlKey);
@@ -202,8 +215,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
                 const cellColliders = this.spatialMap.get(key);
                 if (cellColliders !== undefined) {
                     cellColliders.add(collider);
-                }
-                else {
+                } else {
                     this.spatialMap.set(key, new Set([collider]));
                 }
                 previousKeys.add(key);
@@ -252,8 +264,8 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         const xAxis = Math.abs(colliderA.center.x - colliderB.center.x);
         const yAxis = Math.abs(colliderA.center.y - colliderB.center.y);
 
-        const cw = (colliderA.width / 2) + (colliderB.width / 2);
-        const ch = (colliderA.height / 2) + (colliderB.height / 2);
+        const cw = colliderA.width / 2 + colliderB.width / 2;
+        const ch = colliderA.height / 2 + colliderB.height / 2;
 
         const ox = Math.abs(xAxis - cw);
         const oy = Math.abs(yAxis - ch);
@@ -265,8 +277,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
         if (ox > oy) {
             normal.x = 0;
             normal.y = normal.y > 0 ? 1 : -1;
-        }
-        else if (ox < oy) {
+        } else if (ox < oy) {
             normal.y = 0;
             normal.x = normal.x > 0 ? 1 : -1;
         }

@@ -18,9 +18,8 @@ import { Terrain } from '../GameObjects/Terrain';
 import { GameObjectConstructionParams } from './Interfaces/GameObjectConstructionParams';
 
 export class GameEngine {
-
     public developmentMode: boolean = true;
-    
+
     private _physicsEngine: PhysicsEngine | null = null;
     private _renderingEngine: RenderingEngine | null = null;
     private loadedScene: Scene | null = null;
@@ -42,7 +41,6 @@ export class GameEngine {
     private readonly _gameCanvas: HTMLCanvasElement;
     private readonly invokeTimeouts: Set<number> = new Set<number>();
     private readonly gameObjectsMarkedForDelete: GameObject[] = [];
-
 
     public constructor(gameCanvas: HTMLCanvasElement) {
         this._gameCanvas = gameCanvas;
@@ -86,7 +84,7 @@ export class GameEngine {
         if (this._componentAnalyzer === null) {
             throw new Error('Component Analyzer is null');
         }
-        
+
         return this._componentAnalyzer;
     }
 
@@ -126,21 +124,26 @@ export class GameEngine {
         return this.loadedScene.loadOrder;
     }
 
-    public instantiate<T extends GameObject>(type: new (constructionParams: GameObjectConstructionParams) => T, position?: Vector2, rotation?: number, parent?: Transform): GameObject {
-        const newGameObject = new type({gameEngine: this});
+    public instantiate<T extends GameObject>(
+        type: new (constructionParams: GameObjectConstructionParams) => T,
+        position?: Vector2,
+        rotation?: number,
+        parent?: Transform
+    ): GameObject {
+        const newGameObject = new type({ gameEngine: this });
 
         if (position !== undefined) {
             newGameObject.transform.setPosition(position.x, position.y);
         }
-        
+
         if (rotation !== undefined) {
             newGameObject.transform.rotation = rotation;
         }
-        
+
         if (parent !== undefined) {
             newGameObject.transform.parent = parent;
         }
-        
+
         this.registerGameObject(newGameObject);
 
         return newGameObject;
@@ -165,8 +168,7 @@ export class GameEngine {
                     children.push(childsChild);
                 }
             }
-        }
-        else {
+        } else {
             this.invoke(() => {
                 this.gameObjectsMarkedForDelete.push(object);
 
@@ -198,7 +200,7 @@ export class GameEngine {
         this.invokeTimeouts.add(timeout);
     }
 
-    public invokeRepeating(funcToInvoke: () => void, repeatRate: number, cancelToken?: { cancel: boolean}): void {
+    public invokeRepeating(funcToInvoke: () => void, repeatRate: number, cancelToken?: { cancel: boolean }): void {
         this.invoke(() => {
             if (cancelToken !== undefined && cancelToken.cancel) {
                 return;
@@ -212,7 +214,7 @@ export class GameEngine {
 
     public findGameObjectById(id: string): GameObject | null {
         const gameObject = this.gameObjectMap.get(id);
-        
+
         if (gameObject === undefined) {
             return null;
         }
@@ -222,7 +224,7 @@ export class GameEngine {
 
     public findGameObjectWithTag(tag: string): GameObject | null {
         const gameObjects = this.tagMap.get(tag);
-        
+
         if (gameObjects === undefined || gameObjects.length === 0) {
             return null;
         }
@@ -232,7 +234,7 @@ export class GameEngine {
 
     public findGameObjectsWithTag(tag: string): GameObject[] {
         const gameObjects = this.tagMap.get(tag);
-        
+
         if (gameObjects === undefined) {
             return [];
         }
@@ -265,7 +267,7 @@ export class GameEngine {
 
     public async loadScene(loadOrderOrName: number | string): Promise<void> {
         const scene = this.scenes.get(loadOrderOrName);
-        
+
         if (scene === undefined) {
             throw new Error(`Scene ${loadOrderOrName} not found.`);
         }
@@ -284,7 +286,7 @@ export class GameEngine {
         if (this._physicsEngine === null) {
             throw new Error('Physics Engine is null');
         }
-        
+
         return this._physicsEngine;
     }
 
@@ -292,7 +294,7 @@ export class GameEngine {
         if (this._renderingEngine === null) {
             throw new Error('Rendering Engine is null');
         }
-        
+
         return this._renderingEngine;
     }
 
@@ -316,12 +318,14 @@ export class GameEngine {
                 gameObjectsWithTag.splice(tagIndex, 1);
             }
         }
-        
+
         //TODO: This still has a bug. Sometimes object ids are still not working correctly when creating and destroying objects (the old bug that used to console errors).
         //For some reason, the id is being set here before being called a 'clone'.
         const numGameObjects = this.gameObjectNumMap.get(object.id);
         if (numGameObjects !== undefined) {
-            numGameObjects > 1 ? this.gameObjectNumMap.set(object.id, numGameObjects - 1) : this.gameObjectNumMap.delete(object.id);
+            numGameObjects > 1
+                ? this.gameObjectNumMap.set(object.id, numGameObjects - 1)
+                : this.gameObjectNumMap.delete(object.id);
         }
 
         object.onDestroy();
@@ -331,7 +335,7 @@ export class GameEngine {
         if (newGameObject.id === '') {
             newGameObject.id = this.generateUniqueId();
         }
-        
+
         if (this.gameObjectMap.has(newGameObject.id)) {
             const originalId = newGameObject.id;
             const numOfSameGameObject = this.gameObjectNumMap.get(originalId);
@@ -342,19 +346,17 @@ export class GameEngine {
 
             newGameObject.id += ` Clone(${numOfSameGameObject})`;
             this.gameObjectNumMap.set(originalId, numOfSameGameObject + 1);
-        }
-        else {
+        } else {
             this.gameObjectNumMap.set(newGameObject.id, 1);
         }
 
         const gameObjectsWithTag = this.tagMap.get(newGameObject.tag);
         if (gameObjectsWithTag !== undefined) {
             gameObjectsWithTag.push(newGameObject);
-        }
-        else {
+        } else {
             this.tagMap.set(newGameObject.tag, [newGameObject]);
         }
-        
+
         this.gameObjectMap.set(newGameObject.id, newGameObject);
         this.gameObjects.push(newGameObject);
         newGameObject.start();
@@ -386,7 +388,7 @@ export class GameEngine {
         this.gameObjectNumMap.clear();
         this.gameObjects.length = 0;
         this.gameObjectsMarkedForDelete.length = 0;
-        
+
         this.loadedScene = null;
         this._assetPool = null;
         this._componentAnalyzer = null;
@@ -398,7 +400,6 @@ export class GameEngine {
     }
 
     private async initializeScene(scene: Scene): Promise<void> {
-
         this._assetPool = await scene.getAssetPool();
         const terrainSpec = scene.terrainSpec;
         let gameObjects: GameObject[] = [];
@@ -406,7 +407,7 @@ export class GameEngine {
         if (terrainSpec !== null) {
             const terrianBuilder = new TerrainBuilder(this._gameCanvas.width, this._gameCanvas.height);
             const terrain = await terrianBuilder.buildTerrain(this, terrainSpec);
-            
+
             gameObjects.push(terrain);
 
             this.renderingEngine.terrain = terrain;
@@ -423,11 +424,13 @@ export class GameEngine {
 
     private createEnginesAndAPIs(): void {
         const time = new Time();
-        
+
         const layerCollisionMatrix = new Map<Layer, Set<Layer>>();
 
-        const layers = Object.keys(Layer).filter(c => typeof Layer[c as any] === 'number').map(k => Number(Layer[k as any]));
-        
+        const layers = Object.keys(Layer)
+            .filter(c => typeof Layer[c as any] === 'number')
+            .map(k => Number(Layer[k as any]));
+
         for (const layer of layers) {
             layerCollisionMatrix.set(layer, new Set(layers));
         }
@@ -440,7 +443,12 @@ export class GameEngine {
 
         collidingLayers.delete(Layer.Terrain);
 
-        const collisionDetector = new SpatialHashCollisionDetector(this._gameCanvas.width, this._gameCanvas.height, layerCollisionMatrix, 100);
+        const collisionDetector = new SpatialHashCollisionDetector(
+            this._gameCanvas.width,
+            this._gameCanvas.height,
+            layerCollisionMatrix,
+            100
+        );
         const collisionResolver = new ImpulseCollisionResolver();
 
         this._physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver, time);
@@ -459,7 +467,6 @@ export class GameEngine {
         this.gameObjects = [...gameObjects];
 
         for (const gameObject of this.gameObjects) {
-
             if (this.gameObjectMap.has(gameObject.id)) {
                 const originalId = gameObject.id;
                 const numGameObjects = this.gameObjectNumMap.get(originalId);
@@ -470,8 +477,7 @@ export class GameEngine {
 
                 gameObject.id += ` Clone(${numGameObjects})`;
                 this.gameObjectNumMap.set(originalId, numGameObjects + 1);
-            }
-            else {
+            } else {
                 this.gameObjectNumMap.set(gameObject.id, 1);
             }
 
@@ -480,8 +486,7 @@ export class GameEngine {
             const gameObjectsWithTag = this.tagMap.get(gameObject.tag);
             if (gameObjectsWithTag !== undefined) {
                 gameObjectsWithTag.push(gameObject);
-            }
-            else {
+            } else {
                 this.tagMap.set(gameObject.tag, [gameObject]);
             }
 
@@ -509,8 +514,7 @@ export class GameEngine {
     }
 
     private startGame(): void {
-
-        if(!this.gameInitialized) {
+        if (!this.gameInitialized) {
             throw new Error('The game is not initialized yet!');
         }
 
@@ -556,7 +560,7 @@ export class GameEngine {
 
         this.time.updateTime();
         this.physicsEngine.updatePhysics();
-        
+
         for (const gameObject of this.gameObjects) {
             if (gameObject.enabled) {
                 gameObject.update();

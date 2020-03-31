@@ -5,9 +5,7 @@ import { RenderableBackground } from './Interfaces/RenderableBackground';
 import { Terrain } from '../GameObjects/Terrain';
 import { Component } from '../Components/Component';
 
-
 export class RenderingEngine {
-
     public renderGizmos: boolean;
 
     private _background: RenderableBackground | null;
@@ -16,7 +14,6 @@ export class RenderingEngine {
     private readonly renderableGizmos: RenderableGizmo[];
     private readonly renderableGUIElements: RenderableGUI[];
     private readonly _canvasContext: CanvasRenderingContext2D;
-    
 
     public constructor(context: CanvasRenderingContext2D) {
         this._canvasContext = context;

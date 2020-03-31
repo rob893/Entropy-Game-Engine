@@ -2,14 +2,8 @@ declare module 'jest-matcher-deep-close-to' {
     global {
         namespace jest {
             interface Matchers<R> {
-                toBeDeepCloseTo: (
-                    expected: number | number[] | object,
-                    decimals?: number
-                ) => R;
-                toMatchCloseTo: (
-                    expected: number | number[] | object,
-                    decimals?: number
-                ) => R;
+                toBeDeepCloseTo: (expected: number | number[] | object, decimals?: number) => R;
+                toMatchCloseTo: (expected: number | number[] | object, decimals?: number) => R;
             }
         }
     }
@@ -21,7 +15,7 @@ declare module 'jest-matcher-deep-close-to' {
     ): {
         pass: boolean;
         message(): string;
-    }
+    };
 
     export function toMatchCloseTo(
         received: number | number[] | object,
@@ -30,6 +24,5 @@ declare module 'jest-matcher-deep-close-to' {
     ): {
         pass: boolean;
         message(): string;
-    }
+    };
 }
-

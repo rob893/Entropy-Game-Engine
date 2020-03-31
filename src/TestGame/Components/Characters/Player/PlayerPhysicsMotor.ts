@@ -7,9 +7,7 @@ import { Component } from '../../../../GameEngine/Components/Component';
 import { ThrowableBall } from '../../../GameObjects/ThrowableBall';
 import { CharacterAnimator } from '../CharacterAnimator';
 
-
 export class PlayerPhysicsMotor extends Component {
-
     private movingRight: boolean = false;
     private movingLeft: boolean = false;
     private movingUp: boolean = false;
@@ -18,15 +16,20 @@ export class PlayerPhysicsMotor extends Component {
     private readonly animator: CharacterAnimator;
     private readonly rb: Rigidbody;
 
-
     public constructor(gameObject: GameObject, rb: Rigidbody, animator: CharacterAnimator) {
         super(gameObject);
 
         this.rb = rb;
         this.animator = animator;
 
-        this.input.addKeyListener(EventType.KeyDown, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space, KeyCode.Backspace], (event) => this.onKeyDown(event));
-        this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], (event) => this.onKeyUp(event));
+        this.input.addKeyListener(
+            EventType.KeyDown,
+            [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space, KeyCode.Backspace],
+            event => this.onKeyDown(event)
+        );
+        this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], event =>
+            this.onKeyUp(event)
+        );
         this.input.addMouseListener(EventType.MouseDown, 0, () => this.throwBall());
 
         this.speed = 5;
@@ -41,15 +44,13 @@ export class PlayerPhysicsMotor extends Component {
     public update(): void {
         if (this.movingRight) {
             this.rb.addForce(Vector2.right.multiplyScalar(this.speed));
-        }
-        else if (this.movingLeft) {
+        } else if (this.movingLeft) {
             this.rb.addForce(Vector2.left.multiplyScalar(this.speed));
         }
 
         if (this.movingUp) {
             this.rb.addForce(Vector2.up.multiplyScalar(this.speed));
-        }
-        else if (this.movingDown) {
+        } else if (this.movingDown) {
             this.rb.addForce(Vector2.down.multiplyScalar(this.speed));
         }
 
@@ -59,7 +60,10 @@ export class PlayerPhysicsMotor extends Component {
     }
 
     private throwBall(): void {
-        const ball = this.instantiate(ThrowableBall, new Vector2(this.transform.position.x, this.transform.position.y - 30));
+        const ball = this.instantiate(
+            ThrowableBall,
+            new Vector2(this.transform.position.x, this.transform.position.y - 30)
+        );
         const rb = ball.getComponent(Rigidbody);
         this.animator.playRandomAttackAnimation();
 
@@ -73,8 +77,7 @@ export class PlayerPhysicsMotor extends Component {
             this.movingRight = true;
             this.movingLeft = false;
             this.animator.playRunAnimation(true);
-        }
-        else if (event.keyCode === KeyCode.A) {
+        } else if (event.keyCode === KeyCode.A) {
             this.movingRight = false;
             this.movingLeft = true;
             this.animator.playRunAnimation(false);
@@ -84,8 +87,7 @@ export class PlayerPhysicsMotor extends Component {
             this.movingUp = true;
             this.movingDown = false;
             this.animator.playRunAnimation(true);
-        }
-        else if (event.keyCode === KeyCode.S) {
+        } else if (event.keyCode === KeyCode.S) {
             this.movingUp = false;
             this.movingDown = true;
             this.animator.playRunAnimation(true);
@@ -104,19 +106,22 @@ export class PlayerPhysicsMotor extends Component {
     private onKeyUp(event: KeyboardEvent): void {
         if (event.keyCode == KeyCode.D) {
             this.movingRight = false;
-        }
-        else if (event.keyCode == KeyCode.A) {
+        } else if (event.keyCode == KeyCode.A) {
             this.movingLeft = false;
         }
 
         if (event.keyCode == KeyCode.W) {
             this.movingUp = false;
-        }
-        else if (event.keyCode == KeyCode.S) {
+        } else if (event.keyCode == KeyCode.S) {
             this.movingDown = false;
         }
 
-        if (!this.input.getKey(KeyCode.W) && !this.input.getKey(KeyCode.A) && !this.input.getKey(KeyCode.S) && !this.input.getKey(KeyCode.D)) {
+        if (
+            !this.input.getKey(KeyCode.W) &&
+            !this.input.getKey(KeyCode.A) &&
+            !this.input.getKey(KeyCode.S) &&
+            !this.input.getKey(KeyCode.D)
+        ) {
             this.animator.playIdleAnimation();
         }
     }

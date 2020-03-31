@@ -18,7 +18,6 @@ import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class PlayerRB extends GameObject {
-
     protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
 
@@ -76,10 +75,10 @@ export class PlayerRB extends GameObject {
             layer: Layer.Default
         };
     }
-    
+
     protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
         // const ball = new ThrowableBall(gameEngineAPIs, 'ball');
-        
+
         // ball.transform.setPosition(this.transform.position.x, this.transform.position.y - 20);
 
         // return [ball];

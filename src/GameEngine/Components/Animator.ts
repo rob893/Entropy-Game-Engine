@@ -4,17 +4,15 @@ import { Animation } from '../Core/Helpers/Animation';
 import { Renderable } from '../Core/Interfaces/Renderable';
 
 export class Animator extends Component implements Renderable {
-
     private animation: Animation;
     private readonly renderWidth: number;
     private readonly renderHeight: number;
     private readonly halfRWidth: number;
     private readonly halfRHeight: number;
 
-
     public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, initialAnimation: Animation) {
         super(gameObject);
-        
+
         this.renderWidth = renderWidth;
         this.halfRWidth = renderWidth / 2;
         this.renderHeight = renderHeight;
@@ -30,7 +28,7 @@ export class Animator extends Component implements Renderable {
         if (this.animation.playToFinish && !this.animation.isComplete) {
             return;
         }
-        
+
         this.animation = animation;
     }
 
@@ -38,8 +36,13 @@ export class Animator extends Component implements Renderable {
         context.translate(this.transform.position.x, this.transform.position.y - this.halfRHeight);
         context.rotate(this.transform.rotation);
 
-        context.drawImage(this.animation.currentFrame, 0 - this.halfRWidth, 
-            0 - this.halfRHeight, this.renderWidth, this.renderHeight);
+        context.drawImage(
+            this.animation.currentFrame,
+            0 - this.halfRWidth,
+            0 - this.halfRHeight,
+            this.renderWidth,
+            this.renderHeight
+        );
 
         context.rotate(-this.transform.rotation);
         context.translate(-this.transform.position.x, -(this.transform.position.y - this.halfRHeight));

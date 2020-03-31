@@ -10,7 +10,6 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
 
 export class TrumpRB extends GameObject {
-
     protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
 
@@ -28,7 +27,7 @@ export class TrumpRB extends GameObject {
 
         return components;
     }
-    
+
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 400,

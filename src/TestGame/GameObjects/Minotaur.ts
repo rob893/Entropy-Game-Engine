@@ -20,7 +20,6 @@ import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class Minotaur extends GameObject {
-
     protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
 
@@ -30,7 +29,7 @@ export class Minotaur extends GameObject {
 
         const navAgent = new NavAgent(this, this.terrain.navGrid);
         components.push(navAgent);
-        
+
         const minotaurSpriteSheet = this.assetPool.getAsset<SpriteSheet>('minotaurSpriteSheet');
 
         const attack1R = new Animation(minotaurSpriteSheet.getFrames(4), 0.075);
@@ -74,7 +73,7 @@ export class Minotaur extends GameObject {
 
         return components;
     }
-    
+
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 200,

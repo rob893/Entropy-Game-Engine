@@ -1,5 +1,4 @@
 export class PhysicalMaterial {
-    
     /**
      * Friction when object is in motion
      */
@@ -14,7 +13,6 @@ export class PhysicalMaterial {
      * restitution
      */
     public readonly bounciness: number;
-
 
     public constructor(dynamicFriction: number, staticFriction: number, bounciness: number) {
         this.dynamicFriction = dynamicFriction;

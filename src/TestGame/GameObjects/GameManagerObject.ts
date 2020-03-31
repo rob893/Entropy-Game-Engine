@@ -6,15 +6,11 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { Component } from '../../GameEngine/Components/Component';
 
 export class GameManagerObject extends GameObject {
-
     protected buildInitialComponents(): Component[] {
-        return [
-            new GameManager(this),
-            new FPSCounter(this)
-        ];
+        return [new GameManager(this), new FPSCounter(this)];
     }
-    
-    protected getPrefabSettings(): PrefabSettings {        
+
+    protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,
             y: 0,

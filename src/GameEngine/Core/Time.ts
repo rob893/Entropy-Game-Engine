@@ -1,9 +1,7 @@
 export class Time {
-
     private _deltaTime: number = 0;
     private startTime: number = 0;
     private prevTime: number = 0;
-
 
     public get deltaTime(): number {
         return this._deltaTime;

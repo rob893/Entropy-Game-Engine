@@ -1,11 +1,9 @@
 import { Comparable } from '../Interfaces/Comparable';
 
 export class BinaryHeap<T extends Comparable> {
-    
     private readonly heapArray: T[] = [];
     private readonly minHeap: boolean;
-    
-    
+
     public constructor(minHeap: boolean = true, items?: Iterable<T>) {
         this.minHeap = minHeap;
 
@@ -24,33 +22,32 @@ export class BinaryHeap<T extends Comparable> {
         }
 
         return heap;
-    } 
+    }
 
     public static isBinaryHeap(heap: Comparable[] | BinaryHeap<Comparable>): boolean {
         return BinaryHeap.isMaxBinaryHeap(heap) || BinaryHeap.isMinBinaryHeap(heap);
     }
 
     public static isMinBinaryHeap(heap: Comparable[] | BinaryHeap<Comparable>): boolean {
-        let heapArray: Comparable[]; 
-        
+        let heapArray: Comparable[];
+
         if (heap instanceof BinaryHeap) {
             heapArray = heap.heapArray;
-        }
-        else {
+        } else {
             heapArray = heap;
         }
-        
+
         for (let i = 0, l = heapArray.length; i < l; i++) {
             const item = heapArray[i];
-            
+
             //if we have a null spot, the tree is not complete and thus not a heap
             if (item === null) {
                 return false;
             }
 
             //if left child is less than parent, not a min heap
-            if ((i * 2) + 1 < l) {
-                const lChild = heapArray[(i * 2) + 1];
+            if (i * 2 + 1 < l) {
+                const lChild = heapArray[i * 2 + 1];
 
                 if (lChild < item) {
                     return false;
@@ -58,39 +55,38 @@ export class BinaryHeap<T extends Comparable> {
             }
 
             //if right child is less than parent, not a min heap
-            if ((i * 2) + 2 < l) {
-                const rChild = heapArray[(i * 2) + 2];
+            if (i * 2 + 2 < l) {
+                const rChild = heapArray[i * 2 + 2];
 
                 if (rChild < item) {
                     return false;
                 }
             }
         }
-        
+
         return true;
     }
 
     public static isMaxBinaryHeap(heap: Comparable[] | BinaryHeap<Comparable>): boolean {
-        let heapArray: Comparable[]; 
-        
+        let heapArray: Comparable[];
+
         if (heap instanceof BinaryHeap) {
             heapArray = heap.heapArray;
-        }
-        else {
+        } else {
             heapArray = heap;
         }
-        
+
         for (let i = 0, l = heapArray.length; i < l; i++) {
             const item = heapArray[i];
-            
+
             //if we have a null spot, the tree is not complete and thus not a heap
             if (item === null) {
                 return false;
             }
 
             //if left child is greater than parent, not a max heap
-            if ((i * 2) + 1 < l) {
-                const lChild = heapArray[(i * 2) + 1];
+            if (i * 2 + 1 < l) {
+                const lChild = heapArray[i * 2 + 1];
 
                 if (lChild > item) {
                     return false;
@@ -98,15 +94,15 @@ export class BinaryHeap<T extends Comparable> {
             }
 
             //if right child is greater than parent, not a max heap
-            if ((i * 2) + 2 < l) {
-                const rChild = heapArray[(i * 2) + 2];
+            if (i * 2 + 2 < l) {
+                const rChild = heapArray[i * 2 + 2];
 
                 if (rChild > item) {
                     return false;
                 }
             }
         }
-        
+
         return true;
     }
 
@@ -180,8 +176,7 @@ export class BinaryHeap<T extends Comparable> {
                 this.swap(index, this.getParentIndex(index));
                 index = this.getParentIndex(index);
             }
-        }
-        else {
+        } else {
             while (this.hasParent(index) && this.heapArray[index] > this.heapArray[this.getParentIndex(index)]) {
                 this.swap(index, this.getParentIndex(index));
                 index = this.getParentIndex(index);
@@ -198,7 +193,10 @@ export class BinaryHeap<T extends Comparable> {
                 let smallerChildIndex = this.getLeftChildIndex(index);
 
                 //Check if the right child is smaller than left.
-                if (this.hasRightChild(index) && this.heapArray[this.getRightChildIndex(index)] < this.heapArray[smallerChildIndex]) {
+                if (
+                    this.hasRightChild(index) &&
+                    this.heapArray[this.getRightChildIndex(index)] < this.heapArray[smallerChildIndex]
+                ) {
                     smallerChildIndex = this.getRightChildIndex(index);
                 }
 
@@ -209,20 +207,22 @@ export class BinaryHeap<T extends Comparable> {
                 this.swap(index, smallerChildIndex);
                 index = smallerChildIndex;
             }
-        }
-        else {
+        } else {
             while (this.hasLeftChild(index)) {
                 let greaterChildIndex = this.getLeftChildIndex(index);
 
                 //Check if the right child is greater than left.
-                if (this.hasRightChild(index) && this.heapArray[this.getRightChildIndex(index)] > this.heapArray[greaterChildIndex]) {
+                if (
+                    this.hasRightChild(index) &&
+                    this.heapArray[this.getRightChildIndex(index)] > this.heapArray[greaterChildIndex]
+                ) {
                     greaterChildIndex = this.getRightChildIndex(index);
                 }
 
                 if (this.heapArray[index] > this.heapArray[greaterChildIndex]) {
                     break;
                 }
-                
+
                 this.swap(index, greaterChildIndex);
                 index = greaterChildIndex;
             }
@@ -246,11 +246,11 @@ export class BinaryHeap<T extends Comparable> {
     }
 
     private getLeftChildIndex(index: number): number {
-        return Math.floor((2 * index) + 1);
+        return Math.floor(2 * index + 1);
     }
 
     private getRightChildIndex(index: number): number {
-        return Math.floor((2 * index) + 2);
+        return Math.floor(2 * index + 2);
     }
 
     private swap(index1: number, index2: number): void {

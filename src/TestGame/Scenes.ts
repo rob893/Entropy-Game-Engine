@@ -22,7 +22,6 @@ import { Minotaur } from './GameObjects/Minotaur';
 import { Box } from './GameObjects/Box';
 import { UICanvas } from './GameObjects/UICanvas';
 
-
 export const scene1: Scene = {
     name: 'Scene1',
     loadOrder: 1,
@@ -34,10 +33,10 @@ export const scene1: Scene = {
 
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         return [
-            new GameManagerObject({gameEngine, id: 'gameManager'}),
-            new Minotaur({gameEngine, id: 'minotaur'}),
-            new Player({gameEngine, id: 'player', x: 400, y: 250}),
-            new UICanvas({gameEngine, id: 'ui-canvas'})
+            new GameManagerObject({ gameEngine, id: 'gameManager' }),
+            new Minotaur({ gameEngine, id: 'minotaur' }),
+            new Player({ gameEngine, id: 'player', x: 400, y: 250 }),
+            new UICanvas({ gameEngine, id: 'ui-canvas' })
         ];
     },
 
@@ -74,8 +73,20 @@ export const scene1: Scene = {
             [19, 3],
             [20, 6]
         ]);
-        const knightSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(KnightSheet, 6, 16, {bottom: 5, top: 0, left: 0, right: 0}, knightMapping);
-        const minotaurSheet = await SpriteSheet.buildSpriteSheetAsync(MinotaurSheet, 9, 20, {bottom: 25, top: 0, left: 0, right: 0}, minotaurMapping);
+        const knightSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(
+            KnightSheet,
+            6,
+            16,
+            { bottom: 5, top: 0, left: 0, right: 0 },
+            knightMapping
+        );
+        const minotaurSheet = await SpriteSheet.buildSpriteSheetAsync(
+            MinotaurSheet,
+            9,
+            20,
+            { bottom: 25, top: 0, left: 0, right: 0 },
+            minotaurMapping
+        );
         const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
         const fireballSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(RedFireball, 3, 2);
         const explosionSound = await AudioClip.buildAudioClipAsync(ExplosionSound, 5);
@@ -100,17 +111,17 @@ export const scene3: Scene = {
     getSkybox(gameCanvas: HTMLCanvasElement): RectangleBackground {
         return new RectangleBackground(gameCanvas, Color.Black);
     },
-    
+
     getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
         const topBorder = Box.buildBox(gameEngine, 1280 / 2, 50, 1280, 50, 'topBorder', 'border');
-        const bottomBorder = Box.buildBox(gameEngine, 1280 / 2, 720, 1280, 50,'bottomBorder', 'border', Color.Green);
+        const bottomBorder = Box.buildBox(gameEngine, 1280 / 2, 720, 1280, 50, 'bottomBorder', 'border', Color.Green);
         const leftBorder = Box.buildBox(gameEngine, 25, 720, 50, 720, 'leftBorder', 'border');
         const rightBorder = Box.buildBox(gameEngine, 1280 - 25, 720, 50, 720, 'rightBorder', 'border');
         const midBox = Box.buildBox(gameEngine, 640, 520, 150, 20, 'midBox', 'border', Color.Brown);
-        
+
         return [
-            new GameManagerObject({gameEngine, id: 'gameManager'}),
-            new PlayerRB({gameEngine, id: 'player'}),
+            new GameManagerObject({ gameEngine, id: 'gameManager' }),
+            new PlayerRB({ gameEngine, id: 'player' }),
             topBorder,
             bottomBorder,
             leftBorder,
@@ -140,7 +151,13 @@ export const scene3: Scene = {
             [19, 3],
             [20, 6]
         ]);
-        const minotaurSheet = await SpriteSheet.buildSpriteSheetAsync(MinotaurSheet, 9, 20, {bottom: 25, top: 0, left: 0, right: 0}, minotaurMapping);
+        const minotaurSheet = await SpriteSheet.buildSpriteSheetAsync(
+            MinotaurSheet,
+            9,
+            20,
+            { bottom: 25, top: 0, left: 0, right: 0 },
+            minotaurMapping
+        );
         const trumpIdleSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpIdle, 10, 4);
         const trumpRunSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(TrumpRun, 6, 4);
         const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);

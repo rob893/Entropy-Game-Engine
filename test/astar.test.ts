@@ -1,9 +1,9 @@
 import { AStarSearch } from '../src/GameEngine/Core/Helpers/AStarSearch';
 import { NavGrid } from '../src/GameEngine/Core/Helpers/NavGrid';
-import {toBeDeepCloseTo, toMatchCloseTo} from 'jest-matcher-deep-close-to';
+import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { Vector2 } from '../src/GameEngine/Core/Helpers/Vector2';
 
-expect.extend({toBeDeepCloseTo, toMatchCloseTo});
+expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
 test('Test the a star path finding', (): void => {
     const graph = new NavGrid(1);
@@ -19,8 +19,7 @@ test('Test the a star path finding', (): void => {
             if (x === 4 && y < 7 && y > 2) {
                 graph.addCell({ passable: false, weight: 0, position: new Vector2(x, y) });
                 graphVisual += 'X ';
-            }
-            else {
+            } else {
                 graph.addCell({ passable: true, weight: 0, position: new Vector2(x, y) });
                 graphVisual += '0 ';
             }
@@ -35,7 +34,7 @@ test('Test the a star path finding', (): void => {
     if (path === null) {
         throw new Error('Path is null');
     }
-    
+
     expect(path.length).toBe(3);
     expect(path[0]).toEqual(new Vector2(0, 0));
     expect(path[1]).toEqual(new Vector2(1, 0));
@@ -47,7 +46,7 @@ test('Test the a star path finding', (): void => {
     if (path === null) {
         throw new Error('Path is null');
     }
-    
+
     expect(path.length).toBe(4);
     expect(path[0]).toEqual(new Vector2(0, 1));
     expect(path[1]).toEqual(new Vector2(0, 0));

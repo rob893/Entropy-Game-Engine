@@ -7,5 +7,5 @@ module.exports = merge(common, {
     devServer: {
         compress: true,
         port: 8080
-    },
+    }
 });

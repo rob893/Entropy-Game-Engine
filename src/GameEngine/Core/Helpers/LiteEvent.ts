@@ -1,9 +1,7 @@
 import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
 
 export class LiteEvent<T> implements CustomLiteEvent<T> {
-
     private handlers: { (data?: T, moreData?: T): void }[] = [];
-
 
     public add(handler: { (data?: T, moreData?: T): void }): void {
         this.handlers.push(handler);

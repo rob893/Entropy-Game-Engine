@@ -13,7 +13,6 @@ import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 
 export class Trump extends GameObject {
-
     protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
 
@@ -23,7 +22,7 @@ export class Trump extends GameObject {
 
         const navAgent = new NavAgent(this, this.terrain.navGrid);
         components.push(navAgent);
-        
+
         const trumpIdleFrames = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
 
         const initialAnimation = new Animation(trumpIdleFrames, 0.1);
@@ -57,7 +56,7 @@ export class Trump extends GameObject {
 
         return components;
     }
-    
+
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 200,

@@ -10,9 +10,17 @@ import { Color } from '../../GameEngine/Core/Enums/Color';
 import { GameEngine } from '../../GameEngine/Core/GameEngine';
 
 export class Box extends GameObject {
-
-    public static buildBox(gameEngine: GameEngine, x: number, y: number, w: number, h: number, id: string, tag: string, color: Color = Color.Grey): Box {
-        const box = new Box({gameEngine, id, x, y, rotation: 0, tag, layer: Layer.Terrain});
+    public static buildBox(
+        gameEngine: GameEngine,
+        x: number,
+        y: number,
+        w: number,
+        h: number,
+        id: string,
+        tag: string,
+        color: Color = Color.Grey
+    ): Box {
+        const box = new Box({ gameEngine, id, x, y, rotation: 0, tag, layer: Layer.Terrain });
         const renderer = box.getComponent(RectangleRenderer);
 
         if (renderer === null) {
@@ -35,7 +43,7 @@ export class Box extends GameObject {
 
         return box;
     }
-    
+
     protected buildInitialComponents(): Component[] {
         const rb = new Rigidbody(this, 100000, true);
 
@@ -45,7 +53,7 @@ export class Box extends GameObject {
 
         return [rb, renderer, collider];
     }
-    
+
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,

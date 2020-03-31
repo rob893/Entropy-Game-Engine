@@ -2,7 +2,6 @@ import { GameEngine } from './GameEngine/Core/GameEngine';
 import { scene1, scene3 } from './TestGame/Scenes';
 import { Color } from './GameEngine/Core/Enums/Color';
 
-
 async function main(): Promise<void> {
     const bodyElement = document.getElementById('body') as HTMLBodyElement;
 

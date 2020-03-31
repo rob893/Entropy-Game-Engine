@@ -2,10 +2,9 @@ import { LiteEvent } from './LiteEvent';
 import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
 
 export class Animation {
-
     public loop: boolean = true;
     public playToFinish: boolean = false;
-    
+
     private frameIndex: number = 0;
     private timer: number = 0;
     private computedTimeBetweenFrames: number;
@@ -13,9 +12,8 @@ export class Animation {
     private readonly frames: HTMLImageElement[];
     private readonly timeBetweenFrames: number;
     private readonly onCompleted = new LiteEvent<void>();
-    
-    
-    public constructor(frames: HTMLImageElement[], timeBetweenFrames: number = 0) {        
+
+    public constructor(frames: HTMLImageElement[], timeBetweenFrames: number = 0) {
         this.frames = frames;
         this.timeBetweenFrames = timeBetweenFrames;
         this.computedTimeBetweenFrames = timeBetweenFrames;

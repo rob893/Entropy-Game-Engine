@@ -12,10 +12,8 @@ import { GameObjectConstructionParams } from '../../Core/Interfaces/GameObjectCo
 type ButtonConfig = GameObjectConstructionParams & { height?: number; width?: number };
 
 export class Button extends GameObject<ButtonConfig> {
-
     public height: number;
     public width: number;
-
 
     public constructor(config: ButtonConfig) {
         super(config);
@@ -34,7 +32,11 @@ export class Button extends GameObject<ButtonConfig> {
 
         const clickedOnDetector = new ClickedOnDetector(this, collider);
 
-        const textRenderer = new TextRenderer(this, { fontColor: Color.Amber, text: 'Button', y: this.transform.position.y - h / 2 });
+        const textRenderer = new TextRenderer(this, {
+            fontColor: Color.Amber,
+            text: 'Button',
+            y: this.transform.position.y - h / 2
+        });
         textRenderer.x = this.transform.position.x - textRenderer.getTextWidth(this.gameCanvasContext) / 2;
 
         this.transform.onMoved.add(() => {
@@ -44,7 +46,7 @@ export class Button extends GameObject<ButtonConfig> {
 
         return [renderer, collider, clickedOnDetector, textRenderer];
     }
-    
+
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,

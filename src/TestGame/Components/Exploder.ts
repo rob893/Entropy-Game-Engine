@@ -7,9 +7,7 @@ import { PlayerHealth } from './Characters/Player/PlayerHealth';
 import { CharacterStats } from './Characters/CharacterStats';
 
 export class Exploder extends Component {
-
     private readonly audioSource: AudioSource;
-
 
     public constructor(gameObject: GameObject, audioSource: AudioSource) {
         super(gameObject);
@@ -26,7 +24,9 @@ export class Exploder extends Component {
         for (const collider of hitColliders) {
             const rb = collider.getComponent(Rigidbody);
             if (rb !== null) {
-                rb.addForce(Vector2.direction(this.transform.position, collider.transform.position).multiplyScalar(1000));
+                rb.addForce(
+                    Vector2.direction(this.transform.position, collider.transform.position).multiplyScalar(1000)
+                );
             }
 
             const health = collider.getComponent(CharacterStats);

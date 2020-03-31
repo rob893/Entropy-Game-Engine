@@ -3,12 +3,11 @@ import { WeightedGraph } from '../Interfaces/WeightedGraph';
 import { PriorityQueue } from './PriorityQueue';
 
 export class AStarSearch {
-
     public static findPath(graph: WeightedGraph, start: Vector2, goal: Vector2): Vector2[] | null {
         if (graph.isUnpassable(goal)) {
             return null;
         }
-        
+
         const cameFrom: Map<Vector2, Vector2> = new Map<Vector2, Vector2>();
         const costSoFar: Map<Vector2, number> = new Map<Vector2, number>();
 
@@ -58,7 +57,12 @@ export class AStarSearch {
         return Vector2.distanceSqrd(a, b);
     }
 
-    private static constructPath(cameFrom: Map<Vector2, Vector2>, current: Vector2, start: Vector2, goal: Vector2): Vector2[] {
+    private static constructPath(
+        cameFrom: Map<Vector2, Vector2>,
+        current: Vector2,
+        start: Vector2,
+        goal: Vector2
+    ): Vector2[] {
         const path: Vector2[] = [current];
 
         if (!current.equals(goal)) {
@@ -71,7 +75,7 @@ export class AStarSearch {
             if (next === undefined) {
                 throw new Error('Error constructing A* path.');
             }
-            
+
             current = next;
             path.push(current);
         }

@@ -1,14 +1,12 @@
 module.exports = {
-    'roots': [
-        '<rootDir>/test'
-    ],
-    'transform': {
+    roots: ['<rootDir>/test'],
+    transform: {
         '^.+\\.tsx?$': 'ts-jest'
     },
-    'globals': {
+    globals: {
         'ts-jest': {
-            'diagnostics': {
-                'ignoreCodes': [151001]
+            diagnostics: {
+                ignoreCodes: [151001]
             }
         }
     }

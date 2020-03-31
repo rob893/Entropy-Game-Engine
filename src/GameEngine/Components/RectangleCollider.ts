@@ -11,10 +11,9 @@ import { PhysicalMaterial } from '../Core/Helpers/PhysicalMaterial';
 import { CollisionManifold } from '../Core/Helpers/CollisionManifold';
 
 export class RectangleCollider extends Component implements RenderableGizmo {
-
     public isTrigger: boolean = false;
     public physicalMaterial: PhysicalMaterial = PhysicalMaterial.zero;
-    public readonly attachedRigidbody: Rigidbody|null;
+    public readonly attachedRigidbody: Rigidbody | null;
 
     private _width: number;
     private _height: number;
@@ -25,9 +24,15 @@ export class RectangleCollider extends Component implements RenderableGizmo {
     private readonly _topRight: Vector2;
     private readonly _bottomLeft: Vector2;
     private readonly _bottomRight: Vector2;
-    
 
-    public constructor(gameObject: GameObject, rb: Rigidbody | null, width: number, height: number, offsetX: number = 0, offsetY: number = 0) {
+    public constructor(
+        gameObject: GameObject,
+        rb: Rigidbody | null,
+        width: number,
+        height: number,
+        offsetX: number = 0,
+        offsetY: number = 0
+    ) {
         super(gameObject);
 
         this._width = width;
@@ -37,10 +42,22 @@ export class RectangleCollider extends Component implements RenderableGizmo {
 
         const transform: Transform = this.transform;
 
-        this._topLeft = new Vector2(transform.position.x + this._offset.x - (width / 2), transform.position.y + this._offset.y - height);
-        this._topRight = new Vector2(transform.position.x + this._offset.x + (width / 2), transform.position.y + this._offset.y - height);
-        this._bottomLeft = new Vector2(transform.position.x + this._offset.x - (width / 2), transform.position.y + this._offset.y);
-        this._bottomRight = new Vector2(transform.position.x + this._offset.x + (width / 2), transform.position.y + this._offset.y);
+        this._topLeft = new Vector2(
+            transform.position.x + this._offset.x - width / 2,
+            transform.position.y + this._offset.y - height
+        );
+        this._topRight = new Vector2(
+            transform.position.x + this._offset.x + width / 2,
+            transform.position.y + this._offset.y - height
+        );
+        this._bottomLeft = new Vector2(
+            transform.position.x + this._offset.x - width / 2,
+            transform.position.y + this._offset.y
+        );
+        this._bottomRight = new Vector2(
+            transform.position.x + this._offset.x + width / 2,
+            transform.position.y + this._offset.y
+        );
     }
 
     public get width(): number {
@@ -74,55 +91,57 @@ export class RectangleCollider extends Component implements RenderableGizmo {
     }
 
     public get topLeft(): Vector2 {
-        this._topLeft.x = this.transform.position.x + this._offset.x - (this._width / 2);
+        this._topLeft.x = this.transform.position.x + this._offset.x - this._width / 2;
         this._topLeft.y = this.transform.position.y + this._offset.y - this._height;
 
         return this._topLeft;
     }
 
     public get topRight(): Vector2 {
-        this._topRight.x = this.transform.position.x + this._offset.x + (this._width / 2);
+        this._topRight.x = this.transform.position.x + this._offset.x + this._width / 2;
         this._topRight.y = this.transform.position.y + this._offset.y - this._height;
 
         return this._topRight;
     }
 
     public get bottomLeft(): Vector2 {
-        this._bottomLeft.x = this.transform.position.x + this._offset.x - (this._width / 2);
+        this._bottomLeft.x = this.transform.position.x + this._offset.x - this._width / 2;
         this._bottomLeft.y = this.transform.position.y + this._offset.y;
 
         return this._bottomLeft;
     }
 
     public get bottomRight(): Vector2 {
-        this._bottomRight.x = this.transform.position.x + this._offset.x + (this._width / 2);
+        this._bottomRight.x = this.transform.position.x + this._offset.x + this._width / 2;
         this._bottomRight.y = this.transform.position.y + this._offset.y;
 
         return this._bottomRight;
     }
 
     public get center(): Vector2 {
-        return new Vector2(this.topLeft.x + (this._width / 2), this.topLeft.y + (this._height / 2));
+        return new Vector2(this.topLeft.x + this._width / 2, this.topLeft.y + this._height / 2);
     }
 
-    public get onCollided(): CustomLiteEvent<CollisionManifold> { 
-        return this._onCollided.expose(); 
+    public get onCollided(): CustomLiteEvent<CollisionManifold> {
+        return this._onCollided.expose();
     }
 
-    public get onResized(): CustomLiteEvent<void> { 
-        return this._onResize.expose(); 
+    public get onResized(): CustomLiteEvent<void> {
+        return this._onResize.expose();
     }
 
     public detectCollision(other: RectangleCollider): boolean {
-        
-        if(!(other.topLeft.x > this.topRight.x ||
-            other.topRight.x < this.topLeft.x ||
-            other.topLeft.y > this.bottomLeft.y ||
-            other.bottomLeft.y < this.topLeft.y)) {
-                
+        if (
+            !(
+                other.topLeft.x > this.topRight.x ||
+                other.topRight.x < this.topLeft.x ||
+                other.topLeft.y > this.bottomLeft.y ||
+                other.bottomLeft.y < this.topLeft.y
+            )
+        ) {
             return true;
         }
-        
+
         return false;
     }
 

@@ -5,12 +5,10 @@ import { Animation } from '../../../GameEngine/Core/Helpers/Animation';
 import { CharacterAnimations } from '../../Interfaces/CharacterAnimations';
 
 export class CharacterAnimator extends Component {
-    
     private facingRight: boolean = true;
     private readonly animations: CharacterAnimations;
     private readonly animator: Animator;
 
-    
     public constructor(gameObject: GameObject, animator: Animator, animations: CharacterAnimations) {
         super(gameObject);
 
@@ -42,17 +40,20 @@ export class CharacterAnimator extends Component {
 
     public playRandomAttackAnimation(): void {
         if (this.facingRight) {
-            const anim = this.animations.rightAttackAnimations[Math.floor(Math.random() * this.animations.rightAttackAnimations.length)];
+            const anim = this.animations.rightAttackAnimations[
+                Math.floor(Math.random() * this.animations.rightAttackAnimations.length)
+            ];
 
             if (this.animator.currentAnimation !== anim) {
                 anim.reset();
             }
-            
+
             this.setAnimation(anim);
-        }
-        else {
-            const anim = this.animations.leftAttackAnimations[Math.floor(Math.random() * this.animations.leftAttackAnimations.length)];
-            
+        } else {
+            const anim = this.animations.leftAttackAnimations[
+                Math.floor(Math.random() * this.animations.leftAttackAnimations.length)
+            ];
+
             if (this.animator.currentAnimation !== anim) {
                 anim.reset();
             }
@@ -65,11 +66,10 @@ export class CharacterAnimator extends Component {
         if (runningRight !== undefined) {
             this.facingRight = runningRight;
         }
-        
+
         if (this.facingRight) {
             this.setAnimation(this.animations.runRightAnimation);
-        }
-        else {
+        } else {
             this.setAnimation(this.animations.runLeftAnimation);
         }
     }
@@ -77,8 +77,7 @@ export class CharacterAnimator extends Component {
     public playIdleAnimation(): void {
         if (this.facingRight) {
             this.setAnimation(this.animations.idleRightAnimation);
-        }
-        else {
+        } else {
             this.setAnimation(this.animations.idleLeftAnimation);
         }
     }
@@ -87,8 +86,7 @@ export class CharacterAnimator extends Component {
         if (this.facingRight) {
             this.animations.jumpRightAnimation.reset();
             this.setAnimation(this.animations.jumpRightAnimation);
-        }
-        else {
+        } else {
             this.animations.jumpLeftAnimation.reset();
             this.setAnimation(this.animations.jumpLeftAnimation);
         }
@@ -98,8 +96,7 @@ export class CharacterAnimator extends Component {
         if (this.facingRight) {
             this.animations.dieRightAnimation.reset();
             this.setAnimation(this.animations.dieRightAnimation);
-        }
-        else {
+        } else {
             this.animations.dieLeftAnimation.reset();
             this.setAnimation(this.animations.dieLeftAnimation);
         }

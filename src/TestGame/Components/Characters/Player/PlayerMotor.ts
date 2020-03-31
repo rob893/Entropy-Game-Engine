@@ -13,11 +13,9 @@ import { CharacterStats } from '../CharacterStats';
 import { Layer } from '../../../../GameEngine/Core/Enums/Layer';
 import { Spawner } from '../../Spawner';
 
-
 export class PlayerMotor extends Component {
+    public speed: number = 5;
 
-    public speed: number = 5
-    
     private xVelocity: number = 0;
     private yVelocity: number = 0;
     private jumping: boolean = false;
@@ -25,15 +23,19 @@ export class PlayerMotor extends Component {
     private readonly collider: RectangleCollider;
     private readonly myStats: CharacterStats;
 
-
-    public constructor(gameObject: GameObject, collider: RectangleCollider, animator: CharacterAnimator, myStats: CharacterStats) {
+    public constructor(
+        gameObject: GameObject,
+        collider: RectangleCollider,
+        animator: CharacterAnimator,
+        myStats: CharacterStats
+    ) {
         super(gameObject);
 
         this.collider = collider;
         this.animator = animator;
         this.myStats = myStats;
 
-        this.collider.onCollided.add((manifold) => this.handleCollisions(manifold));
+        this.collider.onCollided.add(manifold => this.handleCollisions(manifold));
 
         this.input.addKeyListener(EventType.KeyDown, KeyCode.Space, () => this.jump());
         this.input.addKeyListener(EventType.KeyDown, KeyCode.R, () => this.fireball());
@@ -65,31 +67,26 @@ export class PlayerMotor extends Component {
         if (this.input.getKey(KeyCode.D)) {
             this.animator.playRunAnimation(true);
             this.xVelocity = 1;
-        }
-        else if (this.input.getKey(KeyCode.A)) {
+        } else if (this.input.getKey(KeyCode.A)) {
             this.animator.playRunAnimation(false);
             this.xVelocity = -1;
-        }
-        else {
+        } else {
             this.xVelocity = 0;
         }
 
         if (this.input.getKey(KeyCode.W)) {
             this.animator.playRunAnimation();
             this.yVelocity = -1;
-        }
-        else if (this.input.getKey(KeyCode.S)) {
+        } else if (this.input.getKey(KeyCode.S)) {
             this.animator.playRunAnimation();
             this.yVelocity = 1;
-        }
-        else {
+        } else {
             this.yVelocity = 0;
         }
 
         if (this.isMoving) {
             this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));
-        }
-        else {
+        } else {
             this.animator.playIdleAnimation();
         }
     }
@@ -125,7 +122,7 @@ export class PlayerMotor extends Component {
         // else {
         //     this.animator.faceRight();
         // }
-        
+
         this.animator.playRandomAttackAnimation();
 
         const colliders = this.physics.overlapSphere(this.transform.position, this.myStats.attackRange, Layer.Hostile);
@@ -141,7 +138,10 @@ export class PlayerMotor extends Component {
 
     private fireball(): void {
         this.animator.playRandomAttackAnimation();
-        const fireball = this.instantiate(Fireball, new Vector2(this.transform.position.x, this.transform.position.y - 20));
+        const fireball = this.instantiate(
+            Fireball,
+            new Vector2(this.transform.position.x, this.transform.position.y - 20)
+        );
         const fbBehaviour = fireball.getComponent(FireballBehavior);
 
         if (fbBehaviour === null) {

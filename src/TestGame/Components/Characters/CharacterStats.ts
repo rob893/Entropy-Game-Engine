@@ -7,7 +7,6 @@ import { LiteEvent } from '../../../GameEngine/Core/Helpers/LiteEvent';
 import { CustomLiteEvent } from '../../../GameEngine/Core/Interfaces/CustomLiteEvent';
 
 export class CharacterStats extends Component implements Damageable {
-    
     private readonly _attackRange = 75;
     private readonly _attackPower = 15;
     private readonly _attackSpeed = 1.25;
@@ -17,7 +16,6 @@ export class CharacterStats extends Component implements Damageable {
     private healthbar: Slider | null = null;
     private readonly animator: CharacterAnimator;
     private readonly onDie: LiteEvent<void> = new LiteEvent<void>();
-
 
     public constructor(gameObject: GameObject, animator: CharacterAnimator) {
         super(gameObject);

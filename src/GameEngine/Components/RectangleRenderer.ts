@@ -3,11 +3,9 @@ import { GameObject } from '../GameObjects/GameObject';
 import { Renderable } from '../Core/Interfaces/Renderable';
 
 export class RectangleRenderer extends Component implements Renderable {
-
     public renderWidth: number;
     public renderHeight: number;
     public color: string;
-
 
     public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, color: string) {
         super(gameObject);
@@ -23,6 +21,11 @@ export class RectangleRenderer extends Component implements Renderable {
 
     public render(context: CanvasRenderingContext2D): void {
         context.fillStyle = this.color;
-        context.fillRect(this.transform.position.x - (this.renderWidth / 2), this.transform.position.y - this.renderHeight, this.renderWidth, this.renderHeight);
+        context.fillRect(
+            this.transform.position.x - this.renderWidth / 2,
+            this.transform.position.y - this.renderHeight,
+            this.renderWidth,
+            this.renderHeight
+        );
     }
 }

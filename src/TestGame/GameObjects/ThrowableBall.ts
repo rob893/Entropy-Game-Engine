@@ -9,7 +9,6 @@ import { Layer } from '../../GameEngine/Core/Enums/Layer';
 import { Grenade } from '../Components/Grenade';
 
 export class ThrowableBall extends GameObject {
-
     protected buildInitialComponents(): Component[] {
         const components: Component[] = [];
 
@@ -25,7 +24,7 @@ export class ThrowableBall extends GameObject {
 
         return components;
     }
-    
+
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,

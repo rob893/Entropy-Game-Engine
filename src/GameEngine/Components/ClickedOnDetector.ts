@@ -7,10 +7,8 @@ import { Geometry } from '../Core/Helpers/Geometry';
 import { EventType } from '../Core/Enums/EventType';
 
 export class ClickedOnDetector extends Component {
-
     private readonly collider: RectangleCollider;
     private readonly onClickedOn: LiteEvent<void> = new LiteEvent<void>();
-
 
     public constructor(gameObject: GameObject, collider: RectangleCollider) {
         super(gameObject);

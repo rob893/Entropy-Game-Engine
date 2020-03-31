@@ -3,25 +3,67 @@ import { TerrainCell } from '../../GameEngine/Core/Interfaces/TerrainCell';
 import { TerrainSpec } from '../../GameEngine/Core/Interfaces/TerrainSpec';
 import SpriteSheet from '../Assets/Images/DungeonTileset.png';
 
-
 export class Scene1TerrainSpec implements TerrainSpec {
-    
     public readonly cellSize: number = 16;
     public readonly scale: number = 1;
     public readonly spriteSheetUrl: string = SpriteSheet;
-    
-    private readonly topWall: SpriteData = { sliceX: 16, sliceY: 0, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
-    private readonly midWall: SpriteData = { sliceX: 16, sliceY: 16, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
-    private readonly rightWall: SpriteData = { sliceX: 0, sliceY: 128, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
-    private readonly leftWall: SpriteData = { sliceX: 16, sliceY: 128, sliceWidth: this.cellSize, sliceHeight: this.cellSize  };
-    private readonly bottomWall: SpriteData = { sliceX: 36, sliceY: 124, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
+
+    private readonly topWall: SpriteData = {
+        sliceX: 16,
+        sliceY: 0,
+        sliceWidth: this.cellSize,
+        sliceHeight: this.cellSize
+    };
+    private readonly midWall: SpriteData = {
+        sliceX: 16,
+        sliceY: 16,
+        sliceWidth: this.cellSize,
+        sliceHeight: this.cellSize
+    };
+    private readonly rightWall: SpriteData = {
+        sliceX: 0,
+        sliceY: 128,
+        sliceWidth: this.cellSize,
+        sliceHeight: this.cellSize
+    };
+    private readonly leftWall: SpriteData = {
+        sliceX: 16,
+        sliceY: 128,
+        sliceWidth: this.cellSize,
+        sliceHeight: this.cellSize
+    };
+    private readonly bottomWall: SpriteData = {
+        sliceX: 36,
+        sliceY: 124,
+        sliceWidth: this.cellSize,
+        sliceHeight: this.cellSize
+    };
     //private readonly bottomRCornerWall: ISpriteData = { sliceX: 48, sliceY: 124, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
     //private readonly topRCornerWall: ISpriteData = { sliceX: 48, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-    private readonly sideWallEndRight: SpriteData = { sliceX: 0, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-    private readonly sideWallEndLeft: SpriteData = { sliceX: 16, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-    private readonly floorTile: SpriteData = { sliceX: 16, sliceY: 64, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-    private readonly floorHole: SpriteData = { sliceX: 96, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
-
+    private readonly sideWallEndRight: SpriteData = {
+        sliceX: 0,
+        sliceY: 144,
+        sliceWidth: this.cellSize,
+        sliceHeight: this.cellSize
+    };
+    private readonly sideWallEndLeft: SpriteData = {
+        sliceX: 16,
+        sliceY: 144,
+        sliceWidth: this.cellSize,
+        sliceHeight: this.cellSize
+    };
+    private readonly floorTile: SpriteData = {
+        sliceX: 16,
+        sliceY: 64,
+        sliceWidth: this.cellSize,
+        sliceHeight: this.cellSize
+    };
+    private readonly floorHole: SpriteData = {
+        sliceX: 96,
+        sliceY: 144,
+        sliceWidth: this.cellSize,
+        sliceHeight: this.cellSize
+    };
 
     public constructor(scale: number = 1) {
         this.scale = scale;
@@ -40,7 +82,7 @@ export class Scene1TerrainSpec implements TerrainSpec {
         const el: TerrainCell = { spriteData: this.sideWallEndLeft, passable: false, weight: 0 };
         const hl: TerrainCell = { spriteData: this.floorHole, passable: false, weight: 0 };
         const nl: TerrainCell | null = null;
-        
+
         return [
             [nl, nl, nl, tw, tw, tw, tw, tw, tw, tw, tw, tw, tw, nl],
             [nl, nl, rw, mw, mw, mw, mw, mw, mw, mw, mw, mw, mw, lw],

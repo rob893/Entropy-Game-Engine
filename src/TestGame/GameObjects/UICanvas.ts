@@ -11,7 +11,7 @@ export class UICanvas extends GameObject {
     protected buildInitialComponents(): Component[] {
         return [];
     }
-    
+
     protected getPrefabSettings(): PrefabSettings {
         return {
             x: 0,
@@ -24,10 +24,10 @@ export class UICanvas extends GameObject {
     }
 
     protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
-        const button = new Button({gameEngine: config.gameEngine, id: 'button1', x: 150, y: 150});
+        const button = new Button({ gameEngine: config.gameEngine, id: 'button1', x: 150, y: 150 });
 
         button.getComponent(ClickedOnDetector)?.onClicked.add(() => config.gameEngine.togglePause());
-        
+
         return [button];
     }
 }

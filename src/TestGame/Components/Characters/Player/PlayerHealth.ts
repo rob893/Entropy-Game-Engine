@@ -5,12 +5,10 @@ import { GameManager } from '../../GameManager';
 import { AudioSource } from '../../../../GameEngine/Components/AudioSource';
 
 export class PlayerHealth extends Component implements Damageable {
-
     private _health: number;
     private _isDead: boolean;
     private gameManager: GameManager | null = null;
     private readonly audioSource: AudioSource;
-    
 
     public constructor(gameObject: GameObject, audioSource: AudioSource, health: number = 100) {
         super(gameObject);
@@ -46,7 +44,7 @@ export class PlayerHealth extends Component implements Damageable {
         this._health -= amount;
 
         if (this.gameManager !== null) {
-            this.gameManager.showMessage('You were hit for ' + amount + ' damage!', 1, 'red'); 
+            this.gameManager.showMessage('You were hit for ' + amount + ' damage!', 1, 'red');
         }
 
         if (this._health <= 0) {
