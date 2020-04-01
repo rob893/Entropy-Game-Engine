@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "composite": true
+    },
+    "files": [],
+    "include": [],
+    "references": [
+        { "path": "./packages/typescript-game-engine/src/__tests__/" },
+        { "path": "./sample-games/sample-game-1/src/__tests__/" }
+    ]
+}
