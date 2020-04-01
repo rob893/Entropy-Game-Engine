@@ -1,9 +1,5 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { FPSCounter } from '../../GameEngine/Components/FPSCounter';
+import { GameObject, Layer, Component, PrefabSettings, FPSCounter } from '@rherber/typescript-game-engine';
 import { GameManager } from '../Components/GameManager';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { Component } from '../../GameEngine/Components/Component';
 
 export class GameManagerObject extends GameObject {
     protected buildInitialComponents(): Component[] {

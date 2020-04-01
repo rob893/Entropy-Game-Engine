@@ -1,21 +1,22 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { Component } from '../../GameEngine/Components/Component';
-import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
-import { Animator } from '../../GameEngine/Components/Animator';
-import { PlayerMotor } from '../Components/Characters/Player/PlayerMotor';
-import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
+import {
+    Animation,
+    GameObject,
+    Component,
+    RectangleCollider,
+    PhysicalMaterial,
+    SpriteSheet,
+    Animator,
+    PrefabSettings,
+    Layer,
+    GameObjectConstructionParams
+} from '@rherber/typescript-game-engine';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
+import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { CharacterStats } from '../Components/Characters/CharacterStats';
+import { PlayerMotor } from '../Components/Characters/Player/PlayerMotor';
 import { Spawner } from '../Components/Spawner';
 import { Minotaur } from './Minotaur';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
 import { Healthbar } from './Healthbar';
-import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class Player extends GameObject {
     protected buildInitialComponents(): Component[] {

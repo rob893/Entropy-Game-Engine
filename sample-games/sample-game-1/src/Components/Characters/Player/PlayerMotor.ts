@@ -1,17 +1,18 @@
-import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
-import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
-import { KeyCode } from '../../../../GameEngine/Core/Enums/KeyCode';
-import { RectangleCollider } from '../../../../GameEngine/Components/RectangleCollider';
-import { EventType } from '../../../../GameEngine/Core/Enums/EventType';
-import { CollisionManifold } from '../../../../GameEngine/Core/Helpers/CollisionManifold';
+import {
+    Component,
+    RectangleCollider,
+    GameObject,
+    EventType,
+    KeyCode,
+    Vector2,
+    CollisionManifold,
+    Layer
+} from '@rherber/typescript-game-engine';
+import { CharacterAnimator } from '../CharacterAnimator';
+import { CharacterStats } from '../CharacterStats';
+import { Spawner } from '../../Spawner';
 import { Fireball } from '../../../GameObjects/Fireball';
 import { FireballBehavior } from '../../FireballBehavior';
-import { Component } from '../../../../GameEngine/Components/Component';
-import { CharacterAnimator } from '../CharacterAnimator';
-import { ClickedOnDetector } from '../../../../GameEngine/Components/ClickedOnDetector';
-import { CharacterStats } from '../CharacterStats';
-import { Layer } from '../../../../GameEngine/Core/Enums/Layer';
-import { Spawner } from '../../Spawner';
 
 export class PlayerMotor extends Component {
     public speed: number = 5;

@@ -1,13 +1,17 @@
-import { Scene } from '@rherber/typescript-game-engine/src/Core/Interfaces/Scene';
-import { GameObject } from '../GameEngine/GameObjects/GameObject';
+import {
+    Scene,
+    RectangleBackground,
+    Color,
+    GameEngine,
+    GameObject,
+    AssetPool,
+    SpriteSheet,
+    AudioClip
+} from '@rherber/typescript-game-engine';
 import { Scene1TerrainSpec } from './Terrains/Scene1TerrainSpec';
-import { RectangleBackground } from '../GameEngine/Core/Helpers/RectangleBackground';
-import { Color } from '../GameEngine/Core/Enums/Color';
 import { GameManagerObject } from './GameObjects/GameManagerObject';
 import { Player } from './GameObjects/Player';
 import { PlayerRB } from './GameObjects/PlayerRB';
-import { AssetPool } from '../GameEngine/Core/Helpers/AssetPool';
-import { SpriteSheet } from '../GameEngine/Core/Helpers/SpriteSheet';
 import KnightSheet from './Assets/Images/knight.png';
 import MinotaurSheet from './Assets/Images/minotaur.png';
 import TrumpIdle from './Assets/Images/trump_idle.png';
@@ -16,8 +20,6 @@ import Explosion from './Assets/Images/explosion.png';
 import RedFireball from './Assets/Images/redFireball.png';
 import ExplosionSound from './Assets/Sounds/explosion.mp3';
 import HurtSound from './Assets/Sounds/fat_1_male_hit_1.wav';
-import { AudioClip } from '../GameEngine/Core/Helpers/AudioClip';
-import { GameEngine } from '../GameEngine/Core/GameEngine';
 import { Minotaur } from './GameObjects/Minotaur';
 import { Box } from './GameObjects/Box';
 import { UICanvas } from './GameObjects/UICanvas';

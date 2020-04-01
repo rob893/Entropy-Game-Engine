@@ -54,7 +54,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'TypeScript Game Engine',
             template: 'src/index.html',
-            favicon: 'src/TestGame/Assets/Images/favicon.ico'
+            favicon: 'src/Assets/Images/favicon.ico'
         }),
         new CircularDependencyPlugin({
             // exclude detection of files based on a RegExp

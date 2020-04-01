@@ -26,7 +26,7 @@
     },
     "dependencies": {
         "@aspnet/signalr": "^1.1.4",
-        "@rherber/typescript-game-engine": "^1.0.0"
+        "@rherber/typescript-game-engine": "file:../../packages/typescript-game-engine"
     },
     "devDependencies": {
         "@types/html-webpack-plugin": "^3.2.2",

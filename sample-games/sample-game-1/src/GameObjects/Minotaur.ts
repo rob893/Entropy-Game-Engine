@@ -1,13 +1,16 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { Component } from '../../GameEngine/Components/Component';
-import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
-import { Animator } from '../../GameEngine/Components/Animator';
-import { NavAgent } from '../../GameEngine/Components/NavAgent';
-import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
+import {
+    GameObject,
+    Layer,
+    Component,
+    PrefabSettings,
+    SpriteSheet,
+    Animator,
+    Animation,
+    RectangleCollider,
+    PhysicalMaterial,
+    NavAgent,
+    GameObjectConstructionParams
+} from '@rherber/typescript-game-engine';
 import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 import { NPCController } from '../Components/Characters/NPC/NPCController';
@@ -16,8 +19,6 @@ import { ChaseState } from '../Components/Characters/NPC/ChaseState';
 import { AttackState } from '../Components/Characters/NPC/AttackState';
 import { CharacterStats } from '../Components/Characters/CharacterStats';
 import { Healthbar } from './Healthbar';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
-import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
 
 export class Minotaur extends GameObject {
     protected buildInitialComponents(): Component[] {

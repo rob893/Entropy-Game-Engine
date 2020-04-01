@@ -1,8 +1,4 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { Component } from '../../GameEngine/Components/Component';
+import { GameObject, Component, RectangleRenderer, PrefabSettings, Layer } from '@rherber/typescript-game-engine/src';
 
 export class Weapon extends GameObject {
     protected buildInitialComponents(): Component[] {

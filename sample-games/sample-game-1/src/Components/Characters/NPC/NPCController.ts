@@ -1,8 +1,6 @@
-import { Component } from '../../../../GameEngine/Components/Component';
+import { GameObject, Component, Transform } from '@rherber/typescript-game-engine';
 import { State } from '../../../Interfaces/State';
-import { Transform } from '../../../../GameEngine/Components/Transform';
 import { CharacterStats } from '../CharacterStats';
-import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
 
 export class NPCController extends Component {
     public currentTarget: Transform | null = null;

@@ -1,9 +1,10 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Component } from '../../GameEngine/Components/Component';
-import { Slider } from '../../GameEngine/Components/Slider';
-import { Color } from '../../GameEngine/Core/Enums/Color';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
+import {
+    GameObject,
+    Layer,
+    Component,
+    PrefabSettings,
+    Slider,
+    Color} from '@rherber/typescript-game-engine';
 
 export class Healthbar extends GameObject {
     protected buildInitialComponents(): Component[] {

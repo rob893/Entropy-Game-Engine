@@ -1,4 +1,4 @@
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
+import { Animation } from '@rherber/typescript-game-engine';
 
 export interface CharacterAnimations {
     rightAttackAnimations: Animation[];

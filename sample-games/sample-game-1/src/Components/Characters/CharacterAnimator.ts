@@ -1,7 +1,4 @@
-import { Component } from '../../../GameEngine/Components/Component';
-import { GameObject } from '../../../GameEngine/GameObjects/GameObject';
-import { Animator } from '../../../GameEngine/Components/Animator';
-import { Animation } from '../../../GameEngine/Core/Helpers/Animation';
+import { Component, Animator, GameObject, Animation } from '@rherber/typescript-game-engine';
 import { CharacterAnimations } from '../../Interfaces/CharacterAnimations';
 
 export class CharacterAnimator extends Component {

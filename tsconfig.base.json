@@ -15,7 +15,7 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
-        "declaration": false,
+        "declaration": true,
         "target": "es2017",
         "pretty": true,
         "moduleResolution": "node",

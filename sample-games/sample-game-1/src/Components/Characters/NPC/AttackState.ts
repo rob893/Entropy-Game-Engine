@@ -1,11 +1,8 @@
+import { GameObject, Component, Vector2, Transform } from '@rherber/typescript-game-engine';
 import { State } from '../../../Interfaces/State';
-import { Component } from '../../../../GameEngine/Components/Component';
-import { NPCController } from './NPCController';
-import { CharacterAnimator } from '../CharacterAnimator';
-import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
-import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
-import { Transform } from '../../../../GameEngine/Components/Transform';
 import { CharacterStats } from '../CharacterStats';
+import { CharacterAnimator } from '../CharacterAnimator';
+import { NPCController } from './NPCController';
 
 export class AttackState extends Component implements State {
     private targetStats: CharacterStats | null = null;
@@ -63,7 +60,7 @@ export class AttackState extends Component implements State {
         this.targetStats = targetStats;
     }
 
-    public onExit(context: NPCController): void {
+    public onExit(): void {
         this.targetStats = null;
     }
 

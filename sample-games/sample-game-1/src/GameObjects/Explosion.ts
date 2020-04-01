@@ -1,13 +1,15 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { Animator } from '../../GameEngine/Components/Animator';
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
+import {
+    GameObject,
+    Layer,
+    Component,
+    PrefabSettings,
+    SpriteSheet,
+    AudioSource,
+    AudioClip,
+    Animator,
+    Animation
+} from '@rherber/typescript-game-engine';
 import { Exploder } from '../Components/Exploder';
-import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
-import { AudioSource } from '../../GameEngine/Components/AudioSource';
-import { AudioClip } from '../../GameEngine/Core/Helpers/AudioClip';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { Component } from '../../GameEngine/Components/Component';
 
 export class Explosion extends GameObject {
     protected buildInitialComponents(): Component[] {

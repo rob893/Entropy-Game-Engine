@@ -1,11 +1,12 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { Component } from '../../GameEngine/Components/Component';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
-import { Button } from '../../GameEngine/GameObjects/UI Elements/Button';
-import { ClickedOnDetector } from '../../GameEngine/Components/ClickedOnDetector';
-import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
+import {
+    GameObject,
+    Component,
+    PrefabSettings,
+    Layer,
+    GameObjectConstructionParams,
+    Button,
+    ClickedOnDetector
+} from '@rherber/typescript-game-engine/src';
 
 export class UICanvas extends GameObject {
     protected buildInitialComponents(): Component[] {

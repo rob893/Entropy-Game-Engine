@@ -1,12 +1,14 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { Animator } from '../../GameEngine/Components/Animator';
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
-import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
-import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
+import {
+    GameObject,
+    Layer,
+    Component,
+    PrefabSettings,
+    SpriteSheet,
+    Animator,
+    Animation,
+    RectangleCollider
+} from '@rherber/typescript-game-engine';
 import { FireballBehavior } from '../Components/FireballBehavior';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { Component } from '../../GameEngine/Components/Component';
 
 export class Fireball extends GameObject {
     protected buildInitialComponents(): Component[] {

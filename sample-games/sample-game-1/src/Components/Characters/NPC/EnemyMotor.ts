@@ -1,8 +1,4 @@
-import { Component } from '../../../../GameEngine/Components/Component';
-import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
-import { NavAgent } from '../../../../GameEngine/Components/NavAgent';
-import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
-import { Transform } from '../../../../GameEngine/Components/Transform';
+import { GameObject, Component, Vector2, Transform, NavAgent } from '@rherber/typescript-game-engine';
 import { CharacterAnimator } from '../CharacterAnimator';
 
 export class EnemyMotor extends Component {

@@ -1,7 +1,5 @@
-import { Transform, Component, AudioSource, Rigidbody } from '@rherber/typescript-game-engine'
+import { Component, AudioSource, Rigidbody, GameObject, Vector2 } from '@rherber/typescript-game-engine'
 import { CharacterStats } from './Characters/CharacterStats';
-import { GameObject } from '../../../../compiled/src/GameEngine/Core/GameObject';
-import { Vector2 } from '../../../../compiled/src/GameEngine/Core/Helpers/Vector2';
 
 export class Exploder extends Component {
     private readonly audioSource: AudioSource;

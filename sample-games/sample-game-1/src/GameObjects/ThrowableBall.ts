@@ -1,11 +1,13 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { Component } from '../../GameEngine/Components/Component';
-import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
-import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
-import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
-import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
+import {
+    GameObject,
+    Component,
+    RectangleRenderer,
+    Rigidbody,
+    RectangleCollider,
+    PhysicalMaterial,
+    PrefabSettings,
+    Layer
+} from '@rherber/typescript-game-engine';
 import { Grenade } from '../Components/Grenade';
 
 export class ThrowableBall extends GameObject {

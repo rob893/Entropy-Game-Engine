@@ -2,17 +2,16 @@
     "name": "typescript-game-engine",
     "version": "1.0.0",
     "description": "Custom 2D game engine written in TypeScript.",
-    "private": true,
     "scripts": {
-        "test": "jest --coverage",
-        "test-watch": "jest --watch --coverage",
-        "start": "webpack-dev-server --open --config webpack.dev.js",
-        "dev": "webpack-dev-server --open --config webpack.dev.js",
-        "build": "webpack --config webpack.prod.js",
-        "prettier": "prettier --write **/*.{ts,js,css,html,json} !**/node_modules/** !**/dist/** !**/coverage/** !**/compiled/**",
+        "compile": "tsc --build tsconfig.build.json",
+        "compile-clean": "tsc --build tsconfig.build.json --clean",
+        "watch": "tsc --build tsconfig.build.json --watch",
         "lint": "./node_modules/.bin/eslint src/**/*.ts",
         "lint-fix": "./node_modules/.bin/eslint --fix src/**/*.ts",
-        "test-pub": "rm -rf compiled/ && tsc"
+        "postinstall": "lerna run prepare && npm run compile",
+        "prettier": "prettier --write **/*.{ts,js,css,html,json} !**/node_modules/** !**/dist/** !**/coverage/** !**/compiled/**",
+        "test": "jest --coverage",
+        "test-watch": "jest --watchAll --coverage"
     },
     "repository": {
         "type": "git",
@@ -29,12 +28,6 @@
         "url": "https://github.com/rob893/TypeScript-Game-Engine/issues"
     },
     "homepage": "https://github.com/rob893/TypeScript-Game-Engine#readme",
-    "files": [
-        "compiled"
-    ],
-    "directories": {
-        "test": "test"
-    },
     "dependencies": {
         "@rherber/typescript-game-engine": "file:packages/typescript-game-engine",
         "@rherber/sample-game-1": "file:sample-games/sample-game-1"
@@ -62,7 +55,7 @@
         ],
         "projects": [
             "<rootDir>/packages/*",
-            "<rootDir>/sample-games/*"  
+            "<rootDir>/sample-games/*"
         ]
     }
 }

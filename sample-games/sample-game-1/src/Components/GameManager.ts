@@ -1,14 +1,13 @@
-import { Component } from '../../GameEngine/Components/Component';
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { RenderableGUI } from '../../GameEngine/Core/Interfaces/RenderableGUI';
-import { EventType } from '../../GameEngine/Core/Enums/EventType';
-import { KeyCode } from '../../GameEngine/Core/Enums/KeyCode';
+import {
+    GameObject,
+    Component,
+    RenderableGUI,
+    EventType,
+    KeyCode,
+    Rigidbody,
+    Vector2
+} from '@rherber/typescript-game-engine';
 import { TrumpRB } from '../GameObjects/TrumpRB';
-import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
-import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
-import { HubConnectionBuilder, HubConnection, HubConnectionState } from '@aspnet/signalr';
-import { PlayerMotor } from './Characters/Player/PlayerMotor';
-import { Transform } from '../../GameEngine/Components/Transform';
 
 export class GameManager extends Component implements RenderableGUI {
     public zIndex: number = 0;

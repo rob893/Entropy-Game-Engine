@@ -1,7 +1,5 @@
-import { SpriteData } from '../../GameEngine/Core/Interfaces/SpriteData';
-import { TerrainCell } from '../../GameEngine/Core/Interfaces/TerrainCell';
-import { TerrainSpec } from '../../GameEngine/Core/Interfaces/TerrainSpec';
 import SpriteSheet from '../Assets/Images/DungeonTileset.png';
+import { SpriteData, TerrainSpec, TerrainCell } from '@rherber/typescript-game-engine';
 
 export class Scene1TerrainSpec implements TerrainSpec {
     public readonly cellSize: number = 16;

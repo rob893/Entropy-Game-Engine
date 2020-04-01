@@ -1,13 +1,15 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
-import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
-import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { Component } from '../../GameEngine/Components/Component';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
-import { Color } from '../../GameEngine/Core/Enums/Color';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import {
+    GameObject,
+    GameEngine,
+    Color,
+    Layer,
+    RectangleRenderer,
+    RectangleCollider,
+    PhysicalMaterial,
+    Component,
+    Rigidbody,
+    PrefabSettings
+} from '@rherber/typescript-game-engine';
 
 export class Box extends GameObject {
     public static buildBox(

@@ -1,16 +1,18 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { Component } from '../../GameEngine/Components/Component';
-import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
-import { Animator } from '../../GameEngine/Components/Animator';
-import { NavAgent } from '../../GameEngine/Components/NavAgent';
-import { EnemyMotor } from '../Components/Characters/NPC/EnemyMotor';
-import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
-import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
+import {
+    Animation,
+    GameObject,
+    Component,
+    RectangleCollider,
+    PhysicalMaterial,
+    NavAgent,
+    SpriteSheet,
+    Animator,
+    PrefabSettings,
+    Layer
+} from '@rherber/typescript-game-engine';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
+import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
+import { EnemyMotor } from '../Components/Characters/NPC/EnemyMotor';
 
 export class Trump extends GameObject {
     protected buildInitialComponents(): Component[] {

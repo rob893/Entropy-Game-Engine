@@ -1,21 +1,22 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { Component } from '../../GameEngine/Components/Component';
-import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
-import { Animation } from '../../GameEngine/Core/Helpers/Animation';
-import { Animator } from '../../GameEngine/Components/Animator';
-import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
-import { PhysicalMaterial } from '../../GameEngine/Core/Helpers/PhysicalMaterial';
-import { PlayerPhysicsMotor } from '../Components/Characters/Player/PlayerPhysicsMotor';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { SpriteSheet } from '../../GameEngine/Core/Helpers/SpriteSheet';
-import { AudioSource } from '../../GameEngine/Components/AudioSource';
-import { AudioClip } from '../../GameEngine/Core/Helpers/AudioClip';
-import { PlayerHealth } from '../Components/Characters/Player/PlayerHealth';
-import { GameEngine } from '../../GameEngine/Core/GameEngine';
+import {
+    Animation,
+    GameObject,
+    Component,
+    Rigidbody,
+    RectangleCollider,
+    PhysicalMaterial,
+    SpriteSheet,
+    Animator,
+    AudioSource,
+    AudioClip,
+    PrefabSettings,
+    Layer,
+    GameObjectConstructionParams
+} from '@rherber/typescript-game-engine';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
-import { GameObjectConstructionParams } from '../../GameEngine/Core/Interfaces/GameObjectConstructionParams';
+import { PlayerHealth } from '../Components/Characters/Player/PlayerHealth';
+import { PlayerPhysicsMotor } from '../Components/Characters/Player/PlayerPhysicsMotor';
 
 export class PlayerRB extends GameObject {
     protected buildInitialComponents(): Component[] {

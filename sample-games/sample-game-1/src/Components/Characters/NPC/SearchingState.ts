@@ -1,8 +1,7 @@
 import { State } from '../../../Interfaces/State';
-import { Component } from '../../../../GameEngine/Components/Component';
 import { NPCController } from './NPCController';
 import { CharacterAnimator } from '../CharacterAnimator';
-import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
+import { Component, GameObject } from '@rherber/typescript-game-engine';
 
 export class SearchingState extends Component implements State {
     private timer = 0;

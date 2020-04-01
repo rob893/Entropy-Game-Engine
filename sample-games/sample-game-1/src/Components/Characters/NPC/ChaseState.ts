@@ -1,11 +1,8 @@
+import { GameObject, Component, Vector2, NavAgent } from '@rherber/typescript-game-engine';
 import { State } from '../../../Interfaces/State';
-import { Component } from '../../../../GameEngine/Components/Component';
-import { NPCController } from './NPCController';
-import { NavAgent } from '../../../../GameEngine/Components/NavAgent';
-import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
-import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
-import { CharacterAnimator } from '../CharacterAnimator';
 import { CharacterStats } from '../CharacterStats';
+import { CharacterAnimator } from '../CharacterAnimator';
+import { NPCController } from './NPCController';
 
 export class ChaseState extends Component implements State {
     private readonly navAgent: NavAgent;

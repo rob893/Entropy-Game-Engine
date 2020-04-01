@@ -1,4 +1,5 @@
-import { Component } from '../../GameEngine/Components/Component';
+import {
+    Component} from '@rherber/typescript-game-engine';
 import { Explosion } from '../GameObjects/Explosion';
 
 export class Grenade extends Component {

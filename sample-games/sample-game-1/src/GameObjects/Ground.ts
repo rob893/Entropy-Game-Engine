@@ -1,10 +1,12 @@
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { RectangleCollider } from '../../GameEngine/Components/RectangleCollider';
-import { Color } from '../../GameEngine/Core/Enums/Color';
-import { RectangleRenderer } from '../../GameEngine/Components/RectangleRenderer';
-import { PrefabSettings } from '../../GameEngine/Core/Interfaces/PrefabSettings';
-import { Layer } from '../../GameEngine/Core/Enums/Layer';
-import { Component } from '../../GameEngine/Components/Component';
+import {
+    GameObject,
+    Layer,
+    Component,
+    PrefabSettings,
+    RectangleCollider,
+    RectangleRenderer,
+    Color
+} from '@rherber/typescript-game-engine';
 
 export class Ground extends GameObject {
     protected buildInitialComponents(): Component[] {

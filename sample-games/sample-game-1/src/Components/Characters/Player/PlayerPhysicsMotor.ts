@@ -1,11 +1,6 @@
-import { GameObject } from '../../../../GameEngine/GameObjects/GameObject';
-import { Vector2 } from '../../../../GameEngine/Core/Helpers/Vector2';
-import { KeyCode } from '../../../../GameEngine/Core/Enums/KeyCode';
-import { Rigidbody } from '../../../../GameEngine/Components/Rigidbody';
-import { EventType } from '../../../../GameEngine/Core/Enums/EventType';
-import { Component } from '../../../../GameEngine/Components/Component';
 import { ThrowableBall } from '../../../GameObjects/ThrowableBall';
 import { CharacterAnimator } from '../CharacterAnimator';
+import { Component, Rigidbody, GameObject, EventType, KeyCode, Vector2 } from '@rherber/typescript-game-engine';
 
 export class PlayerPhysicsMotor extends Component {
     private movingRight: boolean = false;
