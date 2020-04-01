@@ -1,10 +1,7 @@
-import { Component } from '../../GameEngine/Components/Component';
-import { GameObject } from '../../GameEngine/GameObjects/GameObject';
-import { Rigidbody } from '../../GameEngine/Components/Rigidbody';
-import { Vector2 } from '../../GameEngine/Core/Helpers/Vector2';
-import { AudioSource } from '../../GameEngine/Components/AudioSource';
-import { PlayerHealth } from './Characters/Player/PlayerHealth';
+import { Transform, Component, AudioSource, Rigidbody } from '@rherber/typescript-game-engine'
 import { CharacterStats } from './Characters/CharacterStats';
+import { GameObject } from '../../../../compiled/src/GameEngine/Core/GameObject';
+import { Vector2 } from '../../../../compiled/src/GameEngine/Core/Helpers/Vector2';
 
 export class Exploder extends Component {
     private readonly audioSource: AudioSource;

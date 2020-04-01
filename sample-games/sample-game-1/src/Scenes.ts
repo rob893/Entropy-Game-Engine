@@ -1,4 +1,4 @@
-import { Scene } from '../GameEngine/Core/Interfaces/Scene';
+import { Scene } from '@rherber/typescript-game-engine/src/Core/Interfaces/Scene';
 import { GameObject } from '../GameEngine/GameObjects/GameObject';
 import { Scene1TerrainSpec } from './Terrains/Scene1TerrainSpec';
 import { RectangleBackground } from '../GameEngine/Core/Helpers/RectangleBackground';
