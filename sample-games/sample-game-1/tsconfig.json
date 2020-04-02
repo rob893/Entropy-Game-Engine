@@ -1,11 +1,6 @@
 {
-    "extends": "../../tsconfig.base",
+    "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "outDir": "./dist"
-    },
-    "include": ["src/**/*"],
-    "exclude": ["**/__tests__", "**/__mocks__"],
-    "references": [
-        { "path": "../../packages/typescript-game-engine" }
-    ]
+        "declaration": false
+    }
 }

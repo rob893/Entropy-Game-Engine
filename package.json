@@ -6,12 +6,12 @@
         "compile": "tsc --build tsconfig.build.json",
         "compile-clean": "tsc --build tsconfig.build.json --clean",
         "watch": "tsc --build tsconfig.build.json --watch",
-        "lint": "./node_modules/.bin/eslint src/**/*.ts",
+        "lint": "./node_modules/.bin/eslint packages/**/*.ts sample-games/**/*.ts",
         "lint-fix": "./node_modules/.bin/eslint --fix src/**/*.ts",
-        "postinstall": "lerna run prepare && npm run compile",
         "prettier": "prettier --write **/*.{ts,js,css,html,json} !**/node_modules/** !**/dist/** !**/coverage/** !**/compiled/**",
         "test": "jest --coverage",
-        "test-watch": "jest --watchAll --coverage"
+        "test-watch": "jest --watchAll --coverage",
+        "fix": "lerna run link && lerna exec npm install"
     },
     "repository": {
         "type": "git",

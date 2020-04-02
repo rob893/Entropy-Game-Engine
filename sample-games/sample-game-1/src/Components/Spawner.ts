@@ -1,8 +1,4 @@
-import {
-    GameObject,
-    Component,
-    GameObjectConstructionParams,
-    Vector2} from '@rherber/typescript-game-engine';
+import { GameObject, Component, GameObjectConstructionParams, Vector2 } from '@rherber/typescript-game-engine';
 
 export class Spawner extends Component {
     public spawnRate = 10;

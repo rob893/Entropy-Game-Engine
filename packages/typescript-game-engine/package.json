@@ -17,6 +17,14 @@
         "url": "https://github.com/rob893/TypeScript-Game-Engine/issues"
     },
     "homepage": "https://github.com/rob893/TypeScript-Game-Engine#readme",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts"
+    "main": "dist/index",
+    "types": "dist/index",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "npm run clean && npm run compile",
+        "clean": "rm -rf ./dist",
+        "compile": "tsc -p tsconfig.build.json"
+    }
 }

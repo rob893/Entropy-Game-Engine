@@ -1,6 +1,6 @@
-import { Component, Slider, LiteEvent, GameObject, CustomLiteEvent } from "@rherber/typescript-game-engine";
-import { Damageable } from "../../Interfaces/Damageable";
-import { CharacterAnimator } from "./CharacterAnimator";
+import { Component, Slider, LiteEvent, GameObject, CustomLiteEvent } from '@rherber/typescript-game-engine';
+import { Damageable } from '../../Interfaces/Damageable';
+import { CharacterAnimator } from './CharacterAnimator';
 
 export class CharacterStats extends Component implements Damageable {
     private readonly _attackRange = 75;

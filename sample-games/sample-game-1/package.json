@@ -17,8 +17,11 @@
     "bugs": {
         "url": "https://github.com/rob893/TypeScript-Game-Engine/issues"
     },
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "dist/index",
+    "types": "dist/index",
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "start": "webpack-dev-server --open --config webpack.dev.js",
         "dev": "webpack-dev-server --open --config webpack.dev.js",
@@ -26,7 +29,7 @@
     },
     "dependencies": {
         "@aspnet/signalr": "^1.1.4",
-        "@rherber/typescript-game-engine": "file:../../packages/typescript-game-engine"
+        "@rherber/typescript-game-engine": "^1.0.0"
     },
     "devDependencies": {
         "@types/html-webpack-plugin": "^3.2.2",

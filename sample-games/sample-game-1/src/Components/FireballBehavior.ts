@@ -1,6 +1,5 @@
-import { GameObject, Component, Vector2, RectangleCollider, CollisionManifold } from "@rherber/typescript-game-engine";
-import { Explosion } from "../GameObjects/Explosion";
-
+import { GameObject, Component, Vector2, RectangleCollider, CollisionManifold } from '@rherber/typescript-game-engine';
+import { Explosion } from '../GameObjects/Explosion';
 
 export class FireballBehavior extends Component {
     private _movementDirection: Vector2 = Vector2.zero;

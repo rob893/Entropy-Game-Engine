@@ -1,11 +1,24 @@
 {
     "compilerOptions": {
-        "composite": true
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "strictBindCallApply": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "allowUnreachableCode": false,
+        "forceConsistentCasingInFileNames": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "declaration": true,
+        "target": "es2017",
+        "pretty": true,
+        "moduleResolution": "node",
+        "module": "es2015"
     },
-    "files": [],
-    "include": [],
-    "references": [
-        { "path": "./packages/typescript-game-engine" },
-        { "path": "./sample-games/sample-game-1" }
-    ]
+    "exclude": ["node_modules", "dist"]
 }

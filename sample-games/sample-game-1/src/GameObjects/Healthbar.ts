@@ -1,10 +1,4 @@
-import {
-    GameObject,
-    Layer,
-    Component,
-    PrefabSettings,
-    Slider,
-    Color} from '@rherber/typescript-game-engine';
+import { GameObject, Layer, Component, PrefabSettings, Slider, Color } from '@rherber/typescript-game-engine';
 
 export class Healthbar extends GameObject {
     protected buildInitialComponents(): Component[] {
