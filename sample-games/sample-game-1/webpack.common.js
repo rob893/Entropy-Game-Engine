@@ -44,7 +44,10 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js']
+        extensions: ['.tsx', '.ts', '.js'],
+        alias: {
+            "@rherber/typescript-game-engine": path.resolve(__dirname, 'packages/src')
+        }
     },
     output: {
         filename: 'bundle.js',
