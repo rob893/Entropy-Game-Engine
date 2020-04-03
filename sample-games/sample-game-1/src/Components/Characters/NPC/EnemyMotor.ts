@@ -1,4 +1,4 @@
-import { GameObject, Component, Vector2, Transform, NavAgent } from '@rherber/typescript-game-engine';
+import { GameObject, Component, Vector2, Transform, NavAgent } from '@rherber/entropy-game-engine';
 import { CharacterAnimator } from '../CharacterAnimator';
 
 export class EnemyMotor extends Component {

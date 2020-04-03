@@ -1,4 +1,4 @@
-import { GameObject, Component, Vector2, RectangleCollider, CollisionManifold } from '@rherber/typescript-game-engine';
+import { GameObject, Component, Vector2, RectangleCollider, CollisionManifold } from '@rherber/entropy-game-engine';
 import { Explosion } from '../GameObjects/Explosion';
 
 export class FireballBehavior extends Component {

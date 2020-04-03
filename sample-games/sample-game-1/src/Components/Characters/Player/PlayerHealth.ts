@@ -1,4 +1,4 @@
-import { GameObject, Component, AudioSource } from '@rherber/typescript-game-engine';
+import { GameObject, Component, AudioSource } from '@rherber/entropy-game-engine';
 import { Damageable } from '../../../Interfaces/Damageable';
 import { GameManager } from '../../GameManager';
 

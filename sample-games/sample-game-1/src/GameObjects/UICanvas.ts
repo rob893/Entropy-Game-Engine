@@ -6,7 +6,7 @@ import {
     GameObjectConstructionParams,
     Button,
     ClickedOnDetector
-} from '@rherber/typescript-game-engine';
+} from '@rherber/entropy-game-engine';
 
 export class UICanvas extends GameObject {
     protected buildInitialComponents(): Component[] {

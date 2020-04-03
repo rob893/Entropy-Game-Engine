@@ -1,4 +1,4 @@
-import { GameEngine, Color } from '@rherber/typescript-game-engine';
+import { GameEngine, Color } from '@rherber/entropy-game-engine';
 import { scene1, scene3 } from './Scenes';
 
 async function main(): Promise<void> {

@@ -8,5 +8,5 @@
     },
     "include": ["src/**/*"],
     "exclude": ["**/__tests__", "**/__mocks__"],
-    "references": [{ "path": "../../packages/typescript-game-engine/tsconfig.build.json" }]
+    "references": [{ "path": "../../packages/entropy-game-engine/tsconfig.build.json" }]
 }

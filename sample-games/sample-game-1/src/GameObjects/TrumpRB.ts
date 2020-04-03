@@ -9,7 +9,7 @@ import {
     Animator,
     PrefabSettings,
     Layer
-} from '@rherber/typescript-game-engine';
+} from '@rherber/entropy-game-engine';
 
 export class TrumpRB extends GameObject {
     protected buildInitialComponents(): Component[] {

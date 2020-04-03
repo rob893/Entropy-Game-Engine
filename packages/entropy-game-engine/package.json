@@ -1,12 +1,12 @@
 {
-    "name": "@rherber/typescript-game-engine",
+    "name": "@rherber/entropy-game-engine",
     "version": "1.0.2",
     "description": "Custom 2D game engine written in TypeScript.",
     "author": "Robert Herber <rwherber@gmail.com>",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/rob893/TypeScript-Game-Engine.git"
+        "url": "git+https://github.com/rob893/Entropy-Game-Engine.git"
     },
     "keywords": [
         "game",
@@ -14,9 +14,9 @@
         "typescript"
     ],
     "bugs": {
-        "url": "https://github.com/rob893/TypeScript-Game-Engine/issues"
+        "url": "https://github.com/rob893/Entropy-Game-Engine/issues"
     },
-    "homepage": "https://github.com/rob893/TypeScript-Game-Engine#readme",
+    "homepage": "https://github.com/rob893/Entropy-Game-Engine#readme",
     "main": "dist/index",
     "types": "dist/index",
     "files": [

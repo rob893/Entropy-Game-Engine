@@ -8,7 +8,7 @@ import {
     AudioClip,
     Animator,
     Animation
-} from '@rherber/typescript-game-engine';
+} from '@rherber/entropy-game-engine';
 import { Exploder } from '../Components/Exploder';
 
 export class Explosion extends GameObject {

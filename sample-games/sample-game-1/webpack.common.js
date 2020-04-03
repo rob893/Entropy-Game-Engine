@@ -46,7 +46,7 @@ module.exports = {
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
         alias: {
-            '@rherber/typescript-game-engine': '@rherber/typescript-game-engine/src'
+            '@rherber/entropy-game-engine': '@rherber/entropy-game-engine/src'
         }
     },
     output: {
@@ -55,7 +55,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'TypeScript Game Engine',
+            title: 'Entropy Game Engine',
             template: 'src/index.html',
             favicon: 'src/Assets/Images/favicon.ico'
         }),

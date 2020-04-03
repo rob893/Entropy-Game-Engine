@@ -1,4 +1,4 @@
-import { Animation } from '@rherber/typescript-game-engine';
+import { Animation } from '@rherber/entropy-game-engine';
 
 export interface CharacterAnimations {
     rightAttackAnimations: Animation[];

@@ -1,4 +1,4 @@
-import { GameObject, Component, Transform } from '@rherber/typescript-game-engine';
+import { GameObject, Component, Transform } from '@rherber/entropy-game-engine';
 import { State } from '../../../Interfaces/State';
 import { CharacterStats } from '../CharacterStats';
 

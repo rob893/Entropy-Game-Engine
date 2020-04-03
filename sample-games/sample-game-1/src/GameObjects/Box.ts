@@ -9,7 +9,7 @@ import {
     Component,
     Rigidbody,
     PrefabSettings
-} from '@rherber/typescript-game-engine';
+} from '@rherber/entropy-game-engine';
 
 export class Box extends GameObject {
     public static buildBox(

@@ -6,7 +6,7 @@ import {
     KeyCode,
     Rigidbody,
     Vector2
-} from '@rherber/typescript-game-engine';
+} from '@rherber/entropy-game-engine';
 import { TrumpRB } from '../GameObjects/TrumpRB';
 
 export class GameManager extends Component implements RenderableGUI {

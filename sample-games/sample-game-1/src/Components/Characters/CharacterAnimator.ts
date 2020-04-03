@@ -1,4 +1,4 @@
-import { Component, Animator, GameObject, Animation } from '@rherber/typescript-game-engine';
+import { Component, Animator, GameObject, Animation } from '@rherber/entropy-game-engine';
 import { CharacterAnimations } from '../../Interfaces/CharacterAnimations';
 
 export class CharacterAnimator extends Component {

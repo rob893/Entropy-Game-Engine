@@ -12,7 +12,6 @@ import { Transform } from '../../Components/Transform';
 import { Vector2 } from '../../Core/Helpers/Vector2';
 import { Rigidbody } from '../../Components/Rigidbody';
 
-
 class TestComponent extends Component {}
 
 class TestComponent2 extends Component {

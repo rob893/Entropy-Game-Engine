@@ -7,16 +7,16 @@
     "private": true,
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/rob893/TypeScript-Game-Engine.git"
+        "url": "git+https://github.com/rob893/Entropy-Game-Engine.git"
     },
     "keywords": [
         "game",
         "engine",
         "typescript"
     ],
-    "homepage": "https://github.com/rob893/TypeScript-Game-Engine#readme",
+    "homepage": "https://github.com/rob893/Entropy-Game-Engine#readme",
     "bugs": {
-        "url": "https://github.com/rob893/TypeScript-Game-Engine/issues"
+        "url": "https://github.com/rob893/Entropy-Game-Engine/issues"
     },
     "main": "dist/index",
     "types": "dist/index",
@@ -30,7 +30,7 @@
     },
     "dependencies": {
         "@aspnet/signalr": "^1.1.4",
-        "@rherber/typescript-game-engine": "^1.0.2"
+        "@rherber/entropy-game-engine": "file:../../packages/entropy-game-engine"
     },
     "devDependencies": {
         "@types/html-webpack-plugin": "^3.2.2",

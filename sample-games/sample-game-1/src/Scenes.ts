@@ -7,7 +7,7 @@ import {
     AssetPool,
     SpriteSheet,
     AudioClip
-} from '@rherber/typescript-game-engine';
+} from '@rherber/entropy-game-engine';
 import { Scene1TerrainSpec } from './Terrains/Scene1TerrainSpec';
 import { GameManagerObject } from './GameObjects/GameManagerObject';
 import { Player } from './GameObjects/Player';
