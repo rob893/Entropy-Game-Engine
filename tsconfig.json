@@ -1,26 +1,10 @@
 {
+    "extends": "./tsconfig.build.json",
     "compilerOptions": {
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "alwaysStrict": true,
-        "strictBindCallApply": true,
-        "strictNullChecks": true,
-        "strictFunctionTypes": true,
-        "strictPropertyInitialization": true,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitReturns": true,
-        "allowUnreachableCode": false,
-        "forceConsistentCasingInFileNames": true,
-        "removeComments": true,
-        "preserveConstEnums": true,
-        "outDir": "./compiled/",
-        "sourceMap": true,
-        "declaration": false,
-        "target": "es2017",
-        "pretty": true,
-        "moduleResolution": "node",
-        "module": "es2015"
-    },
-    "include": ["src/**/*.ts", "**/*.test.ts"],
-    "exclude": ["node_modules"]
+        "baseUrl": ".",
+        "paths": {
+            "*": ["types/*"],
+            "@rherber/entropy-game-engine": ["./packages/entropy-game-engine/src"]
+        }
+    }
 }

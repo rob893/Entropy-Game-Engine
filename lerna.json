@@ -1,0 +1,4 @@
+{
+    "packages": ["packages/*", "sample-games/*"],
+    "version": "independent"
+}
