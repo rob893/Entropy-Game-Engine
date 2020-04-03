@@ -1,9 +1,10 @@
 {
     "name": "@rherber/sample-game-1",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "description": "Custom 2D game engine written in TypeScript.",
     "author": "Robert Herber",
     "license": "MIT",
+    "private": true,
     "repository": {
         "type": "git",
         "url": "git+https://github.com/rob893/TypeScript-Game-Engine.git"

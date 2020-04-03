@@ -1,6 +1,6 @@
 {
     "name": "@rherber/typescript-game-engine",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "description": "Custom 2D game engine written in TypeScript.",
     "author": "Robert Herber <rwherber@gmail.com>",
     "license": "MIT",
@@ -25,6 +25,10 @@
     "scripts": {
         "build": "npm run clean && npm run compile",
         "clean": "rm -rf ./dist && rm -rf tsconfig.build.tsbuildinfo",
-        "compile": "tsc -p tsconfig.build.json"
+        "compile": "tsc -p tsconfig.build.json",
+        "prepare": "npm run build"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }
