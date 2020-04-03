@@ -1,5 +1,7 @@
-import { BinaryHeap } from '../src/GameEngine/Core/Helpers/BinaryHeap';
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
+
+import { BinaryHeap } from '../BinaryHeap';
+
 expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
 test('Tests the binary heap static is binary heap functions', () => {

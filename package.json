@@ -11,7 +11,8 @@
         "prettier": "prettier --write **/*.{ts,js,css,html,json} !**/node_modules/** !**/dist/** !**/coverage/** !**/compiled/**",
         "test": "jest --coverage",
         "test-watch": "jest --watchAll --coverage",
-        "fix": "lerna run link && lerna exec npm install"
+        "postinstall": "lerna bootstrap",
+        "start": "cd sample-games/sample-game-1 && npm start"
     },
     "repository": {
         "type": "git",
@@ -28,20 +29,15 @@
         "url": "https://github.com/rob893/TypeScript-Game-Engine/issues"
     },
     "homepage": "https://github.com/rob893/TypeScript-Game-Engine#readme",
-    "dependencies": {
-        "@rherber/typescript-game-engine": "file:packages/typescript-game-engine",
-        "@rherber/sample-game-1": "file:sample-games/sample-game-1"
-    },
     "devDependencies": {
-        "@types/jest": "^25.1.4",
+        "@types/jest": "^25.1.5",
         "@typescript-eslint/eslint-plugin": "^2.26.0",
         "@typescript-eslint/parser": "^2.26.0",
         "acorn": "^7.1.1",
         "eslint": "^6.8.0",
         "eslint-config-prettier": "^6.10.1",
-        "eslint-loader": "^3.0.3",
         "eslint-plugin-prettier": "^3.1.2",
-        "jest": "^25.2.4",
+        "jest": "^25.2.6",
         "jest-canvas-mock": "^2.2.0",
         "jest-matcher-deep-close-to": "^1.3.0",
         "lerna": "^3.20.2",

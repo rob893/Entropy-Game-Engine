@@ -1,4 +1,4 @@
-import { GameObject, Component, RectangleRenderer, PrefabSettings, Layer } from '@rherber/typescript-game-engine/src';
+import { GameObject, Component, RectangleRenderer, PrefabSettings, Layer } from '@rherber/typescript-game-engine';
 
 export class Weapon extends GameObject {
     protected buildInitialComponents(): Component[] {

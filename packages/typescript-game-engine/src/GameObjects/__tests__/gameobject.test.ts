@@ -1,16 +1,17 @@
 import 'jest-canvas-mock';
-import { GameObject } from '../src/GameEngine/GameObjects/GameObject';
-import { Component } from '../src/GameEngine/Components/Component';
-import { Rigidbody } from '../src/GameEngine/Components/Rigidbody';
-import { Layer } from '../src/GameEngine/Core/Enums/Layer';
-import { PrefabSettings } from '../src/GameEngine/Core/Interfaces/PrefabSettings';
-import { Transform } from '../src/GameEngine/Components/Transform';
-import { Vector2 } from '../src/GameEngine/Core/Helpers/Vector2';
-import { GameEngine } from '../src/GameEngine/Core/GameEngine';
-import { Scene } from '../src/GameEngine/Core/Interfaces/Scene';
-import { AssetPool } from '../src/GameEngine/Core/Helpers/AssetPool';
-import { RectangleBackground } from '../src/GameEngine/Core/Helpers/RectangleBackground';
-import { GameObjectConstructionParams } from '../src/GameEngine/Core/Interfaces/GameObjectConstructionParams';
+import { Component } from '../../Components/Component';
+import { GameObject } from '../GameObject';
+import { PrefabSettings } from '../../Core/Interfaces/PrefabSettings';
+import { GameObjectConstructionParams } from '../../Core/Interfaces/GameObjectConstructionParams';
+import { RectangleBackground } from '../../Core/Helpers/RectangleBackground';
+import { GameEngine } from '../../Core/GameEngine';
+import { Scene } from '../../Core/Interfaces/Scene';
+import { Layer } from '../../Core/Enums/Layer';
+import { AssetPool } from '../../Core/Helpers/AssetPool';
+import { Transform } from '../../Components/Transform';
+import { Vector2 } from '../../Core/Helpers/Vector2';
+import { Rigidbody } from '../../Components/Rigidbody';
+
 
 class TestComponent extends Component {}
 

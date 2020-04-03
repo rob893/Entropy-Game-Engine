@@ -6,7 +6,7 @@ import {
     GameObjectConstructionParams,
     Button,
     ClickedOnDetector
-} from '@rherber/typescript-game-engine/src';
+} from '@rherber/typescript-game-engine';
 
 export class UICanvas extends GameObject {
     protected buildInitialComponents(): Component[] {

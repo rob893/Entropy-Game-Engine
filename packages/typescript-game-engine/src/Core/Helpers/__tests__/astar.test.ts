@@ -1,7 +1,8 @@
-import { AStarSearch } from '../src/GameEngine/Core/Helpers/AStarSearch';
-import { NavGrid } from '../src/GameEngine/Core/Helpers/NavGrid';
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
-import { Vector2 } from '../src/GameEngine/Core/Helpers/Vector2';
+
+import { AStarSearch } from '../AStarSearch';
+import { NavGrid } from '../NavGrid';
+import { Vector2 } from '../Vector2';
 
 expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 

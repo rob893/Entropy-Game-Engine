@@ -1,4 +1,4 @@
-import { PriorityQueue } from '../src/GameEngine/Core/Helpers/PriorityQueue';
+import { PriorityQueue } from '../PriorityQueue';
 
 test('Tests the priority queue', () => {
     const q = new PriorityQueue<string>();
