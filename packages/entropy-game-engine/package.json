@@ -1,6 +1,6 @@
 {
     "name": "@rherber/entropy-game-engine",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Custom 2D game engine written in TypeScript.",
     "author": "Robert Herber <rwherber@gmail.com>",
     "license": "MIT",
