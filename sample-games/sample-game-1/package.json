@@ -1,6 +1,6 @@
 {
     "name": "@rherber/sample-game-1",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Custom 2D game engine written in TypeScript.",
     "author": "Robert Herber",
     "license": "MIT",
@@ -29,7 +29,7 @@
     },
     "dependencies": {
         "@aspnet/signalr": "^1.1.4",
-        "@rherber/typescript-game-engine": "^1.0.0"
+        "@rherber/typescript-game-engine": "^1.0.1"
     },
     "devDependencies": {
         "@types/html-webpack-plugin": "^3.2.2",
