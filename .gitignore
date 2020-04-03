@@ -3,4 +3,4 @@ dist/
 compiled/
 coverage/
 *.tsbuildinfo
-lerna-debug-log
+lerna-debug.log
