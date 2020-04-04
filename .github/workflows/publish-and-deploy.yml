@@ -5,12 +5,10 @@ on:
     branches: [master]
 
 jobs:
-  deploy:
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+  lint_and_test:
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip test]')"
     runs-on: ubuntu-latest
-    name: Deply to Remote Server
-    needs:
-      - lint_and_test
+    name: Lint and Test
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -18,21 +16,13 @@ jobs:
           node-version: "12"
       - name: Install dependencies
         run: npm install
-      - name: Build
-        run: npx lerna run build
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          name: id_rsa
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Clean remote directory
-        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
-      - name: Copy build to remote server
-        run: scp -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm test
 
   publish_packages:
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip publish]')"
     runs-on: ubuntu-latest
     name: Publish Packages
     needs:
@@ -65,10 +55,12 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-  lint_and_test:
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+  deploy:
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip deploy]')"
     runs-on: ubuntu-latest
-    name: Lint and Test
+    name: Deply to Remote Server
+    needs:
+      - lint_and_test
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -76,7 +68,15 @@ jobs:
           node-version: "12"
       - name: Install dependencies
         run: npm install
-      - name: Lint
-        run: npm run lint
-      - name: Test
-        run: npm test
+      - name: Build
+        run: npx lerna run build
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          name: id_rsa
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Clean remote directory
+        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
+      - name: Copy build to remote server
+        run: scp -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
