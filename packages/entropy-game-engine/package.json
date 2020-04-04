@@ -1,6 +1,6 @@
 {
     "name": "@entropy-engine/entropy-game-engine",
-    "version": "1.0.6",
+    "version": "1.0.5",
     "description": "Custom 2D game engine written in TypeScript.",
     "author": "Robert Herber <rwherber@gmail.com>",
     "license": "MIT",
@@ -19,6 +19,10 @@
     "homepage": "https://github.com/rob893/Entropy-Game-Engine#readme",
     "main": "dist/index",
     "types": "dist/index",
+    "files": [
+        "src",
+        "dist"
+    ],
     "scripts": {
         "build": "npm run clean && npm run compile",
         "clean": "rm -rf ./dist && rm -rf tsconfig.build.tsbuildinfo",

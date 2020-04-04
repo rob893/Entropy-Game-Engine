@@ -1,6 +1,6 @@
 {
     "name": "@entropy-engine/sample-game-1",
-    "version": "1.0.6",
+    "version": "1.0.5",
     "description": "Custom 2D game engine written in TypeScript.",
     "author": "Robert Herber",
     "license": "MIT",
@@ -20,6 +20,10 @@
     },
     "main": "dist/index",
     "types": "dist/index",
+    "files": [
+        "src",
+        "dist"
+    ],
     "scripts": {
         "start": "webpack-dev-server --open --config webpack.dev.js",
         "dev": "webpack-dev-server --open --config webpack.dev.js",
