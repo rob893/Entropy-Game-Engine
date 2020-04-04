@@ -19,9 +19,6 @@
     "homepage": "https://github.com/rob893/Entropy-Game-Engine#readme",
     "main": "dist/index",
     "types": "dist/index",
-    "files": [
-        "dist"
-    ],
     "scripts": {
         "build": "npm run clean && npm run compile",
         "clean": "rm -rf ./dist && rm -rf tsconfig.build.tsbuildinfo",
