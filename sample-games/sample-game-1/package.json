@@ -27,7 +27,7 @@
     "scripts": {
         "start": "webpack-dev-server --open --config webpack.dev.js",
         "dev": "webpack-dev-server --open --config webpack.dev.js",
-        "build": "webpack --config webpack.prod.js"
+        "build": "npm i --only-prod && webpack --config webpack.prod.js"
     },
     "dependencies": {
         "@aspnet/signalr": "^1.1.4",
