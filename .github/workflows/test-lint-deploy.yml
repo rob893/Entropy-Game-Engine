@@ -21,7 +21,7 @@ jobs:
       with:
         node-version: '12.16'
     - run: npm install
-    - run: npm test
-    - run: npm run lint
+    # - run: npm test
+    # - run: npm run lint
     - run: npx lerna run build
-    - run: scp -i ${{ secrets.SERVER_SSH_KEY }} -r .\sample-games\sample-game-1\dist\*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
+    - run: scp -i ${{ secrets.SERVER_SSH_KEY }} -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
