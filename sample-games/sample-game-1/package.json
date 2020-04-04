@@ -1,6 +1,6 @@
 {
     "name": "@entropy-engine/sample-game-1",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "description": "Custom 2D game engine written in TypeScript.",
     "author": "Robert Herber",
     "license": "MIT",
