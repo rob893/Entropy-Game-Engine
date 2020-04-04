@@ -29,5 +29,5 @@ jobs:
       with:
         key: ${{ secrets.SERVER_SSH_KEY }}
         name: id_rsa # optional
-        known_hosts: rwherber.com
+    - run: ssh-keyscan ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
     - run: scp -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
