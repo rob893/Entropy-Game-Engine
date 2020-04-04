@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
       - name: Build
         run: npx lerna run build
@@ -26,9 +26,9 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           name: id_rsa
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Clean Remote Directory
+      - name: Clean remote directory
         run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
-      - name: Copy Build to Remote Server
+      - name: Copy build to remote server
         run: scp -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
 
   publish_packages:
@@ -42,17 +42,23 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
-      - name: Setup git auth
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npx lerna run build
+      - name: Authenticate with GitHub
         run: |
           # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"
           git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
           git checkout "${GITHUB_REF:11}"
           git config user.name "Github Actions"
           git config user.email "bot@github.com"
-      - name: Install Dependencies
-        run: npm install
-      - name: Build
-        run: npx lerna run build
+      - name: Authenticate with registry
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish
         run: npx lerna publish --yes
         env:
@@ -68,7 +74,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
       - name: Lint
         run: npm run lint
