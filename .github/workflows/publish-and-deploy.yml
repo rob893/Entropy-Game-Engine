@@ -1,11 +1,11 @@
-name: Test, Lint, Build, Publish, and Deploy
+name: Publish and Deploy
 
 on:
   push:
     branches: [master]
 
 jobs:
-  build_and_deploy_deploy:
+  deploy:
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     runs-on: ubuntu-latest
     name: Deply to Remote Server
@@ -51,6 +51,8 @@ jobs:
           git config user.email "bot@github.com"
       - name: Install Dependencies
         run: npm install
+      - name: Build
+        run: npx lerna run build
       - name: Publish
         run: npx lerna publish --yes
         env:
