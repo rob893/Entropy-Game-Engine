@@ -24,4 +24,10 @@ jobs:
     # - run: npm test
     # - run: npm run lint
     - run: npx lerna run build
-    - run: scp -i ${{ secrets.SERVER_SSH_KEY }} -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        name: id_rsa # optional
+        known_hosts: rwherber.com
+    - run: scp -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
