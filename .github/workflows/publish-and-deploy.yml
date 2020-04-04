@@ -53,7 +53,7 @@ jobs:
           git checkout "${GITHUB_REF:11}"
           git config user.name "Github Actions"
           git config user.email "bot@github.com"
-      - name: Authenticate with registry
+      - name: Authenticate with NPM
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
           npm whoami
