@@ -50,12 +50,11 @@ jobs:
         git config user.email "bot@github.com"
     - name: Install Dependencies
       run: npm install
-    - name: Build
-      run: npx lerna run build
     - name: Publish
-      run: npx lerna publish --yes --message 'chore release new versions'
+      run: npx lerna publish --yes
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
   lint_and_test:
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     runs-on: ubuntu-latest
