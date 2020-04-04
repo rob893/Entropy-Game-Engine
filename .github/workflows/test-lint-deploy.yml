@@ -5,8 +5,6 @@ name: Test, Lint, Build, Publish, and Deploy
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -25,4 +23,4 @@ jobs:
     - run: npm install
     - run: npm test
     - run: npm run lint
-    - run: lerna run build
+    - run: npx lerna run build
