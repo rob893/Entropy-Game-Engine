@@ -1,6 +1,6 @@
 import { ThrowableBall } from '../../../GameObjects/ThrowableBall';
 import { CharacterAnimator } from '../CharacterAnimator';
-import { Component, Rigidbody, GameObject, EventType, KeyCode, Vector2 } from '@rherber/entropy-game-engine';
+import { Component, Rigidbody, GameObject, EventType, KeyCode, Vector2 } from '@entropy-engine/entropy-game-engine';
 
 export class PlayerPhysicsMotor extends Component {
     private movingRight: boolean = false;

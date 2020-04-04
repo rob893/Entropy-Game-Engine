@@ -1,4 +1,4 @@
-import { GameObject, Component, RectangleRenderer, PrefabSettings, Layer } from '@rherber/entropy-game-engine';
+import { GameObject, Component, RectangleRenderer, PrefabSettings, Layer } from '@entropy-engine/entropy-game-engine';
 
 export class Weapon extends GameObject {
     protected buildInitialComponents(): Component[] {

@@ -7,7 +7,7 @@ import {
     Animator,
     Animation,
     RectangleCollider
-} from '@rherber/entropy-game-engine';
+} from '@entropy-engine/entropy-game-engine';
 import { FireballBehavior } from '../Components/FireballBehavior';
 
 export class Fireball extends GameObject {

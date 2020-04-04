@@ -6,7 +6,7 @@ import {
     RectangleCollider,
     RectangleRenderer,
     Color
-} from '@rherber/entropy-game-engine';
+} from '@entropy-engine/entropy-game-engine';
 
 export class Ground extends GameObject {
     protected buildInitialComponents(): Component[] {

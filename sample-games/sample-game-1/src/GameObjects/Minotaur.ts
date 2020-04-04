@@ -10,7 +10,7 @@ import {
     PhysicalMaterial,
     NavAgent,
     GameObjectConstructionParams
-} from '@rherber/entropy-game-engine';
+} from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 import { NPCController } from '../Components/Characters/NPC/NPCController';

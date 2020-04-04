@@ -9,7 +9,7 @@ import {
     Animator,
     PrefabSettings,
     Layer
-} from '@rherber/entropy-game-engine';
+} from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { EnemyMotor } from '../Components/Characters/NPC/EnemyMotor';

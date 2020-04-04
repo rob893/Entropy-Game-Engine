@@ -1,4 +1,4 @@
-import { GameObject, Layer, Component, PrefabSettings, FPSCounter } from '@rherber/entropy-game-engine';
+import { GameObject, Layer, Component, PrefabSettings, FPSCounter } from '@entropy-engine/entropy-game-engine';
 import { GameManager } from '../Components/GameManager';
 
 export class GameManagerObject extends GameObject {

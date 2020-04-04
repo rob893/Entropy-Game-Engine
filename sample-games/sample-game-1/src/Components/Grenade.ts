@@ -1,4 +1,4 @@
-import { Component } from '@rherber/entropy-game-engine';
+import { Component } from '@entropy-engine/entropy-game-engine';
 import { Explosion } from '../GameObjects/Explosion';
 
 export class Grenade extends Component {

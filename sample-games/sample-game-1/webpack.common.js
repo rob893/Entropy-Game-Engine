@@ -46,7 +46,7 @@ module.exports = {
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
         alias: {
-            '@rherber/entropy-game-engine': '@rherber/entropy-game-engine/src'
+            '@entropy-engine/entropy-game-engine': '@entropy-engine/entropy-game-engine/src'
         }
     },
     output: {

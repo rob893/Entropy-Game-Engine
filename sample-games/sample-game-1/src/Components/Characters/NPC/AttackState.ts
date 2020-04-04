@@ -1,4 +1,4 @@
-import { GameObject, Component, Vector2, Transform } from '@rherber/entropy-game-engine';
+import { GameObject, Component, Vector2, Transform } from '@entropy-engine/entropy-game-engine';
 import { State } from '../../../Interfaces/State';
 import { CharacterStats } from '../CharacterStats';
 import { CharacterAnimator } from '../CharacterAnimator';

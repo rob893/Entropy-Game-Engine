@@ -1,5 +1,5 @@
 {
-    "name": "@rherber/entropy-game-engine",
+    "name": "@entropy-engine/entropy-game-engine",
     "version": "1.0.4",
     "description": "Custom 2D game engine written in TypeScript.",
     "author": "Robert Herber <rwherber@gmail.com>",

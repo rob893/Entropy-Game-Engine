@@ -7,7 +7,7 @@ import {
     PhysicalMaterial,
     PrefabSettings,
     Layer
-} from '@rherber/entropy-game-engine';
+} from '@entropy-engine/entropy-game-engine';
 import { Grenade } from '../Components/Grenade';
 
 export class ThrowableBall extends GameObject {

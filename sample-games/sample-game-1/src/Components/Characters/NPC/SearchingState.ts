@@ -1,7 +1,7 @@
 import { State } from '../../../Interfaces/State';
 import { NPCController } from './NPCController';
 import { CharacterAnimator } from '../CharacterAnimator';
-import { Component, GameObject } from '@rherber/entropy-game-engine';
+import { Component, GameObject } from '@entropy-engine/entropy-game-engine';
 
 export class SearchingState extends Component implements State {
     private timer = 0;

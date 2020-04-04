@@ -7,7 +7,7 @@ import {
     Vector2,
     CollisionManifold,
     Layer
-} from '@rherber/entropy-game-engine';
+} from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimator } from '../CharacterAnimator';
 import { CharacterStats } from '../CharacterStats';
 import { Spawner } from '../../Spawner';

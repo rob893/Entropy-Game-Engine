@@ -4,7 +4,7 @@
         "baseUrl": ".",
         "paths": {
             "*": ["types/*"],
-            "@rherber/entropy-game-engine": ["./packages/entropy-game-engine/src"]
+            "@entropy-engine/entropy-game-engine": ["./packages/entropy-game-engine/src"]
         }
     }
 }
