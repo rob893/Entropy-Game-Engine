@@ -23,4 +23,5 @@ jobs:
     - run: npm install
     - run: npm test
     - run: npm run lint
+    - run: echo cd sample-games/sample-game-1/ && npm i
     - run: npx lerna run build
