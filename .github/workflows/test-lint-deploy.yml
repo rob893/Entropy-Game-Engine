@@ -17,13 +17,13 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-#     - uses: actions/setup-node@v1
-#       with:
-#         node-version: '12.16'
-    # - run: npm install
-    # - run: npm test
-    # - run: npm run lint
-    # - run: npx lerna run build
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.16'
+    - run: npm install
+    - run: npm test
+    - run: npm run lint
+    - run: npx lerna run build
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
@@ -31,4 +31,4 @@ jobs:
         name: id_rsa # optional
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
     - run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
-    # - run: scp -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
+    - run: scp -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
