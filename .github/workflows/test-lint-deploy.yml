@@ -6,11 +6,11 @@ on:
 
 jobs:
   build_and_deploy_deploy:
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     runs-on: ubuntu-latest
     name: Deply to Remote Server
     needs:
-      - test
-      - lint
+      - lint_and_test
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
@@ -30,21 +30,36 @@ jobs:
       run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
     - name: Copy Build to Remote Server
       run: scp -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
-  test:
+  publish_packages:
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     runs-on: ubuntu-latest
-    name: Test
+    name: Publish Packages
+    needs:
+      - lint_and_test
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
         node-version: '12'
+    - name: Setup git auth
+      run: |
+        # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"
+        git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
+        git checkout "${GITHUB_REF:11}"
+        git config user.name "Github Actions"
+        git config user.email "bot@github.com"
     - name: Install Dependencies
       run: npm install
-    - name: Test
-      run: npm test
-  lint:
+    - name: Build
+      run: npx lerna run build
+    - name: Publish
+      run: npx lerna publish --yes --message 'chore release new versions'
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  lint_and_test:
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     runs-on: ubuntu-latest
-    name: Lint
+    name: Lint and Test
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
@@ -54,3 +69,6 @@ jobs:
       run: npm install
     - name: Lint
       run: npm run lint
+    - name: Test
+      run: npm test
+    
