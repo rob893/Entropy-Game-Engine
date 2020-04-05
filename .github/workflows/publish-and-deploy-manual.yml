@@ -21,15 +21,11 @@ jobs:
     steps:
       - name: Check Password
         run: |
-          if [ $PASSED_PASSWORD !=  $DEPLOY_PASSWORD ]
+          if [ ::add-mask::${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]
           then 
             echo Invalid value 
             exit 1 
           fi
-        env:
-          PASSED_PASSWORD: ${{ ::add-mask::github.event.client_payload.Password }}
-          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
-
   # lint_and_test:
   #   needs:
   #     - check_password
@@ -46,7 +42,6 @@ jobs:
   #       run: npm run lint
   #     - name: Test
   #       run: npm test
-
   # publish_packages:
   #   runs-on: ubuntu-latest
   #   name: Publish Packages
@@ -79,7 +74,6 @@ jobs:
   #       run: npx lerna publish --yes
   #       env:
   #         GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
   # deploy:
   #   runs-on: ubuntu-latest
   #   name: Deply to Remote Server
