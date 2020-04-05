@@ -6,7 +6,6 @@
 # SERVER_SSH_KEY: the private key that matches the public key on the remote server
 # KNOWN_HOSTS: the known hosts. Run `ssh-keyscan {{ IP/Domain }}` to obtain this
 # NPM_TOKEN: access token for NPM. Obtained on NPM site.
-# DEPLOY_PASSWORD: Password required to manually deploy.
 
 name: Publish and Deploy
 
@@ -27,79 +26,79 @@ jobs:
             exit 1 
           fi
 
-  # lint_and_test:
-  #   needs:
-  #     - check_password
-  #   runs-on: ubuntu-latest
-  #   name: Lint and Test
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-node@v1
-  #       with:
-  #         node-version: "12"
-  #     - name: Install dependencies
-  #       run: npm install
-  #     - name: Lint
-  #       run: npm run lint
-  #     - name: Test
-  #       run: npm test
+  lint_and_test:
+    needs:
+      - check_response
+    runs-on: ubuntu-latest
+    name: Lint and Test
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm test
 
-  # publish_packages:
-  #   runs-on: ubuntu-latest
-  #   name: Publish Packages
-  #   needs:
-  #     - check_password
-  #     - lint_and_test
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-node@v1
-  #       with:
-  #         node-version: "12"
-  #     - name: Install dependencies
-  #       run: npm install
-  #     - name: Build
-  #       run: npx lerna run build
-  #     - name: Authenticate with GitHub
-  #       run: |
-  #         # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"
-  #         git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
-  #         git checkout "${GITHUB_REF:11}"
-  #         git config user.name "Github Actions"
-  #         git config user.email "bot@github.com"
-  #     - name: Authenticate with NPM
-  #       run: |
-  #         echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-  #         npm whoami
-  #       env:
-  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  #     - name: Publish
-  #       run: npx lerna publish --yes
-  #       env:
-  #         GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  publish_packages:
+    runs-on: ubuntu-latest
+    name: Publish Packages
+    needs:
+      - check_response
+      - lint_and_test
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npx lerna run build
+      - name: Authenticate with GitHub
+        run: |
+          # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"
+          git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
+          git checkout "${GITHUB_REF:11}"
+          git config user.name "Github Actions"
+          git config user.email "bot@github.com"
+      - name: Authenticate with NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish
+        run: npx lerna publish --yes
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   name: Deply to Remote Server
-  #   needs:
-  #     - check_password
-  #     - lint_and_test
-  #     - publish_packages
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-node@v1
-  #       with:
-  #         node-version: "12"
-  #     - name: Install dependencies
-  #       run: npm install
-  #     - name: Build
-  #       run: npx lerna run build
-  #     - name: Install SSH key
-  #       uses: shimataro/ssh-key-action@v2
-  #       with:
-  #         key: ${{ secrets.SERVER_SSH_KEY }}
-  #         name: id_rsa
-  #         known_hosts: ${{ secrets.KNOWN_HOSTS }}
-  #     - name: Clean remote directory
-  #       run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
-  #     - name: Copy build to remote server
-  #       run: scp -r ${{ secrets.DEPLOY_SOURCE }} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deply to Remote Server
+    needs:
+      - check_response
+      - lint_and_test
+      - publish_packages
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npx lerna run build
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          name: id_rsa
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Clean remote directory
+        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
+      - name: Copy build to remote server
+        run: scp -r ${{ secrets.DEPLOY_SOURCE }} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
