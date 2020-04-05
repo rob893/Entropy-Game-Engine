@@ -3,6 +3,8 @@ name: Lint and Test
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
+  repository_dispatch:
+    types: [run_tests]
 
 jobs:
   lint_and_test:

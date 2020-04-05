@@ -12,6 +12,8 @@ name: Publish and Deploy
 on:
   push:
     branches: [master]
+  repository_dispatch:
+    types: [publish_and_deploy]
 
 jobs:
   lint_and_test:
@@ -45,6 +47,13 @@ jobs:
         run: npm install
       - name: Build
         run: npx lerna run build
+      - name: Authenticate with GitHub
+        run: |
+          # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"
+          git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
+          git checkout "${GITHUB_REF:11}"
+          git config user.name "Github Actions"
+          git config user.email "bot@github.com"
       - name: Authenticate with NPM
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
