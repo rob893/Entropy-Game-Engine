@@ -43,9 +43,9 @@ jobs:
           arrIN=(${IN//:/ })
           if [ ${#arrIN[@]} -gt 1 ]
           then
-            ::set-env name=BRANCH::${arrIN[1]}
+            echo "::set-env name=BRANCH::${arrIN[1]}""
           else
-            ::set-env name=BRANCH::master
+            echo "::set-env name=BRANCH::master"
           fi
       - uses: actions/checkout@v2
         with:
