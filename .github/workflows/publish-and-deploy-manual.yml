@@ -20,12 +20,17 @@ jobs:
     name: Check Password
     steps:
       - name: Check Password
-        run: |
-          if [ ::add-mask::${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]
-          then 
-            echo Invalid value 
-            exit 1 
-          fi
+      - run: echo "::set-env name=PASSED::$(echo ${github.event.client_payload.Password})"
+      - run: echo "::set-env name=EXPECTED::$(echo ${secrets.DEPLOY_PASSWORD})"
+      - name: Test
+        if: env.PASSED != env.EXPECTED
+        run: exit 1
+        # run: |
+        #   if [ ::add-mask::${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]
+        #   then 
+        #     echo Invalid value 
+        #     exit 1 
+        #   fi
   # lint_and_test:
   #   needs:
   #     - check_password
