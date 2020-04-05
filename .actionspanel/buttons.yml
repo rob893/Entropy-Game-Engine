@@ -8,4 +8,4 @@ buttons:
     action: "publish_and_deploy"
     description: Publish Packages and Deploy
     arguments:
-      - name: Password
+      - name: Confirm

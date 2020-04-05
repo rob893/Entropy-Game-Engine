@@ -15,17 +15,14 @@ on:
     types: [publish_and_deploy]
 
 jobs:
-  check_password:
+  check_response:
     runs-on: ubuntu-latest
-    name: Check Password
+    name: Check Response
     steps:
-      - name: Add Mask
-        run: echo ::add-mask::$PASSED
-        env:
-          PASSED: ${{ github.event.client_payload.Password }}
-      - name: Check Password
+      - name: Check Response
         run: |
-          if [ ${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]
+          response=github.event.client_payload.Confirm
+          if [ ${response^^} != 'YES' ]
           then 
             echo Invalid value 
             exit 1 
