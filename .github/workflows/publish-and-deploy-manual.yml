@@ -20,8 +20,9 @@ jobs:
     name: Check Password
     steps:
       - name: Check Password
-      - run: echo "::set-env name=PASSED::$(echo ${github.event.client_payload.Password})"
-      - run: echo "::set-env name=EXPECTED::$(echo ${secrets.DEPLOY_PASSWORD})"
+        run: |
+          echo "::set-env name=PASSED::$(echo ${github.event.client_payload.Password})"
+          echo "::set-env name=EXPECTED::$(echo ${secrets.DEPLOY_PASSWORD})"
       - name: Test
         if: env.PASSED != env.EXPECTED
         run: exit 1
