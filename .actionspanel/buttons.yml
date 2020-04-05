@@ -5,7 +5,13 @@ buttons:
     description: Run your tests
 
   - title: Publish and Deploy
-    action: "publish_and_deploy"
-    description: Publish Packages and Deploy
+    action: "manual_publish_and_deploy"
+    description: Publish Packages and Deploy. Confirm format {confirmation}:{(optional)branch}
+    arguments:
+      - name: Confirm
+
+  - title: Deploy
+    action: "manual_deploy"
+    description: Deploy to remote server. Confirm format {confirmation}:{(optional)branch}
     arguments:
       - name: Confirm

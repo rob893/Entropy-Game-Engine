@@ -1,0 +1,109 @@
+# This workflow is triggered manually using the repository_dispatch event: 
+# https://help.github.com/en/actions/reference/events-that-trigger-workflows#external-events-repository_dispatch
+#
+# Input will be parsed as {confirm}:{branch to use}. If no branch is passed, it will default to master
+# Examples:
+#   `yes:dev` will run this workflow using the dev branch
+#   `no:dev` will not run this workflow
+#   `yes` will run this workflow using master branch
+#
+# This workflow is unable to use the cache action as it only supports push and pull request events as of now.
+#
+# Secrets used:
+# DEPLOY_SOURCE: the path to the folder/file to be deployed. Example: ./sample-games/sample-game-1/dist/* will deploy all files in dist folder
+# REMOTE_USER: to user to ssh into the remote server as
+# REMOTE_HOST: the IP/Domain to ssh into
+# REMOTE_TARGET: the target directory on the remote host to copy the source files to. Example: /var/www/html/sample-site
+# SERVER_SSH_KEY: the private key that matches the public key on the remote server
+# KNOWN_HOSTS: the known hosts. Run `ssh-keyscan {{ IP/Domain }}` to obtain this
+
+name: Manual Deploy
+
+on:
+  repository_dispatch:
+    types: [manual_deploy]
+
+env:
+  INPUT: ${{ github.event.client_payload.Confirm }}
+
+jobs:
+  check_response:
+    runs-on: ubuntu-latest
+    name: Check Response
+    steps:
+      - name: Check Response
+        run: |
+          IN=$INPUT
+          arrIN=(${IN//:/ })
+          response=${arrIN[0]}
+          if [ ${response^^} != 'YES' ]
+          then
+            exit 1 
+          fi
+
+  lint_and_test:
+    needs:
+      - check_response
+    runs-on: ubuntu-latest
+    name: Lint and Test
+    steps:
+      - name: Set branch
+        run: |
+          IN=$INPUT
+          arrIN=(${IN//:/ })
+          if [ ${#arrIN[@]} -gt 1 ]
+          then
+            echo "::set-env name=BRANCH::${arrIN[1]}"
+          else
+            echo "::set-env name=BRANCH::master"
+          fi
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm test
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deply to Remote Server
+    needs:
+      - check_response
+      - lint_and_test
+    steps:
+      - name: Set branch
+        run: |
+          IN=$INPUT
+          arrIN=(${IN//:/ })
+          if [ ${#arrIN[@]} -gt 1 ]
+          then
+            echo "::set-env name=BRANCH::${arrIN[1]}"
+          else
+            echo "::set-env name=BRANCH::master"
+          fi
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npx lerna run build
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          name: id_rsa
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Clean remote directory
+        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
+      - name: Copy build to remote server
+        run: scp -r ${{ secrets.DEPLOY_SOURCE }} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
