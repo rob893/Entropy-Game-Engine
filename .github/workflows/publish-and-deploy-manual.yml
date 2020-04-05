@@ -21,8 +21,8 @@ jobs:
     steps:
       - name: Check Password
         run: |
-          echo "::stop-commands::pause-logging"
-          if [ ::add-mask::${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]
+          echo "::add-mask::${{ github.event.client_payload.Password }}"
+          if [ ${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]
           then 
             echo Invalid value 
             exit 1 
