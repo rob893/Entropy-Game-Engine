@@ -21,10 +21,9 @@ jobs:
     steps:
       - name: Check Response
         run: |
-          response=github.event.client_payload.Confirm
+          response=${{ github.event.client_payload.Confirm }}
           if [ ${response^^} != 'YES' ]
-          then 
-            echo Invalid value 
+          then
             exit 1 
           fi
 
