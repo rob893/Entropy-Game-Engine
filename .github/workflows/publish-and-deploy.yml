@@ -45,13 +45,6 @@ jobs:
         run: npm install
       - name: Build
         run: npx lerna run build
-      - name: Authenticate with GitHub
-        run: |
-          # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.CICD_GITHUB_PAT}} | base64)"
-          git remote set-url origin https://x-access-token:${{secrets.CICD_GITHUB_PAT}}@github.com/${GITHUB_REPOSITORY}.git
-          git checkout "${GITHUB_REF:11}"
-          git config user.name "Github Actions"
-          git config user.email "bot@github.com"
       - name: Authenticate with NPM
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
@@ -61,7 +54,7 @@ jobs:
       - name: Publish
         run: npx lerna publish --yes
         env:
-          GH_TOKEN: ${{secrets.CICD_GITHUB_PAT}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   deploy:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip deploy]')"
