@@ -1,0 +1,11 @@
+hideHelp: true
+buttons:
+  - title: Run tests
+    action: "run_tests"
+    description: Run your tests
+
+  - title: Publish and Deploy
+    action: "publish_and_deploy"
+    description: Publish Packages and Deploy
+    arguments:
+      - name: Confirm
