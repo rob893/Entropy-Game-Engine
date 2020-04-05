@@ -20,7 +20,9 @@ jobs:
     name: Check Password
     steps:
       - name: Add Mask
-        run: echo ::add-mask::${{ github.event.client_payload.Password }}
+        run: echo ::add-mask::$PASSED
+        env:
+          PASSED: ${{ github.event.client_payload.Password }}
       - name: Check Password
         run: |
           if [ ${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]
