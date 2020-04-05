@@ -9,7 +9,6 @@ test('Finds the magnitude of a vector2', () => {
     expect(Vector2.one.magnitude).toBeCloseTo(1.414);
     expect(new Vector2(50, 69).magnitude).toBeCloseTo(85.212);
     expect(new Vector2(6969.6969, 0.001).magnitude).toBeCloseTo(6969.697);
-    expect(true).toBe(false);
 });
 
 test('Find dot product of a vector2', () => {
