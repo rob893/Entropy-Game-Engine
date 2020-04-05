@@ -1,3 +1,4 @@
+hideHelp: true
 buttons:
   - title: Run tests
     action: "run_tests"

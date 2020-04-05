@@ -22,8 +22,8 @@ jobs:
       - name: Check Password
         if: ${{ github.event.client_payload.Password }} !=
         run: |
-          if [ ${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]; then
-            echo Invalid password
+          if [ ::add-mask::${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]; then
+            echo Invalid Value
             exit 1
           fi
 
