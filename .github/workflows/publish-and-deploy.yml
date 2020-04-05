@@ -3,7 +3,7 @@
 # If head commit message contains '[skip deploy]', testing, linting, and publishing will occur, but deployment will be skipped.
 #
 # Secrets used:
-# DEPLOY_SOURCE: the path to the folder/file to be deployed. Example: ./sample-games/sample-game-1/dist/* will deploy all files in dist folder
+# DEPLOY_SOURCE: the path to the folder/file to be deployed. Example: ./sample-games/sample-game-1/dist/* will deploy all files in dist folder.
 # REMOTE_USER: to user to ssh into the remote server as
 # REMOTE_HOST: the IP/Domain to ssh into
 # REMOTE_TARGET: the target directory on the remote host to copy the source files to. Example: /var/www/html/sample-site
