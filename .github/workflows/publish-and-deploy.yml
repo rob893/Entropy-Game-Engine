@@ -1,3 +1,12 @@
+# Secrets used:
+# DEPLOY_SOURCE: the path to the folder/file to be deployed. Example: ./sample-games/sample-game-1/dist/* will deploy all files in dist folder
+# REMOTE_USER: to user to ssh into the remote server as
+# REMOTE_HOST: the IP/Domain to ssh into
+# REMOTE_TARGET: the target directory on the remote host to copy the source files to. Example: /var/www/html/sample-site
+# SERVER_SSH_KEY: the private key that matches the public key on the remote server
+# KNOWN_HOSTS: the known hosts. Run `ssh-keyscan {{ IP/Domain }}` to obtain this
+# NPM_TOKEN: access token for NPM. Obtained on NPM site.
+
 name: Publish and Deploy
 
 on:
@@ -60,6 +69,7 @@ jobs:
     name: Deply to Remote Server
     needs:
       - lint_and_test
+      - publish_packages
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -78,4 +88,4 @@ jobs:
       - name: Clean remote directory
         run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
       - name: Copy build to remote server
-        run: scp -r ./sample-games/sample-game-1/dist/*  ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
+        run: scp -r ${{ secrets.DEPLOY_SOURCE }} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
