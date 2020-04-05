@@ -20,10 +20,15 @@ jobs:
     name: Check Password
     steps:
       - name: Check Password
-        if: ${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }}
+        if: ${{ github.event.client_payload.Password }} != 
         run: |
-          echo "Invalid password"
-          exit 1
+          if [ "$PASSED_PASSWORD" != "$DEPLOY_PASSWORD" ]; then
+            echo Invalid password
+            exit 1
+          fi
+        env:
+          PASSED_PASSWORD: ${{ github.event.client_payload.Password }}
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
 
   lint_and_test:
     needs:
