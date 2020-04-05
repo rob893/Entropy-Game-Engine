@@ -43,7 +43,7 @@ jobs:
           arrIN=(${IN//:/ })
           if [ ${#arrIN[@]} -gt 1 ]
           then
-            echo "::set-env name=BRANCH::${arrIN[1]}""
+            echo "::set-env name=BRANCH::${arrIN[1]}"
           else
             echo "::set-env name=BRANCH::master"
           fi
