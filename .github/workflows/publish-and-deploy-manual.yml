@@ -19,10 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Check Password
     steps:
-      - name: Pause Logging
-        run: echo "::stop-commands::pause-logging"
       - name: Add Mask
-        run: echo "::add-mask::${{ github.event.client_payload.Password }}"
+        run: ::add-mask::${{ github.event.client_payload.Password }}
       - name: Check Password
         run: |
           if [ ${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]
