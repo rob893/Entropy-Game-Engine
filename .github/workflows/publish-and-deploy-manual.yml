@@ -13,6 +13,9 @@ on:
   repository_dispatch:
     types: [publish_and_deploy]
 
+env:
+  INPUT: ${{ github.event.client_payload.Confirm }}
+
 jobs:
   check_response:
     runs-on: ubuntu-latest
@@ -20,7 +23,9 @@ jobs:
     steps:
       - name: Check Response
         run: |
-          response=${{ github.event.client_payload.Confirm }}
+          IN=$INPUT
+          arrIN=(${IN//:/ })
+          response=${arrIN[0]}
           if [ ${response^^} != 'YES' ]
           then
             exit 1 
@@ -32,10 +37,28 @@ jobs:
     runs-on: ubuntu-latest
     name: Lint and Test
     steps:
+      - name: Set branch
+        run: |
+          IN=$INPUT
+          arrIN=(${IN//:/ })
+          if [ ${#arrIN[@]} -gt 1 ]
+          then
+            ::set-env name=BRANCH::${arrIN[1]}
+          else
+            ::set-env name=BRANCH::master
+          fi
       - uses: actions/checkout@v2
+        with:
+            ref: $BRANCH
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Install dependencies
         run: npm install
       - name: Lint
@@ -43,62 +66,74 @@ jobs:
       - name: Test
         run: npm test
 
-  publish_packages:
-    runs-on: ubuntu-latest
-    name: Publish Packages
-    needs:
-      - check_response
-      - lint_and_test
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "12"
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npx lerna run build
-      - name: Authenticate with GitHub
-        run: |
-          # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"
-          git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
-          git checkout "${GITHUB_REF:11}"
-          git config user.name "Github Actions"
-          git config user.email "bot@github.com"
-      - name: Authenticate with NPM
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-          npm whoami
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Publish
-        run: npx lerna publish --yes
-        env:
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  # publish_packages:
+  #   runs-on: ubuntu-latest
+  #   name: Publish Packages
+  #   needs:
+  #     - check_response
+  #     - lint_and_test
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: "12"
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.npm
+  #         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-node-
+  #     - name: Install dependencies
+  #       run: npm install
+  #     - name: Build
+  #       run: npx lerna run build
+  #     - name: Authenticate with GitHub
+  #       run: |
+  #         # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"
+  #         git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
+  #         git checkout "${GITHUB_REF:11}"
+  #         git config user.name "Github Actions"
+  #         git config user.email "bot@github.com"
+  #     - name: Authenticate with NPM
+  #       run: |
+  #         echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+  #         npm whoami
+  #       env:
+  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #     - name: Publish
+  #       run: npx lerna publish --yes
+  #       env:
+  #         GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-  deploy:
-    runs-on: ubuntu-latest
-    name: Deply to Remote Server
-    needs:
-      - check_response
-      - lint_and_test
-      - publish_packages
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "12"
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npx lerna run build
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          name: id_rsa
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Clean remote directory
-        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
-      - name: Copy build to remote server
-        run: scp -r ${{ secrets.DEPLOY_SOURCE }} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   name: Deply to Remote Server
+  #   needs:
+  #     - check_response
+  #     - lint_and_test
+  #     - publish_packages
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: "12"
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/.npm
+  #         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-node-
+  #     - name: Install dependencies
+  #       run: npm install
+  #     - name: Build
+  #       run: npx lerna run build
+  #     - name: Install SSH key
+  #       uses: shimataro/ssh-key-action@v2
+  #       with:
+  #         key: ${{ secrets.SERVER_SSH_KEY }}
+  #         name: id_rsa
+  #         known_hosts: ${{ secrets.KNOWN_HOSTS }}
+  #     - name: Clean remote directory
+  #       run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
+  #     - name: Copy build to remote server
+  #       run: scp -r ${{ secrets.DEPLOY_SOURCE }} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
