@@ -19,9 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     name: Check Password
     steps:
-      - uses: actions/checkout@v2
       - name: Check Password
-        run: echo "if [ $PASSED_PASSWORD !=  $DEPLOY_PASSWORD] then echo Invalid value exit 1 fi"
+        run: |
+          if [ $PASSED_PASSWORD !=  $DEPLOY_PASSWORD] then 
+            echo Invalid value 
+            exit 1 
+          fi
         env:
           PASSED_PASSWORD: ${{ github.event.client_payload.Password }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
