@@ -27,7 +27,7 @@ jobs:
             exit 1 
           fi
         env:
-          PASSED_PASSWORD: ::add-mask::${{ github.event.client_payload.Password }}
+          PASSED_PASSWORD: ${{ ::add-mask::github.event.client_payload.Password }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
 
   # lint_and_test:
