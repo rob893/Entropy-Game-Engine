@@ -1,4 +1,4 @@
-# This workflow is triggered manually using the repository_dispatch event: 
+# This workflow is triggered manually using the repository_dispatch event:
 # https://help.github.com/en/actions/reference/events-that-trigger-workflows#external-events-repository_dispatch
 #
 # Input will be parsed as {confirm}:{branch to use}. If no branch is passed, it will default to master

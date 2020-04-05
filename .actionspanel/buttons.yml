@@ -15,3 +15,9 @@ buttons:
     description: Deploy to remote server. Confirm format {confirmation}:{(optional)branch}
     arguments:
       - name: Confirm
+
+  - title: Publish
+    action: "manual_publish"
+    description: Publish Packages. Confirm format {confirmation}:{(optional)branch}
+    arguments:
+      - name: Confirm

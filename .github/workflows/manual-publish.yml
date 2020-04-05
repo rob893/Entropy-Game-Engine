@@ -10,18 +10,13 @@
 # This workflow is unable to use the cache action as it only supports push and pull request events as of now.
 #
 # Secrets used:
-# DEPLOY_SOURCE: the path to the folder/file to be deployed. Example: ./sample-games/sample-game-1/dist/* will deploy all files in dist folder
-# REMOTE_USER: to user to ssh into the remote server as
-# REMOTE_HOST: the IP/Domain to ssh into
-# REMOTE_TARGET: the target directory on the remote host to copy the source files to. Example: /var/www/html/sample-site
-# SERVER_SSH_KEY: the private key that matches the public key on the remote server
-# KNOWN_HOSTS: the known hosts. Run `ssh-keyscan {{ IP/Domain }}` to obtain this
+# NPM_TOKEN: access token for NPM. Obtained on NPM site.
 
-name: Manual Deploy
+name: Manual Publish
 
 on:
   repository_dispatch:
-    types: [manual_deploy]
+    types: [manual_publish]
 
 env:
   INPUT: ${{ github.event.client_payload.Confirm }}
@@ -70,9 +65,9 @@ jobs:
       - name: Test
         run: npm test
 
-  deploy:
+  publish_packages:
     runs-on: ubuntu-latest
-    name: Deply to Remote Server
+    name: Publish Packages
     needs:
       - check_response
       - lint_and_test
@@ -97,13 +92,20 @@ jobs:
         run: npm install
       - name: Build
         run: npx lerna run build
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          name: id_rsa
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Clean remote directory
-        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
-      - name: Copy build to remote server
-        run: scp -r ${{ secrets.DEPLOY_SOURCE }} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
+      - name: Authenticate with GitHub
+        run: |
+          # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"
+          git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
+          git checkout $BRANCH
+          git config user.name "Github Actions"
+          git config user.email "bot@github.com"
+      - name: Authenticate with NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish
+        run: npx lerna publish --yes
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
