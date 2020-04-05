@@ -6,6 +6,7 @@
 # SERVER_SSH_KEY: the private key that matches the public key on the remote server
 # KNOWN_HOSTS: the known hosts. Run `ssh-keyscan {{ IP/Domain }}` to obtain this
 # NPM_TOKEN: access token for NPM. Obtained on NPM site.
+# DEPLOY_PASSWORD: Password required to manually deploy.
 
 name: Publish and Deploy
 
@@ -19,7 +20,7 @@ jobs:
     name: Check Password
     steps:
       - name: Check Password
-        if: ${{ github.event.client_payload.Password }} != ${{secrets.GITHUB_TOKEN}}
+        if: ${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }}
         run: |
           echo "Invalid password"
           exit 1
