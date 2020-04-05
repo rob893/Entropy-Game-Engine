@@ -10,12 +10,23 @@
 name: Publish and Deploy
 
 on:
-  push:
-    branches: [master]
+  repository_dispatch:
+    types: [publish_and_deploy]
 
 jobs:
+  check_password:
+    runs-on: ubuntu-latest
+    name: Check Password
+    steps:
+      - name: Check Password
+        if: ${{ github.event.client_payload.Password }} != ${{secrets.GITHUB_TOKEN}}
+        run: |
+          echo "Invalid password"
+          exit 1
+
   lint_and_test:
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    needs:
+      - check_password
     runs-on: ubuntu-latest
     name: Lint and Test
     steps:
@@ -31,10 +42,10 @@ jobs:
         run: npm test
 
   publish_packages:
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip publish]')"
     runs-on: ubuntu-latest
     name: Publish Packages
     needs:
+      - check_password
       - lint_and_test
     steps:
       - uses: actions/checkout@v2
@@ -64,10 +75,10 @@ jobs:
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   deploy:
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip deploy]')"
     runs-on: ubuntu-latest
     name: Deply to Remote Server
     needs:
+      - check_password
       - lint_and_test
       - publish_packages
     steps:
