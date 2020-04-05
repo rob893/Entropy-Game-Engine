@@ -20,12 +20,10 @@ jobs:
     name: Check Password
     steps:
       - name: Check Password
-        if: ${{ github.event.client_payload.Password }} !=
+        if: github.event.client_payload.Password != secrets.DEPLOY_PASSWORD
         run: |
-          if [ ::add-mask::${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]; then
-            echo Invalid Value
-            exit 1
-          fi
+          echo "Invalid Value"
+          exit 1
 
   lint_and_test:
     needs:
