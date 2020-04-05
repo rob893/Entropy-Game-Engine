@@ -49,7 +49,7 @@ jobs:
           fi
       - uses: actions/checkout@v2
         with:
-            ref: $BRANCH
+            ref: ${{ env.BRANCH }}
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
