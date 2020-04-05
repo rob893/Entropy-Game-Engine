@@ -21,7 +21,8 @@ jobs:
     steps:
       - name: Check Password
         run: |
-          if [ $PASSED_PASSWORD !=  $DEPLOY_PASSWORD] then 
+          if [ $PASSED_PASSWORD !=  $DEPLOY_PASSWORD] 
+          then 
             echo Invalid value 
             exit 1 
           fi
