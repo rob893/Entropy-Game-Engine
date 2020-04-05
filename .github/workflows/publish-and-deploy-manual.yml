@@ -19,9 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Check Password
     steps:
+      - name: Add Mask
+        run: echo "::add-mask::${{ github.event.client_payload.Password }}"
       - name: Check Password
         run: |
-          echo "::add-mask::${{ github.event.client_payload.Password }}"
           if [ ${{ github.event.client_payload.Password }} != ${{ secrets.DEPLOY_PASSWORD }} ]
           then 
             echo Invalid value 
