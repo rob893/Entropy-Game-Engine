@@ -16,6 +16,7 @@ export enum Color {
     Orange = '#FF9800',
     DeepOrange = '#FF5722',
     Brown = '#795548',
+    RedGrey = '#635c5c',
     BlueGrey = '#607D8B',
     Grey = '#9E9E9E',
     White = '#FFFFFF',
