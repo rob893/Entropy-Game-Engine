@@ -1,0 +1,15 @@
+{
+    "name": "@entropy-engine/entropy-cli",
+    "version": "1.0.0",
+    "description": "CLI for Entropy Game Engine",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Robert Herber <rwherber@gmail.com>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rob893/Entropy-Game-Engine.git"
+    }
+}
