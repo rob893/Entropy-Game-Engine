@@ -1,0 +1,30 @@
+{
+    "name": "game",
+    "version": "1.0.0",
+    "main": "dist/index",
+    "types": "dist/index",
+    "files": [
+        "src",
+        "dist"
+    ],
+    "scripts": {
+        "start": "webpack-dev-server --open --config webpack.dev.js",
+        "build": "npm i --only-prod && webpack --config webpack.prod.js"
+    },
+    "dependencies": {
+        "@entropy-engine/entropy-game-engine": "latest"
+    },
+    "devDependencies": {
+        "@types/html-webpack-plugin": "^3.2.2",
+        "circular-dependency-plugin": "^5.2.0",
+        "clean-webpack-plugin": "^3.0.0",
+        "file-loader": "^6.0.0",
+        "html-webpack-plugin": "^4.0.3",
+        "ts-loader": "^6.2.2",
+        "typescript": "^3.8.3",
+        "webpack": "^4.42.1",
+        "webpack-cli": "^3.3.11",
+        "webpack-dev-server": "^3.10.3",
+        "webpack-merge": "^4.2.2"
+    }
+}

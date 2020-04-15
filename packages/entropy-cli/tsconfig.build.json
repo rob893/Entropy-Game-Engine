@@ -1,0 +1,12 @@
+{
+    "extends": "../../tsconfig.build.json",
+    "compilerOptions": {
+        "composite": true,
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "module": "ESNext",
+        "esModuleInterop": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["**/__tests__", "**/__mocks__"]
+}
