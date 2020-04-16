@@ -7,12 +7,6 @@ module.exports = {
     module: {
         rules: [
             {
-                enforce: 'pre',
-                test: /\.(js|tsx?)$/,
-                exclude: /node_modules/,
-                loader: 'eslint-loader'
-            },
-            {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/
@@ -44,10 +38,7 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
-        alias: {
-            '@entropy-engine/entropy-game-engine': '@entropy-engine/entropy-game-engine/src'
-        }
+        extensions: ['.tsx', '.ts', '.js']
     },
     output: {
         filename: 'bundle.js',
@@ -57,7 +48,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Entropy Game Engine',
             template: 'src/index.html',
-            favicon: 'src/Assets/Images/favicon.ico'
+            favicon: 'src/assets/images/favicon.ico'
         }),
         new CircularDependencyPlugin({
             // exclude detection of files based on a RegExp

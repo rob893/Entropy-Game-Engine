@@ -2,7 +2,7 @@ import arg from 'arg';
 import inquirer from 'inquirer';
 import { createProject } from './main';
 
-function parseArgumentsIntoOptions(rawArgs: string[]) {
+function parseArgumentsIntoOptions(rawArgs: string[]): any {
     const args = arg(
         {
             '--git': Boolean,
@@ -24,7 +24,7 @@ function parseArgumentsIntoOptions(rawArgs: string[]) {
     };
 }
 
-async function promptForMissingOptions(options: any) {
+async function promptForMissingOptions(options: any): Promise<any> {
     const defaultTemplate = 'JavaScript';
     if (options.skipPrompts) {
         return {
@@ -65,5 +65,4 @@ export async function cli(args: string[]): Promise<void> {
     let options = parseArgumentsIntoOptions(args);
     options = await promptForMissingOptions(options);
     await createProject(options);
-    console.log(options);
 }
