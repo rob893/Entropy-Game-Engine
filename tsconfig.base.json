@@ -23,7 +23,7 @@
         "pretty": true,
         "baseUrl": ".",
         "paths": {
-            "*": ["types/*"]
+            "*": ["@types/*"]
         }
     }
 }
