@@ -1,8 +1,19 @@
 import arg from 'arg';
+import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { createProject } from './main';
 
-function parseArgumentsIntoOptions(rawArgs: string[]): any {
+export interface Options {
+    skipPrompts: boolean;
+    git: boolean;
+    runInstall: boolean;
+    template?: string;
+    command?: string;
+}
+
+export const commands = new Set<string>(['init']);
+
+function parseArgumentsIntoOptions(rawArgs: string[]): Options {
     const args = arg(
         {
             '--git': Boolean,
@@ -16,16 +27,22 @@ function parseArgumentsIntoOptions(rawArgs: string[]): any {
             argv: rawArgs.slice(2)
         }
     );
+
+    const command = commands.has(args._[0]) ? args._[0] : undefined;
+    const template = args._[1];
+
     return {
         skipPrompts: args['--yes'] || false,
         git: args['--git'] || false,
-        template: args._[0],
-        runInstall: args['--install'] || false
+        runInstall: args['--install'] || false,
+        template,
+        command
     };
 }
 
-async function promptForMissingOptions(options: any): Promise<any> {
-    const defaultTemplate = 'JavaScript';
+async function promptForMissingOptions(options: Options): Promise<any> {
+    const defaultTemplate = 'TypeScript';
+
     if (options.skipPrompts) {
         return {
             ...options,
@@ -34,14 +51,30 @@ async function promptForMissingOptions(options: any): Promise<any> {
     }
 
     const questions = [];
-    if (!options.template) {
+    const javaScriptResponses = [
+        "Don't use JavaScript.",
+        'You really should not use JavaScript for this...',
+        "You really want to use JavaScript don't you? Well you shouldn't."
+    ];
+    let resIndex = 0;
+
+    while (!options.template || options.template === 'JavaScript') {
+        if (options.template === 'JavaScript') {
+            console.error(chalk.red.bold(javaScriptResponses[resIndex]));
+            resIndex = (resIndex + 1) % javaScriptResponses.length;
+        }
+
         questions.push({
             type: 'list',
             name: 'template',
             message: 'Please choose which project template to use',
-            choices: ['JavaScript', 'TypeScript'],
+            choices: ['TypeScript', 'JavaScript'],
             default: defaultTemplate
         });
+
+        const templateAnswer = await inquirer.prompt(questions);
+        questions.length = 0;
+        options.template = templateAnswer.template as any;
     }
 
     if (!options.git) {
@@ -53,16 +86,33 @@ async function promptForMissingOptions(options: any): Promise<any> {
         });
     }
 
+    if (!options.runInstall) {
+        questions.push({
+            type: 'confirm',
+            name: 'runInstall',
+            message: 'Install packages?',
+            default: false
+        });
+    }
+
     const answers = await inquirer.prompt(questions);
     return {
         ...options,
         template: options.template || answers.template,
-        git: options.git || answers.git
+        git: options.git || answers.git,
+        runInstall: options.runInstall || answers.runInstall
     };
 }
 
 export async function cli(args: string[]): Promise<void> {
     let options = parseArgumentsIntoOptions(args);
+
+    if (!options.command) {
+        console.log('Invalid command. Valid commands are:');
+        commands.forEach(command => console.log(command));
+        return;
+    }
+
     options = await promptForMissingOptions(options);
     await createProject(options);
 }
