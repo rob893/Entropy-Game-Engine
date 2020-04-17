@@ -1,9 +1,6 @@
 {
-    "extends": "./tsconfig.build.json",
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "*": ["types/*"]
-        }
-    }
+    "extends": "./tsconfig.base.json",
+    "files": [],
+    "include": [],
+    "references": [{ "path": "./tsconfig.build.json" }]
 }

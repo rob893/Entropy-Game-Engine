@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "moduleResolution": "node",
+        "module": "es2015",
+        "composite": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "strictBindCallApply": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "allowUnreachableCode": false,
+        "forceConsistentCasingInFileNames": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
+        "pretty": true,
+        "baseUrl": ".",
+        "paths": {
+            "*": ["types/*"]
+        }
+    }
+}

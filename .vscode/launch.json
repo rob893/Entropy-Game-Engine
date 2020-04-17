@@ -20,14 +20,15 @@
             "name": "Attach to Chrome",
             "port": 9222,
             "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}/sample-games/sample-game-1"
         },
         {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            "port": 9223,
+            "webRoot": "${workspaceFolder}/sample-games/sample-game-1"
         },
         {
             "type": "node",

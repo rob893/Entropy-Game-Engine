@@ -90,8 +90,10 @@ jobs:
           node-version: "12"
       - name: Install dependencies
         run: npm install
-      - name: Build
-        run: npx lerna run build
+      - name: Build packages
+        run: npm run compile
+      - name: Build games
+        run: npx lerna run build-game
       - name: Authenticate with GitHub
         run: |
           # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"

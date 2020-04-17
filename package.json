@@ -6,12 +6,14 @@
         "compile": "tsc --build tsconfig.build.json",
         "compile-clean": "tsc --build tsconfig.build.json --clean",
         "watch": "tsc --build tsconfig.build.json --watch",
+        "clean-modules": "rm -rf packages/*/node_modules && rm -rf sample-games/*/node_modules && rm -rf node_modules",
         "lint": "./node_modules/.bin/eslint packages/**/*.ts sample-games/**/*.ts",
         "lint-fix": "./node_modules/.bin/eslint --fix src/**/*.ts",
         "prettier": "prettier --write **/*.{ts,js,css,html,json} !**/node_modules/** !**/dist/** !**/coverage/** !**/compiled/**",
         "test": "jest --coverage",
         "test-watch": "jest --watchAll --coverage",
-        "postinstall": "lerna bootstrap",
+        "test-clean": "jest --clearCache",
+        "postinstall": "lerna bootstrap && lerna run lerna-postinstall",
         "start": "cd sample-games/sample-game-1 && npm start"
     },
     "repository": {

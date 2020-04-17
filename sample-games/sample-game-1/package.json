@@ -26,8 +26,10 @@
     ],
     "scripts": {
         "start": "webpack-dev-server --open --config webpack.dev.js",
-        "dev": "webpack-dev-server --open --config webpack.dev.js",
-        "build": "npm i --only-prod && webpack --config webpack.prod.js"
+        "clean": "rm -rf ./dist",
+        "build": "npm i --only-prod && webpack --config webpack.prod.js",
+        "build-game": "npm run build",
+        "lerna-postinstall": "npm link"
     },
     "dependencies": {
         "@aspnet/signalr": "^1.1.4",

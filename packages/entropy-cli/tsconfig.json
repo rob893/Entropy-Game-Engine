@@ -1,7 +1,11 @@
 {
-    "extends": "../../tsconfig.json",
+    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
-        "esModuleInterop": true,
-        "module": "ESNext"
-    }
+        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true,
+        "outDir": "./dist",
+        "rootDir": "./src"
+    },
+    "include": ["src/**/*"],
+    "exclude": ["**/__tests__", "**/__mocks__"]
 }

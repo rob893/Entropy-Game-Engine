@@ -95,8 +95,10 @@ jobs:
           node-version: "12"
       - name: Install dependencies
         run: npm install
-      - name: Build
-        run: npx lerna run build
+      - name: Build packages
+        run: npm run compile
+      - name: Build games
+        run: npx lerna run build-game
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:

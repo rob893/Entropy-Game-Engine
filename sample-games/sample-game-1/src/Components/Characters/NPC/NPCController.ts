@@ -49,7 +49,7 @@ export class NPCController extends Component {
     public update(): void {
         if (this._myStats.isDead) {
             return;
-        } 
+        }
 
         this._currentState.performBehavior(this);
     }
