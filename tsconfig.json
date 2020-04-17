@@ -3,8 +3,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "*": ["types/*"],
-            "@entropy-engine/entropy-game-engine": ["./packages/entropy-game-engine/src"]
+            "*": ["types/*"]
         }
     }
 }

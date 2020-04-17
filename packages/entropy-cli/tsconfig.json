@@ -1,8 +1,6 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "declarationMap": false,
-        "declaration": false,
         "esModuleInterop": true,
         "module": "ESNext"
     }

@@ -1,7 +1,10 @@
 {
-    "extends": "../../tsconfig.json",
+    "extends": "../../tsconfig.build.json",
     "compilerOptions": {
-        "declarationMap": false,
-        "declaration": false
-    }
+        "composite": true,
+        "outDir": "./dist",
+        "rootDir": "./src"
+    },
+    "include": ["src/**/*"],
+    "exclude": ["**/__tests__", "**/__mocks__"]
 }
