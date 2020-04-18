@@ -7,6 +7,19 @@
     // Chrome must be ran as administrator
     "version": "0.2.0",
     "configurations": [
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "Launch CLI",
+        "program": "${workspaceFolder}/packages/entropy-cli/bin/entropy",
+        "console": "integratedTerminal",
+        "args": [
+            "init"
+        ],
+        "skipFiles": [
+            "<node_internals>/**"
+        ]
+    },
         {
             "type": "node",
             "request": "attach",
