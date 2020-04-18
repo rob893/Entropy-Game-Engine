@@ -9,7 +9,7 @@ import {
     RectangleCollider,
     PhysicalMaterial
 } from '@entropy-engine/entropy-game-engine';
-import { Jumper } from '../components/Jumper';
+import { Motor } from '../components/Motor';
 
 export class SampleGameObject extends GameObject {
     protected getPrefabSettings(): PrefabSettings {
@@ -31,9 +31,9 @@ export class SampleGameObject extends GameObject {
         const rb = new Rigidbody(this);
         const collider = new RectangleCollider(this, rb, 15, 15);
         collider.physicalMaterial = PhysicalMaterial.bouncy;
-        const jumper = new Jumper(this, rb);
+        const motor = new Motor(this, rb);
 
-        components.push(jumper);
+        components.push(motor);
         components.push(rb);
         components.push(collider);
 
