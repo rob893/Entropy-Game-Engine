@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.2.0 (2020-04-18)
+
+
+### Features
+
+* update cli typescript template. Add readme to CLI ([7a86bde](https://github.com/rob893/Entropy-Game-Engine/commit/7a86bdeea3405bb4659aa1e8cef73909f9072111))
+
+
+
+
+
 ## 1.1.1 (2020-04-17)
 
 **Note:** Version bump only for package @entropy-engine/entropy-cli
