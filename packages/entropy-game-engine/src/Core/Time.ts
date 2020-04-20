@@ -20,6 +20,9 @@ export class Time {
     public updateTime(timeStamp: number): void {
         // this._deltaTime = (Date.now() - this.prevTime) / 1000;
         // this.prevTime = Date.now();
+        if (this.prevTime === 0) {
+            this.prevTime = timeStamp;
+        }
         this._deltaTime = (timeStamp - this.prevTime) / 1000;
         this.prevTime = timeStamp;
         this._totalTime += this._deltaTime;
