@@ -518,7 +518,7 @@ export class GameEngine {
             throw new Error('The game is not initialized yet!');
         }
 
-        this.time.start();
+        //this.time.start();
         this.paused = false;
 
         this.gameObjects.forEach(go => {
@@ -540,10 +540,10 @@ export class GameEngine {
             }
         });
 
-        this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
+        this.gameLoopId = requestAnimationFrame((timeStamp) => this.gameLoop(timeStamp));
     }
 
-    private update(): void {
+    private update(timeStamp: number): void {
         if (this.paused) {
             return;
         }
@@ -558,7 +558,7 @@ export class GameEngine {
             this.removeReferencesToGameObject(gameObject);
         }
 
-        this.time.updateTime();
+        this.time.updateTime(timeStamp);
         this.physicsEngine.updatePhysics();
 
         for (const gameObject of this.gameObjects) {
@@ -570,8 +570,8 @@ export class GameEngine {
         this.renderingEngine.renderScene();
     }
 
-    private gameLoop(): void {
-        this.update();
-        this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
+    private gameLoop(timeStamp: number): void {
+        this.update(timeStamp);
+        this.gameLoopId = requestAnimationFrame((newTimeStamp) => this.gameLoop(newTimeStamp));
     }
 }
