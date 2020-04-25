@@ -540,7 +540,7 @@ export class GameEngine {
             }
         });
 
-        this.gameLoopId = requestAnimationFrame((timeStamp) => this.gameLoop(timeStamp));
+        this.gameLoopId = requestAnimationFrame(timeStamp => this.gameLoop(timeStamp));
     }
 
     private update(timeStamp: number): void {
@@ -572,6 +572,6 @@ export class GameEngine {
 
     private gameLoop(timeStamp: number): void {
         this.update(timeStamp);
-        this.gameLoopId = requestAnimationFrame((newTimeStamp) => this.gameLoop(newTimeStamp));
+        this.gameLoopId = requestAnimationFrame(newTimeStamp => this.gameLoop(newTimeStamp));
     }
 }

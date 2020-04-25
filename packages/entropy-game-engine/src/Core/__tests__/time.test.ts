@@ -15,7 +15,7 @@ describe('Time', () => {
 
             time.updateTime(20);
 
-            expect(time.deltaTime).toEqual(0.004)
+            expect(time.deltaTime).toEqual(0.004);
         });
     });
 
