@@ -1,72 +1,72 @@
 import {
-    Animation,
-    GameObject,
-    Component,
-    RectangleCollider,
-    PhysicalMaterial,
-    NavAgent,
-    SpriteSheet,
-    Animator,
-    PrefabSettings,
-    Layer
+  Animation,
+  GameObject,
+  Component,
+  RectangleCollider,
+  PhysicalMaterial,
+  NavAgent,
+  SpriteSheet,
+  Animator,
+  PrefabSettings,
+  Layer
 } from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
 import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
 import { EnemyMotor } from '../Components/Characters/NPC/EnemyMotor';
 
 export class Trump extends GameObject {
-    protected buildInitialComponents(): Component[] {
-        const components: Component[] = [];
+  protected buildInitialComponents(): Component[] {
+    const components: Component[] = [];
 
-        const collider = new RectangleCollider(this, null, 60, 60, 0, -5);
-        collider.physicalMaterial = PhysicalMaterial.bouncy;
-        components.push(collider);
+    const collider = new RectangleCollider(this, null, 60, 60, 0, -5);
+    collider.physicalMaterial = PhysicalMaterial.bouncy;
+    components.push(collider);
 
-        const navAgent = new NavAgent(this, this.terrain.navGrid);
-        components.push(navAgent);
+    const navAgent = new NavAgent(this, this.terrain.navGrid);
+    components.push(navAgent);
 
-        const trumpIdleFrames = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
+    const trumpIdleFrames = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
 
-        const initialAnimation = new Animation(trumpIdleFrames, 0.1);
-        const animator = new Animator(this, 75, 75, initialAnimation);
-        components.push(animator);
+    const initialAnimation = new Animation(trumpIdleFrames, 0.1);
+    const animator = new Animator(this, 75, 75, initialAnimation);
+    components.push(animator);
 
-        const trumpRunSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
-        const trumpIdleSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
+    const trumpRunSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
+    const trumpIdleSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
 
-        const runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
-        const runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
-        const idleAnimation = new Animation(trumpIdleSpriteSheet.getFrames(1), 0.1);
+    const runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
+    const runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
+    const idleAnimation = new Animation(trumpIdleSpriteSheet.getFrames(1), 0.1);
 
-        const animations: CharacterAnimations = {
-            rightAttackAnimations: [idleAnimation],
-            leftAttackAnimations: [idleAnimation],
-            runLeftAnimation: runLeftAnimation,
-            runRightAnimation: runRightAnimation,
-            idleLeftAnimation: idleAnimation,
-            idleRightAnimation: idleAnimation,
-            jumpLeftAnimation: idleAnimation,
-            jumpRightAnimation: idleAnimation,
-            dieLeftAnimation: idleAnimation,
-            dieRightAnimation: idleAnimation
-        };
+    const animations: CharacterAnimations = {
+      rightAttackAnimations: [idleAnimation],
+      leftAttackAnimations: [idleAnimation],
+      runLeftAnimation: runLeftAnimation,
+      runRightAnimation: runRightAnimation,
+      idleLeftAnimation: idleAnimation,
+      idleRightAnimation: idleAnimation,
+      jumpLeftAnimation: idleAnimation,
+      jumpRightAnimation: idleAnimation,
+      dieLeftAnimation: idleAnimation,
+      dieRightAnimation: idleAnimation
+    };
 
-        const characterAnimator = new CharacterAnimator(this, animator, animations);
-        components.push(characterAnimator);
+    const characterAnimator = new CharacterAnimator(this, animator, animations);
+    components.push(characterAnimator);
 
-        components.push(new EnemyMotor(this, navAgent, characterAnimator));
+    components.push(new EnemyMotor(this, navAgent, characterAnimator));
 
-        return components;
-    }
+    return components;
+  }
 
-    protected getPrefabSettings(): PrefabSettings {
-        return {
-            x: 200,
-            y: 300,
-            rotation: 0,
-            id: 'trump',
-            tag: '',
-            layer: Layer.Default
-        };
-    }
+  protected getPrefabSettings(): PrefabSettings {
+    return {
+      x: 200,
+      y: 300,
+      rotation: 0,
+      id: 'trump',
+      tag: '',
+      layer: Layer.Default
+    };
+  }
 }

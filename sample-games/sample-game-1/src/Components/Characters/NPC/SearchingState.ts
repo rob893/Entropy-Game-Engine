@@ -4,39 +4,39 @@ import { CharacterAnimator } from '../CharacterAnimator';
 import { Component, GameObject } from '@entropy-engine/entropy-game-engine';
 
 export class SearchingState extends Component implements State {
-    private timer = 0;
-    private readonly animator: CharacterAnimator;
+  private timer = 0;
+  private readonly animator: CharacterAnimator;
 
-    public constructor(gameObject: GameObject, animator: CharacterAnimator) {
-        super(gameObject);
+  public constructor(gameObject: GameObject, animator: CharacterAnimator) {
+    super(gameObject);
 
-        this.animator = animator;
+    this.animator = animator;
+  }
+
+  public performBehavior(context: NPCController): void {
+    this.timer += this.time.deltaTime;
+
+    if (this.timer < 1) {
+      return;
     }
 
-    public performBehavior(context: NPCController): void {
-        this.timer += this.time.deltaTime;
+    const player = this.findGameObjectById('player');
 
-        if (this.timer < 1) {
-            return;
-        }
-
-        const player = this.findGameObjectById('player');
-
-        if (player === null) {
-            return;
-        }
-
-        context.currentTarget = player.transform;
-        context.setState(context.chaseState);
+    if (player === null) {
+      return;
     }
 
-    public onEnter(context: NPCController): void {
-        this.animator.playIdleAnimation();
-        this.timer = 0;
-        context.currentTarget = null;
-    }
+    context.currentTarget = player.transform;
+    context.setState(context.chaseState);
+  }
 
-    public onExit(context: NPCController): void {
-        this.timer = 0;
-    }
+  public onEnter(context: NPCController): void {
+    this.animator.playIdleAnimation();
+    this.timer = 0;
+    context.currentTarget = null;
+  }
+
+  public onExit(context: NPCController): void {
+    this.timer = 0;
+  }
 }

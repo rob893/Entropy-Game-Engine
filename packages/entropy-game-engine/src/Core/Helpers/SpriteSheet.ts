@@ -1,164 +1,164 @@
 type TrimBy = {
-    top: number;
-    bottom: number;
-    left: number;
-    right: number;
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
 };
 
 export class SpriteSheet {
-    private readonly frames = new Map<number, HTMLImageElement[]>();
+  private readonly frames = new Map<number, HTMLImageElement[]>();
 
-    private constructor() {}
+  private constructor() {}
 
-    /**
-     * @param spriteSheetUrl The location of the sprite sheet (import it as a variable and then use that)
-     * @param framesPerRow Number of frames per row (if the sprite sheet is 5 by 5 (5 rows with 5 frames per row), then this should be 5)
-     * @param numRows Number of rows the sprite sheet has.
-     * @param trimEdgesBy How many pixals to trim the sprite sheet down by. This is applied to each side.
-     */
-    public static async buildSpriteSheetAsync(
-        spriteSheetUrl: string,
-        framesPerRow: number,
-        numRows: number,
-        trimEdgesBy?: number | TrimBy,
-        rowFrameMap?: Map<number, number>
-    ): Promise<SpriteSheet> {
-        const spriteSheet = new SpriteSheet();
+  /**
+   * @param spriteSheetUrl The location of the sprite sheet (import it as a variable and then use that)
+   * @param framesPerRow Number of frames per row (if the sprite sheet is 5 by 5 (5 rows with 5 frames per row), then this should be 5)
+   * @param numRows Number of rows the sprite sheet has.
+   * @param trimEdgesBy How many pixals to trim the sprite sheet down by. This is applied to each side.
+   */
+  public static async buildSpriteSheetAsync(
+    spriteSheetUrl: string,
+    framesPerRow: number,
+    numRows: number,
+    trimEdgesBy?: number | TrimBy,
+    rowFrameMap?: Map<number, number>
+  ): Promise<SpriteSheet> {
+    const spriteSheet = new SpriteSheet();
 
-        if (trimEdgesBy === undefined) {
-            trimEdgesBy = 0;
-        }
-
-        if (rowFrameMap === undefined) {
-            rowFrameMap = new Map();
-        }
-
-        await spriteSheet.initializeSpriteSheet(spriteSheetUrl, framesPerRow, numRows, trimEdgesBy, rowFrameMap);
-
-        return spriteSheet;
+    if (trimEdgesBy === undefined) {
+      trimEdgesBy = 0;
     }
 
-    public getFrames(rows?: number[] | number): HTMLImageElement[] {
-        let frames: HTMLImageElement[] = [];
+    if (rowFrameMap === undefined) {
+      rowFrameMap = new Map();
+    }
 
-        if (rows !== undefined && rows !== null) {
-            if (typeof rows === 'number') {
-                rows = [rows];
-            }
+    await spriteSheet.initializeSpriteSheet(spriteSheetUrl, framesPerRow, numRows, trimEdgesBy, rowFrameMap);
 
-            for (const row of rows) {
-                if (!this.frames.has(row)) {
-                    console.error(`Row ${row} does not exist in this sprite sheet!`);
-                    continue;
-                }
+    return spriteSheet;
+  }
 
-                const framesInRow = this.frames.get(row);
+  public getFrames(rows?: number[] | number): HTMLImageElement[] {
+    let frames: HTMLImageElement[] = [];
 
-                if (framesInRow === undefined) {
-                    throw new Error('Error getting frames');
-                }
+    if (rows !== undefined && rows !== null) {
+      if (typeof rows === 'number') {
+        rows = [rows];
+      }
 
-                frames = [...frames, ...framesInRow];
-            }
+      for (const row of rows) {
+        if (!this.frames.has(row)) {
+          console.error(`Row ${row} does not exist in this sprite sheet!`);
+          continue;
+        }
+
+        const framesInRow = this.frames.get(row);
+
+        if (framesInRow === undefined) {
+          throw new Error('Error getting frames');
+        }
+
+        frames = [...frames, ...framesInRow];
+      }
+    } else {
+      for (const rowFrames of this.frames.values()) {
+        frames = [...frames, ...rowFrames];
+      }
+    }
+
+    return frames;
+  }
+
+  private async initializeSpriteSheet(
+    spriteSheetUrl: string,
+    framesPerRow: number,
+    numRows: number,
+    trimEdgesBy: number | TrimBy,
+    rowFrameMap: Map<number, number>
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('Timeout when waiting on spritesheet to load.')), 5000);
+
+      let totalNumberOfFramesForSheet = 0;
+      for (let i = 1; i <= numRows; i++) {
+        const framesForRow = rowFrameMap.get(i);
+
+        if (framesForRow !== undefined) {
+          totalNumberOfFramesForSheet += framesForRow;
         } else {
-            for (const rowFrames of this.frames.values()) {
-                frames = [...frames, ...rowFrames];
-            }
+          totalNumberOfFramesForSheet += framesPerRow;
+        }
+      }
+
+      let totalFramesCreated = 0;
+
+      const spriteSheet = new Image();
+      spriteSheet.src = spriteSheetUrl;
+      spriteSheet.onload = () => {
+        const spriteWidth = spriteSheet.width / framesPerRow;
+        const spriteHeight = spriteSheet.height / numRows;
+
+        if (typeof trimEdgesBy === 'number') {
+          trimEdgesBy = {
+            top: trimEdgesBy,
+            bottom: trimEdgesBy,
+            left: trimEdgesBy,
+            right: trimEdgesBy
+          };
         }
 
-        return frames;
-    }
+        for (let i = 0; i < numRows; i++) {
+          let numFramesInRow = rowFrameMap.get(i + 1); //rows are defined as starting at index 1, not 0. So add 1
 
-    private async initializeSpriteSheet(
-        spriteSheetUrl: string,
-        framesPerRow: number,
-        numRows: number,
-        trimEdgesBy: number | TrimBy,
-        rowFrameMap: Map<number, number>
-    ): Promise<void> {
-        return new Promise((resolve, reject) => {
-            const timer = setTimeout(() => reject(new Error('Timeout when waiting on spritesheet to load.')), 5000);
+          if (numFramesInRow === undefined) {
+            numFramesInRow = framesPerRow;
+          }
 
-            let totalNumberOfFramesForSheet = 0;
-            for (let i = 1; i <= numRows; i++) {
-                const framesForRow = rowFrameMap.get(i);
+          for (let j = 0; j < numFramesInRow; j++) {
+            const canvas = document.createElement('canvas');
 
-                if (framesForRow !== undefined) {
-                    totalNumberOfFramesForSheet += framesForRow;
-                } else {
-                    totalNumberOfFramesForSheet += framesPerRow;
-                }
+            canvas.width = spriteWidth;
+            canvas.height = spriteHeight;
+
+            const context = canvas.getContext('2d');
+
+            if (context === null) {
+              throw new Error('Error making context');
             }
 
-            let totalFramesCreated = 0;
+            context.drawImage(
+              spriteSheet,
+              j * spriteWidth + trimEdgesBy.left,
+              i * spriteHeight + trimEdgesBy.top,
+              spriteWidth - trimEdgesBy.right,
+              spriteHeight - trimEdgesBy.bottom,
+              0,
+              0,
+              canvas.width,
+              canvas.height
+            );
+            const frame = new Image();
+            frame.src = canvas.toDataURL();
+            frame.onload = () => {
+              const row = i + 1;
 
-            const spriteSheet = new Image();
-            spriteSheet.src = spriteSheetUrl;
-            spriteSheet.onload = () => {
-                const spriteWidth = spriteSheet.width / framesPerRow;
-                const spriteHeight = spriteSheet.height / numRows;
+              const framesInRow = this.frames.get(row);
+              if (framesInRow !== undefined) {
+                framesInRow.push(frame);
+              } else {
+                this.frames.set(row, [frame]);
+              }
 
-                if (typeof trimEdgesBy === 'number') {
-                    trimEdgesBy = {
-                        top: trimEdgesBy,
-                        bottom: trimEdgesBy,
-                        left: trimEdgesBy,
-                        right: trimEdgesBy
-                    };
-                }
-
-                for (let i = 0; i < numRows; i++) {
-                    let numFramesInRow = rowFrameMap.get(i + 1); //rows are defined as starting at index 1, not 0. So add 1
-
-                    if (numFramesInRow === undefined) {
-                        numFramesInRow = framesPerRow;
-                    }
-
-                    for (let j = 0; j < numFramesInRow; j++) {
-                        const canvas = document.createElement('canvas');
-
-                        canvas.width = spriteWidth;
-                        canvas.height = spriteHeight;
-
-                        const context = canvas.getContext('2d');
-
-                        if (context === null) {
-                            throw new Error('Error making context');
-                        }
-
-                        context.drawImage(
-                            spriteSheet,
-                            j * spriteWidth + trimEdgesBy.left,
-                            i * spriteHeight + trimEdgesBy.top,
-                            spriteWidth - trimEdgesBy.right,
-                            spriteHeight - trimEdgesBy.bottom,
-                            0,
-                            0,
-                            canvas.width,
-                            canvas.height
-                        );
-                        const frame = new Image();
-                        frame.src = canvas.toDataURL();
-                        frame.onload = () => {
-                            const row = i + 1;
-
-                            const framesInRow = this.frames.get(row);
-                            if (framesInRow !== undefined) {
-                                framesInRow.push(frame);
-                            } else {
-                                this.frames.set(row, [frame]);
-                            }
-
-                            totalFramesCreated++;
-                            //if (i === numRows - 1 && j === framesPerRow - 1) {
-                            if (totalFramesCreated === totalNumberOfFramesForSheet) {
-                                clearTimeout(timer);
-                                resolve();
-                            }
-                        };
-                    }
-                }
+              totalFramesCreated++;
+              //if (i === numRows - 1 && j === framesPerRow - 1) {
+              if (totalFramesCreated === totalNumberOfFramesForSheet) {
+                clearTimeout(timer);
+                resolve();
+              }
             };
-        });
-    }
+          }
+        }
+      };
+    });
+  }
 }

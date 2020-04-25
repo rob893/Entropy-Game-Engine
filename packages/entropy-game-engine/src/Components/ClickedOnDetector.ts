@@ -7,26 +7,26 @@ import { Geometry } from '../Core/Helpers/Geometry';
 import { EventType } from '../Core/Enums/EventType';
 
 export class ClickedOnDetector extends Component {
-    private readonly collider: RectangleCollider;
-    private readonly onClickedOn: LiteEvent<void> = new LiteEvent<void>();
+  private readonly collider: RectangleCollider;
+  private readonly onClickedOn: LiteEvent<void> = new LiteEvent<void>();
 
-    public constructor(gameObject: GameObject, collider: RectangleCollider) {
-        super(gameObject);
+  public constructor(gameObject: GameObject, collider: RectangleCollider) {
+    super(gameObject);
 
-        this.collider = collider;
+    this.collider = collider;
 
-        this.input.addMouseListener(EventType.Click, 0, () => this.handleClickEvent());
+    this.input.addMouseListener(EventType.Click, 0, () => this.handleClickEvent());
+  }
+
+  public get onClicked(): CustomLiteEvent<void> {
+    return this.onClickedOn.expose();
+  }
+
+  private handleClickEvent(): void {
+    const mousePosition = this.input.canvasMousePosition;
+
+    if (Geometry.rectangleContainsPoint(this.collider.topLeft, this.collider.bottomRight, mousePosition)) {
+      this.onClickedOn.trigger();
     }
-
-    public get onClicked(): CustomLiteEvent<void> {
-        return this.onClickedOn.expose();
-    }
-
-    private handleClickEvent(): void {
-        const mousePosition = this.input.canvasMousePosition;
-
-        if (Geometry.rectangleContainsPoint(this.collider.topLeft, this.collider.bottomRight, mousePosition)) {
-            this.onClickedOn.trigger();
-        }
-    }
+  }
 }

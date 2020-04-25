@@ -1,3 +1,3 @@
 export interface Comparable {
-    valueOf(): number | string | boolean;
+  valueOf(): number | string | boolean;
 }

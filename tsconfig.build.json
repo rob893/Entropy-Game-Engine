@@ -1,8 +1,8 @@
 {
-    "compilerOptions": {
-        "composite": true
-    },
-    "files": [],
-    "include": [],
-    "references": [{ "path": "./packages/entropy-game-engine" }, { "path": "./packages/entropy-cli" }]
+  "compilerOptions": {
+    "composite": true
+  },
+  "files": [],
+  "include": [],
+  "references": [{ "path": "./packages/entropy-game-engine" }, { "path": "./packages/entropy-cli" }]
 }

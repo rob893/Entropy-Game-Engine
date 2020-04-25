@@ -1,11 +1,11 @@
 {
-    "packages": ["packages/*", "sample-games/*"],
-    "version": "independent",
-    "command": {
-        "publish": {
-            "conventionalCommits": true,
-            "createRelease": "github",
-            "message": "chore(release): publish new version"
-        }
+  "packages": ["packages/*", "sample-games/*"],
+  "version": "independent",
+  "command": {
+    "publish": {
+      "conventionalCommits": true,
+      "createRelease": "github",
+      "message": "chore(release): publish new version"
     }
+  }
 }
