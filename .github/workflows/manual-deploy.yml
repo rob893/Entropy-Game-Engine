@@ -99,6 +99,10 @@ jobs:
         run: npm run compile
       - name: Build games
         run: npx lerna run build-game
+      - uses: actions/upload-artifact@v1
+        with:
+          name: game-build
+          path: ${{ secrets.DEPLOY_SOURCE }}
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
