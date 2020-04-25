@@ -38,7 +38,7 @@ jobs:
           response=${arrIN[0]}
           if [ ${response^^} != 'YES' ]
           then
-            exit 1 
+            exit 1
           fi
 
   lint_and_test:
@@ -99,6 +99,18 @@ jobs:
         run: npm run compile
       - name: Build games
         run: npx lerna run build-game
+      - name: Get build version
+        uses: tyankatsu0105/read-package-version-actions@v1
+        with:
+          path: ./sample-games/sample-game-1
+        id: package-version
+      - name: Get timestamp
+        run: echo "::set-env name=TIMESTAMP::$(date +'%s')"
+      - name: Upload build
+        uses: actions/upload-artifact@v1
+        with:
+          name: game-build-v${{ steps.package-version.outputs.version }}-${{ env.TIMESTAMP }}
+          path: ./sample-games/sample-game-1/dist
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:

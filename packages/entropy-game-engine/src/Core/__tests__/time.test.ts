@@ -1,14 +1,39 @@
-// import { Time } from '../src/GameEngine/Core/Time';
+import { Time } from '../Time';
 
-// const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+describe('Time', () => {
+    describe('deltaTime', () => {
+        it('should be the difference in time between to calls of updateTime', () => {
+            const time = new Time();
 
-test('Measure change in time', async () => {
-    // Time.start();
-    // await sleep(20);
-    // Time.updateTime();
-    // expect(Time.DeltaTime).toBeCloseTo(0.02);
-    // await sleep(15);
-    // Time.updateTime();
-    // expect(Time.DeltaTime).toBeCloseTo(0.015);
-    // expect(Time.TotalTime).toBeCloseTo(0.035);
+            time.updateTime(0);
+
+            expect(time.deltaTime).toEqual(0);
+
+            time.updateTime(16);
+
+            expect(time.deltaTime).toEqual(0.016);
+
+            time.updateTime(20);
+
+            expect(time.deltaTime).toEqual(0.004);
+        });
+    });
+
+    describe('totalTime', () => {
+        it('should be total time since game start', () => {
+            const time = new Time();
+
+            time.updateTime(0);
+
+            expect(time.totalTime).toEqual(0);
+
+            time.updateTime(16);
+
+            expect(time.totalTime).toEqual(0.016);
+
+            time.updateTime(20);
+
+            expect(time.totalTime).toEqual(0.02);
+        });
+    });
 });
