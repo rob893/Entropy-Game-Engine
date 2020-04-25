@@ -104,10 +104,12 @@ jobs:
         with:
           path: ./sample-games/sample-game-1
         id: package-version
+      - name: Get timestamp
+        run: echo "::set-env name=TIMESTAMP::(date +'%s')"
       - name: Upload build
         uses: actions/upload-artifact@v1
         with:
-          name: game-build@${{ steps.package-version.outputs.version }}
+          name: game-build-v${{ steps.package-version.outputs.version }}-${{ env.TIMESTAMP }}
           path: ./sample-games/sample-game-1/dist
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
