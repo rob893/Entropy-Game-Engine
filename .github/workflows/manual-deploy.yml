@@ -27,55 +27,55 @@ env:
   INPUT: ${{ github.event.client_payload.Confirm }}
 
 jobs:
-  # check_response:
-  #   runs-on: ubuntu-latest
-  #   name: Check Response
-  #   steps:
-  #     - name: Check Response
-  #       run: |
-  #         IN=$INPUT
-  #         arrIN=(${IN//:/ })
-  #         response=${arrIN[0]}
-  #         if [ ${response^^} != 'YES' ]
-  #         then
-  #           exit 1
-  #         fi
+  check_response:
+    runs-on: ubuntu-latest
+    name: Check Response
+    steps:
+      - name: Check Response
+        run: |
+          IN=$INPUT
+          arrIN=(${IN//:/ })
+          response=${arrIN[0]}
+          if [ ${response^^} != 'YES' ]
+          then
+            exit 1
+          fi
 
-  # lint_and_test:
-  #   needs:
-  #     - check_response
-  #   runs-on: ubuntu-latest
-  #   name: Lint and Test
-  #   steps:
-  #     - name: Set branch
-  #       run: |
-  #         IN=$INPUT
-  #         arrIN=(${IN//:/ })
-  #         if [ ${#arrIN[@]} -gt 1 ]
-  #         then
-  #           echo "::set-env name=BRANCH::${arrIN[1]}"
-  #         else
-  #           echo "::set-env name=BRANCH::master"
-  #         fi
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         ref: ${{ env.BRANCH }}
-  #     - uses: actions/setup-node@v1
-  #       with:
-  #         node-version: "12"
-  #     - name: Install dependencies
-  #       run: npm install
-  #     - name: Lint
-  #       run: npm run lint
-  #     - name: Test
-  #       run: npm test
+  lint_and_test:
+    needs:
+      - check_response
+    runs-on: ubuntu-latest
+    name: Lint and Test
+    steps:
+      - name: Set branch
+        run: |
+          IN=$INPUT
+          arrIN=(${IN//:/ })
+          if [ ${#arrIN[@]} -gt 1 ]
+          then
+            echo "::set-env name=BRANCH::${arrIN[1]}"
+          else
+            echo "::set-env name=BRANCH::master"
+          fi
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.BRANCH }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm test
 
   deploy:
     runs-on: ubuntu-latest
     name: Deply to Remote Server
-    # needs:
-    #   - check_response
-    #   - lint_and_test
+    needs:
+      - check_response
+      - lint_and_test
     steps:
       - name: Set branch
         run: |
