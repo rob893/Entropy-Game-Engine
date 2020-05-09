@@ -1,11 +1,11 @@
-import { Rigidbody } from '../Components/Rigidbody';
-import { RectangleCollider } from '../Components/RectangleCollider';
-import { CollisionDetector } from './Interfaces/CollisionDetector';
-import { CollisionResolver } from './Interfaces/CollisionResolver';
-import { CollisionManifold } from './Helpers/CollisionManifold';
-import { Vector2 } from './Helpers/Vector2';
+import { Rigidbody } from '../components/Rigidbody';
+import { RectangleCollider } from '../components/RectangleCollider';
+import { CollisionDetector } from './interfaces/CollisionDetector';
+import { CollisionResolver } from './interfaces/CollisionResolver';
+import { CollisionManifold } from './helpers/CollisionManifold';
+import { Vector2 } from './helpers/Vector2';
 import { Time } from './Time';
-import { Component } from '../Components/Component';
+import { Component } from '../components/Component';
 
 export class PhysicsEngine {
   public gravity: number;

@@ -1,13 +1,13 @@
-import { NavGrid } from '../Core/Helpers/NavGrid';
-import { RectangleCollider } from '../Components/RectangleCollider';
-import { RenderableBackground } from '../Core/Interfaces/RenderableBackground';
+import { NavGrid } from '../core/helpers/NavGrid';
+import { RectangleCollider } from '../components/RectangleCollider';
+import { RenderableBackground } from '../core/interfaces/RenderableBackground';
 import { GameObject } from './GameObject';
-import { Vector2 } from '../Core/Helpers/Vector2';
-import { Layer } from '../Core/Enums/Layer';
-import { Component } from '../Components/Component';
-import { PrefabSettings } from '../Core/Interfaces/PrefabSettings';
-import { GameEngine } from '../Core/GameEngine';
-import { WeightedGraphVisualizer } from '../Components/GraphVisualizer';
+import { Vector2 } from '../core/helpers/Vector2';
+import { Layer } from '../core/enums/Layer';
+import { Component } from '../components/Component';
+import { PrefabSettings } from '../core/interfaces/PrefabSettings';
+import { GameEngine } from '../core/GameEngine';
+import { WeightedGraphVisualizer } from '../components/GraphVisualizer';
 
 export class Terrain extends GameObject implements RenderableBackground {
   public readonly terrainImage: HTMLImageElement;

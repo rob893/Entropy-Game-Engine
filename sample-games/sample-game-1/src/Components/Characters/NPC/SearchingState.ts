@@ -1,4 +1,4 @@
-import { State } from '../../../Interfaces/State';
+import { State } from '../../../interfaces/State';
 import { NPCController } from './NPCController';
 import { CharacterAnimator } from '../CharacterAnimator';
 import { Component, GameObject } from '@entropy-engine/entropy-game-engine';

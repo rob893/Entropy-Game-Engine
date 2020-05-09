@@ -10,9 +10,9 @@ import {
   PrefabSettings,
   Layer
 } from '@entropy-engine/entropy-game-engine';
-import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
-import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
-import { EnemyMotor } from '../Components/Characters/NPC/EnemyMotor';
+import { CharacterAnimations } from '../interfaces/CharacterAnimations';
+import { CharacterAnimator } from '../components/characters/CharacterAnimator';
+import { EnemyMotor } from '../components/characters/npc/EnemyMotor';
 
 export class Trump extends GameObject {
   protected buildInitialComponents(): Component[] {

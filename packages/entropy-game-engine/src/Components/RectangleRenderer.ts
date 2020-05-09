@@ -1,6 +1,6 @@
 import { Component } from './Component';
-import { GameObject } from '../GameObjects/GameObject';
-import { Renderable } from '../Core/Interfaces/Renderable';
+import { GameObject } from '../game-objects/GameObject';
+import { Renderable } from '../core/interfaces/Renderable';
 
 export class RectangleRenderer extends Component implements Renderable {
   public renderWidth: number;

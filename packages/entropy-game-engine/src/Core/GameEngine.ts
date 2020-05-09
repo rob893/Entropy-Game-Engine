@@ -1,21 +1,21 @@
 import { PhysicsEngine } from './PhysicsEngine';
-import { GameObject } from '../GameObjects/GameObject';
+import { GameObject } from '../game-objects/GameObject';
 import { Time } from './Time';
 import { RenderingEngine } from './RenderingEngine';
-import { TerrainBuilder } from './Helpers/TerrainBuilder';
-import { Scene } from './Interfaces/Scene';
-import { Input } from './Helpers/Input';
-import { ComponentAnalyzer } from './Helpers/ComponentAnalyzer';
-import { SceneManager } from './Helpers/SceneManager';
-import { Layer } from './Enums/Layer';
-import { SpatialHashCollisionDetector } from './Physics/SpatialHashCollisionDetector';
-import { ImpulseCollisionResolver } from './Physics/ImpulseCollisionResolver';
-import { Physics } from './Physics/Physics';
-import { Vector2 } from './Helpers/Vector2';
-import { Transform } from '../Components/Transform';
-import { AssetPool } from './Helpers/AssetPool';
-import { Terrain } from '../GameObjects/Terrain';
-import { GameObjectConstructionParams } from './Interfaces/GameObjectConstructionParams';
+import { TerrainBuilder } from './helpers/TerrainBuilder';
+import { Scene } from './interfaces/Scene';
+import { Input } from './helpers/Input';
+import { ComponentAnalyzer } from './helpers/ComponentAnalyzer';
+import { SceneManager } from './helpers/SceneManager';
+import { Layer } from './enums/Layer';
+import { SpatialHashCollisionDetector } from './physics/SpatialHashCollisionDetector';
+import { ImpulseCollisionResolver } from './physics/ImpulseCollisionResolver';
+import { Physics } from './physics/Physics';
+import { Vector2 } from './helpers/Vector2';
+import { Transform } from '../components/Transform';
+import { AssetPool } from './helpers/AssetPool';
+import { Terrain } from '../game-objects/Terrain';
+import { GameObjectConstructionParams } from './interfaces/GameObjectConstructionParams';
 
 export class GameEngine {
   public developmentMode: boolean = true;

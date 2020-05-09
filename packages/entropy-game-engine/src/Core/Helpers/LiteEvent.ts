@@ -1,4 +1,4 @@
-import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
+import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
 
 export class LiteEvent<T> implements CustomLiteEvent<T> {
   private handlers: { (data?: T, moreData?: T): void }[] = [];

@@ -1,5 +1,5 @@
 import { Component, Slider, LiteEvent, GameObject, CustomLiteEvent } from '@entropy-engine/entropy-game-engine';
-import { Damageable } from '../../Interfaces/Damageable';
+import { Damageable } from '../../interfaces/Damageable';
 import { CharacterAnimator } from './CharacterAnimator';
 
 export class CharacterStats extends Component implements Damageable {

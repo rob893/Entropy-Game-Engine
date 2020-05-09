@@ -9,7 +9,7 @@ import {
   Animator,
   Animation
 } from '@entropy-engine/entropy-game-engine';
-import { Exploder } from '../Components/Exploder';
+import { Exploder } from '../components/Exploder';
 
 export class Explosion extends GameObject {
   protected buildInitialComponents(): Component[] {

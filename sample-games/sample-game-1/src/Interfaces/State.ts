@@ -1,4 +1,4 @@
-import { NPCController } from '../Components/Characters/NPC/NPCController';
+import { NPCController } from '../components/characters/npc/NPCController';
 
 export interface State {
   performBehavior(context: NPCController): void;

@@ -1,7 +1,7 @@
 import { Component } from './Component';
-import { GameObject } from '../GameObjects/GameObject';
-import { Animation } from '../Core/Helpers/Animation';
-import { Renderable } from '../Core/Interfaces/Renderable';
+import { GameObject } from '../game-objects/GameObject';
+import { Animation } from '../core/helpers/Animation';
+import { Renderable } from '../core/interfaces/Renderable';
 
 export class Animator extends Component implements Renderable {
   private animation: Animation;

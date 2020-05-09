@@ -1,7 +1,7 @@
-import { KeyCode } from '../Enums/KeyCode';
+import { KeyCode } from '../enums/KeyCode';
 import { Vector2 } from './Vector2';
-import { EventType } from '../Enums/EventType';
-import { CanvasMouseEvent } from '../Interfaces/CanvasMouseEvent';
+import { EventType } from '../enums/EventType';
+import { CanvasMouseEvent } from '../interfaces/CanvasMouseEvent';
 
 export class Input {
   private boundingRect: ClientRect | DOMRect;

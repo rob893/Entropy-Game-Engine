@@ -1,14 +1,14 @@
-import { Vector2 } from '../Core/Helpers/Vector2';
+import { Vector2 } from '../core/helpers/Vector2';
 import { Component } from './Component';
 import { Transform } from './Transform';
-import { LiteEvent } from '../Core/Helpers/LiteEvent';
-import { GameObject } from '../GameObjects/GameObject';
-import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
-import { RenderableGizmo } from '../Core/Interfaces/RenderableGizmo';
+import { LiteEvent } from '../core/helpers/LiteEvent';
+import { GameObject } from '../game-objects/GameObject';
+import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
+import { RenderableGizmo } from '../core/interfaces/RenderableGizmo';
 import { Rigidbody } from './Rigidbody';
-import { Color } from '../Core/Enums/Color';
-import { PhysicalMaterial } from '../Core/Helpers/PhysicalMaterial';
-import { CollisionManifold } from '../Core/Helpers/CollisionManifold';
+import { Color } from '../core/enums/Color';
+import { PhysicalMaterial } from '../core/helpers/PhysicalMaterial';
+import { CollisionManifold } from '../core/helpers/CollisionManifold';
 
 export class RectangleCollider extends Component implements RenderableGizmo {
   public isTrigger: boolean = false;

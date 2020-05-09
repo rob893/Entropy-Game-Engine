@@ -1,4 +1,4 @@
-import { ThrowableBall } from '../../../GameObjects/ThrowableBall';
+import { ThrowableBall } from '../../../game-objects/ThrowableBall';
 import { CharacterAnimator } from '../CharacterAnimator';
 import { Component, Rigidbody, GameObject, EventType, KeyCode, Vector2 } from '@entropy-engine/entropy-game-engine';
 

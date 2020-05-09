@@ -1,11 +1,11 @@
 import { PhysicsEngine } from '../PhysicsEngine';
 import { RenderingEngine } from '../RenderingEngine';
-import { Component } from '../../Components/Component';
-import { Rigidbody } from '../../Components/Rigidbody';
-import { RectangleCollider } from '../../Components/RectangleCollider';
-import { Renderable } from '../Interfaces/Renderable';
-import { RenderableGUI } from '../Interfaces/RenderableGUI';
-import { RenderableGizmo } from '../Interfaces/RenderableGizmo';
+import { Component } from '../../components/Component';
+import { Rigidbody } from '../../components/Rigidbody';
+import { RectangleCollider } from '../../components/RectangleCollider';
+import { Renderable } from '../interfaces/Renderable';
+import { RenderableGUI } from '../interfaces/RenderableGUI';
+import { RenderableGizmo } from '../interfaces/RenderableGizmo';
 
 export class ComponentAnalyzer {
   private readonly physicsEngine: PhysicsEngine;

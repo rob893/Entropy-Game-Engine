@@ -1,8 +1,8 @@
-import { SpriteData } from '../Interfaces/SpriteData';
+import { SpriteData } from '../interfaces/SpriteData';
 import { NavGrid } from './NavGrid';
 import { Vector2 } from './Vector2';
-import { Terrain } from '../../GameObjects/Terrain';
-import { TerrainSpec } from '../Interfaces/TerrainSpec';
+import { Terrain } from '../../game-objects/Terrain';
+import { TerrainSpec } from '../interfaces/TerrainSpec';
 import { GameEngine } from '../GameEngine';
 
 export class TerrainBuilder {

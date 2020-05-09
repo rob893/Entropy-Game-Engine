@@ -1,7 +1,7 @@
-import { GameObject } from '../../GameObjects/GameObject';
+import { GameObject } from '../../game-objects/GameObject';
 import { RenderableBackground } from './RenderableBackground';
 import { TerrainSpec } from './TerrainSpec';
-import { AssetPool } from '../Helpers/AssetPool';
+import { AssetPool } from '../helpers/AssetPool';
 import { GameEngine } from '../GameEngine';
 
 export interface Scene {

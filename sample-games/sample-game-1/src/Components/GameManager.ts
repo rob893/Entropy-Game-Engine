@@ -7,7 +7,7 @@ import {
   Rigidbody,
   Vector2
 } from '@entropy-engine/entropy-game-engine';
-import { TrumpRB } from '../GameObjects/TrumpRB';
+import { TrumpRB } from '../game-objects/TrumpRB';
 
 export class GameManager extends Component implements RenderableGUI {
   public zIndex: number = 0;

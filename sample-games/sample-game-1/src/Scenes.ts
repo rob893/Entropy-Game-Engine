@@ -8,21 +8,21 @@ import {
   SpriteSheet,
   AudioClip
 } from '@entropy-engine/entropy-game-engine';
-import { Scene1TerrainSpec } from './Terrains/Scene1TerrainSpec';
-import { GameManagerObject } from './GameObjects/GameManagerObject';
-import { Player } from './GameObjects/Player';
-import { PlayerRB } from './GameObjects/PlayerRB';
-import KnightSheet from './Assets/Images/knight.png';
-import MinotaurSheet from './Assets/Images/minotaur.png';
-import TrumpIdle from './Assets/Images/trump_idle.png';
-import TrumpRun from './Assets/Images/trump_run.png';
-import Explosion from './Assets/Images/explosion.png';
-import RedFireball from './Assets/Images/redFireball.png';
-import ExplosionSound from './Assets/Sounds/explosion.mp3';
-import HurtSound from './Assets/Sounds/fat_1_male_hit_1.wav';
-import { Minotaur } from './GameObjects/Minotaur';
-import { Box } from './GameObjects/Box';
-import { UICanvas } from './GameObjects/UICanvas';
+import { Scene1TerrainSpec } from './terrains/Scene1TerrainSpec';
+import { GameManagerObject } from './game-objects/GameManagerObject';
+import { Player } from './game-objects/Player';
+import { PlayerRB } from './game-objects/PlayerRB';
+import KnightSheet from './assets/images/knight.png';
+import MinotaurSheet from './assets/images/minotaur.png';
+import TrumpIdle from './assets/images/trump_idle.png';
+import TrumpRun from './assets/images/trump_run.png';
+import Explosion from './assets/images/explosion.png';
+import RedFireball from './assets/images/redFireball.png';
+import ExplosionSound from './assets/sounds/explosion.mp3';
+import HurtSound from './assets/sounds/fat_1_male_hit_1.wav';
+import { Minotaur } from './game-objects/Minotaur';
+import { Box } from './game-objects/Box';
+import { UICanvas } from './game-objects/UICanvas';
 
 export const scene1: Scene = {
   name: 'Scene1',

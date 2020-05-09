@@ -1,8 +1,8 @@
 import { Component } from './Component';
-import { Vector2 } from '../Core/Helpers/Vector2';
-import { LiteEvent } from '../Core/Helpers/LiteEvent';
-import { GameObject } from '../GameObjects/GameObject';
-import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
+import { Vector2 } from '../core/helpers/Vector2';
+import { LiteEvent } from '../core/helpers/LiteEvent';
+import { GameObject } from '../game-objects/GameObject';
+import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
 
 export class Transform extends Component {
   //Rotation in radians

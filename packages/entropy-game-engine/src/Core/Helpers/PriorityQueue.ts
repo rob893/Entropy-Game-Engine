@@ -1,5 +1,5 @@
 import { BinaryHeap } from './BinaryHeap';
-import { Comparable } from '../Interfaces/Comparable';
+import { Comparable } from '../interfaces/Comparable';
 
 class QueueItem<T> implements Comparable {
   public readonly item: T;

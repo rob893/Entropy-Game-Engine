@@ -1,4 +1,4 @@
-import { Comparable } from '../Interfaces/Comparable';
+import { Comparable } from '../interfaces/Comparable';
 
 export class BinaryHeap<T extends Comparable> {
   private readonly heapArray: T[] = [];

@@ -1,5 +1,5 @@
 import { GraphCell } from './GraphCell';
-import { Vector2 } from '../Helpers/Vector2';
+import { Vector2 } from '../helpers/Vector2';
 
 export interface Graph<T extends GraphCell = GraphCell> {
   cellSize: number;

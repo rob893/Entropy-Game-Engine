@@ -1,12 +1,12 @@
 import { Component } from './Component';
-import { RenderableGizmo } from '../Core/Interfaces/RenderableGizmo';
-import { Vector2 } from '../Core/Helpers/Vector2';
-import { Color } from '../Core/Enums/Color';
-import { NavGrid } from '../Core/Helpers/NavGrid';
-import { AStarSearch } from '../Core/Helpers/AStarSearch';
-import { GameObject } from '../GameObjects/GameObject';
-import { LiteEvent } from '../Core/Helpers/LiteEvent';
-import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
+import { RenderableGizmo } from '../core/interfaces/RenderableGizmo';
+import { Vector2 } from '../core/helpers/Vector2';
+import { Color } from '../core/enums/Color';
+import { NavGrid } from '../core/helpers/NavGrid';
+import { AStarSearch } from '../core/helpers/AStarSearch';
+import { GameObject } from '../game-objects/GameObject';
+import { LiteEvent } from '../core/helpers/LiteEvent';
+import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
 
 export class NavAgent extends Component implements RenderableGizmo {
   public speed: number = 1;

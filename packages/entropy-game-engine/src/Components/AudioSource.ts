@@ -1,6 +1,6 @@
 import { Component } from './Component';
-import { GameObject } from '../GameObjects/GameObject';
-import { AudioClip } from '../Core/Helpers/AudioClip';
+import { GameObject } from '../game-objects/GameObject';
+import { AudioClip } from '../core/helpers/AudioClip';
 
 export class AudioSource extends Component {
   private audioElement: HTMLAudioElement;

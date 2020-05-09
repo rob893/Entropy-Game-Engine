@@ -1,6 +1,6 @@
 import { GameEngine, Color } from '@entropy-engine/entropy-game-engine';
 import { scene1, scene3 } from './Scenes';
-import backgroundImage from './Assets/Images/background.jpg';
+import backgroundImage from './assets/images/background.jpg';
 
 function setBodyStyles({ style }: HTMLBodyElement): void {
   style.backgroundColor = Color.BlueGrey;

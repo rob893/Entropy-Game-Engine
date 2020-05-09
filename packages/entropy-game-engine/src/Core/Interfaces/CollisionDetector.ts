@@ -1,6 +1,6 @@
 import { CustomLiteEvent } from './CustomLiteEvent';
-import { RectangleCollider } from '../../Components/RectangleCollider';
-import { CollisionManifold } from '../Helpers/CollisionManifold';
+import { RectangleCollider } from '../../components/RectangleCollider';
+import { CollisionManifold } from '../helpers/CollisionManifold';
 
 export interface CollisionDetector {
   readonly onCollisionDetected: CustomLiteEvent<CollisionManifold>;

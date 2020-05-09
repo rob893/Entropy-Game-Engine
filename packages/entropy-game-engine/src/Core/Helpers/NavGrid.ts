@@ -1,6 +1,6 @@
-import { WeightedGraph } from '../Interfaces/WeightedGraph';
+import { WeightedGraph } from '../interfaces/WeightedGraph';
 import { Vector2 } from './Vector2';
-import { WeightedGraphCell } from '../Interfaces/WeightedGraphCell';
+import { WeightedGraphCell } from '../interfaces/WeightedGraphCell';
 
 export class NavGrid<T extends WeightedGraphCell = WeightedGraphCell> implements WeightedGraph<T> {
   public readonly cellSize: number;

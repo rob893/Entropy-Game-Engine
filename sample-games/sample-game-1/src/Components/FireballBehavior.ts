@@ -5,7 +5,7 @@ import {
   RectangleCollider,
   CollisionManifold
 } from '@entropy-engine/entropy-game-engine';
-import { Explosion } from '../GameObjects/Explosion';
+import { Explosion } from '../game-objects/Explosion';
 
 export class FireballBehavior extends Component {
   private _movementDirection: Vector2 = Vector2.zero;

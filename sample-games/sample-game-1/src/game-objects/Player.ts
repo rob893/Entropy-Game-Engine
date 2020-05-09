@@ -10,11 +10,11 @@ import {
   Layer,
   GameObjectConstructionParams
 } from '@entropy-engine/entropy-game-engine';
-import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
-import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
-import { CharacterStats } from '../Components/Characters/CharacterStats';
-import { PlayerMotor } from '../Components/Characters/Player/PlayerMotor';
-import { Spawner } from '../Components/Spawner';
+import { CharacterAnimations } from '../interfaces/CharacterAnimations';
+import { CharacterAnimator } from '../components/characters/CharacterAnimator';
+import { CharacterStats } from '../components/characters/CharacterStats';
+import { PlayerMotor } from '../components/characters/player/PlayerMotor';
+import { Spawner } from '../components/Spawner';
 import { Minotaur } from './Minotaur';
 import { Healthbar } from './Healthbar';
 

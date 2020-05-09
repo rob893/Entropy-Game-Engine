@@ -1,5 +1,5 @@
 import { WeightedGraphCell } from './WeightedGraphCell';
-import { Vector2 } from '../Helpers/Vector2';
+import { Vector2 } from '../helpers/Vector2';
 import { Graph } from './Graph';
 
 export interface WeightedGraph<T extends WeightedGraphCell = WeightedGraphCell> extends Graph<T> {

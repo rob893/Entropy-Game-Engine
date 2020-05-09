@@ -1,11 +1,11 @@
 import { Component } from './Component';
-import { RenderableGizmo } from '../Core/Interfaces/RenderableGizmo';
-import { Color } from '../Core/Enums/Color';
-import { GameObject } from '../GameObjects/GameObject';
-import { WeightedGraph } from '../Core/Interfaces/WeightedGraph';
-import { WeightedGraphCell } from '../Core/Interfaces/WeightedGraphCell';
-import { Graph } from '../Core/Interfaces/Graph';
-import { GraphCell } from '../Core/Interfaces/GraphCell';
+import { RenderableGizmo } from '../core/interfaces/RenderableGizmo';
+import { Color } from '../core/enums/Color';
+import { GameObject } from '../game-objects/GameObject';
+import { WeightedGraph } from '../core/interfaces/WeightedGraph';
+import { WeightedGraphCell } from '../core/interfaces/WeightedGraphCell';
+import { Graph } from '../core/interfaces/Graph';
+import { GraphCell } from '../core/interfaces/GraphCell';
 
 export class GraphVisualizer extends Component implements RenderableGizmo {
   private readonly graph: Graph;

@@ -1,5 +1,5 @@
 import { GameObject, Component, Transform } from '@entropy-engine/entropy-game-engine';
-import { State } from '../../../Interfaces/State';
+import { State } from '../../../interfaces/State';
 import { CharacterStats } from '../CharacterStats';
 
 export class NPCController extends Component {

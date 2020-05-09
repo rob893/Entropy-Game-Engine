@@ -1,17 +1,17 @@
-import { Transform } from '../Components/Transform';
-import { Component } from '../Components/Component';
-import { GameEngine } from '../Core/GameEngine';
-import { Layer } from '../Core/Enums/Layer';
-import { PrefabSettings } from '../Core/Interfaces/PrefabSettings';
-import { ComponentAnalyzer } from '../Core/Helpers/ComponentAnalyzer';
-import { Input } from '../Core/Helpers/Input';
-import { Physics } from '../Core/Physics/Physics';
-import { SceneManager } from '../Core/Helpers/SceneManager';
-import { AssetPool } from '../Core/Helpers/AssetPool';
-import { Time } from '../Core/Time';
-import { Vector2 } from '../Core/Helpers/Vector2';
+import { Transform } from '../components/Transform';
+import { Component } from '../components/Component';
+import { GameEngine } from '../core/GameEngine';
+import { Layer } from '../core/enums/Layer';
+import { PrefabSettings } from '../core/interfaces/PrefabSettings';
+import { ComponentAnalyzer } from '../core/helpers/ComponentAnalyzer';
+import { Input } from '../core/helpers/Input';
+import { Physics } from '../core/physics/Physics';
+import { SceneManager } from '../core/helpers/SceneManager';
+import { AssetPool } from '../core/helpers/AssetPool';
+import { Time } from '../core/Time';
+import { Vector2 } from '../core/helpers/Vector2';
 import { Terrain } from './Terrain';
-import { GameObjectConstructionParams } from '../Core/Interfaces/GameObjectConstructionParams';
+import { GameObjectConstructionParams } from '../core/interfaces/GameObjectConstructionParams';
 
 export abstract class GameObject<TConfig extends GameObjectConstructionParams = GameObjectConstructionParams> {
   public id: string;

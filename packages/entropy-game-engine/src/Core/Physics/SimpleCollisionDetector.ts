@@ -1,9 +1,9 @@
-import { CollisionDetector } from '../Interfaces/CollisionDetector';
-import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
-import { RectangleCollider } from '../../Components/RectangleCollider';
-import { LiteEvent } from '../Helpers/LiteEvent';
-import { CollisionManifold } from '../Helpers/CollisionManifold';
-import { Vector2 } from '../Helpers/Vector2';
+import { CollisionDetector } from '../interfaces/CollisionDetector';
+import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
+import { RectangleCollider } from '../../components/RectangleCollider';
+import { LiteEvent } from '../helpers/LiteEvent';
+import { CollisionManifold } from '../helpers/CollisionManifold';
+import { Vector2 } from '../helpers/Vector2';
 
 export class SimpleCollisionDetector implements CollisionDetector {
   private readonly _colliders: RectangleCollider[];

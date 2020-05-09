@@ -51,7 +51,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Entropy Game Engine',
       template: 'src/index.html',
-      favicon: 'src/Assets/Images/favicon.ico'
+      favicon: 'src/assets/images/favicon.ico'
     }),
     new CircularDependencyPlugin({
       // exclude detection of files based on a RegExp

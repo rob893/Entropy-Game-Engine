@@ -1,13 +1,13 @@
 import { GameObject } from '../GameObject';
-import { Component } from '../../Components/Component';
-import { RectangleCollider } from '../../Components/RectangleCollider';
-import { RectangleRenderer } from '../../Components/RectangleRenderer';
-import { Color } from '../../Core/Enums/Color';
-import { PrefabSettings } from '../../Core/Interfaces/PrefabSettings';
-import { Layer } from '../../Core/Enums/Layer';
-import { ClickedOnDetector } from '../../Components/ClickedOnDetector';
-import { TextRenderer } from '../../Components/TextRenderer';
-import { GameObjectConstructionParams } from '../../Core/Interfaces/GameObjectConstructionParams';
+import { Component } from '../../components/Component';
+import { RectangleCollider } from '../../components/RectangleCollider';
+import { RectangleRenderer } from '../../components/RectangleRenderer';
+import { Color } from '../../core/enums/Color';
+import { PrefabSettings } from '../../core/interfaces/PrefabSettings';
+import { Layer } from '../../core/enums/Layer';
+import { ClickedOnDetector } from '../../components/ClickedOnDetector';
+import { TextRenderer } from '../../components/TextRenderer';
+import { GameObjectConstructionParams } from '../../core/interfaces/GameObjectConstructionParams';
 
 type ButtonConfig = GameObjectConstructionParams & { height?: number; width?: number };
 

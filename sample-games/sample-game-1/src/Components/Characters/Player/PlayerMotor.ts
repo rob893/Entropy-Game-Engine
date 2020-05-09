@@ -11,7 +11,7 @@ import {
 import { CharacterAnimator } from '../CharacterAnimator';
 import { CharacterStats } from '../CharacterStats';
 import { Spawner } from '../../Spawner';
-import { Fireball } from '../../../GameObjects/Fireball';
+import { Fireball } from '../../../game-objects/Fireball';
 import { FireballBehavior } from '../../FireballBehavior';
 
 export class PlayerMotor extends Component {

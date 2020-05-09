@@ -8,7 +8,7 @@ import {
   PrefabSettings,
   Layer
 } from '@entropy-engine/entropy-game-engine';
-import { Grenade } from '../Components/Grenade';
+import { Grenade } from '../components/Grenade';
 
 export class ThrowableBall extends GameObject {
   protected buildInitialComponents(): Component[] {

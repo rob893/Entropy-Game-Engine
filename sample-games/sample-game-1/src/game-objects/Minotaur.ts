@@ -11,13 +11,13 @@ import {
   NavAgent,
   GameObjectConstructionParams
 } from '@entropy-engine/entropy-game-engine';
-import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
-import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
-import { NPCController } from '../Components/Characters/NPC/NPCController';
-import { SearchingState } from '../Components/Characters/NPC/SearchingState';
-import { ChaseState } from '../Components/Characters/NPC/ChaseState';
-import { AttackState } from '../Components/Characters/NPC/AttackState';
-import { CharacterStats } from '../Components/Characters/CharacterStats';
+import { CharacterAnimator } from '../components/characters/CharacterAnimator';
+import { CharacterAnimations } from '../interfaces/CharacterAnimations';
+import { NPCController } from '../components/characters/npc/NPCController';
+import { SearchingState } from '../components/characters/npc/SearchingState';
+import { ChaseState } from '../components/characters/npc/ChaseState';
+import { AttackState } from '../components/characters/npc/AttackState';
+import { CharacterStats } from '../components/characters/CharacterStats';
 import { Healthbar } from './Healthbar';
 
 export class Minotaur extends GameObject {

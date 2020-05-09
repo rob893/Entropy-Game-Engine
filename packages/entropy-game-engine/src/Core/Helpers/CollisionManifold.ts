@@ -1,4 +1,4 @@
-import { RectangleCollider } from '../../Components/RectangleCollider';
+import { RectangleCollider } from '../../components/RectangleCollider';
 import { Vector2 } from './Vector2';
 
 export class CollisionManifold {

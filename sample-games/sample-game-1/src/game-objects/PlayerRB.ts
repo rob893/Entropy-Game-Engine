@@ -13,10 +13,10 @@ import {
   Layer,
   GameObjectConstructionParams
 } from '@entropy-engine/entropy-game-engine';
-import { CharacterAnimations } from '../Interfaces/CharacterAnimations';
-import { CharacterAnimator } from '../Components/Characters/CharacterAnimator';
-import { PlayerHealth } from '../Components/Characters/Player/PlayerHealth';
-import { PlayerPhysicsMotor } from '../Components/Characters/Player/PlayerPhysicsMotor';
+import { CharacterAnimations } from '../interfaces/CharacterAnimations';
+import { CharacterAnimator } from '../components/characters/CharacterAnimator';
+import { PlayerHealth } from '../components/characters/player/PlayerHealth';
+import { PlayerPhysicsMotor } from '../components/characters/player/PlayerPhysicsMotor';
 
 export class PlayerRB extends GameObject {
   protected buildInitialComponents(): Component[] {

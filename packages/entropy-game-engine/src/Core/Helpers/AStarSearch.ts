@@ -1,5 +1,5 @@
 import { Vector2 } from './Vector2';
-import { WeightedGraph } from '../Interfaces/WeightedGraph';
+import { WeightedGraph } from '../interfaces/WeightedGraph';
 import { PriorityQueue } from './PriorityQueue';
 
 export class AStarSearch {

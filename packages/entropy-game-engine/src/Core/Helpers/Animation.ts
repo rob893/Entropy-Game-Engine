@@ -1,5 +1,5 @@
 import { LiteEvent } from './LiteEvent';
-import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
+import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
 
 export class Animation {
   public loop: boolean = true;

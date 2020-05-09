@@ -1,5 +1,5 @@
-import { Layer } from '../Enums/Layer';
-import { Component } from '../../Components/Component';
+import { Layer } from '../enums/Layer';
+import { Component } from '../../components/Component';
 
 export interface PrefabSettings {
   /**

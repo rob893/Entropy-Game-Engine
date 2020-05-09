@@ -1,4 +1,4 @@
-import SpriteSheet from '../Assets/Images/DungeonTileset.png';
+import SpriteSheet from '../assets/images/DungeonTileset.png';
 import { SpriteData, TerrainSpec, TerrainCell } from '@entropy-engine/entropy-game-engine';
 
 export class Scene1TerrainSpec implements TerrainSpec {

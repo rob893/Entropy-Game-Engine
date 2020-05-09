@@ -1,4 +1,4 @@
-import { RenderableBackground } from '../Interfaces/RenderableBackground';
+import { RenderableBackground } from '../interfaces/RenderableBackground';
 
 export class RectangleBackground implements RenderableBackground {
   private readonly gameCanvas: HTMLCanvasElement;

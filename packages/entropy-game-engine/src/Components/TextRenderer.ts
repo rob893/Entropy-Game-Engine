@@ -1,7 +1,7 @@
 import { Component } from './Component';
-import { RenderableGUI } from '../Core/Interfaces/RenderableGUI';
-import { Color } from '../Core/Enums/Color';
-import { GameObject } from '../GameObjects/GameObject';
+import { RenderableGUI } from '../core/interfaces/RenderableGUI';
+import { Color } from '../core/enums/Color';
+import { GameObject } from '../game-objects/GameObject';
 
 export interface TextRendererParams {
   fontSize?: number;

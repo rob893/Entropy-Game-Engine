@@ -1,5 +1,5 @@
 import { GameEngine } from '../GameEngine';
-import { Layer } from '../Enums/Layer';
+import { Layer } from '../enums/Layer';
 
 export interface GameObjectConstructionParams {
   gameEngine: GameEngine;

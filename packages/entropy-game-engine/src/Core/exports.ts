@@ -1,4 +1,4 @@
 export * from './GameEngine';
-export * from './Enums/exports';
-export * from './Helpers/exports';
-export * from './Interfaces/exports';
+export * from './enums/exports';
+export * from './helpers/exports';
+export * from './interfaces/exports';

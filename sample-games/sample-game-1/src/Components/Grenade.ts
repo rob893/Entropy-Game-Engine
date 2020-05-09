@@ -1,5 +1,5 @@
 import { Component } from '@entropy-engine/entropy-game-engine';
-import { Explosion } from '../GameObjects/Explosion';
+import { Explosion } from '../game-objects/Explosion';
 
 export class Grenade extends Component {
   public start(): void {

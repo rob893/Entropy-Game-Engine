@@ -1,16 +1,16 @@
-import { GameObject } from '../GameObjects/GameObject';
+import { GameObject } from '../game-objects/GameObject';
 import { Transform } from './Transform';
-import { LiteEvent } from '../Core/Helpers/LiteEvent';
-import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
-import { Input } from '../Core/Helpers/Input';
-import { Time } from '../Core/Time';
-import { AssetPool } from '../Core/Helpers/AssetPool';
-import { SceneManager } from '../Core/Helpers/SceneManager';
-import { Physics } from '../Core/Physics/Physics';
-import { GameEngine } from '../Core/GameEngine';
-import { Vector2 } from '../Core/Helpers/Vector2';
-import { Terrain } from '../GameObjects/Terrain';
-import { GameObjectConstructionParams } from '../Core/Interfaces/GameObjectConstructionParams';
+import { LiteEvent } from '../core/helpers/LiteEvent';
+import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
+import { Input } from '../core/helpers/Input';
+import { Time } from '../core/Time';
+import { AssetPool } from '../core/helpers/AssetPool';
+import { SceneManager } from '../core/helpers/SceneManager';
+import { Physics } from '../core/physics/Physics';
+import { GameEngine } from '../core/GameEngine';
+import { Vector2 } from '../core/helpers/Vector2';
+import { Terrain } from '../game-objects/Terrain';
+import { GameObjectConstructionParams } from '../core/interfaces/GameObjectConstructionParams';
 
 export abstract class Component {
   public readonly gameObject: GameObject;

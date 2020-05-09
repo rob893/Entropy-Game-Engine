@@ -1,9 +1,9 @@
-import { Renderable } from './Interfaces/Renderable';
-import { RenderableGizmo } from './Interfaces/RenderableGizmo';
-import { RenderableGUI } from './Interfaces/RenderableGUI';
-import { RenderableBackground } from './Interfaces/RenderableBackground';
-import { Terrain } from '../GameObjects/Terrain';
-import { Component } from '../Components/Component';
+import { Renderable } from './interfaces/Renderable';
+import { RenderableGizmo } from './interfaces/RenderableGizmo';
+import { RenderableGUI } from './interfaces/RenderableGUI';
+import { RenderableBackground } from './interfaces/RenderableBackground';
+import { Terrain } from '../game-objects/Terrain';
+import { Component } from '../components/Component';
 
 export class RenderingEngine {
   public renderGizmos: boolean;

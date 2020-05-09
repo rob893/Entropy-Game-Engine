@@ -1,7 +1,7 @@
-import { Vector2 } from '../Helpers/Vector2';
-import { RectangleCollider } from '../../Components/RectangleCollider';
-import { Rigidbody } from '../../Components/Rigidbody';
-import { Transform } from '../../Components/Transform';
+import { Vector2 } from '../helpers/Vector2';
+import { RectangleCollider } from '../../components/RectangleCollider';
+import { Rigidbody } from '../../components/Rigidbody';
+import { Transform } from '../../components/Transform';
 
 export class RaycastHit {
   // public centroid: Vector2;

@@ -1,10 +1,10 @@
-import { CollisionDetector } from '../Interfaces/CollisionDetector';
-import { RectangleCollider } from '../../Components/RectangleCollider';
-import { CustomLiteEvent } from '../Interfaces/CustomLiteEvent';
-import { LiteEvent } from '../Helpers/LiteEvent';
-import { Vector2 } from '../Helpers/Vector2';
-import { Layer } from '../Enums/Layer';
-import { CollisionManifold } from '../Helpers/CollisionManifold';
+import { CollisionDetector } from '../interfaces/CollisionDetector';
+import { RectangleCollider } from '../../components/RectangleCollider';
+import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
+import { LiteEvent } from '../helpers/LiteEvent';
+import { Vector2 } from '../helpers/Vector2';
+import { Layer } from '../enums/Layer';
+import { CollisionManifold } from '../helpers/CollisionManifold';
 
 export class SpatialHashCollisionDetector implements CollisionDetector {
   private readonly _colliders: RectangleCollider[];

@@ -1,10 +1,10 @@
 import { Component } from './Component';
 import { RectangleCollider } from './RectangleCollider';
-import { GameObject } from '../GameObjects/GameObject';
-import { LiteEvent } from '../Core/Helpers/LiteEvent';
-import { CustomLiteEvent } from '../Core/Interfaces/CustomLiteEvent';
-import { Geometry } from '../Core/Helpers/Geometry';
-import { EventType } from '../Core/Enums/EventType';
+import { GameObject } from '../game-objects/GameObject';
+import { LiteEvent } from '../core/helpers/LiteEvent';
+import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
+import { Geometry } from '../core/helpers/Geometry';
+import { EventType } from '../core/enums/EventType';
 
 export class ClickedOnDetector extends Component {
   private readonly collider: RectangleCollider;

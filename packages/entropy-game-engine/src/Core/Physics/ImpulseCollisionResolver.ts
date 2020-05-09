@@ -1,7 +1,7 @@
-import { CollisionResolver } from '../Interfaces/CollisionResolver';
-import { Vector2 } from '../Helpers/Vector2';
-import { Rigidbody } from '../../Components/Rigidbody';
-import { CollisionManifold } from '../Helpers/CollisionManifold';
+import { CollisionResolver } from '../interfaces/CollisionResolver';
+import { Vector2 } from '../helpers/Vector2';
+import { Rigidbody } from '../../components/Rigidbody';
+import { CollisionManifold } from '../helpers/CollisionManifold';
 
 export class ImpulseCollisionResolver implements CollisionResolver {
   public resolveCollisions(collisionManifold: CollisionManifold): void {
