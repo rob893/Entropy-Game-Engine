@@ -3,7 +3,7 @@ import { Renderable } from '../core/interfaces/Renderable';
 import { GameObject } from '../game-objects/GameObject';
 
 export class ImageRenderer extends Component implements Renderable {
-  private image: HTMLImageElement;
+  private readonly image: HTMLImageElement;
   private readonly renderWidth: number;
   private readonly renderHeight: number;
   private readonly halfRWidth: number;
