@@ -68,6 +68,8 @@ jobs:
           git checkout "${GITHUB_REF:11}"
           git config user.name "Github Actions"
           git config user.email "bot@github.com"
+      - name: Stash changes
+        run: git stash
       - name: Authenticate with NPM
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
@@ -75,11 +77,7 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish
-        run: |
-          git stash
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-          npm whoami
-          npx lerna publish --yes
+        run: npx lerna publish --yes
         env:
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
