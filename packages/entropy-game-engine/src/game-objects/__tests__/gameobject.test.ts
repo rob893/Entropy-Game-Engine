@@ -69,7 +69,7 @@ const scene1: Scene = {
   loadOrder: 1,
   terrainSpec: null,
 
-  getSkybox(gameCanvas: HTMLCanvasElement): RectangleBackground {
+  getSkybox(_gameEngine: GameEngine): RectangleBackground {
     return null!;
   },
 
