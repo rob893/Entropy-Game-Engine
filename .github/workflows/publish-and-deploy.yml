@@ -75,7 +75,9 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish
-        run: npx lerna publish --yes
+        run: |
+          git stash
+          npx lerna publish --yes
         env:
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
