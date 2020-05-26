@@ -101,6 +101,8 @@ jobs:
           git checkout $BRANCH
           git config user.name "Github Actions"
           git config user.email "bot@github.com"
+      - name: Stash changes
+        run: git stash
       - name: Authenticate with NPM
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
