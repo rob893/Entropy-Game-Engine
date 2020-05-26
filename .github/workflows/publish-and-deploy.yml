@@ -77,6 +77,8 @@ jobs:
       - name: Publish
         run: |
           git stash
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
           npx lerna publish --yes
         env:
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
