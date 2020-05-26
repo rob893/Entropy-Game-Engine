@@ -40,6 +40,22 @@
       "webRoot": "${workspaceFolder}/sample-games/sample-game-1"
     },
     {
+      "type": "chrome",
+      "request": "attach",
+      "name": "Attach to Chrome 2",
+      "port": 9222,
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-2"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost 2",
+      "url": "http://localhost:8080",
+      "port": 9223,
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-2"
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Jest All",

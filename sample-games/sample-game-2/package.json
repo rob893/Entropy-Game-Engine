@@ -1,0 +1,49 @@
+{
+  "name": "@entropy-engine/sample-game-2",
+  "version": "1.0.0",
+  "description": "Custom 2D game engine written in TypeScript.",
+  "author": "Robert Herber",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rob893/Entropy-Game-Engine.git"
+  },
+  "keywords": [
+    "game",
+    "engine",
+    "typescript"
+  ],
+  "homepage": "https://github.com/rob893/Entropy-Game-Engine#readme",
+  "bugs": {
+    "url": "https://github.com/rob893/Entropy-Game-Engine/issues"
+  },
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "clean": "rm -rf ./dist",
+    "build": "npm i --only-prod && webpack --config webpack.prod.js",
+    "build-game": "npm run build",
+    "lerna-postinstall": "npm link"
+  },
+  "dependencies": {
+    "@entropy-engine/entropy-game-engine": "file:../../packages/entropy-game-engine"
+  },
+  "devDependencies": {
+    "@types/html-webpack-plugin": "^3.2.3",
+    "circular-dependency-plugin": "^5.2.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "file-loader": "^6.0.0",
+    "html-webpack-plugin": "^4.3.0",
+    "ts-loader": "^7.0.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^4.2.2"
+  }
+}

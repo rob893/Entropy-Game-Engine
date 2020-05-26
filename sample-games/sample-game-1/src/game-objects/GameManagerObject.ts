@@ -1,9 +1,21 @@
-import { GameObject, Layer, Component, PrefabSettings, FPSCounter } from '@entropy-engine/entropy-game-engine';
+import {
+  GameObject,
+  Layer,
+  Component,
+  PrefabSettings,
+  FPSCounter,
+  // WeightedGraphVisualizer,
+  GameObjectConstructionParams
+} from '@entropy-engine/entropy-game-engine';
 import { GameManager } from '../components/GameManager';
 
 export class GameManagerObject extends GameObject {
-  protected buildInitialComponents(): Component[] {
-    return [new GameManager(this), new FPSCounter(this)];
+  protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
+    return [
+      // new WeightedGraphVisualizer(this, this.terrain.navGrid),
+      new GameManager(this),
+      new FPSCounter(this)
+    ];
   }
 
   protected getPrefabSettings(): PrefabSettings {

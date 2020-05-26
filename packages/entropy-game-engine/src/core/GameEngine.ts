@@ -415,9 +415,14 @@ export class GameEngine {
     }
 
     gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this)];
+    const skyBox = scene.getSkybox(this);
+    this.renderingEngine.background = skyBox;
+
+    if (skyBox instanceof GameObject) {
+      gameObjects.push(skyBox);
+    }
 
     this.setGameObjects(gameObjects);
-    this.renderingEngine.background = scene.getSkybox(this._gameCanvas);
 
     this.gameInitialized = true;
   }

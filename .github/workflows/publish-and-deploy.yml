@@ -123,7 +123,9 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           name: id_rsa
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Clean remote directory
-        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf ${{ secrets.REMOTE_TARGET }}/*'
-      - name: Copy build to remote server
-        run: scp -r ${{ secrets.DEPLOY_SOURCE }} ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}
+      - name: Clean remote directories
+        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf /var/www/html/entropy/sample-game-1/* && rm -rf /var/www/html/entropy/sample-game-2/*'
+      - name: Copy builds to remote server
+        run: |
+          scp -r ./sample-games/sample-game-1/dist/* ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/var/www/html/entropy/sample-game-1
+          scp -r ./sample-games/sample-game-2/dist/* ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/var/www/html/entropy/sample-game-2

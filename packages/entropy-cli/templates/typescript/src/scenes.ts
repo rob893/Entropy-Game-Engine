@@ -14,7 +14,7 @@ export const scene1: Scene = {
   loadOrder: 1,
   terrainSpec: null,
 
-  getSkybox(gameCanvas: HTMLCanvasElement): RectangleBackground {
+  getSkybox({ gameCanvas }: GameEngine): RectangleBackground {
     return new RectangleBackground(gameCanvas, Color.Black);
   },
 

@@ -18,8 +18,8 @@ import TrumpIdle from './assets/images/trump_idle.png';
 import TrumpRun from './assets/images/trump_run.png';
 import Explosion from './assets/images/explosion.png';
 import RedFireball from './assets/images/redFireball.png';
-import ExplosionSound from './assets/sounds/explosion.mp3';
-import HurtSound from './assets/sounds/fat_1_male_hit_1.wav';
+import ExplosionSound from './assets/audio/explosion.mp3';
+import HurtSound from './assets/audio/fat_1_male_hit_1.wav';
 import { Minotaur } from './game-objects/Minotaur';
 import { Box } from './game-objects/Box';
 import { UICanvas } from './game-objects/UICanvas';
@@ -29,7 +29,7 @@ export const scene1: Scene = {
   loadOrder: 1,
   terrainSpec: new Scene1TerrainSpec(3),
 
-  getSkybox(gameCanvas: HTMLCanvasElement): RectangleBackground {
+  getSkybox({ gameCanvas }): RectangleBackground {
     return new RectangleBackground(gameCanvas, Color.Black);
   },
 
@@ -110,7 +110,7 @@ export const scene3: Scene = {
   loadOrder: 3,
   terrainSpec: null,
 
-  getSkybox(gameCanvas: HTMLCanvasElement): RectangleBackground {
+  getSkybox({ gameCanvas }): RectangleBackground {
     return new RectangleBackground(gameCanvas, Color.Black);
   },
 

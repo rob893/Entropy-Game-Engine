@@ -8,7 +8,7 @@ export interface Scene {
   name: string;
   loadOrder: number;
   terrainSpec: TerrainSpec | null;
-  getSkybox(gameCanvas: HTMLCanvasElement): RenderableBackground;
+  getSkybox(gameEngine: GameEngine): RenderableBackground;
   getStartingGameObjects(gameEngine: GameEngine): GameObject[];
   getAssetPool(): Promise<AssetPool>;
 }

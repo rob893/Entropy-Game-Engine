@@ -18,3 +18,4 @@ export * from './SpriteSheet';
 export * from './Stopwatch';
 export * from './TerrainBuilder';
 export * from './Vector2';
+export * from './ImageUtilities';

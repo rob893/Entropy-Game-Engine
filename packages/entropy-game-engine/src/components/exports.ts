@@ -11,3 +11,4 @@ export * from './Rigidbody';
 export * from './Slider';
 export * from './TextRenderer';
 export * from './Transform';
+export * from './ImageRenderer';
