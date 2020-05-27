@@ -1,7 +1,7 @@
 import { Component, GameObject, RenderableBackground } from '@entropy-engine/entropy-game-engine';
 
 export class ScrollingBackground extends Component implements RenderableBackground {
-  public scrollSpeed: number = 10;
+  public scrollSpeed: number = 300;
 
   private readonly backgroundImage: HTMLImageElement;
 
@@ -13,7 +13,7 @@ export class ScrollingBackground extends Component implements RenderableBackgrou
   }
 
   public update(): void {
-    this.x -= this.scrollSpeed;
+    this.x -= this.scrollSpeed * this.time.deltaTime;
 
     if (this.x < -this.gameCanvas.width) {
       this.x = 0;

@@ -17,7 +17,7 @@ export class Border extends GameObject {
     const brickImage = this.assetPool.getAsset<HTMLImageElement>('brickImage');
     const imageRenderer = new ImageRenderer(this, 20, 200, brickImage);
 
-    const scroller = new Scroller(this, -10);
+    const scroller = new Scroller(this, -300);
     // const destroyer = new Destroyer(this, [
     //   ({
     //     transform: {

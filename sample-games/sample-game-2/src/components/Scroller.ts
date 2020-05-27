@@ -16,6 +16,6 @@ export class Scroller extends Component {
   }
 
   public update(): void {
-    this.transform.translate(new Vector2(this.xScrollSpeed, this.yScrollSpeed));
+    this.transform.translate(new Vector2(this.xScrollSpeed, this.yScrollSpeed).multiplyScalar(this.time.deltaTime));
   }
 }
