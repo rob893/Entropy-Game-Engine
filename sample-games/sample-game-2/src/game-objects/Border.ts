@@ -11,26 +11,22 @@ import { Scroller } from '../components/Scroller';
 import { Destroyer } from '../components/Destroyer';
 
 export class Border extends GameObject {
-  protected buildInitialComponents({
-    gameEngine: {
-      gameCanvas: { width }
-    }
-  }: GameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
     const collider = new RectangleCollider(this, null, 20, 200);
 
     const brickImage = this.assetPool.getAsset<HTMLImageElement>('brickImage');
     const imageRenderer = new ImageRenderer(this, 20, 200, brickImage);
 
     const scroller = new Scroller(this, -10);
-    const destroyer = new Destroyer(this, [
-      ({
-        transform: {
-          position: { x }
-        }
-      }) => x < -20 || x > width + 20
-    ]);
+    // const destroyer = new Destroyer(this, [
+    //   ({
+    //     transform: {
+    //       position: { x }
+    //     }
+    //   }) => x < -20 || x > width + 20
+    // ]);
 
-    return [collider, imageRenderer, scroller, destroyer];
+    return [collider, imageRenderer, scroller];
   }
 
   protected getPrefabSettings(): PrefabSettings {

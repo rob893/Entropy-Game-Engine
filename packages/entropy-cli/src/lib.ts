@@ -6,6 +6,7 @@ import { promisify } from 'util';
 import execa from 'execa';
 import Listr from 'listr';
 import { projectInstall } from 'pkg-install';
+import { Options } from './index';
 
 const access = promisify(fs.access);
 const copy = promisify(ncp);
@@ -26,11 +27,15 @@ async function initGit(options: any): Promise<boolean> {
   return true;
 }
 
-export async function createProject(options: any): Promise<boolean> {
+export async function createProject(options: Options): Promise<boolean> {
   options = {
     ...options,
     targetDirectory: options.targetDirectory || process.cwd()
   };
+
+  if (!options.template) {
+    throw new Error('No template defined');
+  }
 
   const templateDir = path.resolve(__dirname, '../templates', options.template.toLowerCase());
   options.templateDirectory = templateDir;

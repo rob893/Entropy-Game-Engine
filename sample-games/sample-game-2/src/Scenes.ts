@@ -18,6 +18,7 @@ import ExplosionSound from './assets/audio/explosion.mp3';
 import { Player } from './game-objects/Player';
 import { Background } from './game-objects/Background';
 import { Border } from './game-objects/Border';
+import { GameManager } from './game-objects/GameManager';
 
 export const scene1: Scene = {
   name: 'Scene1',
@@ -30,8 +31,8 @@ export const scene1: Scene = {
 
   getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
     const player = new Player({ gameEngine });
-    const brick = new Border({ gameEngine });
-    return [player, brick];
+    const gameManager = new GameManager({ gameEngine });
+    return [player, gameManager];
   },
 
   async getAssetPool(): Promise<AssetPool> {

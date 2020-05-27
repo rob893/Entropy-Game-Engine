@@ -9,6 +9,8 @@ export interface Options {
   runInstall: boolean;
   template?: string;
   command?: string;
+  targetDirectory?: string;
+  templateDirectory?: string;
 }
 
 export const commands = new Set<string>(['init']);
