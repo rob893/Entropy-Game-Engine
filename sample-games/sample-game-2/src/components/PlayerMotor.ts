@@ -1,7 +1,20 @@
-import { Component, Vector2, KeyCode } from '@entropy-engine/entropy-game-engine';
+import { Component, Vector2, KeyCode, RectangleCollider } from '@entropy-engine/entropy-game-engine';
 
 export class PlayerMotor extends Component {
   private dy: number = 0;
+
+  public start(): void {
+    const collider = this.getComponent(RectangleCollider);
+
+    if (!collider) {
+      throw new Error('No collider attached to player');
+    }
+
+    collider.onCollided.add(() => {
+      this.destroy(this.gameObject);
+      console.log('Player is dead');
+    });
+  }
 
   public update(): void {
     if (this.input.getKey(KeyCode.Space)) {

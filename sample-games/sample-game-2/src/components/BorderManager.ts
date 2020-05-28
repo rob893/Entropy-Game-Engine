@@ -64,30 +64,44 @@ export class BorderManager extends Component {
 
       const {
         transform: {
-          position: { y: ltY }
+          position: { x: ltbX, y: ltbY }
         }
-      } = leftTopBorder;
+      } = this.topBorders[this.topBorders.length - 1];
 
-      if (ltY >= this.maxBorderHeight) {
+      if (ltbY >= this.maxBorderHeight) {
         this.topGoingDown = false;
-      } else if (ltY <= this.minBorderHeight) {
+      } else if (ltbY <= this.minBorderHeight) {
         this.topGoingDown = true;
       }
 
-      leftTopBorder.transform.setPosition(this.gameCanvas.width + 100, this.topGoingDown ? ltY + 5 : ltY - 5);
+      leftTopBorder.transform.setPosition(ltbX + this.borderWidth, this.topGoingDown ? ltbY + 1 : ltbY - 1);
+
       this.topBorders.push(leftTopBorder);
     }
 
     if (this.bottomBorders[0].transform.position.x <= -100) {
       const leftBottomBorder = this.bottomBorders.shift();
+
       if (!leftBottomBorder) {
         throw new Error('Top border is null');
       }
 
-      leftBottomBorder.transform.setPosition(
-        this.gameCanvas.width + 100,
-        this.gameCanvas.height + (this.borderHeight - 5)
-      );
+      const {
+        transform: {
+          position: { x: ltbX, y: ltbY }
+        }
+      } = this.bottomBorders[this.bottomBorders.length - 1];
+
+      const botBorderHeight = this.gameCanvas.height - (ltbY - this.borderHeight);
+
+      if (botBorderHeight >= this.maxBorderHeight) {
+        this.bottomGoingDown = true;
+      } else if (botBorderHeight <= this.minBorderHeight) {
+        this.bottomGoingDown = false;
+      }
+
+      leftBottomBorder.transform.setPosition(ltbX + this.borderWidth, this.bottomGoingDown ? ltbY + 1 : ltbY - 1);
+
       this.bottomBorders.push(leftBottomBorder);
     }
   }
