@@ -3,15 +3,17 @@ import {
   GameObjectConstructionParams,
   Component,
   PrefabSettings,
-  Layer
+  Layer,
+  FPSCounter
 } from '@entropy-engine/entropy-game-engine';
 import { BorderManager } from '../components/BorderManager';
 
 export class GameManager extends GameObject {
   protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
     const borderManager = new BorderManager(this);
+    const fpsCounter = new FPSCounter(this);
 
-    return [borderManager];
+    return [borderManager, fpsCounter];
   }
 
   protected getPrefabSettings(): PrefabSettings {
