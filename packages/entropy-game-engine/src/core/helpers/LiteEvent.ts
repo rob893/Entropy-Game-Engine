@@ -1,13 +1,13 @@
 import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
 
 export class LiteEvent<T> implements CustomLiteEvent<T> {
-  private handlers: { (data?: T, moreData?: T): void }[] = [];
+  private handlers: ((data?: T, moreData?: T) => void)[] = [];
 
-  public add(handler: { (data?: T, moreData?: T): void }): void {
+  public add(handler: (data?: T, moreData?: T) => void): void {
     this.handlers.push(handler);
   }
 
-  public remove(handler: { (data?: T, moreData?: T): void }): void {
+  public remove(handler: (data?: T, moreData?: T) => void): void {
     this.handlers = this.handlers.filter(h => h !== handler);
   }
 

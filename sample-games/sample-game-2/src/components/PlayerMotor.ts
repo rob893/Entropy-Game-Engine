@@ -18,9 +18,9 @@ export class PlayerMotor extends Component {
 
   public update(): void {
     if (this.input.getKey(KeyCode.Space)) {
-      this.dy -= 15 * this.time.deltaTime;
+      this.dy -= 60 * this.time.deltaTime;
     } else {
-      this.dy += 15 * this.time.deltaTime;
+      this.dy += 60 * this.time.deltaTime;
     }
 
     if (this.dy > 15) {
