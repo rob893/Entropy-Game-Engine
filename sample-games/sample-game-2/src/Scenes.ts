@@ -38,7 +38,7 @@ export const scene1: Scene = {
   async getAssetPool(): Promise<AssetPool> {
     const assets = new Map<string, any>();
 
-    const helicopterSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(HelicopterSpriteSheet, 3, 1);
+    const helicopterSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(HelicopterSpriteSheet, 3, 1, { right: 3 });
     const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
 
     const backgroundImage = await ImageUtilities.loadImage(BackgroundImage);

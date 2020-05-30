@@ -1,29 +1,28 @@
 import { Component, Vector2, RectangleCollider, GameObject } from '@entropy-engine/entropy-game-engine';
 import { Border } from '../game-objects/Border';
+import { ScoreManager } from './ScoreManager';
 
 export class BorderManager extends Component {
+  private readonly scoreManager: ScoreManager;
   private readonly topBorders: Border[] = [];
   private readonly bottomBorders: Border[] = [];
   private readonly borderWidth: number;
   private readonly borderHeight: number;
+  private readonly maxBorderHeightStart = 30;
+  private readonly minBorderHeightStart = 5;
 
   private maxBorderHeight: number;
   private minBorderHeight: number;
   private topGoingDown: boolean = false;
   private bottomGoingDown: boolean = false;
 
-  public constructor(
-    gameObject: GameObject,
-    borderWidth?: number,
-    borderHeight?: number,
-    maxBorderHeight?: number,
-    minBorderHeight?: number
-  ) {
+  public constructor(gameObject: GameObject, scoreManager: ScoreManager, borderWidth?: number, borderHeight?: number) {
     super(gameObject);
+    this.scoreManager = scoreManager;
     this.borderWidth = borderWidth || 20;
     this.borderHeight = borderHeight || 200;
-    this.maxBorderHeight = maxBorderHeight || 30;
-    this.minBorderHeight = minBorderHeight || 5;
+    this.maxBorderHeight = this.maxBorderHeightStart;
+    this.minBorderHeight = this.minBorderHeightStart;
   }
 
   public start(): void {
@@ -51,6 +50,14 @@ export class BorderManager extends Component {
   }
 
   public update(): void {
+    this.maxBorderHeight = this.maxBorderHeightStart + this.scoreManager.score / this.scoreManager.progressDenom;
+
+    if (this.maxBorderHeight > this.gameCanvas.height / 4) {
+      this.maxBorderHeight = this.gameCanvas.height / 4;
+    }
+
+    this.minBorderHeight = this.minBorderHeightStart + this.scoreManager.score / this.scoreManager.progressDenom;
+
     if (this.topBorders.length === 0 || this.bottomBorders.length === 0) {
       return;
     }
@@ -74,7 +81,11 @@ export class BorderManager extends Component {
         this.topGoingDown = true;
       }
 
-      leftTopBorder.transform.setPosition(ltbX + this.borderWidth, this.topGoingDown ? ltbY + 1 : ltbY - 1);
+      if (this.scoreManager.score % 50 === 0) {
+        leftTopBorder.transform.setPosition(ltbX + this.borderWidth, Math.random() * this.maxBorderHeight + 1);
+      } else {
+        leftTopBorder.transform.setPosition(ltbX + this.borderWidth, this.topGoingDown ? ltbY + 1 : ltbY - 1);
+      }
 
       this.topBorders.push(leftTopBorder);
     }
@@ -100,7 +111,14 @@ export class BorderManager extends Component {
         this.bottomGoingDown = false;
       }
 
-      leftBottomBorder.transform.setPosition(ltbX + this.borderWidth, this.bottomGoingDown ? ltbY + 1 : ltbY - 1);
+      if (this.scoreManager.score % 50 === 0) {
+        leftBottomBorder.transform.setPosition(
+          ltbX + this.borderWidth,
+          Math.random() * this.maxBorderHeight + (this.gameCanvas.height - this.maxBorderHeight) + this.borderHeight + 1
+        );
+      } else {
+        leftBottomBorder.transform.setPosition(ltbX + this.borderWidth, this.bottomGoingDown ? ltbY + 1 : ltbY - 1);
+      }
 
       this.bottomBorders.push(leftBottomBorder);
     }

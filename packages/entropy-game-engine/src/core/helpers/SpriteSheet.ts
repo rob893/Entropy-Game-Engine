@@ -1,9 +1,9 @@
-type TrimBy = {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-};
+interface TrimBy {
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+}
 
 export class SpriteSheet {
   private readonly frames = new Map<number, HTMLImageElement[]>();
@@ -14,7 +14,7 @@ export class SpriteSheet {
    * @param spriteSheetUrl The location of the sprite sheet (import it as a variable and then use that)
    * @param framesPerRow Number of frames per row (if the sprite sheet is 5 by 5 (5 rows with 5 frames per row), then this should be 5)
    * @param numRows Number of rows the sprite sheet has.
-   * @param trimEdgesBy How many pixals to trim the sprite sheet down by. This is applied to each side.
+   * @param trimEdgesBy How many pixals to trim the sprite sheet down by.
    */
   public static async buildSpriteSheetAsync(
     spriteSheetUrl: string,
@@ -128,10 +128,10 @@ export class SpriteSheet {
 
             context.drawImage(
               spriteSheet,
-              j * spriteWidth + trimEdgesBy.left,
-              i * spriteHeight + trimEdgesBy.top,
-              spriteWidth - trimEdgesBy.right,
-              spriteHeight - trimEdgesBy.bottom,
+              j * spriteWidth + (trimEdgesBy.left || 0),
+              i * spriteHeight + (trimEdgesBy.top || 0),
+              spriteWidth - (trimEdgesBy.right || 0),
+              spriteHeight - (trimEdgesBy.bottom || 0),
               0,
               0,
               canvas.width,
