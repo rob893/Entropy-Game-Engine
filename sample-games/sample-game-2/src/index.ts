@@ -1,4 +1,4 @@
-import { GameEngine, Color } from '@entropy-engine/entropy-game-engine';
+import { GameEngine, Color, SimpleCollisionDetector } from '@entropy-engine/entropy-game-engine';
 import { scene1 } from './Scenes';
 import backgroundImage from './assets/images/background.jpg';
 
@@ -26,7 +26,10 @@ async function main(): Promise<void> {
   setBodyStyles(bodyElement);
   setCanvasStyles(gameCanvas);
 
-  const gameEngine = new GameEngine(gameCanvas);
+  const gameEngine = new GameEngine({
+    gameCanvas,
+    collisionDetectorGenerator: ({ layerCollisionMatrix }) => new SimpleCollisionDetector(layerCollisionMatrix)
+  });
 
   gameEngine.developmentMode = false;
 

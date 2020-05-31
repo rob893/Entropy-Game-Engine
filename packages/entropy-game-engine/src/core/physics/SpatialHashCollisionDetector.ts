@@ -1,14 +1,11 @@
-import { CollisionDetector } from '../interfaces/CollisionDetector';
 import { RectangleCollider } from '../../components/RectangleCollider';
 import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
-import { LiteEvent } from '../helpers/LiteEvent';
 import { Vector2 } from '../helpers/Vector2';
 import { Layer } from '../enums/Layer';
 import { CollisionManifold } from '../helpers/CollisionManifold';
+import { BaseCollisionDetector } from './BaseCollisionDetector';
 
-export class SpatialHashCollisionDetector implements CollisionDetector {
-  private readonly _colliders: RectangleCollider[];
-  private readonly _onCollisionDetected: LiteEvent<CollisionManifold> = new LiteEvent<CollisionManifold>();
+export class SpatialHashCollisionDetector extends BaseCollisionDetector {
   private readonly colliderSpacialMapKeys: Map<RectangleCollider, Set<string>> = new Map<
     RectangleCollider,
     Set<string>
@@ -21,7 +18,6 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
   private readonly cellSize: number;
   private readonly gameMapWidth: number;
   private readonly gameMapHeight: number;
-  private readonly layerCollisionMatrix: Map<Layer, Set<Layer>>;
 
   public constructor(
     gameMapWidth: number,
@@ -29,17 +25,12 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
     layerCollisionMatrix: Map<Layer, Set<Layer>>,
     cellSize: number = 100
   ) {
-    this._colliders = [];
+    super(layerCollisionMatrix);
     this.cellSize = cellSize;
     this.gameMapWidth = gameMapWidth;
     this.gameMapHeight = gameMapHeight;
-    this.layerCollisionMatrix = layerCollisionMatrix;
 
     this.buildSpatialMapCells();
-  }
-
-  public get colliders(): RectangleCollider[] {
-    return this._colliders;
   }
 
   public get onCollisionDetected(): CustomLiteEvent<CollisionManifold> {
@@ -49,7 +40,7 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
   public detectCollisions(): void {
     this.collisionMap.clear();
 
-    for (const collider of this._colliders) {
+    for (const collider of this.colliders) {
       if (!collider.enabled) {
         continue;
       }
@@ -77,19 +68,15 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
   public addCollider(collider: RectangleCollider): void {
     collider.transform.onMoved.add(() => this.updateColliderSpatialMapping(collider));
     collider.onResized.add(() => this.updateColliderSpatialMapping(collider));
-    this._colliders.push(collider);
+    this.colliders.push(collider);
     this.updateColliderSpatialMapping(collider);
   }
 
-  public addColliders(colliders: RectangleCollider[]): void {
-    colliders.forEach(c => this.addCollider(c));
-  }
-
   public removeCollider(collider: RectangleCollider): void {
-    const index = this._colliders.indexOf(collider);
+    const index = this.colliders.indexOf(collider);
 
     if (index !== -1) {
-      this._colliders.splice(index, 1);
+      this.colliders.splice(index, 1);
 
       const keys = this.colliderSpacialMapKeys.get(collider);
 
@@ -256,30 +243,5 @@ export class SpatialHashCollisionDetector implements CollisionDetector {
     }
 
     return possibleCollisions;
-  }
-
-  private buildCollisionManifold(colliderA: RectangleCollider, colliderB: RectangleCollider): CollisionManifold {
-    const xAxis = Math.abs(colliderA.center.x - colliderB.center.x);
-    const yAxis = Math.abs(colliderA.center.y - colliderB.center.y);
-
-    const cw = colliderA.width / 2 + colliderB.width / 2;
-    const ch = colliderA.height / 2 + colliderB.height / 2;
-
-    const ox = Math.abs(xAxis - cw);
-    const oy = Math.abs(yAxis - ch);
-
-    const normal = Vector2.clone(colliderA.center).subtract(colliderB.center).normalized;
-
-    const penetration = ox > oy ? oy : ox;
-
-    if (ox > oy) {
-      normal.x = 0;
-      normal.y = normal.y > 0 ? 1 : -1;
-    } else if (ox < oy) {
-      normal.y = 0;
-      normal.x = normal.x > 0 ? 1 : -1;
-    }
-
-    return new CollisionManifold(colliderA, colliderB, penetration, normal);
   }
 }

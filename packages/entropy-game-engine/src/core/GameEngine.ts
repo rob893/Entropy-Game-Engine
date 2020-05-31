@@ -16,9 +16,11 @@ import { Transform } from '../components/Transform';
 import { AssetPool } from './helpers/AssetPool';
 import { Terrain } from '../game-objects/Terrain';
 import { GameObjectConstructionParams } from './interfaces/GameObjectConstructionParams';
+import { GameEngineConfiguration } from './interfaces/GameEngineConfiguration';
 
 export class GameEngine {
   public developmentMode: boolean = true;
+  public readonly layerCollisionMatrix: Map<Layer, Set<Layer>>;
 
   private _physicsEngine: PhysicsEngine | null = null;
   private _renderingEngine: RenderingEngine | null = null;
@@ -41,9 +43,29 @@ export class GameEngine {
   private readonly _gameCanvas: HTMLCanvasElement;
   private readonly invokeTimeouts: Set<number> = new Set<number>();
   private readonly gameObjectsMarkedForDelete: GameObject[] = [];
+  private readonly configuration: GameEngineConfiguration;
 
-  public constructor(gameCanvas: HTMLCanvasElement) {
-    this._gameCanvas = gameCanvas;
+  public constructor(configuration: GameEngineConfiguration) {
+    this._gameCanvas = configuration.gameCanvas;
+    this.configuration = configuration;
+
+    this.layerCollisionMatrix = new Map<Layer, Set<Layer>>();
+
+    const layers = Object.keys(Layer)
+      .filter(c => typeof Layer[c as any] === 'number')
+      .map(k => Number(Layer[k as any]));
+
+    for (const layer of layers) {
+      this.layerCollisionMatrix.set(layer, new Set(layers));
+    }
+
+    const collidingLayers = this.layerCollisionMatrix.get(Layer.Terrain);
+
+    if (collidingLayers === undefined) {
+      throw new Error('Error with layers');
+    }
+
+    collidingLayers.delete(Layer.Terrain);
   }
 
   public get canvasContext(): CanvasRenderingContext2D {
@@ -430,31 +452,18 @@ export class GameEngine {
   private createEnginesAndAPIs(): void {
     const time = new Time();
 
-    const layerCollisionMatrix = new Map<Layer, Set<Layer>>();
+    const collisionDetector = this.configuration.collisionDetectorGenerator
+      ? this.configuration.collisionDetectorGenerator(this)
+      : new SpatialHashCollisionDetector(
+          this._gameCanvas.width,
+          this._gameCanvas.height,
+          this.layerCollisionMatrix,
+          100
+        );
 
-    const layers = Object.keys(Layer)
-      .filter(c => typeof Layer[c as any] === 'number')
-      .map(k => Number(Layer[k as any]));
-
-    for (const layer of layers) {
-      layerCollisionMatrix.set(layer, new Set(layers));
-    }
-
-    const collidingLayers = layerCollisionMatrix.get(Layer.Terrain);
-
-    if (collidingLayers === undefined) {
-      throw new Error('Error with layers');
-    }
-
-    collidingLayers.delete(Layer.Terrain);
-
-    const collisionDetector = new SpatialHashCollisionDetector(
-      this._gameCanvas.width,
-      this._gameCanvas.height,
-      layerCollisionMatrix,
-      100
-    );
-    const collisionResolver = new ImpulseCollisionResolver();
+    const collisionResolver = this.configuration.collisionResolverGenerator
+      ? this.configuration.collisionResolverGenerator(this)
+      : new ImpulseCollisionResolver();
 
     this._physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver, time);
 

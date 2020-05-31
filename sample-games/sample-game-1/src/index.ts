@@ -26,7 +26,7 @@ async function main(): Promise<void> {
   setBodyStyles(bodyElement);
   setCanvasStyles(gameCanvas);
 
-  const gameEngine = new GameEngine(gameCanvas);
+  const gameEngine = new GameEngine({ gameCanvas });
 
   gameEngine.developmentMode = true;
 

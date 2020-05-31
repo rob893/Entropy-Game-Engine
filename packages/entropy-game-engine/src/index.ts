@@ -1,3 +1,3 @@
-export * from './core/exports';
-export * from './components/exports';
-export * from './game-objects/exports';
+export * from './core';
+export * from './components';
+export * from './game-objects';

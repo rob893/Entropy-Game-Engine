@@ -99,9 +99,9 @@ let testGameObject2: GameObject = null!;
 let testGameObject3: GameObject = null!;
 
 beforeAll(async () => {
-  const canvas = document.createElement('canvas');
+  const gameCanvas = document.createElement('canvas');
 
-  const gameEngine = new GameEngine(canvas);
+  const gameEngine = new GameEngine({ gameCanvas });
   gameEngine.setScenes([scene1]);
   await gameEngine.loadScene(1);
 
