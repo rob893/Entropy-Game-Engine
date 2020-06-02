@@ -170,6 +170,12 @@ export class Input {
     this.currentListeners.clear();
   }
 
+  /**
+   * This is needed in this syntax (name = () =>) in order to keep a reference to this correctly.
+   * When defined as a normal class function and passed in without using an arrow function, this is lost.
+   * The reference needs to be kept to this function in order to remove the event listener, so anonymous arrow
+   * functions cannot be used.
+   */
   private readonly invokeGenericHandlers = (event: Event): void => {
     const handlers = this.genericEventMap.get(event.type as EventType);
     if (handlers !== undefined) {
