@@ -17,5 +17,9 @@ export class MissileMotor extends Component {
 
   public update(): void {
     this.transform.translate(new Vector2(this.time.deltaTime * -this.speed, 0));
+
+    if (this.transform.position.x < -100) {
+      this.destroy(this.gameObject);
+    }
   }
 }
