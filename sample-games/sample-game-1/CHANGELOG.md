@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.4.0 (2020-06-07)
+
+
+### Features
+
+* add MouseButton enum ([c8eb57e](https://github.com/rob893/Entropy-Game-Engine/commit/c8eb57e83a1a7a84ef3cd37effc854c1f38321a8))
+
+
+
+
+
 # 1.3.0 (2020-06-07)
 
 
