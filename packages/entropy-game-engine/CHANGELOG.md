@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.3.0 (2020-06-07)
+
+
+### Features
+
+* add missiles to sample game 2 ([4ca70c7](https://github.com/rob893/Entropy-Game-Engine/commit/4ca70c79f36a5165f169fb67b3a498ff2dc8ed6f))
+
+
+
+
+
 ## 1.2.4 (2020-06-06)
 
 **Note:** Version bump only for package @entropy-engine/entropy-game-engine
