@@ -3,7 +3,6 @@ import { Missile } from '../game-objects/Missile';
 import { BorderManager } from './BorderManager';
 import { MissileMotor } from './MissileMotor';
 import { ScoreManager } from './ScoreManager';
-import { Border } from '../game-objects/Border';
 
 export class MissileSpawner extends Component {
   private timer: number = 0;
@@ -18,6 +17,10 @@ export class MissileSpawner extends Component {
   }
 
   public update(): void {
+    if (!this.scoreManager.playing) {
+      return;
+    }
+
     this.timer += this.time.deltaTime;
 
     if (this.timer > Math.max(5 - this.scoreManager.score / 100, 0.25)) {

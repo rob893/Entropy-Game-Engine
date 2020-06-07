@@ -1,10 +1,20 @@
-import { Component, Vector2, KeyCode, RectangleCollider } from '@entropy-engine/entropy-game-engine';
+import { Component, Vector2, KeyCode, RectangleCollider, MouseButton } from '@entropy-engine/entropy-game-engine';
 import { Explosion } from '../game-objects/Explosion';
+import { ScoreManager } from './ScoreManager';
 
 export class PlayerMotor extends Component {
   private dy: number = 0;
+  private scoreManager: ScoreManager | null = null;
 
   public start(): void {
+    const gameManager = this.findGameObjectById('gameManager');
+
+    if (!gameManager) {
+      throw new Error('No gameManager found');
+    }
+
+    this.scoreManager = gameManager.getComponent(ScoreManager);
+
     const collider = this.getComponent(RectangleCollider);
 
     if (!collider) {
@@ -19,7 +29,15 @@ export class PlayerMotor extends Component {
   }
 
   public update(): void {
-    if (this.input.getKey(KeyCode.Space)) {
+    if (!this.scoreManager) {
+      throw new Error('Scoremanager is null');
+    }
+
+    if (!this.scoreManager.playing) {
+      return;
+    }
+
+    if (this.input.getKey(KeyCode.Space) || this.input.getMouseButton(MouseButton.LeftMouseButton)) {
       this.dy -= 60 * this.time.deltaTime;
     } else {
       this.dy += 60 * this.time.deltaTime;

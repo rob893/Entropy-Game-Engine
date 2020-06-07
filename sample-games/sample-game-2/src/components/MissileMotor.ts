@@ -1,4 +1,5 @@
 import { Component, Vector2, RectangleCollider } from '@entropy-engine/entropy-game-engine';
+import { Explosion } from '../game-objects/Explosion';
 
 export class MissileMotor extends Component {
   public speed: number = 350;
@@ -11,6 +12,7 @@ export class MissileMotor extends Component {
     }
 
     collider.onCollided.add(() => {
+      this.instantiate(Explosion, this.transform.position);
       this.destroy(this.gameObject);
     });
   }

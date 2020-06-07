@@ -2,6 +2,7 @@ import { KeyCode } from '../enums/KeyCode';
 import { Vector2 } from './Vector2';
 import { EventType } from '../enums/EventType';
 import { CanvasMouseEvent } from '../interfaces/CanvasMouseEvent';
+import { MouseButton } from '../enums/MouseButton';
 
 export class Input {
   private boundingRect: ClientRect | DOMRect;
@@ -106,7 +107,7 @@ export class Input {
    */
   public addMouseListener(
     type: EventType.MouseDown | EventType.MouseUp | EventType.Click,
-    mouseButton: 0 | 1 | 2,
+    mouseButton: 0 | 1 | 2 | MouseButton,
     handler: (event: CanvasMouseEvent) => void
   ): void {
     if (!this.currentListeners.has(type)) {
@@ -145,7 +146,7 @@ export class Input {
     return this.keyDownSet.has(keyCode);
   }
 
-  public getMouseButton(mouseButton: 0 | 1 | 2): boolean {
+  public getMouseButton(mouseButton: 0 | 1 | 2 | MouseButton): boolean {
     return this.mouseButtonDownSet.has(mouseButton);
   }
 

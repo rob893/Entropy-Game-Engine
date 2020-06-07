@@ -12,7 +12,7 @@ import {
 import { PlayerMotor } from '../components/PlayerMotor';
 
 export class Player extends GameObject {
-  protected buildInitialComponents(config: GameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
     const helicopterFrames = this.assetPool.getAsset<SpriteSheet>('helicopterSpriteSheet').getFrames();
 
     const collider = new RectangleCollider(this, null, 60, 30);
@@ -28,7 +28,7 @@ export class Player extends GameObject {
   protected getPrefabSettings(): PrefabSettings {
     return {
       x: 100,
-      y: 100,
+      y: this.gameCanvas.height / 2,
       rotation: 0,
       id: 'player',
       tag: 'player',

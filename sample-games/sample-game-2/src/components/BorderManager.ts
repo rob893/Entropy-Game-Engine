@@ -54,6 +54,10 @@ export class BorderManager extends Component {
   }
 
   public update(): void {
+    if (!this.scoreManager.playing) {
+      return;
+    }
+
     this.maxBorderHeight = this.maxBorderHeightStart + this.scoreManager.score / this.scoreManager.progressDenom;
 
     if (this.maxBorderHeight > this.gameCanvas.height / 4) {
