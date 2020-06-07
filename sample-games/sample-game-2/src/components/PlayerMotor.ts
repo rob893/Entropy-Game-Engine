@@ -14,6 +14,7 @@ export class PlayerMotor extends Component {
     collider.onCollided.add(() => {
       this.destroy(this.gameObject);
       this.instantiate(Explosion, this.transform.position);
+      this.invoke(() => this.sceneManager.loadScene(1), 3);
     });
   }
 

@@ -25,6 +25,10 @@ export class BorderManager extends Component {
     this.minBorderHeight = this.minBorderHeightStart;
   }
 
+  public get maxPossibleBorderHeight(): number {
+    return this.maxBorderHeight;
+  }
+
   public start(): void {
     const targetWidth = this.gameCanvas.width + 100;
 
