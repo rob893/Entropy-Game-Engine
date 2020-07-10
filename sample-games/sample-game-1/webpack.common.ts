@@ -1,8 +1,9 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CircularDependencyPlugin = require('circular-dependency-plugin');
+import { resolve } from 'path';
+import { Configuration } from 'webpack';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CircularDependencyPlugin from 'circular-dependency-plugin';
 
-module.exports = {
+const commonConfig: Configuration = {
   entry: './src/index.ts',
   module: {
     rules: [
@@ -45,7 +46,7 @@ module.exports = {
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: resolve(__dirname, 'dist')
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -66,3 +67,5 @@ module.exports = {
     })
   ]
 };
+
+export default commonConfig;

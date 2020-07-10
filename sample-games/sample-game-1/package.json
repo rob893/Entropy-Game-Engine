@@ -25,9 +25,9 @@
     "dist"
   ],
   "scripts": {
-    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "start": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack-dev-server --open --config webpack.dev.ts",
     "clean": "rm -rf ./dist",
-    "build": "npm i --only-prod && webpack --config webpack.prod.js",
+    "build": "npm i --only-prod && cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --config webpack.prod.ts",
     "build-game": "npm run build",
     "lerna-postinstall": "npm link"
   },
@@ -36,15 +36,24 @@
     "@entropy-engine/entropy-game-engine": "file:../../packages/entropy-game-engine"
   },
   "devDependencies": {
+    "@types/circular-dependency-plugin": "^5.0.1",
     "@types/html-webpack-plugin": "^3.2.3",
+    "@types/node": "^14.0.22",
+    "@types/webpack": "^4.41.21",
+    "@types/webpack-dev-server": "^3.11.0",
+    "@types/webpack-merge": "^4.1.5",
     "circular-dependency-plugin": "^5.2.0",
     "clean-webpack-plugin": "^3.0.0",
+    "cross-env": "^7.0.2",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
-    "ts-loader": "^7.0.5",
+    "ts-loader": "^8.0.0",
+    "ts-node": "^8.10.2",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^3.9.6",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^4.2.2"
+    "webpack-merge": "^5.0.9"
   }
 }

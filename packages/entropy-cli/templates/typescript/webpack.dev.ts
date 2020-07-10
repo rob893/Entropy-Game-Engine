@@ -1,7 +1,8 @@
-const merge = require('webpack-merge');
-const common = require('./webpack.common.js');
+import { Configuration } from 'webpack';
+import { merge } from 'webpack-merge';
+import commonConfig from './webpack.common';
 
-module.exports = merge(common, {
+const devConfig: Configuration = merge(commonConfig, {
   mode: 'development',
   devtool: 'inline-source-map',
   module: {
@@ -18,3 +19,5 @@ module.exports = merge(common, {
     port: 8080
   }
 });
+
+export default devConfig;
