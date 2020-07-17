@@ -17,8 +17,8 @@ import { FireballBehavior } from '../../FireballBehavior';
 export class PlayerMotor extends Component {
   public speed: number = 5;
 
-  private xVelocity: number = 0;
-  private yVelocity: number = 0;
+  private xVelocity: -1 | 0 | 1 = 0;
+  private yVelocity: -1 | 0 | 1 = 0;
   private jumping: boolean = false;
   private readonly animator: CharacterAnimator;
   private readonly collider: RectangleCollider;
@@ -50,6 +50,7 @@ export class PlayerMotor extends Component {
 
     if (spawner !== null) {
       this.input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, () => spawner.toggleSpawn());
+      this.input.addKeyListener(EventType.KeyDown, KeyCode.Zero, () => spawner.stopSpawning());
       this.myStats.onDeath.add(() => spawner.stopSpawning());
     }
   }
@@ -66,24 +67,22 @@ export class PlayerMotor extends Component {
 
   private move(): void {
     if (this.input.getKey(KeyCode.D)) {
-      this.animator.playRunAnimation(true);
       this.xVelocity = 1;
     } else if (this.input.getKey(KeyCode.A)) {
-      this.animator.playRunAnimation(false);
       this.xVelocity = -1;
     } else {
       this.xVelocity = 0;
     }
 
     if (this.input.getKey(KeyCode.W)) {
-      this.animator.playRunAnimation();
       this.yVelocity = -1;
     } else if (this.input.getKey(KeyCode.S)) {
-      this.animator.playRunAnimation();
       this.yVelocity = 1;
     } else {
       this.yVelocity = 0;
     }
+
+    this.animator.playRunAnimation(this.xVelocity, this.yVelocity);
 
     if (this.isMoving) {
       this.transform.translate(new Vector2(this.xVelocity, this.yVelocity).multiplyScalar(this.speed));

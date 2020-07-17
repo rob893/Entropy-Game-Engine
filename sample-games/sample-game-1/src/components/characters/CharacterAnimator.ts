@@ -5,6 +5,7 @@ export class CharacterAnimator extends Component {
   private facingRight: boolean = true;
   private readonly animations: CharacterAnimations;
   private readonly animator: Animator;
+  private readonly runAnimations: Map<-1 | 0 | 1, Map<-1 | 0 | 1, Animation>>;
 
   public constructor(gameObject: GameObject, animator: Animator, animations: CharacterAnimations) {
     super(gameObject);
@@ -28,6 +29,33 @@ export class CharacterAnimator extends Component {
     animations.jumpLeftAnimation.loop = false;
     animations.jumpRightAnimation.playToFinish = true;
     animations.jumpRightAnimation.loop = false;
+
+    this.runAnimations = new Map([
+      [
+        -1,
+        new Map([
+          [-1, animations.runUpLeftAnimation],
+          [0, animations.runLeftAnimation],
+          [1, animations.runDownLeftAnimation]
+        ])
+      ],
+      [
+        0,
+        new Map([
+          [-1, animations.runUpAnimation],
+          [0, animations.idleLeftAnimation],
+          [1, animations.runDownAnimation]
+        ])
+      ],
+      [
+        1,
+        new Map([
+          [-1, animations.runUpRightAnimation],
+          [0, animations.runRightAnimation],
+          [1, animations.runDownRightAnimation]
+        ])
+      ]
+    ]);
 
     this.animator = animator;
     this.animations = animations;
@@ -59,16 +87,14 @@ export class CharacterAnimator extends Component {
     }
   }
 
-  public playRunAnimation(runningRight?: boolean): void {
-    if (runningRight !== undefined) {
-      this.facingRight = runningRight;
+  public playRunAnimation(xVelocity: -1 | 0 | 1, yVelocity: -1 | 0 | 1): void {
+    const runAnimation = this.runAnimations.get(xVelocity)?.get(yVelocity);
+
+    if (!runAnimation) {
+      throw new Error('No animation');
     }
 
-    if (this.facingRight) {
-      this.setAnimation(this.animations.runRightAnimation);
-    } else {
-      this.setAnimation(this.animations.runLeftAnimation);
-    }
+    this.setAnimation(runAnimation);
   }
 
   public playIdleAnimation(): void {

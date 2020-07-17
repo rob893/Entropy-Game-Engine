@@ -16,6 +16,8 @@ import KnightSheet from './assets/images/knight.png';
 import MinotaurSheet from './assets/images/minotaur.png';
 import TrumpIdle from './assets/images/trump_idle.png';
 import TrumpRun from './assets/images/trump_run.png';
+import KnightRun from './assets/images/male-knight/Male_Knight_Run.png';
+import KnightIdle from './assets/images/male-knight/Male_Knight_Idle6.png';
 import Explosion from './assets/images/explosion.png';
 import RedFireball from './assets/images/redFireball.png';
 import ExplosionSound from './assets/audio/explosion.mp3';
@@ -75,6 +77,7 @@ export const scene1: Scene = {
       [19, 3],
       [20, 6]
     ]);
+
     const knightSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(
       KnightSheet,
       6,
@@ -91,10 +94,14 @@ export const scene1: Scene = {
     );
     const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);
     const fireballSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(RedFireball, 3, 2);
+    const knightRunSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(KnightRun, 8, 8);
+    const knightIdleSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(KnightIdle, 3, 8);
     const explosionSound = await AudioClip.buildAudioClipAsync(ExplosionSound, 5);
     const hurtSound = await AudioClip.buildAudioClipAsync(HurtSound, 5);
 
     assets.set('knightSpriteSheet', knightSpriteSheet);
+    assets.set('knightRunSpriteSheet', knightRunSpriteSheet);
+    assets.set('knightIdleSpriteSheet', knightIdleSpriteSheet);
     assets.set('minotaurSpriteSheet', minotaurSheet);
     assets.set('explosionSpriteSheet', explosionSpriteSheet);
     assets.set('redFireball', fireballSpriteSheet);

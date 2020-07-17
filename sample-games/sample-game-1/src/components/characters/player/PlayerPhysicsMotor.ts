@@ -71,21 +71,21 @@ export class PlayerPhysicsMotor extends Component {
     if (event.keyCode === KeyCode.D) {
       this.movingRight = true;
       this.movingLeft = false;
-      this.animator.playRunAnimation(true);
+      this.animator.playRunAnimation(1, 0);
     } else if (event.keyCode === KeyCode.A) {
       this.movingRight = false;
       this.movingLeft = true;
-      this.animator.playRunAnimation(false);
+      this.animator.playRunAnimation(-1, 0);
     }
 
     if (event.keyCode === KeyCode.W) {
       this.movingUp = true;
       this.movingDown = false;
-      this.animator.playRunAnimation(true);
+      this.animator.playRunAnimation(1, 0);
     } else if (event.keyCode === KeyCode.S) {
       this.movingUp = false;
       this.movingDown = true;
-      this.animator.playRunAnimation(true);
+      this.animator.playRunAnimation(-1, 0);
     }
 
     if (event.keyCode === KeyCode.Space) {

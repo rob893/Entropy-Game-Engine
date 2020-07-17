@@ -26,13 +26,15 @@ export class Player extends GameObject {
     collider.physicalMaterial = PhysicalMaterial.bouncy;
     components.push(collider);
 
-    const idleFrames = this.assetPool.getAsset<SpriteSheet>('knightSpriteSheet').getFrames(9);
+    const idleFrames = this.assetPool.getAsset<SpriteSheet>('knightIdleSpriteSheet').getFrames(1);
 
     const initialAnimation = new Animation(idleFrames, 0.2);
     const animator = new Animator(this, 75, 75, initialAnimation);
     components.push(animator);
 
     const knightSheet = this.assetPool.getAsset<SpriteSheet>('knightSpriteSheet');
+    const knightRunSheet = this.assetPool.getAsset<SpriteSheet>('knightRunSpriteSheet');
+    const knightIdleSheet = this.assetPool.getAsset<SpriteSheet>('knightIdleSpriteSheet');
 
     const rightAttackAnimation1 = new Animation(knightSheet.getFrames(2), 0.075);
     const rightAttackAnimation2 = new Animation(knightSheet.getFrames(4), 0.075);
@@ -42,10 +44,16 @@ export class Player extends GameObject {
     const playerAnimations: CharacterAnimations = {
       rightAttackAnimations: [rightAttackAnimation1, rightAttackAnimation2],
       leftAttackAnimations: [leftAttackAnimation1, leftAttackAnimation2],
-      runRightAnimation: new Animation(knightSheet.getFrames(14), 0.075),
-      runLeftAnimation: new Animation(knightSheet.getFrames(13), 0.075),
-      idleRightAnimation: new Animation(knightSheet.getFrames(9), 0.2),
-      idleLeftAnimation: new Animation(knightSheet.getFrames(10), 0.2),
+      runRightAnimation: new Animation(knightRunSheet.getFrames(3), 0.075),
+      runLeftAnimation: new Animation(knightRunSheet.getFrames(2), 0.075),
+      runUpAnimation: new Animation(knightRunSheet.getFrames(4), 0.075),
+      runDownAnimation: new Animation(knightRunSheet.getFrames(1), 0.075),
+      runUpRightAnimation: new Animation(knightRunSheet.getFrames(8), 0.075),
+      runUpLeftAnimation: new Animation(knightRunSheet.getFrames(6), 0.075),
+      runDownRightAnimation: new Animation(knightRunSheet.getFrames(7), 0.075),
+      runDownLeftAnimation: new Animation(knightRunSheet.getFrames(5), 0.075),
+      idleRightAnimation: new Animation(knightIdleSheet.getFrames(1), 0.2),
+      idleLeftAnimation: new Animation(knightIdleSheet.getFrames(1), 0.2),
       jumpRightAnimation: new Animation(knightSheet.getFrames(12), 0.1),
       jumpLeftAnimation: new Animation(knightSheet.getFrames(11), 0.1),
       dieRightAnimation: new Animation(knightSheet.getFrames(6), 0.075),

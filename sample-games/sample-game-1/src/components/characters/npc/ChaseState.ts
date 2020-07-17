@@ -64,18 +64,21 @@ export class ChaseState extends Component implements State {
       throw new Error('Error');
     }
 
-    if (Math.abs(newDirection.x) > Math.abs(newDirection.y)) {
-      if (newDirection.x > 0.5) {
-        this.animator.playRunAnimation(true);
-      } else {
-        this.animator.playRunAnimation(false);
-      }
-    } else {
-      if (newDirection.y > 0.5) {
-        this.animator.playRunAnimation();
-      } else {
-        this.animator.playRunAnimation();
-      }
+    let xVelocity: -1 | 0 | 1 = 0;
+    let yVelocity: -1 | 0 | 1 = 0;
+    // if (Math.abs(newDirection.x) > Math.abs(newDirection.y)) {
+    if (newDirection.x > 0.5) {
+      xVelocity = 1;
+    } else if (newDirection.x < -0.5) {
+      xVelocity = -1;
     }
+    // } else {
+    if (newDirection.y > 0.5) {
+      yVelocity = 1;
+    } else if (newDirection.y < -0.5) {
+      yVelocity = -1;
+    }
+    this.animator.playRunAnimation(xVelocity, yVelocity);
+    // }
   }
 }
