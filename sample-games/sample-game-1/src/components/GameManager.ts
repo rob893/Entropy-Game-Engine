@@ -5,9 +5,11 @@ import {
   EventType,
   KeyCode,
   Rigidbody,
-  Vector2
+  Vector2,
+  Cursor
 } from '@entropy-engine/entropy-game-engine';
 import { TrumpRB } from '../game-objects/TrumpRB';
+import cursorImage from '../assets/images/cursors/cursor_final.png';
 
 export class GameManager extends Component implements RenderableGUI {
   public zIndex: number = 0;
@@ -29,6 +31,8 @@ export class GameManager extends Component implements RenderableGUI {
     this.input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
     this.input.addKeyListener(EventType.KeyDown, KeyCode.I, () => this.testInstantiate());
     this.input.addKeyListener(EventType.KeyDown, KeyCode.Escape, () => this.togglePause());
+
+    Cursor.setCursor(cursorImage);
   }
 
   // public start(): void {
