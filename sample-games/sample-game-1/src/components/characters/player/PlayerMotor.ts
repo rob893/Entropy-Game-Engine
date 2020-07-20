@@ -13,6 +13,7 @@ import { CharacterStats } from '../CharacterStats';
 import { Spawner } from '../../Spawner';
 import { Fireball } from '../../../game-objects/Fireball';
 import { FireballBehavior } from '../../FireballBehavior';
+import { PlayerAnimator } from './PlayerAnimator';
 
 export class PlayerMotor extends Component {
   public speed: number = 5;
@@ -20,14 +21,14 @@ export class PlayerMotor extends Component {
   private xVelocity: -1 | 0 | 1 = 0;
   private yVelocity: -1 | 0 | 1 = 0;
   private jumping: boolean = false;
-  private readonly animator: CharacterAnimator;
+  private readonly animator: PlayerAnimator;
   private readonly collider: RectangleCollider;
   private readonly myStats: CharacterStats;
 
   public constructor(
     gameObject: GameObject,
     collider: RectangleCollider,
-    animator: CharacterAnimator,
+    animator: PlayerAnimator,
     myStats: CharacterStats
   ) {
     super(gameObject);

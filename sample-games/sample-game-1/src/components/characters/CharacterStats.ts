@@ -1,6 +1,7 @@
 import { Component, Slider, LiteEvent, GameObject, CustomLiteEvent } from '@entropy-engine/entropy-game-engine';
 import { Damageable } from '../../interfaces/Damageable';
 import { CharacterAnimator } from './CharacterAnimator';
+import { PlayerAnimator } from './player/PlayerAnimator';
 
 export class CharacterStats extends Component implements Damageable {
   private readonly _attackRange = 75;
@@ -10,10 +11,10 @@ export class CharacterStats extends Component implements Damageable {
   private _health = 100;
   private readonly _maxHealth = 100;
   private healthbar: Slider | null = null;
-  private readonly animator: CharacterAnimator;
+  private readonly animator: CharacterAnimator | PlayerAnimator;
   private readonly onDie: LiteEvent<void> = new LiteEvent<void>();
 
-  public constructor(gameObject: GameObject, animator: CharacterAnimator) {
+  public constructor(gameObject: GameObject, animator: CharacterAnimator | PlayerAnimator) {
     super(gameObject);
 
     this.animator = animator;
