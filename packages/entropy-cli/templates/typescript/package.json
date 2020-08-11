@@ -12,7 +12,7 @@
     "build": "npm i --only-prod && cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --config webpack.prod.ts"
   },
   "dependencies": {
-    "@entropy-engine/entropy-game-engine": "latest"
+    "@entropy-engine/entropy-game-engine": "^1.4.1"
   },
   "devDependencies": {
     "@types/circular-dependency-plugin": "^5.0.1",
@@ -31,9 +31,9 @@
     "ts-node": "^8.10.2",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^3.9.7",
-    "webpack": "^4.43.0",
+    "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^5.0.9"
+    "webpack-merge": "^5.1.1"
   }
 }
