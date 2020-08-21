@@ -32,20 +32,28 @@
   },
   "homepage": "https://github.com/rob893/Entropy-Game-Engine#readme",
   "devDependencies": {
-    "@types/jest": "^26.0.9",
-    "@typescript-eslint/eslint-plugin": "^3.9.0",
-    "@typescript-eslint/parser": "^3.9.0",
-    "acorn": "^7.4.0",
-    "eslint": "^7.6.0",
+    "@commitlint/cli": "^10.0.0",
+    "@commitlint/config-conventional": "^10.0.0",
+    "@types/jest": "^26.0.10",
+    "@typescript-eslint/eslint-plugin": "^3.9.1",
+    "@typescript-eslint/parser": "^3.9.1",
+    "acorn": "^8.0.1",
+    "eslint": "^7.7.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "jest": "^26.3.0",
+    "husky": "^4.2.5",
+    "jest": "^26.4.1",
     "jest-canvas-mock": "^2.2.0",
     "jest-matcher-deep-close-to": "^2.0.1",
     "lerna": "^3.22.1",
     "prettier": "^2.0.5",
     "ts-jest": "^26.2.0",
-    "typescript": "^3.9.7"
+    "typescript": "^4.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
   },
   "jest": {
     "setupFiles": [
