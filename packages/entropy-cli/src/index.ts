@@ -76,7 +76,7 @@ async function promptForMissingOptions(options: Options): Promise<any> {
 
     const templateAnswer = await inquirer.prompt(questions);
     questions.length = 0;
-    options.template = templateAnswer.template as any;
+    options.template = templateAnswer.template;
   }
 
   if (!options.git) {

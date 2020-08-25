@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "start": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack-dev-server --open --config webpack.dev.ts",
-    "clean": "rm -rf ./dist",
+    "clean-dist": "rm -rf ./dist",
     "build": "npm i --only-prod && cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --config webpack.prod.ts",
     "build-game": "npm run build",
     "lerna-postinstall": "npm link"
@@ -47,8 +47,8 @@
     "cross-env": "^7.0.2",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
-    "ts-loader": "^8.0.2",
-    "ts-node": "^8.10.2",
+    "ts-loader": "^8.0.3",
+    "ts-node": "^9.0.0",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.0.2",
     "webpack": "^4.44.1",

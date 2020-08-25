@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "build": "npm run clean && npm run compile",
-    "clean": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
+    "clean-dist": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
     "compile": "tsc -p tsconfig.json",
     "prepare": "npm run build"
   },
