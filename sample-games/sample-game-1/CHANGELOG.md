@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/sample-game-1@1.4.1...@entropy-engine/sample-game-1@1.5.0) (2020-09-12)
+
+
+### Features
+
+* add Cursor API to core engine ([a88be83](https://github.com/rob893/Entropy-Game-Engine/commit/a88be83eed0be136f406ec4feba061ea0cb051ca))
+* add new player animations ([3196bc6](https://github.com/rob893/Entropy-Game-Engine/commit/3196bc688fce8c65231e32cd1b0e09fcf5e2008c))
+
+
+
+
+
 ## 1.4.1 (2020-07-10)
 
 **Note:** Version bump only for package @entropy-engine/sample-game-1

@@ -1,6 +1,6 @@
 {
   "name": "@entropy-engine/entropy-cli",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "CLI for Entropy Game Engine",
   "author": "Robert Herber <rwherber@gmail.com>",
   "license": "MIT",
