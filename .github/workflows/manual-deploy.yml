@@ -1,12 +1,6 @@
 # This workflow is triggered manually using the repository_dispatch event:
 # https://help.github.com/en/actions/reference/events-that-trigger-workflows#external-events-repository_dispatch
 #
-# Input will be parsed as {confirm}:{branch to use}. If no branch is passed, it will default to master
-# Examples:
-#   `yes:dev` will run this workflow using the dev branch
-#   `no:dev` will not run this workflow
-#   `yes` will run this workflow using master branch
-#
 # This workflow is unable to use the cache action as it only supports push and pull request events as of now.
 #
 # Secrets used:
@@ -20,11 +14,14 @@
 name: Manual Deploy
 
 on:
-  repository_dispatch:
-    types: [manual_deploy]
-
-env:
-  INPUT: ${{ github.event.client_payload.Confirm }}
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Confirm
+        required: true
+      git-ref:
+        description: Git Ref (Optional)
+        required: false
 
 jobs:
   check_response:
@@ -33,12 +30,10 @@ jobs:
     steps:
       - name: Check Response
         run: |
-          IN=$INPUT
-          arrIN=(${IN//:/ })
-          response=${arrIN[0]}
+          response=${{ github.event.inputs.confirm }}
           if [ ${response^^} != 'YES' ]
           then
-            exit 1
+            exit 1 
           fi
 
   lint_and_test:
@@ -47,19 +42,14 @@ jobs:
     runs-on: ubuntu-latest
     name: Lint and Test
     steps:
-      - name: Set branch
-        run: |
-          IN=$INPUT
-          arrIN=(${IN//:/ })
-          if [ ${#arrIN[@]} -gt 1 ]
-          then
-            echo "::set-env name=BRANCH::${arrIN[1]}"
-          else
-            echo "::set-env name=BRANCH::master"
-          fi
-      - uses: actions/checkout@v2
+      - name: Checkout
+        if: github.event.inputs.git-ref == ''
+        uses: actions/checkout@v2
+      - name: Checkout (Custom Ref)
+        if: github.event.inputs.git-ref != ''
+        uses: actions/checkout@v2
         with:
-          ref: ${{ env.BRANCH }}
+          ref: ${{ github.event.inputs.git-ref }}
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
@@ -77,19 +67,14 @@ jobs:
       - check_response
       - lint_and_test
     steps:
-      - name: Set branch
-        run: |
-          IN=$INPUT
-          arrIN=(${IN//:/ })
-          if [ ${#arrIN[@]} -gt 1 ]
-          then
-            echo "::set-env name=BRANCH::${arrIN[1]}"
-          else
-            echo "::set-env name=BRANCH::master"
-          fi
-      - uses: actions/checkout@v2
+      - name: Checkout
+        if: github.event.inputs.git-ref == ''
+        uses: actions/checkout@v2
+      - name: Checkout (Custom Ref)
+        if: github.event.inputs.git-ref != ''
+        uses: actions/checkout@v2
         with:
-          ref: ${{ env.BRANCH }}
+          ref: ${{ github.event.inputs.git-ref }}
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
@@ -98,7 +83,7 @@ jobs:
       - name: Build packages
         run: npm run compile
       - name: Build games
-        run: npx lerna run build-game
+        run: npm run build-games
       - name: Get build version
         uses: tyankatsu0105/read-package-version-actions@v1
         with:

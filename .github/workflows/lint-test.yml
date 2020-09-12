@@ -3,19 +3,29 @@ name: Lint and Test
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
-  repository_dispatch:
-    types: [run_tests]
+  workflow_dispatch:
+    inputs:
+      git-ref:
+        description: Git Ref (Optional)
+        required: false
 
 jobs:
   lint_and_test:
     runs-on: ubuntu-latest
     name: Lint and Test
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        if: github.event.inputs.git-ref == ''
+        uses: actions/checkout@v2
+      - name: Checkout (Custom Ref)
+        if: github.event.inputs.git-ref != ''
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.git-ref }}
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
