@@ -17,6 +17,10 @@ on:
       confirm:
         description: Confirm
         required: true
+      upload-build:
+        description: Upload Build
+        required: false
+        default: "false"
       git-ref:
         description: Git Ref (Optional)
         required: false
@@ -115,13 +119,16 @@ jobs:
       - name: Build games
         run: npm run build-games
       - name: Get build version
+        if: github.event.inputs.upload-build == 'true'
         uses: tyankatsu0105/read-package-version-actions@v1
         with:
           path: ./sample-games/sample-game-1
         id: package-version
       - name: Get timestamp
+        if: github.event.inputs.upload-build == 'true'
         run: echo "::set-env name=TIMESTAMP::$(date +'%s')"
       - name: Upload build
+        if: github.event.inputs.upload-build == 'true'
         uses: actions/upload-artifact@v1
         with:
           name: game-build-v${{ steps.package-version.outputs.version }}-${{ env.TIMESTAMP }}
