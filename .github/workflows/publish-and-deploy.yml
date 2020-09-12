@@ -1,6 +1,6 @@
-# This workflow fires off of pushes to master branch. If the head commit message contains '[skip ci]', the whole workflow will be skipped.
-# If head commit message contains '[skip publish]', both publishing and deployment will be skipped (as deploy depends on publishing).
-# If head commit message contains '[skip deploy]', testing, linting, and publishing will occur, but deployment will be skipped.
+# This workflow fires off of pushes to master branch. If the head commit message contains '[ci skip]', the whole workflow will be skipped.
+# If head commit message contains '[publish skip]', both publishing and deployment will be skipped (as deploy depends on publishing).
+# If head commit message contains '[deploy skip]', testing, linting, and publishing will occur, but deployment will be skipped.
 #
 # Secrets used:
 # DEPLOY_SOURCE: the path to the folder/file to be deployed. Example: ./sample-games/sample-game-1/dist/* will deploy all files in dist folder.
@@ -19,7 +19,7 @@ on:
 
 jobs:
   lint_and_test:
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     runs-on: ubuntu-latest
     name: Lint and Test
     steps:
@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -41,7 +41,7 @@ jobs:
         run: npm test
 
   publish_packages:
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip publish]')"
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[publish skip]')"
     runs-on: ubuntu-latest
     name: Publish Packages
     needs:
@@ -51,7 +51,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -82,7 +82,7 @@ jobs:
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   deploy:
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip deploy]')"
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[deploy skip]')"
     runs-on: ubuntu-latest
     name: Deply to Remote Server
     needs:
@@ -93,7 +93,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -104,7 +104,7 @@ jobs:
       - name: Build packages
         run: npm run compile
       - name: Build games
-        run: npx lerna run build-game
+        run: npm run build-games
       - name: Get build version
         uses: tyankatsu0105/read-package-version-actions@v1
         with:

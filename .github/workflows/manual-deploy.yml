@@ -1,7 +1,4 @@
-# This workflow is triggered manually using the repository_dispatch event:
-# https://help.github.com/en/actions/reference/events-that-trigger-workflows#external-events-repository_dispatch
-#
-# This workflow is unable to use the cache action as it only supports push and pull request events as of now.
+# This workflow is triggered manually using workflow_dispatch
 #
 # Secrets used:
 # DEPLOY_SOURCE: the path to the folder/file to be deployed. Example: ./sample-games/sample-game-1/dist/* will deploy all files in dist folder
@@ -36,36 +33,11 @@ jobs:
             exit 1 
           fi
 
-  lint_and_test:
-    needs:
-      - check_response
-    runs-on: ubuntu-latest
-    name: Lint and Test
-    steps:
-      - name: Checkout
-        if: github.event.inputs.git-ref == ''
-        uses: actions/checkout@v2
-      - name: Checkout (Custom Ref)
-        if: github.event.inputs.git-ref != ''
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.inputs.git-ref }}
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "12"
-      - name: Install dependencies
-        run: npm install
-      - name: Lint
-        run: npm run lint
-      - name: Test
-        run: npm test
-
   deploy:
     runs-on: ubuntu-latest
     name: Deply to Remote Server
     needs:
       - check_response
-      - lint_and_test
     steps:
       - name: Checkout
         if: github.event.inputs.git-ref == ''
@@ -78,6 +50,12 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Install dependencies
         run: npm install
       - name: Build packages
