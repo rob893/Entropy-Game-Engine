@@ -43,11 +43,14 @@ jobs:
       - name: Checkout
         if: github.event.inputs.git-ref == ''
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Checkout (Custom Ref)
         if: github.event.inputs.git-ref != ''
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.inputs.git-ref }}
+          fetch-depth: 0
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
