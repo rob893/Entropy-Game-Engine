@@ -1,4 +1,4 @@
-import { Component, Rigidbody, GameObject, EventType, KeyCode, Vector2 } from '@entropy-engine/entropy-game-engine';
+import { Component, Rigidbody, GameObject, EventType, Key, Vector2 } from '@entropy-engine/entropy-game-engine';
 
 export class Motor extends Component {
   private movingRight: boolean = false;
@@ -13,14 +13,10 @@ export class Motor extends Component {
 
     this.rb = rb;
 
-    this.input.addKeyListener(
-      EventType.KeyDown,
-      [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A, KeyCode.Space, KeyCode.Backspace],
-      event => this.onKeyDown(event)
+    this.input.addKeyListener(EventType.KeyDown, ['w', 'a', 's', 'd', Key.Space, Key.Backspace], event =>
+      this.onKeyDown(event)
     );
-    this.input.addKeyListener(EventType.KeyUp, [KeyCode.W, KeyCode.D, KeyCode.S, KeyCode.A], event =>
-      this.onKeyUp(event)
-    );
+    this.input.addKeyListener(EventType.KeyUp, ['w', 'a', 's', 'd'], event => this.onKeyUp(event));
 
     this.speed = 5;
   }
@@ -40,37 +36,37 @@ export class Motor extends Component {
   }
 
   private onKeyDown(event: KeyboardEvent): void {
-    if (event.keyCode === KeyCode.D) {
+    if (event.key === 'd') {
       this.movingRight = true;
       this.movingLeft = false;
-    } else if (event.keyCode === KeyCode.A) {
+    } else if (event.key === 'a') {
       this.movingRight = false;
       this.movingLeft = true;
     }
 
-    if (event.keyCode === KeyCode.W) {
+    if (event.key === 'w') {
       this.movingUp = true;
       this.movingDown = false;
-    } else if (event.keyCode === KeyCode.S) {
+    } else if (event.key === 's') {
       this.movingUp = false;
       this.movingDown = true;
     }
 
-    if (event.keyCode === KeyCode.Space) {
+    if (event.key === Key.Space) {
       this.rb.addForce(Vector2.up.multiplyScalar(600));
     }
   }
 
   private onKeyUp(event: KeyboardEvent): void {
-    if (event.keyCode == KeyCode.D) {
+    if (event.key === 'd') {
       this.movingRight = false;
-    } else if (event.keyCode == KeyCode.A) {
+    } else if (event.key === 'a') {
       this.movingLeft = false;
     }
 
-    if (event.keyCode == KeyCode.W) {
+    if (event.key === 'w') {
       this.movingUp = false;
-    } else if (event.keyCode == KeyCode.S) {
+    } else if (event.key === 's') {
       this.movingDown = false;
     }
   }
