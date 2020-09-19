@@ -1,3 +1,7 @@
+/**
+ * @deprecated Deprecated in favor of event.key
+ * please see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
+ */
 export enum KeyCode {
   Backspace = 8,
   Tab = 9,

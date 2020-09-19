@@ -2,7 +2,7 @@ import {
   Component,
   GameObject,
   RenderableGUI,
-  KeyCode,
+  Key,
   MouseButton,
   RectangleCollider
 } from '@entropy-engine/entropy-game-engine';
@@ -50,7 +50,7 @@ export class ScoreManager extends Component implements RenderableGUI {
   public update(): void {
     if (!this._playing) {
       if (
-        (this.input.getKey(KeyCode.Space) || this.input.getMouseButton(MouseButton.LeftMouseButton)) &&
+        (this.input.getKey(Key.Space) || this.input.getMouseButton(MouseButton.LeftMouseButton)) &&
         this._score === 0
       ) {
         this._playing = true;

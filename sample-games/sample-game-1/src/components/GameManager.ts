@@ -3,10 +3,10 @@ import {
   Component,
   RenderableGUI,
   EventType,
-  KeyCode,
   Rigidbody,
   Vector2,
-  Cursor
+  Cursor,
+  Key
 } from '@entropy-engine/entropy-game-engine';
 import { TrumpRB } from '../game-objects/TrumpRB';
 import cursorImage from '../assets/images/cursors/cursor_final.png';
@@ -25,12 +25,12 @@ export class GameManager extends Component implements RenderableGUI {
   public constructor(gameObject: GameObject) {
     super(gameObject);
 
-    this.input.addKeyListener(EventType.KeyDown, KeyCode.One, async () => await this.sceneManager.loadScene(1));
-    this.input.addKeyListener(EventType.KeyDown, KeyCode.Two, async () => await this.sceneManager.loadScene(2));
-    this.input.addKeyListener(EventType.KeyDown, KeyCode.Three, async () => await this.sceneManager.loadScene(3));
-    this.input.addKeyListener(EventType.KeyDown, KeyCode.P, () => this.printGameData());
-    this.input.addKeyListener(EventType.KeyDown, KeyCode.I, () => this.testInstantiate());
-    this.input.addKeyListener(EventType.KeyDown, KeyCode.Escape, () => this.togglePause());
+    this.input.addKeyListener(EventType.KeyDown, '1', async () => await this.sceneManager.loadScene(1));
+    this.input.addKeyListener(EventType.KeyDown, '2', async () => await this.sceneManager.loadScene(2));
+    this.input.addKeyListener(EventType.KeyDown, '3', async () => await this.sceneManager.loadScene(3));
+    this.input.addKeyListener(EventType.KeyDown, 'p', () => this.printGameData());
+    this.input.addKeyListener(EventType.KeyDown, 'i', () => this.testInstantiate());
+    this.input.addKeyListener(EventType.KeyDown, Key.Escape, () => this.togglePause());
 
     Cursor.setCursor(cursorImage);
   }
@@ -50,7 +50,7 @@ export class GameManager extends Component implements RenderableGUI {
 
   //     this.hubConnection.start();
 
-  //     this.input.addKeyListener(EventType.KeyDown, KeyCode.T, () => this.send());
+  //     this.input.addKeyListener(EventType.KeyDown, 't', () => this.send());
 
   //     const player = this.findGameObjectById('player');
 

@@ -3,7 +3,7 @@ import {
   RectangleCollider,
   GameObject,
   EventType,
-  KeyCode,
+  Key,
   Vector2,
   CollisionManifold,
   Layer
@@ -39,8 +39,8 @@ export class PlayerMotor extends Component {
 
     this.collider.onCollided.add(manifold => this.handleCollisions(manifold));
 
-    this.input.addKeyListener(EventType.KeyDown, KeyCode.Space, () => this.jump());
-    this.input.addKeyListener(EventType.KeyDown, KeyCode.R, () => this.fireball());
+    this.input.addKeyListener(EventType.KeyDown, Key.Space, () => this.jump());
+    this.input.addKeyListener(EventType.KeyDown, 'r', () => this.fireball());
     this.input.addMouseListener(EventType.MouseDown, 0, () => this.meleeAttack());
 
     this.speed = 2;
@@ -50,8 +50,8 @@ export class PlayerMotor extends Component {
     const spawner = this.getComponent(Spawner);
 
     if (spawner !== null) {
-      this.input.addKeyListener(EventType.KeyDown, KeyCode.Backspace, () => spawner.toggleSpawn());
-      this.input.addKeyListener(EventType.KeyDown, KeyCode.Zero, () => spawner.stopSpawning());
+      this.input.addKeyListener(EventType.KeyDown, Key.Backspace, () => spawner.toggleSpawn());
+      this.input.addKeyListener(EventType.KeyDown, '0', () => spawner.stopSpawning());
       this.myStats.onDeath.add(() => spawner.stopSpawning());
     }
   }
@@ -67,17 +67,17 @@ export class PlayerMotor extends Component {
   }
 
   private move(): void {
-    if (this.input.getKey(KeyCode.D)) {
+    if (this.input.getKey('d')) {
       this.xVelocity = 1;
-    } else if (this.input.getKey(KeyCode.A)) {
+    } else if (this.input.getKey('a')) {
       this.xVelocity = -1;
     } else {
       this.xVelocity = 0;
     }
 
-    if (this.input.getKey(KeyCode.W)) {
+    if (this.input.getKey('w')) {
       this.yVelocity = -1;
-    } else if (this.input.getKey(KeyCode.S)) {
+    } else if (this.input.getKey('s')) {
       this.yVelocity = 1;
     } else {
       this.yVelocity = 0;

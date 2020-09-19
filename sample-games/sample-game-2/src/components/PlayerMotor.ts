@@ -1,4 +1,4 @@
-import { Component, Vector2, KeyCode, RectangleCollider, MouseButton } from '@entropy-engine/entropy-game-engine';
+import { Component, Vector2, Key, RectangleCollider, MouseButton } from '@entropy-engine/entropy-game-engine';
 import { Explosion } from '../game-objects/Explosion';
 import { ScoreManager } from './ScoreManager';
 
@@ -37,7 +37,7 @@ export class PlayerMotor extends Component {
       return;
     }
 
-    if (this.input.getKey(KeyCode.Space) || this.input.getMouseButton(MouseButton.LeftMouseButton)) {
+    if (this.input.getKey(Key.Space) || this.input.getMouseButton(MouseButton.LeftMouseButton)) {
       this.dy -= 60 * this.time.deltaTime;
     } else {
       this.dy += 60 * this.time.deltaTime;

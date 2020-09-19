@@ -1,16 +1,16 @@
-import { KeyCode } from '../enums/KeyCode';
 import { Vector2 } from './Vector2';
 import { EventType } from '../enums/EventType';
 import { CanvasMouseEvent } from '../interfaces/CanvasMouseEvent';
 import { MouseButton } from '../enums/MouseButton';
+import { Key } from '../enums';
 
 export class Input {
   private boundingRect: ClientRect | DOMRect;
-  private previousKeyHandled: number | null = null;
+  private previousKeyHandled: string | null = null;
   private readonly gameCanvas: HTMLCanvasElement;
   private readonly keyMap = new Map<
     EventType.KeyDown | EventType.KeyUp,
-    Map<KeyCode, ((event: KeyboardEvent) => void)[]>
+    Map<string, ((event: KeyboardEvent) => void)[]>
   >();
   private readonly mouseMap = new Map<
     EventType.Click | EventType.MouseDown | EventType.MouseUp,
@@ -19,7 +19,7 @@ export class Input {
   private readonly genericEventMap = new Map<EventType, ((event: Event) => void)[]>();
   private readonly currentListeners = new Map<EventType, (event: Event) => void>();
   private readonly reservedEvents = new Set([EventType.Click, EventType.KeyDown, EventType.KeyUp]);
-  private readonly keyDownSet = new Set<KeyCode>();
+  private readonly keyDownSet = new Set<string>();
   private readonly mouseButtonDownSet = new Set<number>();
   private readonly currentMousePosition = Vector2.zero;
 
@@ -65,7 +65,7 @@ export class Input {
 
   public addKeyListener(
     type: EventType.KeyUp | EventType.KeyDown,
-    keyCodes: KeyCode | KeyCode[],
+    keys: string | Key | string[] | Key[],
     handler: (event: KeyboardEvent) => void
   ): void {
     if (!this.currentListeners.has(type)) {
@@ -74,25 +74,25 @@ export class Input {
     }
 
     if (!this.keyMap.has(type)) {
-      this.keyMap.set(type, new Map<KeyCode, ((event: KeyboardEvent) => void)[]>());
+      this.keyMap.set(type, new Map<string, ((event: KeyboardEvent) => void)[]>());
     }
 
-    if (typeof keyCodes === 'number') {
-      keyCodes = [keyCodes];
+    if (typeof keys === 'string') {
+      keys = [keys];
     }
 
-    for (const key of keyCodes) {
-      const keyCodeMap = this.keyMap.get(type);
+    for (const key of keys) {
+      const keyMap = this.keyMap.get(type);
 
-      if (keyCodeMap === undefined) {
+      if (keyMap === undefined) {
         throw new Error('Invalid key');
       }
 
-      const handlers = keyCodeMap.get(key);
+      const handlers = keyMap.get(key);
       if (handlers !== undefined) {
         handlers.push(handler);
       } else {
-        keyCodeMap.set(key, [handler]);
+        keyMap.set(key, [handler]);
       }
     }
   }
@@ -137,13 +137,13 @@ export class Input {
   }
 
   /**
-   * This function will return true if the passed in keyCode is currently being pressed.
+   * This function will return true if the passed in key is currently being pressed.
    *
-   * @param keyCode The key to check if it is currently being pressed.
-   * @example if (Input.getKey(KeyCode.J)) { console.log('J is being pressed'); }
+   * @param key The key to check if it is currently being pressed.
+   * @example if (Input.getKey('j)) { console.log('J is being pressed'); }
    */
-  public getKey(keyCode: KeyCode): boolean {
-    return this.keyDownSet.has(keyCode);
+  public getKey(key: string | Key): boolean {
+    return this.keyDownSet.has(key);
   }
 
   public getMouseButton(mouseButton: 0 | 1 | 2 | MouseButton): boolean {
@@ -194,11 +194,11 @@ export class Input {
 
     if (eventType === EventType.KeyDown) {
       //Handle autofiring of event when key is held down. We want to only fire once per keydown.
-      if (this.previousKeyHandled === event.keyCode) {
+      if (this.previousKeyHandled === event.key) {
         return;
       }
 
-      this.previousKeyHandled = event.keyCode;
+      this.previousKeyHandled = event.key;
     }
 
     if (!this.keyMap.has(eventType)) {
@@ -211,7 +211,7 @@ export class Input {
       throw new Error('Invalid event type.');
     }
 
-    const handlers = keyMap.get(event.keyCode);
+    const handlers = keyMap.get(event.key);
     if (handlers !== undefined) {
       handlers.forEach(handler => handler(event));
     }
@@ -252,10 +252,10 @@ export class Input {
 
   private readonly updateKeyDownSet = (event: KeyboardEvent): void => {
     if (event.type === 'keydown') {
-      this.keyDownSet.add(event.keyCode);
+      this.keyDownSet.add(event.key);
     } else if (event.type === 'keyup') {
       this.previousKeyHandled = null;
-      this.keyDownSet.delete(event.keyCode);
+      this.keyDownSet.delete(event.key);
     }
   };
 
