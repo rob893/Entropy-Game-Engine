@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/entropy-cli@1.5.2...@entropy-engine/entropy-cli@1.6.0) (2020-09-19)
+
+
+### Features
+
+* add version flag to cli ([fbb1d2c](https://github.com/rob893/Entropy-Game-Engine/commit/fbb1d2c3b12afe5d529b1383185338613d6b8c68))
+
+
+
+
+
 ## [1.5.2](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/entropy-cli@1.5.1...@entropy-engine/entropy-cli@1.5.2) (2020-09-19)
 
 
