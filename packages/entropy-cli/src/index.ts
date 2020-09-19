@@ -3,10 +3,13 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { createProject } from './lib';
 
+const pkg = require('../package.json');
+
 export interface Options {
   skipPrompts: boolean;
   git: boolean;
   runInstall: boolean;
+  args: any;
   template?: string;
   command?: string;
   targetDirectory?: string;
@@ -15,15 +18,21 @@ export interface Options {
 
 export const commands = new Set<string>(['init']);
 
+function getCLIVersion(): string {
+  return pkg.version;
+}
+
 function parseArgumentsIntoOptions(rawArgs: string[]): Options {
   const args = arg(
     {
       '--git': Boolean,
       '--yes': Boolean,
       '--install': Boolean,
+      '--version': Boolean,
       '-g': '--git',
       '-y': '--yes',
-      '-i': '--install'
+      '-i': '--install',
+      '-v': '--version'
     },
     {
       argv: rawArgs.slice(2)
@@ -38,7 +47,8 @@ function parseArgumentsIntoOptions(rawArgs: string[]): Options {
     git: args['--git'] || false,
     runInstall: args['--install'] || false,
     template,
-    command
+    command,
+    args
   };
 }
 
@@ -107,14 +117,23 @@ async function promptForMissingOptions(options: Options): Promise<any> {
 }
 
 export async function cli(args: string[]): Promise<void> {
-  let options = parseArgumentsIntoOptions(args);
+  try {
+    let options = parseArgumentsIntoOptions(args);
 
-  if (!options.command) {
-    console.log('Invalid command. Valid commands are:');
-    commands.forEach(command => console.log(command));
-    return;
+    if (options.args['--version']) {
+      console.log(getCLIVersion());
+      return;
+    }
+
+    if (!options.command) {
+      console.log('Invalid command. Valid commands are:');
+      commands.forEach(command => console.log(command));
+      return;
+    }
+
+    options = await promptForMissingOptions(options);
+    await createProject(options);
+  } catch (error) {
+    console.error(error.message);
   }
-
-  options = await promptForMissingOptions(options);
-  await createProject(options);
 }
