@@ -3,16 +3,12 @@
   "version": "1.0.0",
   "main": "dist/index",
   "types": "dist/index",
-  "files": [
-    "src",
-    "dist"
-  ],
   "scripts": {
     "start": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack-dev-server --open --config webpack.dev.ts",
     "build": "npm i --only-prod && cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --config webpack.prod.ts"
   },
   "dependencies": {
-    "@entropy-engine/entropy-game-engine": "^1.5.0"
+    "@entropy-engine/entropy-game-engine": "^1.5.1"
   },
   "devDependencies": {
     "@types/circular-dependency-plugin": "^5.0.1",
