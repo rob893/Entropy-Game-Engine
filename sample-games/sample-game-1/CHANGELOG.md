@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/sample-game-1@1.5.1...@entropy-engine/sample-game-1@2.0.0) (2020-09-19)
+
+
+* refactor!: remove use of event.keyCode ([62015d0](https://github.com/rob893/Entropy-Game-Engine/commit/62015d0f3af65d2f34cf2344698482c397f30af4))
+
+
+### BREAKING CHANGES
+
+* event.keyCode is deprecated. event.key should be used instead
+
+
+
+
+
 ## [1.5.1](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/sample-game-1@1.5.0...@entropy-engine/sample-game-1@1.5.1) (2020-09-19)
 
 
