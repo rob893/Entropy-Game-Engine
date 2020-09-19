@@ -1,4 +1,6 @@
 *
 !src/**/*
 !dist/**/*
+!bin/**/*
+!templates/**/*
 dist/**/*.test.*
