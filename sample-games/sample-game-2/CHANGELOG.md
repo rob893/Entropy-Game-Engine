@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/sample-game-2@1.3.0...@entropy-engine/sample-game-2@1.3.1) (2020-09-19)
+
+
+### Bug Fixes
+
+* fix templates in cli ([f05c64d](https://github.com/rob893/Entropy-Game-Engine/commit/f05c64de4bb30b30a7c7225530bb131da119aac7))
+
+
+
+
+
 # [1.3.0](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/sample-game-2@1.2.1...@entropy-engine/sample-game-2@1.3.0) (2020-09-12)
 
 
