@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.2](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/entropy-cli@1.5.1...@entropy-engine/entropy-cli@1.5.2) (2020-09-19)
+
+
+### Bug Fixes
+
+* fix template ([5779ccb](https://github.com/rob893/Entropy-Game-Engine/commit/5779ccbb7d68829ec77a03a6c8a7d7fda7d5bf20))
+
+
+
+
+
 ## [1.5.1](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/entropy-cli@1.5.0...@entropy-engine/entropy-cli@1.5.1) (2020-09-19)
 
 
