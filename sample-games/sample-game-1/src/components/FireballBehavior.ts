@@ -1,9 +1,9 @@
 import {
-  GameObject,
+  CollisionManifold,
   Component,
-  Vector2,
+  GameObject,
   RectangleCollider,
-  CollisionManifold
+  Vector2
 } from '@entropy-engine/entropy-game-engine';
 import { Explosion } from '../game-objects/Explosion';
 

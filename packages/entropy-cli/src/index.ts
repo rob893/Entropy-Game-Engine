@@ -40,7 +40,8 @@ function parseArgumentsIntoOptions(rawArgs: string[]): Options {
   );
 
   const command = commands.has(args._[0]) ? args._[0] : undefined;
-  const template = args._[1];
+  const templateIndex = 1;
+  const template = args._[templateIndex];
 
   return {
     skipPrompts: args['--yes'] || false,

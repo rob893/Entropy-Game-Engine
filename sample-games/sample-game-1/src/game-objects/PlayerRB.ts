@@ -1,17 +1,17 @@
 import {
   Animation,
-  GameObject,
-  Component,
-  Rigidbody,
-  RectangleCollider,
-  PhysicalMaterial,
-  SpriteSheet,
   Animator,
-  AudioSource,
   AudioClip,
-  PrefabSettings,
+  AudioSource,
+  Component,
+  GameObject,
+  GameObjectConstructionParams,
   Layer,
-  GameObjectConstructionParams
+  PhysicalMaterial,
+  PrefabSettings,
+  RectangleCollider,
+  Rigidbody,
+  SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimations } from '../interfaces/CharacterAnimations';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';

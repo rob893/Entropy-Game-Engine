@@ -43,7 +43,7 @@ export class Vector2 {
 
   public static fromString(xCommaY: string): Vector2 {
     if (xCommaY.split(',').length < 2) {
-      throw new Error(xCommaY + ' is invalid format. It should be x,y (eg: 5,6)');
+      throw new Error(`${xCommaY} is invalid format. It should be x,y (eg: 5,6)`);
     }
 
     const x = Number(xCommaY.split(',')[0]);
@@ -137,7 +137,7 @@ export class Vector2 {
    * @param vector The vector to normalize. This will change the passed in vector, not return a new one.
    */
   public static normalize(vector: Vector2): Vector2 {
-    const magnitude = vector.magnitude;
+    const { magnitude } = vector;
 
     if (magnitude === 0) {
       return vector;
@@ -158,7 +158,7 @@ export class Vector2 {
    * Return a new normalized copy of the vector. The calling vector will remain unmodified.
    */
   public get normalized(): Vector2 {
-    const magnitude = this.magnitude;
+    const { magnitude } = this;
 
     if (magnitude === 0) {
       return Vector2.zero;
@@ -281,6 +281,6 @@ export class Vector2 {
   }
 
   public toString(): string {
-    return this.x + ',' + this.y;
+    return `${this.x},${this.y}`;
   }
 }

@@ -1,15 +1,15 @@
 import {
-  GameObject,
-  Layer,
-  Component,
-  PrefabSettings,
-  SpriteSheet,
-  Animator,
   Animation,
-  RectangleCollider,
-  PhysicalMaterial,
+  Animator,
+  Component,
+  GameObject,
+  GameObjectConstructionParams,
+  Layer,
   NavAgent,
-  GameObjectConstructionParams
+  PhysicalMaterial,
+  PrefabSettings,
+  RectangleCollider,
+  SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';
 import { CharacterAnimations } from '../interfaces/CharacterAnimations';

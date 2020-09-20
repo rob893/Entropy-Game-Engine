@@ -1,12 +1,12 @@
 import {
+  Animation,
+  Animator,
+  Component,
   GameObject,
   Layer,
-  Component,
   PrefabSettings,
-  SpriteSheet,
-  Animator,
-  Animation,
-  RectangleCollider
+  RectangleCollider,
+  SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { FireballBehavior } from '../components/FireballBehavior';
 

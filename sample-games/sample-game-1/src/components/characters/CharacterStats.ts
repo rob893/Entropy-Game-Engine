@@ -1,4 +1,4 @@
-import { Component, Slider, LiteEvent, GameObject, CustomLiteEvent } from '@entropy-engine/entropy-game-engine';
+import { Component, CustomLiteEvent, GameObject, LiteEvent, Slider } from '@entropy-engine/entropy-game-engine';
 import { Damageable } from '../../interfaces/Damageable';
 import { CharacterAnimator } from './CharacterAnimator';
 import { PlayerAnimator } from './player/PlayerAnimator';

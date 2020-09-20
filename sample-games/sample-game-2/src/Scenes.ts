@@ -1,14 +1,14 @@
 import {
-  Scene,
-  RectangleBackground,
+  AssetPool,
+  AudioClip,
   Color,
   GameEngine,
   GameObject,
-  AssetPool,
-  SpriteSheet,
-  AudioClip,
+  ImageUtilities,
+  RectangleBackground,
   RenderableBackground,
-  ImageUtilities
+  Scene,
+  SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import HelicopterSpriteSheet from './assets/images/helicopter.png';
 import MissileSpriteSheet from './assets/images/missile.png';

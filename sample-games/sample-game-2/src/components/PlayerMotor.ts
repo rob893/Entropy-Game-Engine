@@ -1,4 +1,4 @@
-import { Component, Vector2, Key, RectangleCollider, MouseButton } from '@entropy-engine/entropy-game-engine';
+import { Component, Key, MouseButton, RectangleCollider, Vector2 } from '@entropy-engine/entropy-game-engine';
 import { Explosion } from '../game-objects/Explosion';
 import { ScoreManager } from './ScoreManager';
 

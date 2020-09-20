@@ -1,11 +1,11 @@
 import {
+  Component,
   GameObject,
   GameObjectConstructionParams,
-  Component,
-  RectangleCollider,
-  PrefabSettings,
+  ImageRenderer,
   Layer,
-  ImageRenderer
+  PrefabSettings,
+  RectangleCollider
 } from '@entropy-engine/entropy-game-engine';
 import { Scroller } from '../components/Scroller';
 import { Destroyer } from '../components/Destroyer';

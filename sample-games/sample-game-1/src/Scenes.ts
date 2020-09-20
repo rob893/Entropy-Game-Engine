@@ -1,12 +1,12 @@
 import {
-  Scene,
-  RectangleBackground,
+  AssetPool,
+  AudioClip,
   Color,
   GameEngine,
   GameObject,
-  AssetPool,
-  SpriteSheet,
-  AudioClip
+  RectangleBackground,
+  Scene,
+  SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { Scene1TerrainSpec } from './terrains/Scene1TerrainSpec';
 import { GameManagerObject } from './game-objects/GameManagerObject';

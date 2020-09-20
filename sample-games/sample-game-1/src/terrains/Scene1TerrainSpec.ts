@@ -1,5 +1,5 @@
 import SpriteSheet from '../assets/images/DungeonTileset.png';
-import { SpriteData, TerrainSpec, TerrainCell } from '@entropy-engine/entropy-game-engine';
+import { SpriteData, TerrainCell, TerrainSpec } from '@entropy-engine/entropy-game-engine';
 
 export class Scene1TerrainSpec implements TerrainSpec {
   public readonly cellSize: number = 16;

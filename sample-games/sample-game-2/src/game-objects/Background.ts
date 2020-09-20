@@ -1,10 +1,10 @@
 import {
-  GameObject,
-  RenderableBackground,
-  PrefabSettings,
-  GameObjectConstructionParams,
   Component,
-  Layer
+  GameObject,
+  GameObjectConstructionParams,
+  Layer,
+  PrefabSettings,
+  RenderableBackground
 } from '@entropy-engine/entropy-game-engine';
 import { ScrollingBackground } from '../components/ScrollingBackground';
 

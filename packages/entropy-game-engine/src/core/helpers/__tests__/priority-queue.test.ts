@@ -18,7 +18,7 @@ test('Tests the priority queue', () => {
   expect(q.dequeue()).toBe('world');
 
   for (let i = 0; i < 10; i++) {
-    q.enqueue('test' + i, 1);
+    q.enqueue(`test${i}`, 1);
   }
 
   for (let i = 0; i < 10; i++) {

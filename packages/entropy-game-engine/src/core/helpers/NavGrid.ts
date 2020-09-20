@@ -60,7 +60,7 @@ export class NavGrid<T extends WeightedGraphCell = WeightedGraphCell> implements
     const key = this.getMapKey(cell.position);
 
     if (this.cells.has(key)) {
-      console.error('WARNING! ' + key + ' alread in cells set!');
+      console.error(`WARNING! ${key} alread in cells set!`);
     }
 
     this.cells.set(key, cell);
@@ -89,15 +89,13 @@ export class NavGrid<T extends WeightedGraphCell = WeightedGraphCell> implements
         throw new Error('y must not be undefined.');
       }
 
-      return (
-        Math.floor(positionOrX / this.cellSize) * this.cellSize + ',' + Math.floor(y / this.cellSize) * this.cellSize
-      );
+      return `${Math.floor(positionOrX / this.cellSize) * this.cellSize},${
+        Math.floor(y / this.cellSize) * this.cellSize
+      }`;
     }
 
-    return (
-      Math.floor(positionOrX.x / this.cellSize) * this.cellSize +
-      ',' +
+    return `${Math.floor(positionOrX.x / this.cellSize) * this.cellSize},${
       Math.floor(positionOrX.y / this.cellSize) * this.cellSize
-    );
+    }`;
   }
 }

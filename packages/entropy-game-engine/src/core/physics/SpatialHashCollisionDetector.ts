@@ -107,16 +107,14 @@ export class SpatialHashCollisionDetector extends BaseCollisionDetector {
         throw new Error('y cannot be undefined when using x, y arguments.');
       }
 
-      return (
-        Math.floor(positionOrX / this.cellSize) * this.cellSize + ',' + Math.floor(y / this.cellSize) * this.cellSize
-      );
+      return `${Math.floor(positionOrX / this.cellSize) * this.cellSize},${
+        Math.floor(y / this.cellSize) * this.cellSize
+      }`;
     }
 
-    return (
-      Math.floor(positionOrX.x / this.cellSize) * this.cellSize +
-      ',' +
+    return `${Math.floor(positionOrX.x / this.cellSize) * this.cellSize},${
       Math.floor(positionOrX.y / this.cellSize) * this.cellSize
-    );
+    }`;
   }
 
   private buildSpatialMapCells(): void {

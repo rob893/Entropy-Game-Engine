@@ -1,4 +1,4 @@
-import { GameEngine, Color, SimpleCollisionDetector } from '@entropy-engine/entropy-game-engine';
+import { Color, GameEngine, SimpleCollisionDetector } from '@entropy-engine/entropy-game-engine';
 import { scene1 } from './Scenes';
 import backgroundImage from './assets/images/background.jpg';
 

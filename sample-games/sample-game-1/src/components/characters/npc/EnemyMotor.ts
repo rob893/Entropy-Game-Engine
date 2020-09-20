@@ -1,4 +1,4 @@
-import { GameObject, Component, Vector2, Transform, NavAgent } from '@entropy-engine/entropy-game-engine';
+import { Component, GameObject, NavAgent, Transform, Vector2 } from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimator } from '../CharacterAnimator';
 
 export class EnemyMotor extends Component {

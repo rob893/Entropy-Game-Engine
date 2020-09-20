@@ -20,6 +20,6 @@ export class FPSCounter extends Component implements RenderableGUI {
 
     context.font = '20px Arial';
     context.fillStyle = 'white';
-    context.fillText('FPS: ' + this.FPS.toFixed(2), 0, 20);
+    context.fillText(`FPS: ${this.FPS.toFixed(2)}`, 0, 20);
   }
 }

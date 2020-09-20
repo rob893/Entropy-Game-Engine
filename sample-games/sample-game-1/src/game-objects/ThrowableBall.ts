@@ -1,12 +1,12 @@
 import {
-  GameObject,
   Component,
-  RectangleRenderer,
-  Rigidbody,
-  RectangleCollider,
+  GameObject,
+  Layer,
   PhysicalMaterial,
   PrefabSettings,
-  Layer
+  RectangleCollider,
+  RectangleRenderer,
+  Rigidbody
 } from '@entropy-engine/entropy-game-engine';
 import { Grenade } from '../components/Grenade';
 

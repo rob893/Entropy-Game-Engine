@@ -1,4 +1,4 @@
-import { Component, Rigidbody, GameObject, EventType, Key, Vector2 } from '@entropy-engine/entropy-game-engine';
+import { Component, EventType, GameObject, Key, Rigidbody, Vector2 } from '@entropy-engine/entropy-game-engine';
 
 export class Motor extends Component {
   private movingRight: boolean = false;

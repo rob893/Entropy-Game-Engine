@@ -1,4 +1,4 @@
-import { Component, AudioSource, Rigidbody, GameObject, Vector2 } from '@entropy-engine/entropy-game-engine';
+import { AudioSource, Component, GameObject, Rigidbody, Vector2 } from '@entropy-engine/entropy-game-engine';
 import { CharacterStats } from './characters/CharacterStats';
 
 export class Exploder extends Component {

@@ -1,13 +1,13 @@
 import {
-  GameObject,
-  PrefabSettings,
-  Layer,
-  GameObjectConstructionParams,
   Component,
-  RectangleRenderer,
-  Rigidbody,
+  GameObject,
+  GameObjectConstructionParams,
+  Layer,
+  PhysicalMaterial,
+  PrefabSettings,
   RectangleCollider,
-  PhysicalMaterial
+  RectangleRenderer,
+  Rigidbody
 } from '@entropy-engine/entropy-game-engine';
 import { Motor } from '../components/Motor';
 

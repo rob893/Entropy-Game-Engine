@@ -1,13 +1,13 @@
 import {
+  Animation,
+  Animator,
+  AudioClip,
+  AudioSource,
+  Component,
   GameObject,
   Layer,
-  Component,
   PrefabSettings,
-  SpriteSheet,
-  AudioSource,
-  AudioClip,
-  Animator,
-  Animation
+  SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { Exploder } from '../components/Exploder';
 

@@ -1,4 +1,4 @@
-import { GameObject, Component, GameObjectConstructionParams, Vector2 } from '@entropy-engine/entropy-game-engine';
+import { Component, GameObject, GameObjectConstructionParams, Vector2 } from '@entropy-engine/entropy-game-engine';
 
 export class Spawner extends Component {
   public spawnRate = 10;

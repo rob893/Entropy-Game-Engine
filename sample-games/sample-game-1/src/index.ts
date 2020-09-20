@@ -1,4 +1,4 @@
-import { GameEngine, Color } from '@entropy-engine/entropy-game-engine';
+import { Color, GameEngine } from '@entropy-engine/entropy-game-engine';
 import { scene1, scene3 } from './Scenes';
 import backgroundImage from './assets/images/background.jpg';
 

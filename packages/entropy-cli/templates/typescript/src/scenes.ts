@@ -1,10 +1,10 @@
 import {
-  Scene,
-  RectangleBackground,
-  Color,
   AssetPool,
+  Color,
+  GameEngine,
   GameObject,
-  GameEngine
+  RectangleBackground,
+  Scene
 } from '@entropy-engine/entropy-game-engine';
 import { SampleGameObject } from './game-objects/SampleGameObject';
 import { Box } from './game-objects/Box';

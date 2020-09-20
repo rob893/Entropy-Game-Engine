@@ -1,14 +1,14 @@
 import {
-  GameObject,
-  GameEngine,
   Color,
-  Layer,
-  RectangleRenderer,
-  RectangleCollider,
-  PhysicalMaterial,
   Component,
-  Rigidbody,
-  PrefabSettings
+  GameEngine,
+  GameObject,
+  Layer,
+  PhysicalMaterial,
+  PrefabSettings,
+  RectangleCollider,
+  RectangleRenderer,
+  Rigidbody
 } from '@entropy-engine/entropy-game-engine';
 
 export class Box extends GameObject {

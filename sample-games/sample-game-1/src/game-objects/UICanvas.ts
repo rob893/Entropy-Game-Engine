@@ -1,11 +1,11 @@
 import {
-  GameObject,
-  Component,
-  PrefabSettings,
-  Layer,
-  GameObjectConstructionParams,
   Button,
-  ClickedOnDetector
+  ClickedOnDetector,
+  Component,
+  GameObject,
+  GameObjectConstructionParams,
+  Layer,
+  PrefabSettings
 } from '@entropy-engine/entropy-game-engine';
 
 export class UICanvas extends GameObject {

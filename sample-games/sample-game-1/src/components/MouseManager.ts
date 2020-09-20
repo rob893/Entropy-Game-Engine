@@ -1,4 +1,4 @@
-import { Component, GameObject, Cursor, Layer } from '@entropy-engine/entropy-game-engine';
+import { Component, Cursor, GameObject, Layer } from '@entropy-engine/entropy-game-engine';
 import defaultMouseCursor from '../assets/images/cursors/cursor_final.png';
 import redMouseCursor from '../assets/images/cursors/cursor_outline_red.png';
 

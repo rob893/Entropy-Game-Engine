@@ -1,10 +1,9 @@
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
-
 import { BinaryHeap } from '../BinaryHeap';
 
 expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
-test('Tests the binary heap static is binary heap functions', () => {
+test('Binary heap static is binary heap functions', () => {
   expect(BinaryHeap.isBinaryHeap([1, 2, 3, 4, 5])).toBe(true);
   expect(BinaryHeap.isBinaryHeap([1, 5, 4, 5, 3, 6, 7, 8])).toBe(false);
   expect(BinaryHeap.isMaxBinaryHeap([7, 7, 6, 6, 5, 5, 2, 1])).toBe(true);
@@ -14,7 +13,7 @@ test('Tests the binary heap static is binary heap functions', () => {
   expect(BinaryHeap.isMaxBinaryHeap(['zzz', 'zb', 'r', 'za', '8'])).toBe(true);
 });
 
-test('Test creation of and various functions of a min binary heap', () => {
+test('Creation of and various functions of a min binary heap', () => {
   const heap = BinaryHeap.from<number>([2345, 456232, 24, -60, 0]);
 
   expect(heap).toBeInstanceOf(BinaryHeap);
@@ -57,7 +56,7 @@ test('Test creation of and various functions of a min binary heap', () => {
   expect(() => heap.remove()).toThrowError();
 });
 
-test('Test creation of and various functions of a max binary heap', () => {
+test('Creation of and various functions of a max binary heap', () => {
   const heap = BinaryHeap.from<number>([2345, 456232, 24, -60, 0], false);
 
   expect(heap).toBeInstanceOf(BinaryHeap);

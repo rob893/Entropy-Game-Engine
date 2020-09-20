@@ -40,7 +40,7 @@ export class RectangleCollider extends Component implements RenderableGizmo {
     this._offset = new Vector2(offsetX, offsetY);
     this.attachedRigidbody = rb;
 
-    const transform: Transform = this.transform;
+    const { transform } = this;
 
     this._topLeft = new Vector2(
       transform.position.x + this._offset.x - width / 2,

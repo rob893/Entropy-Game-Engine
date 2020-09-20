@@ -1,4 +1,4 @@
-import { GameObject, Component, AudioSource } from '@entropy-engine/entropy-game-engine';
+import { AudioSource, Component, GameObject } from '@entropy-engine/entropy-game-engine';
 import { Damageable } from '../../../interfaces/Damageable';
 import { GameManager } from '../../GameManager';
 
@@ -42,7 +42,7 @@ export class PlayerHealth extends Component implements Damageable {
     this._health -= amount;
 
     if (this.gameManager !== null) {
-      this.gameManager.showMessage('You were hit for ' + amount + ' damage!', 1, 'red');
+      this.gameManager.showMessage(`You were hit for ${amount} damage!`, 1, 'red');
     }
 
     if (this._health <= 0) {

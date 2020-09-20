@@ -1,12 +1,12 @@
 import {
-  Component,
-  RectangleCollider,
-  GameObject,
-  EventType,
-  Key,
-  Vector2,
   CollisionManifold,
-  Layer
+  Component,
+  EventType,
+  GameObject,
+  Key,
+  Layer,
+  RectangleCollider,
+  Vector2
 } from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimator } from '../CharacterAnimator';
 import { CharacterStats } from '../CharacterStats';

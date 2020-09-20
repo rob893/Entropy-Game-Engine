@@ -1,4 +1,4 @@
-import { Component, Vector2, RectangleCollider } from '@entropy-engine/entropy-game-engine';
+import { Component, RectangleCollider, Vector2 } from '@entropy-engine/entropy-game-engine';
 import { Explosion } from '../game-objects/Explosion';
 
 export class MissileMotor extends Component {

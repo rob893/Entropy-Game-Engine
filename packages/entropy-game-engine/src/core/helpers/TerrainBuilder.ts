@@ -32,9 +32,9 @@ export class TerrainBuilder {
     await this.using(terrainSpec.spriteSheetUrl);
 
     return new Promise(resolve => {
-      const scale = terrainSpec.scale;
+      const { scale } = terrainSpec;
       const terrainGrid = terrainSpec.getSpec();
-      const cellSize = terrainSpec.cellSize;
+      const { cellSize } = terrainSpec;
       const navGrid = new NavGrid(cellSize * scale);
       const colliderOffsets: Vector2[] = [];
 

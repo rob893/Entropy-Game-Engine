@@ -1,11 +1,11 @@
 import {
+  Color,
+  Component,
   GameObject,
   Layer,
-  Component,
   PrefabSettings,
   RectangleCollider,
-  RectangleRenderer,
-  Color
+  RectangleRenderer
 } from '@entropy-engine/entropy-game-engine';
 
 export class Ground extends GameObject {

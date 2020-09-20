@@ -1,4 +1,4 @@
-import { GameObject, Layer, Component, PrefabSettings, Slider, Color } from '@entropy-engine/entropy-game-engine';
+import { Color, Component, GameObject, Layer, PrefabSettings, Slider } from '@entropy-engine/entropy-game-engine';
 
 export class Healthbar extends GameObject {
   protected buildInitialComponents(): Component[] {

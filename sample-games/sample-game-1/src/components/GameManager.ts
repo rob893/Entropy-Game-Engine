@@ -1,12 +1,12 @@
 import {
-  GameObject,
   Component,
-  RenderableGUI,
-  EventType,
-  Rigidbody,
-  Vector2,
   Cursor,
-  Key
+  EventType,
+  GameObject,
+  Key,
+  RenderableGUI,
+  Rigidbody,
+  Vector2
 } from '@entropy-engine/entropy-game-engine';
 import { TrumpRB } from '../game-objects/TrumpRB';
 import cursorImage from '../assets/images/cursors/cursor_final.png';

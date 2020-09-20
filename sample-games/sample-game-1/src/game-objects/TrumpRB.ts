@@ -1,14 +1,14 @@
 import {
   Animation,
-  GameObject,
-  Component,
-  Rigidbody,
-  RectangleCollider,
-  PhysicalMaterial,
-  SpriteSheet,
   Animator,
+  Component,
+  GameObject,
+  Layer,
+  PhysicalMaterial,
   PrefabSettings,
-  Layer
+  RectangleCollider,
+  Rigidbody,
+  SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 
 export class TrumpRB extends GameObject {

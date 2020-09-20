@@ -1,10 +1,10 @@
 import {
+  Component,
+  FPSCounter,
   GameObject,
   GameObjectConstructionParams,
-  Component,
-  PrefabSettings,
   Layer,
-  FPSCounter
+  PrefabSettings
 } from '@entropy-engine/entropy-game-engine';
 import { BorderManager } from '../components/BorderManager';
 import { ScoreManager } from '../components/ScoreManager';

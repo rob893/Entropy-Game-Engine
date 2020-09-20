@@ -1,4 +1,4 @@
-import { Component, Animator, GameObject, Animation } from '@entropy-engine/entropy-game-engine';
+import { Animation, Animator, Component, GameObject } from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimations, PlayerAnimations } from '../../../interfaces/CharacterAnimations';
 
 export class PlayerAnimator extends Component {

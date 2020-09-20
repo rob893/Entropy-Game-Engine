@@ -1,13 +1,13 @@
 import {
+  Animation,
+  Animator,
+  Component,
   GameObject,
   GameObjectConstructionParams,
-  Component,
-  PrefabSettings,
   Layer,
-  Animation,
-  SpriteSheet,
-  Animator,
-  RectangleCollider
+  PrefabSettings,
+  RectangleCollider,
+  SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { PlayerMotor } from '../components/PlayerMotor';
 

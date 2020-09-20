@@ -6,7 +6,7 @@ import { Vector2 } from '../Vector2';
 
 expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
-test('Test the a star path finding', (): void => {
+test('A star path finding', (): void => {
   const graph = new NavGrid(1);
 
   let graphVisual = '';

@@ -1,4 +1,4 @@
-import { Component, Vector2, GameObject } from '@entropy-engine/entropy-game-engine';
+import { Component, GameObject, Vector2 } from '@entropy-engine/entropy-game-engine';
 import { Missile } from '../game-objects/Missile';
 import { BorderManager } from './BorderManager';
 import { MissileMotor } from './MissileMotor';

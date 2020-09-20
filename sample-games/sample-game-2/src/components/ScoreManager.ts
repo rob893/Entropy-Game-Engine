@@ -1,10 +1,10 @@
 import {
   Component,
   GameObject,
-  RenderableGUI,
   Key,
   MouseButton,
-  RectangleCollider
+  RectangleCollider,
+  RenderableGUI
 } from '@entropy-engine/entropy-game-engine';
 
 export class ScoreManager extends Component implements RenderableGUI {

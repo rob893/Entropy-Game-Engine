@@ -175,7 +175,9 @@ export class GameEngine {
     if (time === 0) {
       this.gameObjectsMarkedForDelete.push(object);
 
-      const children = object.transform.children;
+      const {
+        transform: { children }
+      } = object;
 
       while (children.length > 0) {
         const child = children.pop();
@@ -194,7 +196,9 @@ export class GameEngine {
       this.invoke(() => {
         this.gameObjectsMarkedForDelete.push(object);
 
-        const children = object.transform.children;
+        const {
+          transform: { children }
+        } = object;
 
         while (children.length > 0) {
           const child = children.pop();
@@ -266,7 +270,7 @@ export class GameEngine {
 
   public printGameData(): void {
     console.log(this);
-    console.log('Time since game start ' + this.time.totalTime + 's');
+    console.log(`Time since game start ${this.time.totalTime}s`);
     console.log(this.renderingEngine);
     console.log(this.physicsEngine);
     this.gameObjects.forEach(go => console.log(go));
@@ -423,7 +427,7 @@ export class GameEngine {
 
   private async initializeScene(scene: Scene): Promise<void> {
     this._assetPool = await scene.getAssetPool();
-    const terrainSpec = scene.terrainSpec;
+    const { terrainSpec } = scene;
     let gameObjects: GameObject[] = [];
 
     if (terrainSpec !== null) {
@@ -505,7 +509,9 @@ export class GameEngine {
       }
 
       //Initialize children of gameObject
-      const children = gameObject.transform.children;
+      const {
+        transform: { children }
+      } = gameObject;
 
       while (children.length > 0) {
         const child = children.pop();
@@ -537,7 +543,9 @@ export class GameEngine {
 
     this.gameObjects.forEach(go => {
       go.start();
-      const children = go.transform.children;
+      const {
+        transform: { children }
+      } = go;
 
       while (children.length > 0) {
         const child = children.pop();

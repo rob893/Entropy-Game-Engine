@@ -82,7 +82,7 @@ export class NavAgent extends Component implements RenderableGizmo {
     this.path = AStarSearch.findPath(this.navGrid, this.transform.position, destination);
 
     if (this.path !== null) {
-      this.nextPosition = this.path[0];
+      [this.nextPosition] = this.path;
       this.pathIndex = 0;
     }
   }

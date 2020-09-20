@@ -192,7 +192,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public getComponentInParent<T extends Component>(component: new (...args: any[]) => T): T | null {
-    let parent = this.transform.parent;
+    let { parent } = this.transform;
 
     while (parent !== null) {
       if (parent.hasComponent(component)) {
@@ -206,7 +206,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public getComponentsInParent<T extends Component>(component: new (...args: any[]) => T): T[] {
-    let parent = this.transform.parent;
+    let { parent } = this.transform;
     const components: T[] = [];
 
     while (parent !== null) {
@@ -227,7 +227,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public getComponentInChildren<T extends Component>(component: new (...args: any[]) => T): T | null {
-    const children: Transform[] = this.transform.children;
+    const { children } = this.transform;
 
     while (children.length > 0) {
       const child = children.pop();
@@ -249,7 +249,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public getComponentsInChildren<T extends Component>(component: new (...args: any[]) => T): T[] {
-    const children: Transform[] = this.transform.children;
+    const { children } = this.transform;
     const components: T[] = [];
 
     while (children.length > 0) {

@@ -46,7 +46,7 @@ export class Input {
 
   public addEventListener(eventType: EventType, handler: (event: Event) => void): void {
     if (this.reservedEvents.has(eventType)) {
-      console.error(eventType + ' is a reserved event. Please use the correct method to add a listener for it.');
+      console.error(`${eventType} is a reserved event. Please use the correct method to add a listener for it.`);
       return;
     }
 

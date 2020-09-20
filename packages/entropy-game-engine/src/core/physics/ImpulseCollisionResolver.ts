@@ -5,8 +5,8 @@ import { CollisionManifold } from '../helpers/CollisionManifold';
 
 export class ImpulseCollisionResolver implements CollisionResolver {
   public resolveCollisions(collisionManifold: CollisionManifold): void {
-    const colliderA = collisionManifold.colliderA;
-    const colliderB = collisionManifold.colliderB;
+    const { colliderA } = collisionManifold;
+    const { colliderB } = collisionManifold;
 
     if (colliderA.isTrigger || colliderB.isTrigger) {
       return;
@@ -16,7 +16,7 @@ export class ImpulseCollisionResolver implements CollisionResolver {
       return;
     }
 
-    const collisionNormal = collisionManifold.collisionNormal;
+    const { collisionNormal } = collisionManifold;
 
     const rbA = colliderA.attachedRigidbody;
     const rbB = colliderB.attachedRigidbody;
