@@ -29,7 +29,11 @@
       "name": "Attach to Chrome",
       "port": 9222,
       "url": "http://localhost:8080",
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-1"
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-1",
+      "sourceMapPathOverrides": {
+        "webpack:///${workspaceFolder}/packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
+        "webpack:///*": "${webRoot}/*"
+      }
     },
     {
       "type": "chrome",
@@ -37,7 +41,11 @@
       "name": "Launch Chrome against localhost",
       "url": "http://localhost:8080",
       "port": 9223,
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-1"
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-1",
+      "sourceMapPathOverrides": {
+        "webpack:///${workspaceFolder}/packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
+        "webpack:///*": "${webRoot}/*"
+      }
     },
     {
       "type": "chrome",
@@ -45,7 +53,11 @@
       "name": "Attach to Chrome 2",
       "port": 9222,
       "url": "http://localhost:8080",
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-2"
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-2",
+      "sourceMapPathOverrides": {
+        "webpack:///${workspaceFolder}/packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
+        "webpack:///*": "${webRoot}/*"
+      }
     },
     {
       "type": "chrome",
@@ -53,7 +65,11 @@
       "name": "Launch Chrome against localhost 2",
       "url": "http://localhost:8080",
       "port": 9223,
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-2"
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-2",
+      "sourceMapPathOverrides": {
+        "webpack:///${workspaceFolder}/packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
+        "webpack:///*": "${webRoot}/*"
+      }
     },
     {
       "type": "node",
