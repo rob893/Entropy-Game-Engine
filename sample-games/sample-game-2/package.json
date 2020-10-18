@@ -1,6 +1,6 @@
 {
   "name": "@entropy-engine/sample-game-2",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Custom 2D game engine written in TypeScript.",
   "author": "Robert Herber",
   "license": "MIT",
@@ -33,22 +33,22 @@
   "devDependencies": {
     "@types/circular-dependency-plugin": "^5.0.1",
     "@types/html-webpack-plugin": "^3.2.3",
-    "@types/node": "^14.11.2",
+    "@types/node": "^14.11.10",
     "@types/webpack": "^4.41.22",
     "@types/webpack-dev-server": "^3.11.0",
     "@types/webpack-merge": "^4.1.5",
     "circular-dependency-plugin": "^5.2.0",
     "clean-webpack-plugin": "^3.0.0",
     "cross-env": "^7.0.2",
-    "file-loader": "^6.1.0",
+    "file-loader": "^6.1.1",
     "html-webpack-plugin": "^4.5.0",
-    "ts-loader": "^8.0.4",
+    "ts-loader": "^8.0.5",
     "ts-node": "^9.0.0",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.0.3",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^5.1.4"
+    "webpack-merge": "^5.2.0"
   }
 }
