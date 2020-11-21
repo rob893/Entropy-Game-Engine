@@ -74,7 +74,7 @@ jobs:
         id: package-version
       - name: Get timestamp
         if: github.event.inputs.upload-build == 'true'
-        run: echo "::set-env name=TIMESTAMP::$(date +'%s')"
+        run: echo "TIMESTAMP=$(date +'%s')" >> $GITHUB_ENV
       - name: Upload build
         if: github.event.inputs.upload-build == 'true'
         uses: actions/upload-artifact@v1

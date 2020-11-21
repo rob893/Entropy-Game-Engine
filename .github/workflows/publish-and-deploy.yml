@@ -113,7 +113,7 @@ jobs:
           path: ./sample-games/sample-game-1
         id: package-version
       - name: Get timestamp
-        run: echo "::set-env name=TIMESTAMP::$(date +'%s')"
+        run: echo "TIMESTAMP=$(date +'%s')" >> $GITHUB_ENV
       - name: Upload build
         uses: actions/upload-artifact@v1
         with:
