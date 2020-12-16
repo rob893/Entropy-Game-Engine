@@ -21,7 +21,7 @@
   "main": "dist/index",
   "types": "dist/index",
   "scripts": {
-    "start": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack-dev-server --open --config webpack.dev.ts",
+    "start": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack serve --config webpack.dev.ts --open Chrome.exe",
     "clean-dist": "rm -rf ./dist",
     "build": "npm i --only-prod && cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --config webpack.prod.ts",
     "build-game": "npm run build",
@@ -33,22 +33,22 @@
   "devDependencies": {
     "@types/circular-dependency-plugin": "^5.0.1",
     "@types/html-webpack-plugin": "^3.2.4",
-    "@types/node": "^14.14.9",
+    "@types/node": "^14.14.14",
     "@types/webpack": "^4.41.25",
     "@types/webpack-dev-server": "^3.11.1",
     "@types/webpack-merge": "^4.1.5",
     "circular-dependency-plugin": "^5.2.2",
     "clean-webpack-plugin": "^3.0.0",
-    "cross-env": "^7.0.2",
+    "cross-env": "^7.0.3",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",
-    "ts-loader": "^8.0.11",
-    "ts-node": "^9.0.0",
+    "ts-loader": "^8.0.12",
+    "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^4.1.2",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12",
+    "typescript": "^4.1.3",
+    "webpack": "^5.10.3",
+    "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^5.4.0"
+    "webpack-merge": "^5.7.2"
   }
 }

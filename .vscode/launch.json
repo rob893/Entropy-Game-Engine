@@ -31,8 +31,8 @@
       "url": "http://localhost:8080",
       "webRoot": "${workspaceFolder}/sample-games/sample-game-1",
       "sourceMapPathOverrides": {
-        "webpack:///${workspaceFolder}/packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
-        "webpack:///*": "${webRoot}/*"
+        "webpack://@entropy-engine/sample-game-1/../packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
+        "webpack://@entropy-engine/sample-game-1/*": "${webRoot}/*"
       }
     },
     {
@@ -43,8 +43,8 @@
       "port": 9223,
       "webRoot": "${workspaceFolder}/sample-games/sample-game-1",
       "sourceMapPathOverrides": {
-        "webpack:///${workspaceFolder}/packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
-        "webpack:///*": "${webRoot}/*"
+        "webpack://@entropy-engine/sample-game-1/../packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
+        "webpack://@entropy-engine/sample-game-1/*": "${webRoot}/*"
       }
     },
     {
@@ -55,8 +55,8 @@
       "url": "http://localhost:8080",
       "webRoot": "${workspaceFolder}/sample-games/sample-game-2",
       "sourceMapPathOverrides": {
-        "webpack:///${workspaceFolder}/packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
-        "webpack:///*": "${webRoot}/*"
+        "webpack://@entropy-engine/sample-game-2/../packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
+        "webpack://@entropy-engine/sample-game-2/*": "${webRoot}/*"
       }
     },
     {
@@ -67,8 +67,8 @@
       "port": 9223,
       "webRoot": "${workspaceFolder}/sample-games/sample-game-2",
       "sourceMapPathOverrides": {
-        "webpack:///${workspaceFolder}/packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
-        "webpack:///*": "${webRoot}/*"
+        "webpack://@entropy-engine/sample-game-2/../packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
+        "webpack://@entropy-engine/sample-game-2/*": "${webRoot}/*"
       }
     },
     {
