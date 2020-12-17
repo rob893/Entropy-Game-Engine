@@ -1,6 +1,6 @@
 import { Component } from './Component';
 import { Vector2 } from '../core/helpers/Vector2';
-import { LiteEvent } from '../core/helpers/LiteEvent';
+import { Topic } from '../core/helpers/LiteEvent';
 import { GameObject } from '../game-objects/GameObject';
 import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
 
@@ -14,7 +14,7 @@ export class Transform extends Component {
 
   private _parent: Transform | null = null;
   private readonly _children: Transform[] = [];
-  private readonly onMove = new LiteEvent<void>();
+  private readonly onMove = new Topic<void>();
 
   public constructor(
     gameObject: GameObject,

@@ -1,7 +1,7 @@
 import { Vector2 } from '../core/helpers/Vector2';
 import { Component } from './Component';
 import { Transform } from './Transform';
-import { LiteEvent } from '../core/helpers/LiteEvent';
+import { Topic } from '../core/helpers/LiteEvent';
 import { GameObject } from '../game-objects/GameObject';
 import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
 import { RenderableGizmo } from '../core/interfaces/RenderableGizmo';
@@ -18,8 +18,8 @@ export class RectangleCollider extends Component implements RenderableGizmo {
   private _width: number;
   private _height: number;
   private _offset: Vector2;
-  private readonly _onCollided = new LiteEvent<CollisionManifold>();
-  private readonly _onResize = new LiteEvent<void>();
+  private readonly _onCollided = new Topic<CollisionManifold>();
+  private readonly _onResize = new Topic<void>();
   private readonly _topLeft: Vector2;
   private readonly _topRight: Vector2;
   private readonly _bottomLeft: Vector2;

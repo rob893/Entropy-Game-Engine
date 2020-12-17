@@ -1,4 +1,4 @@
-import { LiteEvent } from '../helpers/LiteEvent';
+import { Topic } from '../helpers/LiteEvent';
 import { CollisionManifold } from '../helpers/CollisionManifold';
 import { Vector2 } from '../helpers/Vector2';
 import { Layer } from '../enums/Layer';
@@ -9,7 +9,7 @@ import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
 export abstract class BaseCollisionDetector implements CollisionDetector {
   public readonly colliders: RectangleCollider[] = [];
 
-  protected readonly _onCollisionDetected: LiteEvent<CollisionManifold> = new LiteEvent<CollisionManifold>();
+  protected readonly _onCollisionDetected: Topic<CollisionManifold> = new Topic<CollisionManifold>();
   protected readonly layerCollisionMatrix: Map<Layer, Set<Layer>>;
 
   public constructor(layerCollisionMatrix: Map<Layer, Set<Layer>>) {

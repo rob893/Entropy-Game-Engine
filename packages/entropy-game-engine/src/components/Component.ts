@@ -1,6 +1,6 @@
 import { GameObject } from '../game-objects/GameObject';
 import { Transform } from './Transform';
-import { LiteEvent } from '../core/helpers/LiteEvent';
+import { Topic } from '../core/helpers/LiteEvent';
 import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
 import { Input } from '../core/helpers/Input';
 import { Time } from '../core/Time';
@@ -16,7 +16,7 @@ export abstract class Component {
   public readonly gameObject: GameObject;
 
   private isEnabled: boolean = true;
-  private readonly _onDestroyed = new LiteEvent<Component>();
+  private readonly _onDestroyed = new Topic<Component>();
 
   public constructor(gameObject: GameObject, enabled: boolean = true) {
     this.gameObject = gameObject;

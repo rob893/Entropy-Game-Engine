@@ -1,14 +1,19 @@
+import { Utilities } from './Utilities';
 import { Subscription } from './Subscription';
+import { Subscribable } from './types';
 
-export class Topic<T> {
+export class Topic<T> implements Subscribable<T> {
   private readonly subscriptions: Subscription<T>[] = [];
 
-  public invoke(eventData: T): void {
-    this.subscriptions.forEach(sub => sub.invoke(eventData));
+  public publish(eventData: T): void {
+    this.subscriptions.forEach(sub => sub.publish(eventData));
   }
 
   public subscribe(handler: (eventData: T) => void): Subscription<T> {
-    const sub = new Subscription(this, handler);
+    const sub = new Subscription(
+      subscription => Utilities.removeItemFromArray(this.subscriptions, subscription),
+      handler
+    );
     this.subscriptions.push(sub);
 
     return sub;
@@ -25,7 +30,7 @@ export class Topic<T> {
     return false;
   }
 
-  public clearSubscribers(): void {
-    this.subscriptions.length = 0;
+  public unsubscribeAll(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 }

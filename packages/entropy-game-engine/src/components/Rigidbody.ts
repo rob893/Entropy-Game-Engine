@@ -1,7 +1,7 @@
 import { Component } from './Component';
 import { Vector2 } from '../core/helpers/Vector2';
 import { GameObject } from '../game-objects/GameObject';
-import { LiteEvent } from '../core/helpers/LiteEvent';
+import { Topic } from '../core/helpers/LiteEvent';
 import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
 
 export class Rigidbody extends Component {
@@ -14,8 +14,8 @@ export class Rigidbody extends Component {
   private _inverseMass: number;
   private _isKinomatic: boolean = false;
   private readonly forces: Vector2[] = [];
-  private readonly _becameKinomatic = new LiteEvent<Rigidbody>();
-  private readonly _becameNonKinomatic = new LiteEvent<Rigidbody>();
+  private readonly _becameKinomatic = new Topic<Rigidbody>();
+  private readonly _becameNonKinomatic = new Topic<Rigidbody>();
 
   public constructor(gameObject: GameObject, mass: number = 70, isKinomatic: boolean = false) {
     super(gameObject);

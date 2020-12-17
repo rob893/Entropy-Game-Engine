@@ -1,4 +1,4 @@
-import { LiteEvent } from './LiteEvent';
+import { Topic } from './LiteEvent';
 import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
 
 export class Animation {
@@ -11,7 +11,7 @@ export class Animation {
   private finalFrameComplete: boolean = false;
   private readonly frames: HTMLImageElement[];
   private readonly timeBetweenFrames: number;
-  private readonly onCompleted = new LiteEvent<void>();
+  private readonly onCompleted = new Topic<void>();
 
   public constructor(frames: HTMLImageElement[], timeBetweenFrames: number = 0) {
     this.frames = frames;

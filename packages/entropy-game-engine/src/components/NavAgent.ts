@@ -53,14 +53,14 @@ export class NavAgent extends Component implements RenderableGizmo {
 
       if (this.pathIndex >= this.path.length) {
         this.resetPath();
-        this.onPathCompleted.invoke();
+        this.onPathCompleted.publish();
         return;
       }
 
       this.nextPosition = this.path[this.pathIndex];
 
       if (this.heading !== null) {
-        this.onDirectionChanged.invoke(this.heading);
+        this.onDirectionChanged.publish(this.heading);
       }
     }
 
