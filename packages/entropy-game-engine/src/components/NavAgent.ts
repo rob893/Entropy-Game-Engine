@@ -5,31 +5,22 @@ import { Color } from '../core/enums/Color';
 import { NavGrid } from '../core/helpers/NavGrid';
 import { AStarSearch } from '../core/helpers/AStarSearch';
 import { GameObject } from '../game-objects/GameObject';
-import { LiteEvent } from '../core/helpers/LiteEvent';
-import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
+import { Topic } from '../core/helpers/Topic';
 
 export class NavAgent extends Component implements RenderableGizmo {
   public speed: number = 1;
+  public readonly onDirectionChanged = new Topic<Vector2>();
+  public readonly onPathCompleted = new Topic<void>();
 
   private path: Vector2[] | null = null;
   private nextPosition: Vector2 | null = null;
   private pathIndex: number = 0;
   private readonly navGrid: NavGrid;
-  private readonly onChangeDirection = new LiteEvent<Vector2>();
-  private readonly onPathComplete = new LiteEvent<Vector2>();
 
   public constructor(gameObject: GameObject, navGrid: NavGrid) {
     super(gameObject);
 
     this.navGrid = navGrid;
-  }
-
-  public get onDirectionChanged(): CustomLiteEvent<Vector2> {
-    return this.onChangeDirection.expose();
-  }
-
-  public get onPathCompleted(): CustomLiteEvent<Vector2> {
-    return this.onPathComplete.expose();
   }
 
   public get heading(): Vector2 | null {
@@ -62,14 +53,14 @@ export class NavAgent extends Component implements RenderableGizmo {
 
       if (this.pathIndex >= this.path.length) {
         this.resetPath();
-        this.onPathComplete.trigger();
+        this.onPathCompleted.invoke();
         return;
       }
 
       this.nextPosition = this.path[this.pathIndex];
 
       if (this.heading !== null) {
-        this.onChangeDirection.trigger(this.heading);
+        this.onDirectionChanged.invoke(this.heading);
       }
     }
 

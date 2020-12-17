@@ -18,8 +18,8 @@ export class ChaseState extends Component implements State {
     this.animator = animator;
     this.myStats = myStats;
 
-    this.navAgent.onDirectionChanged.add(newDirection => this.changeAnimation(newDirection));
-    this.navAgent.onPathCompleted.add(() => this.animator.playIdleAnimation());
+    this.navAgent.onDirectionChanged.subscribe(newDirection => this.changeAnimation(newDirection));
+    this.navAgent.onPathCompleted.subscribe(() => this.animator.playIdleAnimation());
   }
 
   public performBehavior(context: NPCController): void {

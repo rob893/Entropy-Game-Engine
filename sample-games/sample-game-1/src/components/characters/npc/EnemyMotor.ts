@@ -13,8 +13,8 @@ export class EnemyMotor extends Component {
     this.navAgent = navAgent;
     this.animator = animator;
 
-    this.navAgent.onDirectionChanged.add(newDirection => this.changeAnimation(newDirection));
-    this.navAgent.onPathCompleted.add(() => this.animator.playIdleAnimation());
+    this.navAgent.onDirectionChanged.subscribe(newDirection => this.changeAnimation(newDirection));
+    this.navAgent.onPathCompleted.subscribe(() => this.animator.playIdleAnimation());
   }
 
   public start(): void {

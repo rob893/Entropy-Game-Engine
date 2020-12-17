@@ -19,3 +19,5 @@ export * from './Stopwatch';
 export * from './TerrainBuilder';
 export * from './Vector2';
 export * from './ImageUtilities';
+export * from './Subscription';
+export * from './Topic';
