@@ -1,10 +1,10 @@
-import { Topic } from '../helpers/LiteEvent';
+import { Topic } from '../helpers/Topic';
 import { CollisionManifold } from '../helpers/CollisionManifold';
 import { Vector2 } from '../helpers/Vector2';
 import { Layer } from '../enums/Layer';
 import { RectangleCollider } from '../../components/RectangleCollider';
 import { CollisionDetector } from '../interfaces/CollisionDetector';
-import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
+import { Subscribable } from '../helpers';
 
 export abstract class BaseCollisionDetector implements CollisionDetector {
   public readonly colliders: RectangleCollider[] = [];
@@ -16,8 +16,8 @@ export abstract class BaseCollisionDetector implements CollisionDetector {
     this.layerCollisionMatrix = layerCollisionMatrix;
   }
 
-  public get onCollisionDetected(): CustomLiteEvent<CollisionManifold> {
-    return this._onCollisionDetected.expose();
+  public get onCollisionDetected(): Subscribable<CollisionManifold> {
+    return this._onCollisionDetected;
   }
 
   public addCollider(collider: RectangleCollider): void {

@@ -27,7 +27,7 @@ export class UICanvas extends GameObject {
   protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
     const button = new Button({ gameEngine: config.gameEngine, id: 'button1', x: 150, y: 150 });
 
-    button.getComponent(ClickedOnDetector)?.onClicked.add(() => config.gameEngine.togglePause());
+    button.getComponent(ClickedOnDetector)?.onClicked.subscribe(() => config.gameEngine.togglePause());
 
     return [button];
   }

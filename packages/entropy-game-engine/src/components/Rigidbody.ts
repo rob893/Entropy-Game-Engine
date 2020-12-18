@@ -1,8 +1,8 @@
 import { Component } from './Component';
 import { Vector2 } from '../core/helpers/Vector2';
 import { GameObject } from '../game-objects/GameObject';
-import { Topic } from '../core/helpers/LiteEvent';
-import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
+import { Topic } from '../core/helpers/Topic';
+import { Subscribable } from '../core';
 
 export class Rigidbody extends Component {
   public readonly velocity: Vector2 = Vector2.zero;
@@ -52,9 +52,9 @@ export class Rigidbody extends Component {
     this._isKinomatic = isKinomatic;
 
     if (isKinomatic) {
-      this._becameKinomatic.trigger(this);
+      this._becameKinomatic.publish(this);
     } else {
-      this._becameNonKinomatic.trigger(this);
+      this._becameNonKinomatic.publish(this);
     }
   }
 
@@ -62,12 +62,12 @@ export class Rigidbody extends Component {
     return this._isKinomatic;
   }
 
-  public get becameKinomatic(): CustomLiteEvent<Rigidbody> {
-    return this._becameKinomatic.expose();
+  public get becameKinomatic(): Subscribable<Rigidbody> {
+    return this._becameKinomatic;
   }
 
-  public get becameNonKinomatic(): CustomLiteEvent<Rigidbody> {
-    return this._becameNonKinomatic.expose();
+  public get becameNonKinomatic(): Subscribable<Rigidbody> {
+    return this._becameNonKinomatic;
   }
 
   public updatePhysics(): void {

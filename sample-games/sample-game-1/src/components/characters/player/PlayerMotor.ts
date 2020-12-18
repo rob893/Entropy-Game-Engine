@@ -37,7 +37,7 @@ export class PlayerMotor extends Component {
     this.animator = animator;
     this.myStats = myStats;
 
-    this.collider.onCollided.add(manifold => this.handleCollisions(manifold));
+    this.collider.onCollided.subscribe(manifold => this.handleCollisions(manifold));
 
     this.input.addKeyListener(EventType.KeyDown, Key.Space, () => this.jump());
     this.input.addKeyListener(EventType.KeyDown, 'r', () => this.fireball());
@@ -52,7 +52,7 @@ export class PlayerMotor extends Component {
     if (spawner !== null) {
       this.input.addKeyListener(EventType.KeyDown, Key.Backspace, () => spawner.toggleSpawn());
       this.input.addKeyListener(EventType.KeyDown, '0', () => spawner.stopSpawning());
-      this.myStats.onDeath.add(() => spawner.stopSpawning());
+      this.myStats.onDeath.subscribe(() => spawner.stopSpawning());
     }
   }
 

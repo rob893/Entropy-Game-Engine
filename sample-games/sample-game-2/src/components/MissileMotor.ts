@@ -11,7 +11,7 @@ export class MissileMotor extends Component {
       throw new Error('No collider attached to player');
     }
 
-    collider.onCollided.add(() => {
+    collider.onCollided.subscribe(() => {
       this.instantiate(Explosion, this.transform.position);
       this.destroy(this.gameObject);
     });

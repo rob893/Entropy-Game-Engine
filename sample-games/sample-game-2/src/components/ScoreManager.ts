@@ -44,7 +44,7 @@ export class ScoreManager extends Component implements RenderableGUI {
       throw new Error('No collider attached to player');
     }
 
-    playerCollider.onCollided.add(() => (this._playing = false));
+    playerCollider.onCollided.subscribe(() => (this._playing = false));
   }
 
   public update(): void {

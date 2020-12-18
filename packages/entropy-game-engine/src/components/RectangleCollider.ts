@@ -1,14 +1,13 @@
 import { Vector2 } from '../core/helpers/Vector2';
 import { Component } from './Component';
-import { Transform } from './Transform';
-import { Topic } from '../core/helpers/LiteEvent';
+import { Topic } from '../core/helpers/Topic';
 import { GameObject } from '../game-objects/GameObject';
-import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
 import { RenderableGizmo } from '../core/interfaces/RenderableGizmo';
 import { Rigidbody } from './Rigidbody';
 import { Color } from '../core/enums/Color';
 import { PhysicalMaterial } from '../core/helpers/PhysicalMaterial';
 import { CollisionManifold } from '../core/helpers/CollisionManifold';
+import { Subscribable } from '../core';
 
 export class RectangleCollider extends Component implements RenderableGizmo {
   public isTrigger: boolean = false;
@@ -69,7 +68,7 @@ export class RectangleCollider extends Component implements RenderableGizmo {
    */
   public set width(value: number) {
     this._width = value;
-    this._onResize.trigger();
+    this._onResize.publish();
   }
 
   public get height(): number {
@@ -78,7 +77,7 @@ export class RectangleCollider extends Component implements RenderableGizmo {
 
   public set height(value: number) {
     this._height = value;
-    this._onResize.trigger();
+    this._onResize.publish();
   }
 
   public get offset(): Vector2 {
@@ -87,7 +86,7 @@ export class RectangleCollider extends Component implements RenderableGizmo {
 
   public set offset(value: Vector2) {
     this._offset = value;
-    this._onResize.trigger();
+    this._onResize.publish();
   }
 
   public get topLeft(): Vector2 {
@@ -122,12 +121,12 @@ export class RectangleCollider extends Component implements RenderableGizmo {
     return new Vector2(this.topLeft.x + this._width / 2, this.topLeft.y + this._height / 2);
   }
 
-  public get onCollided(): CustomLiteEvent<CollisionManifold> {
-    return this._onCollided.expose();
+  public get onCollided(): Subscribable<CollisionManifold> {
+    return this._onCollided;
   }
 
-  public get onResized(): CustomLiteEvent<void> {
-    return this._onResize.expose();
+  public get onResized(): Subscribable<void> {
+    return this._onResize;
   }
 
   public detectCollision(other: RectangleCollider): boolean {
@@ -146,7 +145,7 @@ export class RectangleCollider extends Component implements RenderableGizmo {
   }
 
   public triggerCollision(manifold: CollisionManifold): void {
-    this._onCollided.trigger(manifold);
+    this._onCollided.publish(manifold);
   }
 
   public renderGizmo(context: CanvasRenderingContext2D): void {

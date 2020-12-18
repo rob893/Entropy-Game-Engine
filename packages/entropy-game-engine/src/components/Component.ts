@@ -1,7 +1,6 @@
 import { GameObject } from '../game-objects/GameObject';
 import { Transform } from './Transform';
-import { Topic } from '../core/helpers/LiteEvent';
-import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
+import { Topic } from '../core/helpers/Topic';
 import { Input } from '../core/helpers/Input';
 import { Time } from '../core/Time';
 import { AssetPool } from '../core/helpers/AssetPool';
@@ -11,6 +10,7 @@ import { GameEngine } from '../core/GameEngine';
 import { Vector2 } from '../core/helpers/Vector2';
 import { Terrain } from '../game-objects/Terrain';
 import { GameObjectConstructionParams } from '../core/interfaces/GameObjectConstructionParams';
+import { Subscribable } from '../core';
 
 export abstract class Component {
   public readonly gameObject: GameObject;
@@ -57,8 +57,8 @@ export abstract class Component {
     return this.gameObject.transform;
   }
 
-  public get onDestroyed(): CustomLiteEvent<Component> {
-    return this._onDestroyed.expose();
+  public get onDestroyed(): Subscribable<Component> {
+    return this._onDestroyed;
   }
 
   public onEnabled(): void {}
@@ -76,7 +76,7 @@ export abstract class Component {
   public onDisable(): void {}
 
   public onDestroy(): void {
-    this._onDestroyed.trigger(this);
+    this._onDestroyed.publish(this);
   }
 
   //These are simply short cut methods to access the gameObject's functionality from a component quicker.

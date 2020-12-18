@@ -1,8 +1,8 @@
 import { Component } from './Component';
 import { Vector2 } from '../core/helpers/Vector2';
-import { Topic } from '../core/helpers/LiteEvent';
+import { Topic } from '../core/helpers/Topic';
 import { GameObject } from '../game-objects/GameObject';
-import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
+import { Subscribable, Unsubscribable } from '../core';
 
 export class Transform extends Component {
   //Rotation in radians
@@ -13,6 +13,7 @@ export class Transform extends Component {
   public readonly scale: Vector2;
 
   private _parent: Transform | null = null;
+  private parentOnMoved: Unsubscribable | null = null;
   private readonly _children: Transform[] = [];
   private readonly onMove = new Topic<void>();
 
@@ -32,8 +33,8 @@ export class Transform extends Component {
     this.scale = Vector2.one;
   }
 
-  public get onMoved(): CustomLiteEvent<void> {
-    return this.onMove.expose();
+  public get onMoved(): Subscribable<void> {
+    return this.onMove;
   }
 
   public get parent(): Transform | null {
@@ -43,12 +44,13 @@ export class Transform extends Component {
   public set parent(newParent: Transform | null) {
     if (this._parent !== null) {
       this._parent._children.splice(this._parent._children.indexOf(this), 1);
-      this._parent.onMoved.remove(this.updatePositionBasedOnParent);
+      this.parentOnMoved?.unsubscribe();
+      this.parentOnMoved = null;
     }
 
     if (newParent !== null) {
       newParent._children.push(this);
-      newParent.onMoved.add(this.updatePositionBasedOnParent);
+      this.parentOnMoved = newParent.onMoved.subscribe(this.updatePositionBasedOnParent);
 
       this.localPosition.x = this.position.x - newParent.position.x;
       this.localPosition.y = this.position.y - newParent.position.y;
@@ -66,7 +68,7 @@ export class Transform extends Component {
 
   public translate(translation: Vector2): void {
     this.position.add(translation);
-    this.onMove.trigger();
+    this.onMove.publish();
   }
 
   public lookAt(target: Vector2): void {
@@ -76,7 +78,7 @@ export class Transform extends Component {
   public setPosition(x: number, y: number): void {
     this.position.x = x;
     this.position.y = y;
-    this.onMove.trigger();
+    this.onMove.publish();
   }
 
   public isChildOf(parent: Transform): boolean {

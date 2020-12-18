@@ -1,9 +1,9 @@
 import { RectangleCollider } from '../../components/RectangleCollider';
-import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
 import { Vector2 } from '../helpers/Vector2';
 import { Layer } from '../enums/Layer';
 import { CollisionManifold } from '../helpers/CollisionManifold';
 import { BaseCollisionDetector } from './BaseCollisionDetector';
+import { Subscribable } from '../helpers';
 
 export class SpatialHashCollisionDetector extends BaseCollisionDetector {
   private readonly colliderSpacialMapKeys: Map<RectangleCollider, Set<string>> = new Map<
@@ -33,8 +33,8 @@ export class SpatialHashCollisionDetector extends BaseCollisionDetector {
     this.buildSpatialMapCells();
   }
 
-  public get onCollisionDetected(): CustomLiteEvent<CollisionManifold> {
-    return this._onCollisionDetected.expose();
+  public get onCollisionDetected(): Subscribable<CollisionManifold> {
+    return this._onCollisionDetected;
   }
 
   public detectCollisions(): void {
@@ -59,15 +59,15 @@ export class SpatialHashCollisionDetector extends BaseCollisionDetector {
           collider.triggerCollision(collisionManifold);
           other.triggerCollision(collisionManifold);
 
-          this._onCollisionDetected.trigger(collisionManifold);
+          this._onCollisionDetected.publish(collisionManifold);
         }
       }
     }
   }
 
   public addCollider(collider: RectangleCollider): void {
-    collider.transform.onMoved.add(() => this.updateColliderSpatialMapping(collider));
-    collider.onResized.add(() => this.updateColliderSpatialMapping(collider));
+    collider.transform.onMoved.subscribe(() => this.updateColliderSpatialMapping(collider));
+    collider.onResized.subscribe(() => this.updateColliderSpatialMapping(collider));
     this.colliders.push(collider);
     this.updateColliderSpatialMapping(collider);
   }

@@ -24,7 +24,7 @@ export class SimpleCollisionDetector extends BaseCollisionDetector {
           collider.triggerCollision(collisionManifold);
           other.triggerCollision(collisionManifold);
 
-          this._onCollisionDetected.trigger(collisionManifold);
+          this._onCollisionDetected.publish(collisionManifold);
         }
       }
     }

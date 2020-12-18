@@ -10,24 +10,14 @@ export class Topic<T> implements Subscribable<T> {
   }
 
   public subscribe(handler: (eventData: T) => void): Subscription<T> {
-    const sub = new Subscription(
-      subscription => Utilities.removeItemFromArray(this.subscriptions, subscription),
-      handler
-    );
+    const sub = new Subscription(subscription => this.unsubscribe(subscription), handler);
     this.subscriptions.push(sub);
 
     return sub;
   }
 
   public unsubscribe(subscription: Subscription<T>): boolean {
-    const index = this.subscriptions.indexOf(subscription);
-
-    if (index >= 0) {
-      this.subscriptions.splice(index, 1);
-      return true;
-    }
-
-    return false;
+    return Utilities.removeItemFromArray(this.subscriptions, subscription);
   }
 
   public unsubscribeAll(): void {

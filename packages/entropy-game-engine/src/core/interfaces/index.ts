@@ -2,7 +2,6 @@ export * from './CanvasMouseEvent';
 export * from './CollisionDetector';
 export * from './CollisionResolver';
 export * from './Comparable';
-export * from './CustomLiteEvent';
 export * from './GameObjectConstructionParams';
 export * from './Graph';
 export * from './GraphCell';

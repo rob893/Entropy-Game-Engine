@@ -20,7 +20,7 @@ export class PhysicsEngine {
     this.gravity = 665;
     this.collisionDetector = collisionDetector;
     this.collisionResolver = collisionResolver;
-    this.collisionDetector.onCollisionDetected.add(manifold => this.resolveCollisions(manifold));
+    this.collisionDetector.onCollisionDetected.subscribe(manifold => this.resolveCollisions(manifold));
 
     this.time = time;
   }
@@ -46,14 +46,14 @@ export class PhysicsEngine {
       this.rigidbodies.push(rb);
     }
 
-    rb.becameKinomatic.add(this.removeKinomaticRigidbody);
-    rb.becameNonKinomatic.add(this.addNonKinomaticRigidbody);
-    rb.onDestroyed.add(this.removeKinomaticRigidbody);
+    rb.becameKinomatic.subscribe(this.removeKinomaticRigidbody);
+    rb.becameNonKinomatic.subscribe(this.addNonKinomaticRigidbody);
+    rb.onDestroyed.subscribe(this.removeKinomaticRigidbody);
   }
 
   public addCollider(collider: RectangleCollider): void {
     this.collisionDetector.addCollider(collider);
-    collider.onDestroyed.add(this.removeColliderFromDetector);
+    collider.onDestroyed.subscribe(this.removeColliderFromDetector);
   }
 
   private resolveCollisions(collisionManifold: CollisionManifold | undefined): void {

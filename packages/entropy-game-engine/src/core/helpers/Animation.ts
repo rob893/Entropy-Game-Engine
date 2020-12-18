@@ -1,5 +1,5 @@
-import { Topic } from './LiteEvent';
-import { CustomLiteEvent } from '../interfaces/CustomLiteEvent';
+import { Topic } from './Topic';
+import { Subscribable } from './types';
 
 export class Animation {
   public loop: boolean = true;
@@ -19,8 +19,8 @@ export class Animation {
     this.computedTimeBetweenFrames = timeBetweenFrames;
   }
 
-  public get onAnimationComplete(): CustomLiteEvent<void> {
-    return this.onCompleted.expose();
+  public get onAnimationComplete(): Subscribable<void> {
+    return this.onCompleted;
   }
 
   public get currentFrame(): HTMLImageElement {
@@ -47,7 +47,7 @@ export class Animation {
 
   public updateAnimation(deltaTime: number): void {
     if (this.isComplete) {
-      this.onCompleted.trigger();
+      this.onCompleted.publish();
       return;
     }
 

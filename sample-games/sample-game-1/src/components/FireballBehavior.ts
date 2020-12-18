@@ -15,7 +15,7 @@ export class FireballBehavior extends Component {
     super(gameObject);
 
     this.collider = collider;
-    this.collider.onCollided.add(manifold => this.hit(manifold));
+    this.collider.onCollided.subscribe(manifold => this.hit(manifold));
   }
 
   public get movementDirection(): Vector2 {

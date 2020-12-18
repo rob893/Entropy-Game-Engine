@@ -1,10 +1,10 @@
 import { Component } from './Component';
 import { RectangleCollider } from './RectangleCollider';
 import { GameObject } from '../game-objects/GameObject';
-import { Topic } from '../core/helpers/LiteEvent';
-import { CustomLiteEvent } from '../core/interfaces/CustomLiteEvent';
+import { Topic } from '../core/helpers/Topic';
 import { Geometry } from '../core/helpers/Geometry';
 import { EventType } from '../core/enums/EventType';
+import { Subscribable } from '../core';
 
 export class ClickedOnDetector extends Component {
   private readonly collider: RectangleCollider;
@@ -18,15 +18,15 @@ export class ClickedOnDetector extends Component {
     this.input.addMouseListener(EventType.Click, 0, () => this.handleClickEvent());
   }
 
-  public get onClicked(): CustomLiteEvent<void> {
-    return this.onClickedOn.expose();
+  public get onClicked(): Subscribable<void> {
+    return this.onClickedOn;
   }
 
   private handleClickEvent(): void {
     const mousePosition = this.input.canvasMousePosition;
 
     if (Geometry.rectangleContainsPoint(this.collider.topLeft, this.collider.bottomRight, mousePosition)) {
-      this.onClickedOn.trigger();
+      this.onClickedOn.publish();
     }
   }
 }

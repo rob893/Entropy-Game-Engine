@@ -21,7 +21,7 @@ export class PlayerMotor extends Component {
       throw new Error('No collider attached to player');
     }
 
-    collider.onCollided.add(() => {
+    collider.onCollided.subscribe(() => {
       this.destroy(this.gameObject);
       this.instantiate(Explosion, this.transform.position);
       this.invoke(() => this.sceneManager.loadScene(1), 3);

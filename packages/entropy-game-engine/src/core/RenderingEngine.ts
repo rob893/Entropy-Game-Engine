@@ -41,7 +41,7 @@ export class RenderingEngine {
     this.renderableObjects.push(object);
 
     if (object instanceof Component) {
-      object.onDestroyed.add(() => {
+      object.onDestroyed.subscribe(() => {
         const index = this.renderableObjects.indexOf(object);
 
         if (index !== -1) {
@@ -55,7 +55,7 @@ export class RenderingEngine {
     this.renderableGizmos.push(gizmo);
 
     if (gizmo instanceof Component) {
-      gizmo.onDestroyed.add(() => {
+      gizmo.onDestroyed.subscribe(() => {
         const index = this.renderableGizmos.indexOf(gizmo);
 
         if (index !== -1) {
@@ -70,7 +70,7 @@ export class RenderingEngine {
     this.renderableGUIElements.sort(uiElement => uiElement.zIndex || 0);
 
     if (guiElement instanceof Component) {
-      guiElement.onDestroyed.add(() => {
+      guiElement.onDestroyed.subscribe(() => {
         const index = this.renderableGUIElements.indexOf(guiElement);
 
         if (index !== -1) {

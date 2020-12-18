@@ -39,7 +39,7 @@ export class Button extends GameObject<ButtonConfig> {
     });
     textRenderer.x = this.transform.position.x - textRenderer.getTextWidth(this.gameCanvasContext) / 2;
 
-    this.transform.onMoved.add(() => {
+    this.transform.onMoved.subscribe(() => {
       textRenderer.x = this.transform.position.x - textRenderer.getTextWidth(this.gameCanvasContext) / 2;
       textRenderer.y = this.transform.position.y - h / 2;
     });
