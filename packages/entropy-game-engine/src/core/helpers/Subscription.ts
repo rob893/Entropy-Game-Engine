@@ -2,19 +2,29 @@ import { Topic } from './Topic';
 import { Unsubscribable } from './types';
 
 export class Subscription<T> implements Unsubscribable {
-  private readonly unsubscribeLogic: (subscription: Subscription<T>) => void;
-  private readonly handler: (eventData: T) => void;
+  private unsubscribeLogic: ((subscription: Subscription<T>) => void) | null;
+  private handler: ((eventData: T) => void) | null;
 
   public constructor(unsubscribeLogic: (subscription: Subscription<T>) => void, handler: (eventData: T) => void) {
     this.unsubscribeLogic = unsubscribeLogic;
     this.handler = handler;
   }
 
+  public get isActive(): boolean {
+    return this.unsubscribeLogic !== null && this.handler !== null;
+  }
+
   public publish(eventData: T): void {
-    this.handler(eventData);
+    if (this.handler) {
+      this.handler(eventData);
+    }
   }
 
   public unsubscribe(): void {
-    this.unsubscribeLogic(this);
+    if (this.unsubscribeLogic) {
+      this.unsubscribeLogic(this);
+      this.unsubscribeLogic = null;
+      this.handler = null;
+    }
   }
 }
