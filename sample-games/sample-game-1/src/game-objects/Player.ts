@@ -90,7 +90,7 @@ export class Player extends GameObject {
     components.push(myStats);
 
     components.push(new PlayerMotor(this, collider, playerAnimator, myStats));
-    components.push(new Spawner(this, [Minotaur]));
+    //components.push(new Spawner(this, [Minotaur]));
 
     return components;
   }

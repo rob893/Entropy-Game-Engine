@@ -4,12 +4,14 @@ import { RenderableGUI } from './interfaces/RenderableGUI';
 import { RenderableBackground } from './interfaces/RenderableBackground';
 import { Terrain } from '../game-objects/Terrain';
 import { Component } from '../components/Component';
+import { GameObject } from '../game-objects';
 
 export class RenderingEngine {
   public renderGizmos: boolean;
 
   private _background: RenderableBackground | null;
   private _terrain: Terrain | null;
+  // private player: GameObject | null = null;
   private readonly renderableObjects: Renderable[];
   private readonly renderableGizmos: RenderableGizmo[];
   private readonly renderableGUIElements: RenderableGUI[];
@@ -41,6 +43,9 @@ export class RenderingEngine {
     this.renderableObjects.push(object);
 
     if (object instanceof Component) {
+      // if (object.tag === 'player') {
+      //   this.player = object.gameObject;
+      // }
       object.onDestroyed.subscribe(() => {
         const index = this.renderableObjects.indexOf(object);
 
@@ -85,6 +90,12 @@ export class RenderingEngine {
       this._background.renderBackground(this._canvasContext);
     }
 
+    // if (this.player) {
+    //   this._canvasContext.translate(-this.player.transform.position.x, -this.player.transform.position.y);
+    // }
+
+    // this._canvasContext.scale(2, 2);
+
     if (this._terrain !== null) {
       this._terrain.renderBackground(this._canvasContext);
     }
@@ -108,5 +119,7 @@ export class RenderingEngine {
         guiElement.renderGUI(this._canvasContext);
       }
     }
+
+    // this._canvasContext.setTransform(1, 0, 0, 1, 0, 0);
   }
 }
