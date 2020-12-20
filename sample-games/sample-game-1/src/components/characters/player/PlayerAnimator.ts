@@ -4,7 +4,7 @@ import { CharacterAnimations, PlayerAnimations } from '../../../interfaces/Chara
 export class PlayerAnimator extends Component {
   private facingRight: boolean = true;
   private readonly animations: PlayerAnimations;
-  private readonly animator: Animator;
+  private animator!: Animator;
 
   public constructor(gameObject: GameObject, animator: Animator, animations: PlayerAnimations) {
     super(gameObject);
@@ -26,9 +26,14 @@ export class PlayerAnimator extends Component {
     animations.jumpRightAnimation.playToFinish = true;
     animations.jumpRightAnimation.loop = false;
 
-    this.animator = animator;
+    //this.animator = animator;
     this.animations = animations;
+  }
 
+  public start(): void {
+    const does = this.getComponent(Animator);
+    debugger;
+    this.animator = does!;
     this.setAnimation(this.animations.idleRightAnimation);
   }
 

@@ -12,6 +12,7 @@ import { Time } from '../core/Time';
 import { Vector2 } from '../core/helpers/Vector2';
 import { Terrain } from './Terrain';
 import { GameObjectConstructionParams } from '../core/interfaces/GameObjectConstructionParams';
+import { Utilities } from '../core/helpers/Utilities';
 
 export abstract class GameObject<TConfig extends GameObjectConstructionParams = GameObjectConstructionParams> {
   public id: string;
@@ -21,14 +22,12 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
 
   private isEnabled: boolean;
   private readonly updatableComponents: Component[] = [];
-  private readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
+  private readonly componentMap = new Map<new (...args: any[]) => any, Component[]>();
   private readonly componentAnalyzer: ComponentAnalyzer;
-  private readonly gameEngine: GameEngine;
 
   public constructor(config: TConfig) {
     const { gameEngine, id, x, y, rotation, tag, layer } = config;
 
-    this.gameEngine = gameEngine;
     this.isEnabled = true;
     this.componentAnalyzer = gameEngine.componentAnalyzer;
 
@@ -154,24 +153,26 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
    * @param component the component to be removed from this game object's update loop. It MUST be one of the game object's components.
    */
   public removeComponentFromUpdate(component: Component): void {
-    if (!this.componentMap.has(component.constructor.name)) {
-      throw new Error(`This game object does not have a component of type ${component.constructor.name}`);
+    const type: new () => any = Object.getPrototypeOf(component).constructor;
+
+    if (!this.componentMap.has(type)) {
+      throw new Error(`This game object does not have a component of type ${type.name}`);
     }
 
     if (!this.updatableComponents.includes(component)) {
       throw new Error('This game object does not have the component being removed.');
     }
 
-    this.updatableComponents.splice(this.updatableComponents.indexOf(component), 1);
+    Utilities.removeItemFromArray(this.updatableComponents, component);
   }
 
   public hasComponent<T extends Component>(component: new (...args: any[]) => T): boolean {
-    return this.componentMap.has(component.name);
+    return this.componentMap.has(component);
   }
 
   public getComponent<T extends Component>(component: new (...args: any[]) => T): T | null {
     const componentType = component.name;
-    const components = this.componentMap.get(componentType);
+    const components = this.componentMap.get(component);
 
     if (components === undefined || components.length === 0) {
       return null;
@@ -181,8 +182,8 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public getComponents<T extends Component>(component: new (...args: any[]) => T): T[] {
-    const componentType = component.name;
-    const components = this.componentMap.get(componentType);
+    //const componentType = component.name;
+    const components = this.componentMap.get(component);
 
     if (components === undefined || components.length === 0) {
       return [];
@@ -278,12 +279,13 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public addComponent<T extends Component>(newComponent: Component): T {
-    const currentComponents = this.componentMap.get(newComponent.constructor.name);
+    const type: new () => any = Object.getPrototypeOf(newComponent).constructor;
+    const currentComponents = this.componentMap.get(type);
 
-    if (currentComponents !== undefined) {
+    if (currentComponents) {
       currentComponents.push(newComponent);
     } else {
-      this.componentMap.set(newComponent.constructor.name, [newComponent]);
+      this.componentMap.set(type, [newComponent]);
     }
 
     this.componentAnalyzer.extractRenderablesCollidersAndRigidbodies(newComponent);
@@ -295,12 +297,20 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public removeComponent(component: Component): void {
-    if (!this.componentMap.has(component.constructor.name)) {
-      throw new Error(`This object does not have a ${component.constructor.name} component!`);
+    const type: new () => any = Object.getPrototypeOf(component).constructor;
+
+    const components = this.componentMap.get(type);
+
+    if (!components || !Utilities.removeItemFromArray(components, component)) {
+      throw new Error(`This object does not have a ${type.name} component!`);
     }
 
-    this.updatableComponents.splice(this.updatableComponents.indexOf(component), 1);
-    this.componentMap.delete(component.constructor.name);
+    Utilities.removeItemFromArray(this.updatableComponents, component);
+
+    if (components.length === 0) {
+      this.componentMap.delete(type);
+    }
+
     component.onDestroy();
   }
 
@@ -323,13 +333,14 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
 
   private setComponents(components: Component[]): void {
     for (const component of components) {
+      const type: new () => any = Object.getPrototypeOf(component).constructor;
       this.updatableComponents.push(component);
-      const currentComponents = this.componentMap.get(component.constructor.name);
+      const currentComponents = this.componentMap.get(type);
 
-      if (currentComponents !== undefined) {
+      if (currentComponents) {
         currentComponents.push(component);
       } else {
-        this.componentMap.set(component.constructor.name, [component]);
+        this.componentMap.set(type, [component]);
       }
 
       this.componentAnalyzer.extractRenderablesCollidersAndRigidbodies(component);

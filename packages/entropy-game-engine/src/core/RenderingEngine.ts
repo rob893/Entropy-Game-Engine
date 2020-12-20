@@ -11,11 +11,12 @@ export class RenderingEngine {
 
   private _background: RenderableBackground | null;
   private _terrain: Terrain | null;
-  // private player: GameObject | null = null;
+  private player: GameObject | null = null;
   private readonly renderableObjects: Renderable[];
   private readonly renderableGizmos: RenderableGizmo[];
   private readonly renderableGUIElements: RenderableGUI[];
   private readonly _canvasContext: CanvasRenderingContext2D;
+  private scale: number = 2;
 
   public constructor(context: CanvasRenderingContext2D) {
     this._canvasContext = context;
@@ -25,6 +26,9 @@ export class RenderingEngine {
     this.renderGizmos = false;
     this._terrain = null;
     this._background = null;
+    document.addEventListener('wheel', (event: WheelEvent) => {
+      this.scale += event.deltaY * -0.001;
+    });
   }
 
   public set terrain(terrain: Terrain) {
@@ -43,9 +47,9 @@ export class RenderingEngine {
     this.renderableObjects.push(object);
 
     if (object instanceof Component) {
-      // if (object.tag === 'player') {
-      //   this.player = object.gameObject;
-      // }
+      if (object.tag === 'player') {
+        this.player = object.gameObject;
+      }
       object.onDestroyed.subscribe(() => {
         const index = this.renderableObjects.indexOf(object);
 
@@ -91,10 +95,13 @@ export class RenderingEngine {
     }
 
     // if (this.player) {
-    //   this._canvasContext.translate(-this.player.transform.position.x, -this.player.transform.position.y);
+    //   this._canvasContext.translate(
+    //     -this.player.transform.position.x * this.scale + this._canvasContext.canvas.width / 2,
+    //     -this.player.transform.position.y * this.scale + this._canvasContext.canvas.height / 2
+    //   );
     // }
 
-    // this._canvasContext.scale(2, 2);
+    this._canvasContext.scale(this.scale, this.scale);
 
     if (this._terrain !== null) {
       this._terrain.renderBackground(this._canvasContext);
@@ -120,6 +127,6 @@ export class RenderingEngine {
       }
     }
 
-    // this._canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+    this._canvasContext.setTransform(1, 0, 0, 1, 0, 0);
   }
 }
