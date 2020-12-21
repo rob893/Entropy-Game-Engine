@@ -4,31 +4,25 @@ import { RenderableGUI } from './interfaces/RenderableGUI';
 import { RenderableBackground } from './interfaces/RenderableBackground';
 import { Terrain } from '../game-objects/Terrain';
 import { Component } from '../components/Component';
-import { GameObject } from '../game-objects';
+import { Camera } from '../components/Camera';
+import { Utilities } from './helpers';
 
 export class RenderingEngine {
   public renderGizmos: boolean;
 
   private _background: RenderableBackground | null;
   private _terrain: Terrain | null;
-  private player: GameObject | null = null;
-  private readonly renderableObjects: Renderable[];
-  private readonly renderableGizmos: RenderableGizmo[];
-  private readonly renderableGUIElements: RenderableGUI[];
+  private readonly cameras: Camera[] = [];
+  private readonly renderableObjects: Renderable[] = [];
+  private readonly renderableGizmos: RenderableGizmo[] = [];
+  private readonly renderableGUIElements: RenderableGUI[] = [];
   private readonly _canvasContext: CanvasRenderingContext2D;
-  private scale: number = 2;
 
   public constructor(context: CanvasRenderingContext2D) {
     this._canvasContext = context;
-    this.renderableObjects = [];
-    this.renderableGizmos = [];
-    this.renderableGUIElements = [];
     this.renderGizmos = false;
     this._terrain = null;
     this._background = null;
-    document.addEventListener('wheel', (event: WheelEvent) => {
-      this.scale += event.deltaY * -0.001;
-    });
   }
 
   public set terrain(terrain: Terrain) {
@@ -43,13 +37,15 @@ export class RenderingEngine {
     return this._canvasContext;
   }
 
+  public addCamera(camera: Camera): void {
+    this.cameras.push(camera);
+    camera.onDestroyed.subscribe(destroyedCamera => Utilities.removeItemFromArray(this.cameras, destroyedCamera));
+  }
+
   public addRenderableObject(object: Renderable): void {
     this.renderableObjects.push(object);
 
     if (object instanceof Component) {
-      if (object.tag === 'player') {
-        this.player = object.gameObject;
-      }
       object.onDestroyed.subscribe(() => {
         const index = this.renderableObjects.indexOf(object);
 
@@ -94,39 +90,49 @@ export class RenderingEngine {
       this._background.renderBackground(this._canvasContext);
     }
 
-    // if (this.player) {
-    //   this._canvasContext.translate(
-    //     -this.player.transform.position.x * this.scale + this._canvasContext.canvas.width / 2,
-    //     -this.player.transform.position.y * this.scale + this._canvasContext.canvas.height / 2
-    //   );
-    // }
+    for (const camera of this.cameras) {
+      // if (this.player) {
+      //   this._canvasContext.translate(
+      //     -this.player.transform.position.x * this.scale + this._canvasContext.canvas.width / 2,
+      //     -this.player.transform.position.y * this.scale + this._canvasContext.canvas.height / 2
+      //   );
+      // }
 
-    this._canvasContext.scale(this.scale, this.scale);
+      const {
+        zoom,
+        transform: {
+          position: { x, y }
+        }
+      } = camera;
 
-    if (this._terrain !== null) {
-      this._terrain.renderBackground(this._canvasContext);
-    }
+      this._canvasContext.translate(x, y);
+      this._canvasContext.scale(zoom, zoom);
 
-    for (const object of this.renderableObjects) {
-      if (object.enabled) {
-        object.render(this._canvasContext);
+      if (this._terrain !== null) {
+        this._terrain.renderBackground(this._canvasContext);
       }
-    }
 
-    if (this.renderGizmos) {
-      for (const gizmo of this.renderableGizmos) {
-        if (gizmo.enabled) {
-          gizmo.renderGizmo(this._canvasContext);
+      for (const object of this.renderableObjects) {
+        if (object.enabled) {
+          object.render(this._canvasContext);
         }
       }
-    }
 
-    for (const guiElement of this.renderableGUIElements) {
-      if (guiElement.enabled) {
-        guiElement.renderGUI(this._canvasContext);
+      if (this.renderGizmos) {
+        for (const gizmo of this.renderableGizmos) {
+          if (gizmo.enabled) {
+            gizmo.renderGizmo(this._canvasContext);
+          }
+        }
       }
-    }
 
-    this._canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+      for (const guiElement of this.renderableGUIElements) {
+        if (guiElement.enabled) {
+          guiElement.renderGUI(this._canvasContext);
+        }
+      }
+
+      this._canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+    }
   }
 }

@@ -6,6 +6,7 @@ import { RectangleCollider } from '../../components/RectangleCollider';
 import { Renderable } from '../interfaces/Renderable';
 import { RenderableGUI } from '../interfaces/RenderableGUI';
 import { RenderableGizmo } from '../interfaces/RenderableGizmo';
+import { Camera } from '../../components/Camera';
 
 export class ComponentAnalyzer {
   private readonly physicsEngine: PhysicsEngine;
@@ -21,6 +22,8 @@ export class ComponentAnalyzer {
       this.physicsEngine.addRigidbody(component);
     } else if (component instanceof RectangleCollider) {
       this.physicsEngine.addCollider(component);
+    } else if (component instanceof Camera) {
+      this.renderingEngine.addCamera(component);
     }
 
     if (typeof ((component as unknown) as Renderable).render === 'function') {

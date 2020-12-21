@@ -16,3 +16,4 @@ export * from './TerrainCell';
 export * from './TerrainSpec';
 export * from './WeightedGraph';
 export * from './WeightedGraphCell';
+export * from './types';

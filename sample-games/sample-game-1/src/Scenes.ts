@@ -6,7 +6,8 @@ import {
   GameObject,
   RectangleBackground,
   Scene,
-  SpriteSheet
+  SpriteSheet,
+  DefaultCamera
 } from '@entropy-engine/entropy-game-engine';
 import { Scene1TerrainSpec } from './terrains/Scene1TerrainSpec';
 import { GameManagerObject } from './game-objects/GameManagerObject';
@@ -39,6 +40,7 @@ export const scene1: Scene = {
 
   getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
     return [
+      new DefaultCamera({ gameEngine }),
       new GameManagerObject({ gameEngine, id: 'gameManager' }),
       // new Minotaur({ gameEngine, id: 'minotaur' }),
       new Player({ gameEngine, id: 'player', x: 400, y: 250 }),
@@ -135,6 +137,7 @@ export const scene3: Scene = {
     const midBox = Box.buildBox(gameEngine, 640, 520, 150, 20, 'midBox', 'border', Color.Brown);
 
     return [
+      new DefaultCamera({ gameEngine }),
       new GameManagerObject({ gameEngine, id: 'gameManager' }),
       new PlayerRB({ gameEngine, id: 'player' }),
       topBorder,

@@ -8,7 +8,8 @@ import {
   RectangleBackground,
   RenderableBackground,
   Scene,
-  SpriteSheet
+  SpriteSheet,
+  DefaultCamera
 } from '@entropy-engine/entropy-game-engine';
 import HelicopterSpriteSheet from './assets/images/helicopter.png';
 import MissileSpriteSheet from './assets/images/missile.png';
@@ -33,7 +34,7 @@ export const scene1: Scene = {
   getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
     const player = new Player({ gameEngine });
     const gameManager = new GameManager({ gameEngine });
-    return [player, gameManager];
+    return [new DefaultCamera({ gameEngine }), player, gameManager];
   },
 
   async getAssetPool(): Promise<AssetPool> {

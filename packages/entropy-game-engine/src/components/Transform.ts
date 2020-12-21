@@ -75,9 +75,19 @@ export class Transform extends Component {
     this.rotation = Math.atan2(target.y - this.position.y, target.x - this.position.x) - Math.PI / 2;
   }
 
-  public setPosition(x: number, y: number): void {
-    this.position.x = x;
-    this.position.y = y;
+  public setPosition(position: Vector2): void;
+  public setPosition(x: number, y: number): void;
+  public setPosition(xOrPosition: number | Vector2, y?: number): void {
+    if (xOrPosition instanceof Vector2) {
+      this.position.x = xOrPosition.x;
+      this.position.y = xOrPosition.y;
+    } else if (typeof y === 'number') {
+      this.position.x = xOrPosition;
+      this.position.y = y;
+    } else {
+      throw new Error('Invalid use of setPosition');
+    }
+
     this.onMove.publish();
   }
 

@@ -13,6 +13,7 @@ import { Vector2 } from '../core/helpers/Vector2';
 import { Terrain } from './Terrain';
 import { GameObjectConstructionParams } from '../core/interfaces/GameObjectConstructionParams';
 import { Utilities } from '../core/helpers/Utilities';
+import { InstantiateOptions } from '../core';
 
 export abstract class GameObject<TConfig extends GameObjectConstructionParams = GameObjectConstructionParams> {
   public id: string;
@@ -21,12 +22,15 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   public readonly transform: Transform;
 
   private isEnabled: boolean;
+  private readonly gameEngine: GameEngine;
   private readonly updatableComponents: Component[] = [];
   private readonly componentMap = new Map<new (...args: any[]) => any, Component[]>();
   private readonly componentAnalyzer: ComponentAnalyzer;
 
   public constructor(config: TConfig) {
     const { gameEngine, id, x, y, rotation, tag, layer } = config;
+
+    this.gameEngine = gameEngine;
 
     this.isEnabled = true;
     this.componentAnalyzer = gameEngine.componentAnalyzer;
@@ -129,7 +133,8 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     type: new (constructionParams: GameObjectConstructionParams) => T,
     position?: Vector2,
     rotation?: number,
-    parent?: Transform
+    parent?: Transform,
+    options?: InstantiateOptions
   ): GameObject {
     return this.gameEngine.instantiate(type, position, rotation, parent);
   }

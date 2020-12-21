@@ -12,3 +12,4 @@ export * from './Slider';
 export * from './TextRenderer';
 export * from './Transform';
 export * from './ImageRenderer';
+export * from './Camera';
