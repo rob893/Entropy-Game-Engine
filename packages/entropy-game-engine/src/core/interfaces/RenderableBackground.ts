@@ -1,3 +1,5 @@
+import { Camera } from '../../components/Camera';
+
 export interface RenderableBackground {
-  renderBackground(context: CanvasRenderingContext2D): void;
+  renderBackground(context: CanvasRenderingContext2D, camera?: Camera): void;
 }

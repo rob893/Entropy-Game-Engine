@@ -431,7 +431,7 @@ export class GameEngine {
     let gameObjects: GameObject[] = [];
 
     if (terrainSpec !== null) {
-      const terrianBuilder = new TerrainBuilder(this._gameCanvas.width, this._gameCanvas.height);
+      const terrianBuilder = new TerrainBuilder();
       const terrain = await terrianBuilder.buildTerrain(this, terrainSpec);
 
       gameObjects.push(terrain);

@@ -11,25 +11,19 @@ export class TerrainBuilder {
     Map<string, SpriteData[]>
   >();
   private readonly spriteSheetSet: Set<string> = new Set<string>();
-  private readonly context: CanvasRenderingContext2D;
-  private readonly canvas: HTMLCanvasElement;
   private currentSpriteSheet: HTMLImageElement | null = null;
-
-  public constructor(width: number = 1024, height: number = 576) {
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = width;
-    this.canvas.height = height;
-    const context = this.canvas.getContext('2d');
-
-    if (context === null) {
-      throw new Error('Bad context');
-    }
-
-    this.context = context;
-  }
 
   public async buildTerrain(gameEngine: GameEngine, terrainSpec: TerrainSpec): Promise<Terrain> {
     await this.using(terrainSpec.spriteSheetUrl);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = terrainSpec.width;
+    canvas.height = terrainSpec.height;
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+      throw new Error('Error loading context from canvas');
+    }
 
     return new Promise(resolve => {
       const { scale } = terrainSpec;
@@ -66,7 +60,7 @@ export class TerrainBuilder {
             throw new Error('Error building terrain.');
           }
 
-          this.context.drawImage(
+          context.drawImage(
             this.currentSpriteSheet,
             c.sliceX,
             c.sliceY,
@@ -82,11 +76,15 @@ export class TerrainBuilder {
         }
       }
 
-      const image = new Image();
-      image.src = this.canvas.toDataURL();
-      image.onload = () => {
-        resolve(new Terrain(gameEngine, image, navGrid, colliderOffsets));
-      };
+      resolve(new Terrain(gameEngine, navGrid, colliderOffsets, canvas));
+
+      // const image = new Image();
+      // image.src = canvas.toDataURL();
+      // image.onload = () => {
+      //   resolve(
+      //     new Terrain(gameEngine, image, navGrid, colliderOffsets, this.currentSpriteSheet!, terrainGrid, canvas)
+      //   );
+      // };
     });
   }
 

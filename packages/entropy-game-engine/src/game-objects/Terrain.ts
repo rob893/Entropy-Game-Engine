@@ -8,21 +8,23 @@ import { Component } from '../components/Component';
 import { PrefabSettings } from '../core/interfaces/PrefabSettings';
 import { GameEngine } from '../core/GameEngine';
 import { WeightedGraphVisualizer } from '../components/GraphVisualizer';
+import { Camera } from '../components/Camera';
+import { TerrainCell } from '../core/interfaces/TerrainCell';
 
 export class Terrain extends GameObject implements RenderableBackground {
-  public readonly terrainImage: HTMLImageElement;
   public readonly navGrid: NavGrid;
+  public readonly backgroundCanvas: HTMLCanvasElement;
 
   public constructor(
     gameEngine: GameEngine,
-    terrainImage: HTMLImageElement,
     navGrid: NavGrid,
-    colliderPositions: Vector2[]
+    colliderPositions: Vector2[],
+    backgroundCanvas: HTMLCanvasElement
   ) {
     super({ gameEngine });
 
-    this.terrainImage = terrainImage;
     this.navGrid = navGrid;
+    this.backgroundCanvas = backgroundCanvas;
 
     const colliderRows = new Map<number, Map<number, [Vector2, number]>>();
 
@@ -69,8 +71,47 @@ export class Terrain extends GameObject implements RenderableBackground {
     //this.addComponent(new WeightedGraphVisualizer(this, navGrid));
   }
 
-  public renderBackground(context: CanvasRenderingContext2D): void {
-    context.drawImage(this.terrainImage, 0, 0);
+  public renderBackground(context: CanvasRenderingContext2D, camera?: Camera): void {
+    if (camera) {
+      // const {
+      //   transform: {
+      //     position: { x: cameraX, y: cameraY }
+      //   }
+      // } = camera;
+
+      // let x = 0;
+      // let y = 0;
+      // for (let i = 0; i < this.terrainGrid.length; i++) {
+      //   for (let j = 0; j < this.terrainGrid[i].length; j++) {
+      //     const gridCell = this.terrainGrid[i][j];
+
+      //     if (gridCell === null) {
+      //       x = j === this.terrainGrid[i].length - 1 ? 0 : x + 16;
+      //       y = j === this.terrainGrid[i].length - 1 ? y + 16 : y;
+      //       continue;
+      //     }
+
+      //     const c = gridCell.spriteData;
+
+      //     context.drawImage(
+      //       this.spriteSheet,
+      //       c.sliceX,
+      //       c.sliceY,
+      //       c.sliceWidth,
+      //       c.sliceHeight,
+      //       x,
+      //       y,
+      //       c.sliceWidth * 3,
+      //       c.sliceHeight * 3
+      //     );
+      //     x = j === this.terrainGrid[i].length - 1 ? 0 : x + c.sliceWidth * 3;
+      //     y = j === this.terrainGrid[i].length - 1 ? y + c.sliceHeight * 3 : y;
+      //   }
+      // }
+      context.drawImage(this.backgroundCanvas, 0, 0, this.backgroundCanvas.width, this.backgroundCanvas.height);
+    } else {
+      //context.drawImage(this.terrainImage, 0, 0, context.canvas.width, context.canvas.height);
+    }
   }
 
   protected buildInitialComponents(): Component[] {

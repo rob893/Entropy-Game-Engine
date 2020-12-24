@@ -109,7 +109,7 @@ export class RenderingEngine {
       this._canvasContext.scale(zoom, zoom);
 
       if (this._terrain !== null) {
-        this._terrain.renderBackground(this._canvasContext);
+        this._terrain.renderBackground(this._canvasContext, camera);
       }
 
       for (const object of this.renderableObjects) {
