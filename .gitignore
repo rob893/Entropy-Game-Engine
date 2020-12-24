@@ -5,3 +5,4 @@ coverage/
 *.tsbuildinfo
 lerna-debug.log
 .npmrc
+debug.log
