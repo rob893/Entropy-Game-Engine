@@ -105,6 +105,7 @@ export class RenderingEngine {
         }
       } = camera;
 
+      //this._canvasContext.setTransform(1, 0.5, -1, 0.5, 0, 0);
       this._canvasContext.translate(x, y);
       this._canvasContext.scale(zoom, zoom);
 

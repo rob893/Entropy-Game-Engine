@@ -1,4 +1,5 @@
 import SpriteSheet from '../assets/images/DungeonTileset.png';
+import ForestTile from '../assets/images/ground/forest-7-tile.png';
 import { SpriteData, TerrainCell, TerrainSpec } from '@entropy-engine/entropy-game-engine';
 
 export class Scene1TerrainSpec implements TerrainSpec {
@@ -53,10 +54,14 @@ export class Scene1TerrainSpec implements TerrainSpec {
     sliceHeight: this.cellSize
   };
   private readonly floorTile: SpriteData = {
-    sliceX: 16,
-    sliceY: 64,
+    sliceX: 0,
+    sliceY: 0,
     sliceWidth: this.cellSize,
-    sliceHeight: this.cellSize
+    sliceHeight: this.cellSize,
+    spriteSheet: ForestTile,
+    ratio: 4,
+    tx: 256,
+    ty: 256
   };
   private readonly floorHole: SpriteData = {
     sliceX: 96,
@@ -75,6 +80,7 @@ export class Scene1TerrainSpec implements TerrainSpec {
     const rw: TerrainCell = { spriteData: this.rightWall, passable: false, weight: 0 };
     const lw: TerrainCell = { spriteData: this.leftWall, passable: false, weight: 0 };
     const bw: TerrainCell = { spriteData: this.bottomWall, passable: false, weight: 0 };
+    // const ft: TerrainCell = { spriteData: this.floorTile, passable: true, weight: 0 };
     const ft: TerrainCell = { spriteData: this.floorTile, passable: true, weight: 0 };
     //const rc: ITerrainCell = { spriteData: this.bottomRCornerWall, passable: false, weight: 0 };
     //const tc: ITerrainCell = { spriteData: this.topRCornerWall, passable: false, weight: 0 };
