@@ -26,12 +26,12 @@ export class ComponentAnalyzer {
       this.renderingEngine.addCamera(component);
     }
 
-    if (typeof ((component as unknown) as Renderable).render === 'function') {
-      this.renderingEngine.addRenderableObject((component as unknown) as Renderable);
-    } else if (typeof ((component as unknown) as RenderableGUI).renderGUI === 'function') {
-      this.renderingEngine.addRenderableGUIElement((component as unknown) as RenderableGUI);
-    } else if (typeof ((component as unknown) as RenderableGizmo).renderGizmo === 'function') {
-      this.renderingEngine.addRenderableGizmo((component as unknown) as RenderableGizmo);
+    if (typeof (component as unknown as Renderable).render === 'function') {
+      this.renderingEngine.addRenderableObject(component as unknown as Renderable);
+    } else if (typeof (component as unknown as RenderableGUI).renderGUI === 'function') {
+      this.renderingEngine.addRenderableGUIElement(component as unknown as RenderableGUI);
+    } else if (typeof (component as unknown as RenderableGizmo).renderGizmo === 'function') {
+      this.renderingEngine.addRenderableGizmo(component as unknown as RenderableGizmo);
     }
   }
 }
