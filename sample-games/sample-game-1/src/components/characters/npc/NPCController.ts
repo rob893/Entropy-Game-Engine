@@ -46,7 +46,7 @@ export class NPCController extends Component {
     return this._attackState;
   }
 
-  public update(): void {
+  public override update(): void {
     if (this._myStats.isDead) {
       return;
     }

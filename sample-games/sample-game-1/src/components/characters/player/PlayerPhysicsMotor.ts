@@ -26,13 +26,13 @@ export class PlayerPhysicsMotor extends Component {
     this.speed = 5;
   }
 
-  public start(): void {
+  public override start(): void {
     super.start();
 
     //this.ball = this.getComponentInChildren(Transform);
   }
 
-  public update(): void {
+  public override update(): void {
     if (this.movingRight) {
       this.rb.addForce(Vector2.right.multiplyScalar(this.speed));
     } else if (this.movingLeft) {

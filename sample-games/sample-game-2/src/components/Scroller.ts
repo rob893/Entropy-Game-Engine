@@ -18,7 +18,7 @@ export class Scroller extends Component {
     }
   }
 
-  public start(): void {
+  public override start(): void {
     const gameManager = this.findGameObjectById('gameManager');
 
     if (!gameManager) {
@@ -28,7 +28,7 @@ export class Scroller extends Component {
     this.scoreManager = gameManager.getComponent(ScoreManager);
   }
 
-  public update(): void {
+  public override update(): void {
     if (!this.scoreManager) {
       throw new Error('Score manager is null.');
     }

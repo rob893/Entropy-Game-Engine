@@ -40,7 +40,7 @@ export class SampleGameObject extends GameObject {
     return components;
   }
 
-  protected buildAndReturnChildGameObjects(_config: GameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(_config: GameObjectConstructionParams): GameObject[] {
     return [];
   }
 }

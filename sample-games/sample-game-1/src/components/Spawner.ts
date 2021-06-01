@@ -17,7 +17,7 @@ export class Spawner extends Component {
     this.objectsToSpawn = objectsToSpawn;
   }
 
-  public start(): void {
+  public override start(): void {
     this.invokeRepeating(() => this.spawn(), this.spawnRate, this.cancelToken);
   }
 

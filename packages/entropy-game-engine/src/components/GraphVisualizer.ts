@@ -52,7 +52,7 @@ export class WeightedGraphVisualizer extends GraphVisualizer {
     this.unpassableColor = unpassableColor;
   }
 
-  protected getColorForCell(cell: GraphCell): Color {
+  protected override getColorForCell(cell: GraphCell): Color {
     if (!this.isWeightedGraphCell(cell)) {
       throw new Error('This must only be used with weighted graphs');
     }

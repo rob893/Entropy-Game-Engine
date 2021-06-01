@@ -33,7 +33,7 @@ export class SpatialHashCollisionDetector extends BaseCollisionDetector {
     this.buildSpatialMapCells();
   }
 
-  public get onCollisionDetected(): Subscribable<CollisionManifold> {
+  public override get onCollisionDetected(): Subscribable<CollisionManifold> {
     return this._onCollisionDetected;
   }
 
@@ -65,14 +65,14 @@ export class SpatialHashCollisionDetector extends BaseCollisionDetector {
     }
   }
 
-  public addCollider(collider: RectangleCollider): void {
+  public override addCollider(collider: RectangleCollider): void {
     collider.transform.onMoved.subscribe(() => this.updateColliderSpatialMapping(collider));
     collider.onResized.subscribe(() => this.updateColliderSpatialMapping(collider));
     this.colliders.push(collider);
     this.updateColliderSpatialMapping(collider);
   }
 
-  public removeCollider(collider: RectangleCollider): void {
+  public override removeCollider(collider: RectangleCollider): void {
     const index = this.colliders.indexOf(collider);
 
     if (index !== -1) {

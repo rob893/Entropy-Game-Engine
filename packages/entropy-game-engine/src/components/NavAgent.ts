@@ -43,7 +43,7 @@ export class NavAgent extends Component implements RenderableGizmo {
     return this.path[this.path.length - 1];
   }
 
-  public update(): void {
+  public override update(): void {
     if (this.nextPosition === null || this.path === null) {
       return;
     }

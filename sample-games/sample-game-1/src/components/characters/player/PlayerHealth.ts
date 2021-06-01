@@ -16,7 +16,7 @@ export class PlayerHealth extends Component implements Damageable {
     this.audioSource = audioSource;
   }
 
-  public start(): void {
+  public override start(): void {
     const gm = this.findGameObjectById('gameManager');
 
     if (gm === null) {

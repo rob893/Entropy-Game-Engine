@@ -45,7 +45,7 @@ export class MouseManager extends Component {
     this.camera.followTarget(player);
   }
 
-  public update(): void {
+  public override update(): void {
     const hit = this.physics.pointRaycastToScreen(this.camera.screenPointToGameWorld(this.input.canvasMousePosition));
 
     if (hit && (hit.gameObject.layer === Layer.Hostile || hit.gameObject.tag === 'player')) {
