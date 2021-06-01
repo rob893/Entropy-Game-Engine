@@ -17,7 +17,7 @@ export class MouseManager extends Component {
     });
   }
 
-  public start(): void {
+  public override start(): void {
     const cameraGameObject = this.findGameObjectWithTag('mainCamera');
 
     if (!cameraGameObject) {
