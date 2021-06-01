@@ -28,7 +28,7 @@ export class FireballBehavior extends Component {
     this.transform.rotation += 5;
   }
 
-  public update(): void {
+  public override update(): void {
     this.transform.translate(this.movementDirection.multiplyScalar(5));
   }
 

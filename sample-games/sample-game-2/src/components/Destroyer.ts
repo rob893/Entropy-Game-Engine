@@ -8,7 +8,7 @@ export class Destroyer extends Component {
     this.conditions = conditions;
   }
 
-  public update(): void {
+  public override update(): void {
     if (this.conditions.some(condition => condition(this.gameObject))) {
       this.destroy(this.gameObject);
     }

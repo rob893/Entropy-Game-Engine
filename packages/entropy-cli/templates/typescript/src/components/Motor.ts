@@ -21,7 +21,7 @@ export class Motor extends Component {
     this.speed = 5;
   }
 
-  public update(): void {
+  public override update(): void {
     if (this.movingRight) {
       this.rb.addForce(Vector2.right.multiplyScalar(this.speed));
     } else if (this.movingLeft) {

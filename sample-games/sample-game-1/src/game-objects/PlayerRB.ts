@@ -83,7 +83,7 @@ export class PlayerRB extends GameObject {
     };
   }
 
-  protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
     // const ball = new ThrowableBall(gameEngineAPIs, 'ball');
 
     // ball.transform.setPosition(this.transform.position.x, this.transform.position.y - 20);

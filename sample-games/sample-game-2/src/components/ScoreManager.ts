@@ -31,7 +31,7 @@ export class ScoreManager extends Component implements RenderableGUI {
     return this._playing;
   }
 
-  public start(): void {
+  public override start(): void {
     const player = this.findGameObjectById('player');
 
     if (!player) {
@@ -47,7 +47,7 @@ export class ScoreManager extends Component implements RenderableGUI {
     playerCollider.onCollided.subscribe(() => (this._playing = false));
   }
 
-  public update(): void {
+  public override update(): void {
     if (!this._playing) {
       if (
         (this.input.getKey(Key.Space) || this.input.getMouseButton(MouseButton.LeftMouseButton)) &&

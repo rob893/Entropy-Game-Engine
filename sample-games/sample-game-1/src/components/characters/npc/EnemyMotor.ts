@@ -17,7 +17,7 @@ export class EnemyMotor extends Component {
     this.navAgent.onPathCompleted.subscribe(() => this.animator.playIdleAnimation());
   }
 
-  public start(): void {
+  public override start(): void {
     const player = this.findGameObjectById('player');
 
     if (player === null) {
@@ -26,7 +26,7 @@ export class EnemyMotor extends Component {
     this.playerTransform = player.transform;
   }
 
-  public update(): void {
+  public override update(): void {
     if (this.playerTransform === null) {
       return;
     }

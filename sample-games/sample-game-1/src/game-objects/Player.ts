@@ -106,7 +106,7 @@ export class Player extends GameObject {
     };
   }
 
-  protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
     const healthBar = new Healthbar(config);
 
     healthBar.transform.setPosition(this.transform.position.x, this.transform.position.y - 60);

@@ -14,7 +14,7 @@ export class ScrollingBackground extends Component implements RenderableBackgrou
     this.backgroundImage = backgroundImage;
   }
 
-  public start(): void {
+  public override start(): void {
     const gameManager = this.findGameObjectById('gameManager');
 
     if (!gameManager) {
@@ -24,7 +24,7 @@ export class ScrollingBackground extends Component implements RenderableBackgrou
     this.scoreManager = gameManager.getComponent(ScoreManager);
   }
 
-  public update(): void {
+  public override update(): void {
     if (!this.scoreManager) {
       throw new Error('No score manager found');
     }

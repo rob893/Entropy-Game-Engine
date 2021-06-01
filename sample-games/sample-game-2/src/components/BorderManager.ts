@@ -29,7 +29,7 @@ export class BorderManager extends Component {
     return this.maxBorderHeight;
   }
 
-  public start(): void {
+  public override start(): void {
     const targetWidth = this.gameCanvas.width + 100;
 
     let currX = -100;
@@ -53,7 +53,7 @@ export class BorderManager extends Component {
     }
   }
 
-  public update(): void {
+  public override update(): void {
     if (!this.scoreManager.playing) {
       return;
     }

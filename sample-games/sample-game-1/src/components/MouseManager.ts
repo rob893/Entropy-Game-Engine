@@ -10,7 +10,7 @@ export class MouseManager extends Component {
     this.changeCursor(defaultMouseCursor);
   }
 
-  public update(): void {
+  public override update(): void {
     const hit = this.physics.pointRaycastToScreen(this.input.canvasMousePosition);
 
     if (hit && hit.gameObject.layer === Layer.Hostile) {

@@ -46,7 +46,7 @@ export class PlayerMotor extends Component {
     this.speed = 2;
   }
 
-  public start(): void {
+  public override start(): void {
     const spawner = this.getComponent(Spawner);
 
     if (spawner !== null) {
@@ -56,7 +56,7 @@ export class PlayerMotor extends Component {
     }
   }
 
-  public update(): void {
+  public override update(): void {
     if (!this.myStats.isDead) {
       this.move();
     }

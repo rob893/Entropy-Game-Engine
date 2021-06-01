@@ -7,6 +7,7 @@
     "composite": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "noImplicitOverride": true,
     "alwaysStrict": true,
     "strictBindCallApply": true,
     "strictNullChecks": true,

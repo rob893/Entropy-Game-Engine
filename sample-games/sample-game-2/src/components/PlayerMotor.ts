@@ -6,7 +6,7 @@ export class PlayerMotor extends Component {
   private dy: number = 0;
   private scoreManager: ScoreManager | null = null;
 
-  public start(): void {
+  public override start(): void {
     const gameManager = this.findGameObjectById('gameManager');
 
     if (!gameManager) {
@@ -28,7 +28,7 @@ export class PlayerMotor extends Component {
     });
   }
 
-  public update(): void {
+  public override update(): void {
     if (!this.scoreManager) {
       throw new Error('Scoremanager is null');
     }

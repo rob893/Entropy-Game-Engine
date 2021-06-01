@@ -20,7 +20,7 @@ export class CharacterStats extends Component implements Damageable {
     this.animator = animator;
   }
 
-  public start(): void {
+  public override start(): void {
     this.healthbar = this.getComponentInChildren(Slider);
   }
 

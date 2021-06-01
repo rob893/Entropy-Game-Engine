@@ -9,7 +9,7 @@ export class Exploder extends Component {
     this.audioSource = audioSource;
   }
 
-  public start(): void {
+  public override start(): void {
     this.destroy(this.gameObject, 5);
     this.audioSource.play();
   }

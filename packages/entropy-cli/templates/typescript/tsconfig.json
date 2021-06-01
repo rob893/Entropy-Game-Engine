@@ -9,6 +9,7 @@
     "strictPropertyInitialization": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
+    "noImplicitOverride": true,
     "allowUnreachableCode": false,
     "forceConsistentCasingInFileNames": true,
     "removeComments": true,

@@ -16,7 +16,7 @@ export class MissileSpawner extends Component {
     this.scoreManager = scoreManager;
   }
 
-  public update(): void {
+  public override update(): void {
     if (!this.scoreManager.playing) {
       return;
     }
