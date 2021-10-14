@@ -17,11 +17,11 @@ class TestComponent extends Component {}
 class TestComponent2 extends Component {
   public testData: number = 0;
 
-  public start(): void {
+  public override start(): void {
     this.testData++;
   }
 
-  public update(): void {
+  public override update(): void {
     this.testData++;
   }
 }
@@ -48,7 +48,7 @@ class TestGameObject2 extends GameObject {
     return [new TestComponent2(this)];
   }
 
-  protected buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
     return [new TestGameObject(config)];
   }
 
