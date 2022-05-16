@@ -48,11 +48,10 @@ test('A star path finding', (): void => {
     throw new Error('Path is null');
   }
 
-  expect(path.length).toBe(4);
+  expect(path.length).toBe(3);
   expect(path[0]).toEqual(new Vector2(0, 1));
-  expect(path[1]).toEqual(new Vector2(0, 0));
-  expect(path[2]).toEqual(new Vector2(1, 0));
-  expect(path[3]).toEqual(new Vector2(2, 1));
+  expect(path[1]).toEqual(new Vector2(1, 1));
+  expect(path[2]).toEqual(new Vector2(2, 1));
 
   //No path. goal is in a wall.
   path = AStarSearch.findPath(graph, new Vector2(0, 4), new Vector2(4, 4));

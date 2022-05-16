@@ -65,9 +65,8 @@ export class CharacterAnimator extends Component {
 
   public playRandomAttackAnimation(): void {
     if (this.facingRight) {
-      const anim = this.animations.rightAttackAnimations[
-        Math.floor(Math.random() * this.animations.rightAttackAnimations.length)
-      ];
+      const anim =
+        this.animations.rightAttackAnimations[Math.floor(Math.random() * this.animations.rightAttackAnimations.length)];
 
       if (this.animator.currentAnimation !== anim) {
         anim.reset();
@@ -75,9 +74,8 @@ export class CharacterAnimator extends Component {
 
       this.setAnimation(anim);
     } else {
-      const anim = this.animations.leftAttackAnimations[
-        Math.floor(Math.random() * this.animations.leftAttackAnimations.length)
-      ];
+      const anim =
+        this.animations.leftAttackAnimations[Math.floor(Math.random() * this.animations.leftAttackAnimations.length)];
 
       if (this.animator.currentAnimation !== anim) {
         anim.reset();

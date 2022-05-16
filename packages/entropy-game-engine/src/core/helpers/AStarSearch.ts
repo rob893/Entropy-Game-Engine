@@ -9,19 +9,18 @@ export class AStarSearch {
     }
 
     const cameFrom: Map<Vector2, Vector2> = new Map<Vector2, Vector2>();
-    const costSoFar: Map<Vector2, number> = new Map<Vector2, number>();
+    const gScore: Map<Vector2, number> = new Map<Vector2, number>();
 
     const frontier = new PriorityQueue<Vector2>();
 
     //set to new vectors to keep from referencing original vectors (as they are ref types)
     //We need a copy of both at this point in time as they are likely to move in the future
-    goal = new Vector2(goal.x, goal.y);
-    start = new Vector2(start.x, start.y);
+    goal = goal.clone();
+    start = start.clone();
+
+    gScore.set(start, 0);
 
     frontier.enqueue(start, 0);
-
-    cameFrom.set(start, start);
-    costSoFar.set(start, 0);
 
     while (frontier.count > 0) {
       const current = frontier.dequeue();
@@ -31,20 +30,12 @@ export class AStarSearch {
       }
 
       for (const next of graph.neighbors(current)) {
-        const currentCost = costSoFar.get(current);
+        const tentativeGScore = 1 + (gScore.get(current) ?? 0);
 
-        if (currentCost === undefined) {
-          throw new Error('Error in A*');
-        }
-
-        const newCost = currentCost + graph.cost(current, next.position);
-
-        const nextCost = costSoFar.get(next.position);
-
-        if (nextCost === undefined || newCost < nextCost) {
-          costSoFar.set(next.position, newCost);
-          const priority = newCost + this.heuristic(next.position, goal);
-          frontier.enqueue(next.position, priority);
+        if (tentativeGScore < (gScore.get(next.position) ?? Number.MAX_SAFE_INTEGER)) {
+          gScore.set(next.position, tentativeGScore);
+          const fScore = tentativeGScore + this.heuristic(next.position, goal);
+          frontier.enqueue(next.position, fScore);
           cameFrom.set(next.position, current);
         }
       }
@@ -54,7 +45,7 @@ export class AStarSearch {
   }
 
   private static heuristic(a: Vector2, b: Vector2): number {
-    return Vector2.distanceSqrd(a, b);
+    return Vector2.manhattanDistance(a, b);
   }
 
   private static constructPath(

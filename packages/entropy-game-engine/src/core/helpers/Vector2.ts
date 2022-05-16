@@ -98,6 +98,13 @@ export class Vector2 {
     return distanceX * distanceX + distanceY * distanceY;
   }
 
+  public static manhattanDistance(point1: Vector2, point2: Vector2): number {
+    const dx = Math.abs(point1.x - point2.x);
+    const dy = Math.abs(point1.y - point2.y);
+
+    return dx + dy;
+  }
+
   public static angleInRadians(from: Vector2, to: Vector2): number {
     const cos0 = Vector2.dot(from, to) / (from.magnitude * to.magnitude);
 
