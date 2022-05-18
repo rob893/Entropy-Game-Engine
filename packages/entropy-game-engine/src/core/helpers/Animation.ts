@@ -23,6 +23,7 @@ export class Animation {
     return this.onCompleted;
   }
 
+  // test
   public get currentFrame(): HTMLImageElement {
     return this.frames[this.frameIndex];
   }
