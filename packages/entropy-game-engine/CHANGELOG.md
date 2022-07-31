@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/entropy-game-engine@2.1.1...@entropy-engine/entropy-game-engine@2.2.0) (2022-07-31)
+
+
+### Features
+
+* add sample game 3 template ([db4ec64](https://github.com/rob893/Entropy-Game-Engine/commit/db4ec649fd3c249a8faab893812eabb665cefd52))
+
+
+
+
+
 ## [2.1.1](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/entropy-game-engine@2.1.0...@entropy-engine/entropy-game-engine@2.1.1) (2022-07-31)
 
 **Note:** Version bump only for package @entropy-engine/entropy-game-engine
