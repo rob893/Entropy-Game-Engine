@@ -3,7 +3,6 @@ import fs from 'fs';
 import ncp from 'ncp';
 import path from 'path';
 import { promisify } from 'util';
-import { execa } from 'execa';
 import Listr from 'listr';
 import { projectInstall } from 'pkg-install';
 import { Options } from './index';
@@ -18,7 +17,10 @@ function copyTemplateFiles(options: any): Promise<void> {
 }
 
 async function initGit(options: any): Promise<boolean> {
-  const result = await execa('git', ['init'], {
+  // Need to await import execa due to it being esm module
+  const result = await (
+    await import('execa')
+  ).execa('git', ['init'], {
     cwd: options.targetDirectory
   });
   if (result.failed) {
