@@ -13,3 +13,4 @@ The best way to get started is to use the Entropy CLI.
 ## Samples of Games using Entropy
 - https://rwherber.com/entropy/sample-game-1
 - https://rwherber.com/entropy/sample-game-2
+- https://rwherber.com/entropy/sample-game-3

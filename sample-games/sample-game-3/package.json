@@ -1,0 +1,52 @@
+{
+  "name": "@entropy-engine/sample-game-3",
+  "version": "1.0.0",
+  "description": "Sample game 3.",
+  "author": "Robert Herber",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rob893/Entropy-Game-Engine.git"
+  },
+  "keywords": [
+    "game",
+    "engine",
+    "typescript"
+  ],
+  "homepage": "https://github.com/rob893/Entropy-Game-Engine#readme",
+  "bugs": {
+    "url": "https://github.com/rob893/Entropy-Game-Engine/issues"
+  },
+  "main": "dist/index",
+  "types": "dist/index",
+  "scripts": {
+    "start": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack serve --config webpack.dev.ts --open",
+    "clean-dist": "rm -rf ./dist",
+    "build": "npm i --only-prod && cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --config webpack.prod.ts",
+    "build-game": "npm run build",
+    "lerna-postinstall": "npm link"
+  },
+  "dependencies": {
+    "@entropy-engine/entropy-game-engine": "file:../../packages/entropy-game-engine"
+  },
+  "devDependencies": {
+    "@types/circular-dependency-plugin": "^5.0.5",
+    "@types/html-webpack-plugin": "^3.2.6",
+    "@types/node": "^17.0.45",
+    "@types/webpack": "^5.28.0",
+    "circular-dependency-plugin": "^5.2.2",
+    "clean-webpack-plugin": "^4.0.0",
+    "cross-env": "^7.0.3",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "ts-loader": "^9.3.1",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.0.0",
+    "typescript": "^4.7.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.9.3",
+    "webpack-merge": "^5.8.0"
+  }
+}
