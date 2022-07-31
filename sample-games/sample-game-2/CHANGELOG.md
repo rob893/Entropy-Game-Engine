@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.4](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/sample-game-2@2.0.3...@entropy-engine/sample-game-2@2.0.4) (2022-07-31)
+
+**Note:** Version bump only for package @entropy-engine/sample-game-2
+
+
+
+
+
 ## [2.0.3](https://github.com/rob893/Entropy-Game-Engine/compare/@entropy-engine/sample-game-2@2.0.2...@entropy-engine/sample-game-2@2.0.3) (2022-05-16)
 
 **Note:** Version bump only for package @entropy-engine/sample-game-2
