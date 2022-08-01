@@ -8,6 +8,7 @@ import {
 } from '@entropy-engine/entropy-game-engine';
 import { SampleGameObject } from './game-objects/SampleGameObject';
 import { Box } from './game-objects/Box';
+import { GameManager } from './game-objects/GameManager';
 
 export const scene1: Scene = {
   name: 'Scene1',
@@ -25,7 +26,15 @@ export const scene1: Scene = {
     const rightBorder = Box.buildBox(gameEngine, 1280 - 25, 720, 50, 720, 'rightBorder', 'border');
     const midBox = Box.buildBox(gameEngine, 640, 520, 150, 20, 'midBox', 'border', Color.Brown);
 
-    return [new SampleGameObject({ gameEngine }), topBorder, bottomBorder, leftBorder, rightBorder, midBox];
+    return [
+      new GameManager({ gameEngine }),
+      new SampleGameObject({ gameEngine }),
+      topBorder,
+      bottomBorder,
+      leftBorder,
+      rightBorder,
+      midBox
+    ];
   },
 
   getAssetPool(): Promise<AssetPool> {

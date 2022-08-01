@@ -36,6 +36,9 @@ export class GameEngine {
   private _sceneManager: SceneManager | null = null;
   private _terrain: Terrain | null = null;
   private _componentAnalyzer: ComponentAnalyzer | null = null;
+  private prevFrameTime: number = 0;
+  private fpsIntervalInMS: number = 0;
+  private fpsCap: number = 60;
   private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
   private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
   private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
@@ -66,6 +69,7 @@ export class GameEngine {
     }
 
     collidingLayers.delete(Layer.Terrain);
+    this.fpsLimit = configuration.fpsLimit ?? 60;
   }
 
   public get canvasContext(): CanvasRenderingContext2D {
@@ -144,6 +148,15 @@ export class GameEngine {
     }
 
     return this.loadedScene.loadOrder;
+  }
+
+  public get fpsLimit(): number {
+    return this.fpsCap;
+  }
+
+  public set fpsLimit(value: number) {
+    this.fpsCap = value;
+    this.fpsIntervalInMS = Math.floor(1000 / value);
   }
 
   public instantiate<T extends GameObject>(
@@ -593,7 +606,14 @@ export class GameEngine {
   }
 
   private gameLoop(timeStamp: number): void {
-    this.update(timeStamp);
+    const now = performance.now();
+    const diff = now - this.prevFrameTime;
+
+    if (diff >= this.fpsIntervalInMS) {
+      this.prevFrameTime = now;
+      this.update(timeStamp);
+    }
+
     this.gameLoopId = requestAnimationFrame(newTimeStamp => this.gameLoop(newTimeStamp));
   }
 }
