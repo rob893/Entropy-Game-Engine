@@ -21,10 +21,10 @@ export const scene1: Scene = {
 
   getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
     const topBorder = Box.buildBox(gameEngine, 1280 / 2, 50, 1280, 50, 'topBorder', 'border');
-    const bottomBorder = Box.buildBox(gameEngine, 1280 / 2, 720, 1280, 50, 'bottomBorder', 'border', Color.Green);
+    const bottomBorder = Box.buildBox(gameEngine, 1280 / 2, 720, 1280, 50, 'bottomBorder', 'border');
     const leftBorder = Box.buildBox(gameEngine, 25, 720, 50, 720, 'leftBorder', 'border');
     const rightBorder = Box.buildBox(gameEngine, 1280 - 25, 720, 50, 720, 'rightBorder', 'border');
-    const midBox = Box.buildBox(gameEngine, 640, 520, 150, 20, 'midBox', 'border', Color.Brown);
+    const midBox = Box.buildBox(gameEngine, 640, 520, 150, 20, 'midBox', 'border');
 
     return [
       new GameManager({ gameEngine }),

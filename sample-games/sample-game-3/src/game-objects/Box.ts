@@ -20,7 +20,7 @@ export class Box extends GameObject {
     h: number,
     id: string,
     tag: string,
-    color: Color = Color.Grey
+    color?: Color
   ): Box {
     const box = new Box({ gameEngine, id, x, y, rotation: 0, tag, layer: Layer.Terrain });
     const renderer = box.getComponent(RectangleRenderer);
@@ -31,7 +31,10 @@ export class Box extends GameObject {
 
     renderer.renderWidth = w;
     renderer.renderHeight = h;
-    renderer.color = color;
+
+    if (color) {
+      renderer.color = color;
+    }
 
     const collider = box.getComponent(RectangleCollider);
 
@@ -51,7 +54,7 @@ export class Box extends GameObject {
 
     const collider = new RectangleCollider(this, rb, 50, 50);
 
-    const renderer = new RectangleRenderer(this, 50, 50, Color.Grey);
+    const renderer = new RectangleRenderer(this, { renderHeight: 50, renderWidth: 50, borderColor: Color.Blue });
 
     return [rb, renderer, collider];
   }
