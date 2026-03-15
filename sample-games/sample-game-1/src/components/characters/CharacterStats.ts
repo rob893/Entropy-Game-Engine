@@ -60,7 +60,7 @@ export class CharacterStats extends Component implements IDamageable {
     this.#health -= amount;
 
     if (this.healthbar !== null) {
-      this.healthbar.fillAmount = (this.#health / this.maxHealth) * 100;
+      this.healthbar.fillAmount = this.#health / this.maxHealth;
     }
 
     if (this.#health <= 0) {

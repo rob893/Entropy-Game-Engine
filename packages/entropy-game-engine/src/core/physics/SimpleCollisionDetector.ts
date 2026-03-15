@@ -18,6 +18,10 @@ export class SimpleCollisionDetector extends BaseCollisionDetector {
       for (let j = i + 1; j < this.colliders.length; j++) {
         const other = this.colliders[j];
 
+        if (!other.enabled) {
+          continue;
+        }
+
         if (collidingLayers.has(other.gameObject.layer) && collider.detectCollision(other)) {
           const collisionManifold = this.buildCollisionManifold(collider, other);
 

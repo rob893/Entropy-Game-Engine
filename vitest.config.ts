@@ -6,7 +6,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['vitest-canvas-mock'],
     coverage: {
-      provider: 'v8'
+      provider: 'v8',
+      reporter: ['text-summary']
     }
   }
 });

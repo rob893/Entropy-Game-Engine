@@ -234,6 +234,10 @@ export class SpatialHashCollisionDetector extends BaseCollisionDetector {
           throw new Error('Layer not found');
         }
 
+        if (!other.enabled) {
+          continue;
+        }
+
         if (other !== collider && collidingLayers.has(other.gameObject.layer)) {
           const collidersAlreadyCollidedWith = this.collisionMap.get(other);
           if (collidersAlreadyCollidedWith !== undefined && collidersAlreadyCollidedWith.has(collider)) {

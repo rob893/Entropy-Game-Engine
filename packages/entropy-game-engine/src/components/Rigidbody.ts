@@ -136,6 +136,11 @@ export class Rigidbody extends Component {
 
   public updatePhysics(deltaTime: number): void {
     this.forces.forEach(force => this.velocity.add(force.divideScalar(this.mass)));
+
+    if (this.drag > 0) {
+      this.velocity.multiplyScalar(Math.max(0, 1 - this.drag * deltaTime));
+    }
+
     this.transform.translate(this.velocity.clone().multiplyScalar(deltaTime));
     this.forces.length = 0;
   }
