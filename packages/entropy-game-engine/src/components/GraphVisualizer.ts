@@ -6,8 +6,11 @@ import { WeightedGraph } from '../core/interfaces/WeightedGraph';
 import { WeightedGraphCell } from '../core/interfaces/WeightedGraphCell';
 import { Graph } from '../core/interfaces/Graph';
 import { GraphCell } from '../core/interfaces/GraphCell';
+import { SerializedComponent } from '../core';
+import { readString } from '../core/helpers/Serialization';
 
 export class GraphVisualizer extends Component implements RenderableGizmo {
+  public static override readonly typeName: string = 'GraphVisualizer';
   private readonly graph: Graph;
   private readonly defaultColor: Color;
 
@@ -17,6 +20,21 @@ export class GraphVisualizer extends Component implements RenderableGizmo {
     this.graph = graph;
     this.defaultColor = defaultColor;
   }
+
+  public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): GraphVisualizer {
+    return new GraphVisualizer(gameObject, gameObject.terrain.navGrid, (readString(data.defaultColor) ?? Color.LightGreen) as Color);
+  }
+
+  public override serialize(): SerializedComponent {
+    return {
+      typeName: this.typeName,
+      data: {
+        defaultColor: this.defaultColor
+      }
+    };
+  }
+
+  public override deserialize(_data: Record<string, unknown>): void {}
 
   public renderGizmo(context: CanvasRenderingContext2D): void {
     for (const cell of this.graph.graphCells) {
@@ -37,6 +55,7 @@ export class GraphVisualizer extends Component implements RenderableGizmo {
 }
 
 export class WeightedGraphVisualizer extends GraphVisualizer {
+  public static override readonly typeName: string = 'WeightedGraphVisualizer';
   private readonly passableColor: Color;
   private readonly unpassableColor: Color;
 
@@ -51,6 +70,27 @@ export class WeightedGraphVisualizer extends GraphVisualizer {
     this.passableColor = passableColor;
     this.unpassableColor = unpassableColor;
   }
+
+  public static override createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): WeightedGraphVisualizer {
+    return new WeightedGraphVisualizer(
+      gameObject,
+      gameObject.terrain.navGrid,
+      (readString(data.passableColor) ?? Color.Blue) as Color,
+      (readString(data.unpassableColor) ?? Color.Red) as Color
+    );
+  }
+
+  public override serialize(): SerializedComponent {
+    return {
+      typeName: this.typeName,
+      data: {
+        passableColor: this.passableColor,
+        unpassableColor: this.unpassableColor
+      }
+    };
+  }
+
+  public override deserialize(_data: Record<string, unknown>): void {}
 
   protected override getColorForCell(cell: GraphCell): Color {
     if (!this.isWeightedGraphCell(cell)) {

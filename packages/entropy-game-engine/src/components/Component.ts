@@ -10,9 +10,11 @@ import { GameEngine } from '../core/GameEngine';
 import { Vector2 } from '../core/helpers/Vector2';
 import { Terrain } from '../game-objects/Terrain';
 import { GameObjectConstructionParams } from '../core/interfaces/GameObjectConstructionParams';
-import { Subscribable } from '../core';
+import { SerializedComponent, Subscribable } from '../core';
 
 export abstract class Component {
+  public static readonly typeName: string = 'Component';
+
   public readonly gameObject: GameObject;
 
   private isEnabled: boolean = true;
@@ -45,12 +47,26 @@ export abstract class Component {
     return this.isEnabled;
   }
 
+  public static getTypeName(component: { name: string; typeName?: string }): string {
+    return Object.prototype.hasOwnProperty.call(component, 'typeName') && component.typeName !== undefined
+      ? component.typeName
+      : component.name;
+  }
+
+  public get typeName(): string {
+    return Component.getTypeName(this.constructor as { name: string; typeName?: string });
+  }
+
   public get tag(): string {
     return this.gameObject.tag;
   }
 
   public get id(): string {
     return this.gameObject.id;
+  }
+
+  public get name(): string {
+    return this.gameObject.name;
   }
 
   public get transform(): Transform {
@@ -60,6 +76,15 @@ export abstract class Component {
   public get onDestroyed(): Subscribable<Component> {
     return this._onDestroyed;
   }
+
+  public serialize(): SerializedComponent {
+    return {
+      typeName: this.typeName,
+      data: {}
+    };
+  }
+
+  public deserialize(_data: Record<string, unknown>): void {}
 
   public onEnabled(): void {}
 

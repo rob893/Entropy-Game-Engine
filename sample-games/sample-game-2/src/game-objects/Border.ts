@@ -34,7 +34,7 @@ export class Border extends GameObject {
       x: 200,
       y: 200,
       rotation: 0,
-      id: 'border',
+      name: 'border',
       tag: 'border',
       layer: Layer.Terrain
     };

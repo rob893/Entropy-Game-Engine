@@ -32,7 +32,7 @@ export class ScoreManager extends Component implements RenderableGUI {
   }
 
   public override start(): void {
-    const player = this.findGameObjectById('player');
+    const player = this.findGameObjectWithTag('player');
 
     if (!player) {
       throw new Error('No player found.');

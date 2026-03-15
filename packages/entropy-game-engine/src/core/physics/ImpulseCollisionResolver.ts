@@ -30,9 +30,14 @@ export class ImpulseCollisionResolver implements CollisionResolver {
     }
 
     const e = Math.min(colliderA.physicalMaterial.bounciness, colliderB.physicalMaterial.bounciness);
+    const inverseMassSum = rbA.inverseMass + rbB.inverseMass;
+
+    if (inverseMassSum === 0) {
+      return;
+    }
 
     let j = -1 * (1 + e) * velAlongNormal;
-    j /= rbA.inverseMass + rbB.inverseMass;
+    j /= inverseMassSum;
 
     const impulse = Vector2.multiplyScalar(collisionNormal, j);
 
@@ -44,29 +49,28 @@ export class ImpulseCollisionResolver implements CollisionResolver {
     }
 
     let jt = -1 * Vector2.dot(rv, tangent);
-    jt /= 1 / rbA.mass + 1 / rbB.mass;
+    jt /= inverseMassSum;
 
-    const mu = colliderA.physicalMaterial.staticFriction ** 2 + colliderB.physicalMaterial.staticFriction ** 2;
+    const mu = Math.sqrt(colliderA.physicalMaterial.staticFriction * colliderB.physicalMaterial.staticFriction);
 
     let frictionImpulse: Vector2;
     if (Math.abs(jt) < j * mu) {
-      frictionImpulse = tangent.multiplyScalar(jt);
+      frictionImpulse = tangent.clone().multiplyScalar(jt);
     } else {
-      const dynamicFriction =
-        colliderA.physicalMaterial.dynamicFriction ** 2 + colliderB.physicalMaterial.dynamicFriction ** 2;
-      frictionImpulse = tangent.multiplyScalar(j * dynamicFriction);
+      const dynamicFriction = Math.sqrt(
+        colliderA.physicalMaterial.dynamicFriction * colliderB.physicalMaterial.dynamicFriction
+      );
+      frictionImpulse = tangent.clone().multiplyScalar(j * dynamicFriction);
     }
 
-    const combinedMass = rbA.mass + rbB.mass;
-
-    if (!rbA.isKinomatic) {
-      rbA.addForce(Vector2.multiplyScalar(impulse, -1 * (rbB.mass / combinedMass)));
-      rbA.addForce(Vector2.multiplyScalar(frictionImpulse, -1));
+    if (!rbA.isKinematic) {
+      rbA.velocity.subtract(impulse.clone().multiplyScalar(rbA.inverseMass));
+      rbA.velocity.subtract(frictionImpulse.clone().multiplyScalar(rbA.inverseMass));
     }
 
-    if (!rbB.isKinomatic) {
-      rbB.addForce(Vector2.multiplyScalar(impulse, rbA.mass / combinedMass));
-      rbB.addForce(frictionImpulse);
+    if (!rbB.isKinematic) {
+      rbB.velocity.add(impulse.clone().multiplyScalar(rbB.inverseMass));
+      rbB.velocity.add(frictionImpulse.clone().multiplyScalar(rbB.inverseMass));
     }
 
     this.positionalCorrection(rbA, rbB, collisionNormal, collisionManifold.penetrationDepth);
@@ -78,12 +82,13 @@ export class ImpulseCollisionResolver implements CollisionResolver {
     const correction = (Math.max(penetration - slop, 0) / (rbA.inverseMass + rbB.inverseMass)) * percent;
     const correctionVector = normal.clone().multiplyScalar(correction);
 
-    if (!rbA.isKinomatic) {
+    if (!rbA.isKinematic) {
       rbA.transform.position.add(correctionVector.clone().multiplyScalar(rbA.inverseMass));
     }
 
-    if (!rbB.isKinomatic) {
+    if (!rbB.isKinematic) {
       rbB.transform.position.subtract(correctionVector.clone().multiplyScalar(rbB.inverseMass));
     }
   }
 }
+

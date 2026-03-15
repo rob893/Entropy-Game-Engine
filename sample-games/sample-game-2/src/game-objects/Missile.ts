@@ -30,7 +30,7 @@ export class Missile extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'missle',
+      name: 'missle',
       tag: 'missle',
       layer: Layer.Hostile
     };

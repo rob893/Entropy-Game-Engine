@@ -100,7 +100,7 @@ export class Player extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'player',
+      name: 'player',
       tag: 'player',
       layer: Layer.Friendly
     };

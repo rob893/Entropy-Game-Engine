@@ -18,11 +18,11 @@ export class Box extends GameObject {
     y: number,
     w: number,
     h: number,
-    id: string,
+    name: string,
     tag: string,
     color: Color = Color.Grey
   ): Box {
-    const box = new Box({ gameEngine, id, x, y, rotation: 0, tag, layer: Layer.Terrain });
+    const box = new Box({ gameEngine, name, x, y, rotation: 0, tag, layer: Layer.Terrain });
     const renderer = box.getComponent(RectangleRenderer);
 
     if (renderer === null) {
@@ -61,7 +61,7 @@ export class Box extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'borders',
+      name: 'borders',
       tag: 'borders',
       layer: Layer.Terrain
     };

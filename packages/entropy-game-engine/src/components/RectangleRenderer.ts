@@ -1,7 +1,8 @@
 import { Component } from './Component';
 import { GameObject } from '../game-objects/GameObject';
 import { Renderable } from '../core/interfaces/Renderable';
-import { Color } from '../core';
+import { Color, SerializedComponent } from '../core';
+import { readNumber, readString } from '../core/helpers/Serialization';
 
 export interface RectangleRendererOptions {
   renderWidth: number;
@@ -11,6 +12,7 @@ export interface RectangleRendererOptions {
 }
 
 export class RectangleRenderer extends Component implements Renderable {
+  public static override readonly typeName: string = 'RectangleRenderer';
   public renderWidth: number;
   public renderHeight: number;
   public color?: string;
@@ -41,6 +43,59 @@ export class RectangleRenderer extends Component implements Renderable {
 
       if (fillColor) {
         this.color = fillColor;
+      }
+    }
+  }
+
+  public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): RectangleRenderer {
+    const rectangleRenderer = new RectangleRenderer(gameObject, {
+      renderWidth: readNumber(data.renderWidth) ?? 0,
+      renderHeight: readNumber(data.renderHeight) ?? 0,
+      fillColor: (readString(data.color) ?? undefined) as Color | undefined,
+      borderColor: (readString(data.borderColor) ?? undefined) as Color | undefined
+    });
+    rectangleRenderer.deserialize(data);
+    return rectangleRenderer;
+  }
+
+  public override serialize(): SerializedComponent {
+    return {
+      typeName: this.typeName,
+      data: {
+        renderWidth: this.renderWidth,
+        renderHeight: this.renderHeight,
+        color: this.color ?? null,
+        borderColor: this.borderColor ?? null
+      }
+    };
+  }
+
+  public override deserialize(data: Record<string, unknown>): void {
+    const renderWidth = readNumber(data.renderWidth);
+    if (renderWidth !== null) {
+      this.renderWidth = renderWidth;
+    }
+
+    const renderHeight = readNumber(data.renderHeight);
+    if (renderHeight !== null) {
+      this.renderHeight = renderHeight;
+    }
+
+    if (data.color === null) {
+      this.color = undefined;
+    } else {
+      const color = readString(data.color);
+      if (color !== null) {
+        this.color = color;
+      }
+    }
+
+    if (data.borderColor === null) {
+      this.borderColor = undefined;
+    } else {
+      const borderColor = readString(data.borderColor);
+      if (borderColor !== null) {
+        this.borderColor = borderColor;
       }
     }
   }

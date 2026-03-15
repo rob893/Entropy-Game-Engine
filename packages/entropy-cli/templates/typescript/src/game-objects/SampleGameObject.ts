@@ -17,7 +17,7 @@ export class SampleGameObject extends GameObject {
       x: 100,
       y: 100,
       rotation: 0,
-      id: 'test',
+      name: 'test',
       layer: Layer.Default,
       tag: 'test'
     };

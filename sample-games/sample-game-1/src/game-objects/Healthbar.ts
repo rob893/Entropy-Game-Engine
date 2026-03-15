@@ -10,7 +10,7 @@ export class Healthbar extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'healthbar',
+      name: 'healthbar',
       tag: 'healthbar',
       layer: Layer.UI
     };

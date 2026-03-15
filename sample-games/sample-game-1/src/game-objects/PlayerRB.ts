@@ -77,7 +77,7 @@ export class PlayerRB extends GameObject {
       x: 400,
       y: 250,
       rotation: 0,
-      id: 'player',
+      name: 'player',
       tag: 'player',
       layer: Layer.Default
     };

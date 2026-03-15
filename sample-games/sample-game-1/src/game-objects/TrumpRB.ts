@@ -35,7 +35,7 @@ export class TrumpRB extends GameObject {
       x: 400,
       y: 250,
       rotation: 0,
-      id: 'trumpRB',
+      name: 'trumpRB',
       tag: 'trumpRB',
       layer: Layer.Default
     };

@@ -19,7 +19,7 @@ export class Scroller extends Component {
   }
 
   public override start(): void {
-    const gameManager = this.findGameObjectById('gameManager');
+    const gameManager = this.findGameObjectWithTag('gameManager');
 
     if (!gameManager) {
       throw new Error('No gameManager found.');

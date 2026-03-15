@@ -32,7 +32,7 @@ export class ThrowableBall extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'throwableBall',
+      name: 'throwableBall',
       tag: '',
       layer: Layer.Default
     };

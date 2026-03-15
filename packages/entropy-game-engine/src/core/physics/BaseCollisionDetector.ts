@@ -48,12 +48,17 @@ export abstract class BaseCollisionDetector implements CollisionDetector {
 
     const normal = Vector2.clone(colliderA.center).subtract(colliderB.center).normalized;
 
+    if (normal.magnitude === 0) {
+      normal.x = 0;
+      normal.y = -1;
+    }
+
     const penetration = ox > oy ? oy : ox;
 
     if (ox > oy) {
       normal.x = 0;
       normal.y = normal.y > 0 ? 1 : -1;
-    } else if (ox < oy) {
+    } else {
       normal.y = 0;
       normal.x = normal.x > 0 ? 1 : -1;
     }

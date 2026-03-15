@@ -6,8 +6,11 @@ import { NavGrid } from '../core/helpers/NavGrid';
 import { AStarSearch } from '../core/helpers/AStarSearch';
 import { GameObject } from '../game-objects/GameObject';
 import { Topic } from '../core/helpers/Topic';
+import { SerializedComponent } from '../core';
+import { readNumber, readVector2 } from '../core/helpers/Serialization';
 
 export class NavAgent extends Component implements RenderableGizmo {
+  public static override readonly typeName: string = 'NavAgent';
   public speed: number = 1;
   public readonly onDirectionChanged = new Topic<Vector2>();
   public readonly onPathCompleted = new Topic<void>();
@@ -21,6 +24,12 @@ export class NavAgent extends Component implements RenderableGizmo {
     super(gameObject);
 
     this.navGrid = navGrid;
+  }
+
+  public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): NavAgent {
+    const navAgent = new NavAgent(gameObject, gameObject.terrain.navGrid);
+    navAgent.deserialize(data);
+    return navAgent;
   }
 
   public get heading(): Vector2 | null {
@@ -41,6 +50,38 @@ export class NavAgent extends Component implements RenderableGizmo {
     }
 
     return this.path[this.path.length - 1];
+  }
+
+  public override serialize(): SerializedComponent {
+    return {
+      typeName: this.typeName,
+      data: {
+        speed: this.speed,
+        hasPath: this.hasPath,
+        destination:
+          this.destination === null
+            ? null
+            : {
+                x: this.destination.x,
+                y: this.destination.y
+              }
+      }
+    };
+  }
+
+  public override deserialize(data: Record<string, unknown>): void {
+    const speed = readNumber(data.speed);
+    if (speed !== null) {
+      this.speed = speed;
+    }
+
+    const destination = readVector2(data.destination);
+    if (destination !== null) {
+      this.setDestination(new Vector2(destination.x, destination.y));
+      return;
+    }
+
+    this.resetPath();
   }
 
   public override update(): void {

@@ -17,7 +17,7 @@ export class PlayerHealth extends Component implements Damageable {
   }
 
   public override start(): void {
-    const gm = this.findGameObjectById('gameManager');
+    const gm = this.findGameObjectWithTag('gameManager');
 
     if (gm === null) {
       throw new Error('Cound not find game manager');

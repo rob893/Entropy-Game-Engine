@@ -29,7 +29,7 @@ export class Explosion extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'explosion',
+      name: 'explosion',
       tag: '',
       layer: Layer.Default
     };

@@ -52,7 +52,7 @@ export class Button extends GameObject<ButtonConfig> {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'button',
+      name: 'button',
       tag: 'ui',
       layer: Layer.UI
     };

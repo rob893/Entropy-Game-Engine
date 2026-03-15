@@ -1,5 +1,6 @@
 export * from './Animator';
 export * from './AudioSource';
+export * from './Camera';
 export * from './ClickedOnDetector';
 export * from './Component';
 export * from './FPSCounter';

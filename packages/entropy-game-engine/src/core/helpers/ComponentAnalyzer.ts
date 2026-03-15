@@ -1,6 +1,7 @@
 import { PhysicsEngine } from '../PhysicsEngine';
 import { RenderingEngine } from '../RenderingEngine';
 import { Component } from '../../components/Component';
+import { Camera } from '../../components/Camera';
 import { Rigidbody } from '../../components/Rigidbody';
 import { RectangleCollider } from '../../components/RectangleCollider';
 import { Renderable } from '../interfaces/Renderable';
@@ -17,6 +18,10 @@ export class ComponentAnalyzer {
   }
 
   public extractRenderablesCollidersAndRigidbodies(component: Component): void {
+    if (component instanceof Camera) {
+      this.renderingEngine.mainCamera = component;
+    }
+
     if (component instanceof Rigidbody) {
       this.physicsEngine.addRigidbody(component);
     } else if (component instanceof RectangleCollider) {

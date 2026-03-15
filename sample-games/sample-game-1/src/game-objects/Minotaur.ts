@@ -86,7 +86,7 @@ export class Minotaur extends GameObject {
       x: 200,
       y: 300,
       rotation: 0,
-      id: 'minotaur',
+      name: 'minotaur',
       tag: '',
       layer: Layer.Hostile
     };

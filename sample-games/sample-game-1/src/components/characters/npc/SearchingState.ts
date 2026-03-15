@@ -20,7 +20,7 @@ export class SearchingState extends Component implements State {
       return;
     }
 
-    const player = this.findGameObjectById('player');
+    const player = this.findGameObjectWithTag('player');
 
     if (player === null) {
       return;

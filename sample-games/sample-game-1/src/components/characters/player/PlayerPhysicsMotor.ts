@@ -90,7 +90,7 @@ export class PlayerPhysicsMotor extends Component {
 
     if (event.key === Key.Backspace) {
       //this.ball.parent = this.ball.parent === null ? this.transform : null;
-      //this.rb.isKinomatic = !this.rb.isKinomatic;
+      //this.rb.isKinematic = !this.rb.isKinematic;
     }
   }
 

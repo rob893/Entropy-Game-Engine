@@ -4,6 +4,7 @@ import { GameEngine } from '../core/GameEngine';
 import { Layer } from '../core/enums/Layer';
 import { PrefabSettings } from '../core/interfaces/PrefabSettings';
 import { ComponentAnalyzer } from '../core/helpers/ComponentAnalyzer';
+import { generateUUID } from '../core/helpers/UUID';
 import { Input } from '../core/helpers/Input';
 import { Physics } from '../core/physics/Physics';
 import { SceneManager } from '../core/helpers/SceneManager';
@@ -12,13 +13,21 @@ import { Time } from '../core/Time';
 import { Vector2 } from '../core/helpers/Vector2';
 import { Terrain } from './Terrain';
 import { GameObjectConstructionParams } from '../core/interfaces/GameObjectConstructionParams';
+import { ComponentRegistry } from '../core/ComponentRegistry';
+import { registerBuiltinComponents } from '../core/registerBuiltinComponents';
+import { SerializedComponent, SerializedGameObject } from '../core/interfaces/Serializable';
+
+type SerializableComponentConstructor = (new (gameObject: GameObject, ...args: any[]) => Component) & {
+  createFromSerialized?: (gameObject: GameObject, data: Record<string, unknown>) => Component;
+};
 
 export abstract class GameObject<TConfig extends GameObjectConstructionParams = GameObjectConstructionParams> {
-  public id: string;
-  public readonly tag: string;
-  public readonly layer: Layer;
+  public name: string;
   public readonly transform: Transform;
 
+  private _id: string;
+  private _tag: string;
+  private _layer: Layer;
   private isEnabled: boolean;
   private readonly updatableComponents: Component[] = [];
   private readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
@@ -26,7 +35,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   private readonly gameEngine: GameEngine;
 
   public constructor(config: TConfig) {
-    const { gameEngine, id, x, y, rotation, tag, layer } = config;
+    const { gameEngine, name, x, y, rotation, tag, layer, id } = config;
 
     this.gameEngine = gameEngine;
     this.isEnabled = true;
@@ -34,11 +43,12 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
 
     const prefabSettings = this.getPrefabSettings();
 
-    this.id = id ? id : prefabSettings.id;
-    this.transform = new Transform(this, x ? x : prefabSettings.x, y ? y : prefabSettings.y);
-    this.transform.rotation = rotation ? rotation : prefabSettings.rotation;
-    this.tag = tag ? tag : prefabSettings.tag;
-    this.layer = layer ? layer : prefabSettings.layer;
+    this._id = id ?? prefabSettings.id ?? generateUUID();
+    this.name = name ?? prefabSettings.name;
+    this.transform = new Transform(this, x ?? prefabSettings.x, y ?? prefabSettings.y);
+    this.transform.rotation = rotation ?? prefabSettings.rotation;
+    this._tag = tag ?? prefabSettings.tag;
+    this._layer = layer ?? prefabSettings.layer;
 
     const initialComponents = this.buildInitialComponents(config); //move this into prefab settings
     initialComponents.push(this.transform);
@@ -50,6 +60,42 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     for (const child of childGameObjects) {
       child.transform.parent = this.transform;
     }
+  }
+
+  public get id(): string {
+    return this._id;
+  }
+
+  public set id(value: string) {
+    if (value === this._id) {
+      return;
+    }
+
+    const previousId = this._id;
+    this._id = value;
+    this.gameEngine.syncGameObjectRegistration(this, previousId, this._tag);
+  }
+
+  public get tag(): string {
+    return this._tag;
+  }
+
+  public set tag(value: string) {
+    if (value === this._tag) {
+      return;
+    }
+
+    const previousTag = this._tag;
+    this._tag = value;
+    this.gameEngine.syncGameObjectRegistration(this, this._id, previousTag);
+  }
+
+  public get layer(): Layer {
+    return this._layer;
+  }
+
+  public set layer(value: Layer) {
+    this._layer = value;
   }
 
   public get enabled(): boolean {
@@ -100,6 +146,57 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
 
   public get terrain(): Terrain {
     return this.gameEngine.terrain;
+  }
+
+  public serialize(): SerializedGameObject {
+    const components: SerializedComponent[] = [];
+    this.componentMap.forEach(componentGroup => {
+      for (const component of componentGroup) {
+        if (component instanceof Transform) {
+          continue;
+        }
+
+        components.push(component.serialize());
+      }
+    });
+
+    const children: SerializedGameObject[] = [];
+    for (const child of this.transform.children) {
+      children.push(child.gameObject.serialize());
+    }
+
+    return {
+      id: this.id,
+      name: this.name,
+      tag: this.tag,
+      layer: this.layer,
+      enabled: this.enabled,
+      components: [this.transform.serialize(), ...components],
+      children
+    };
+  }
+
+  public static deserialize(data: SerializedGameObject, gameEngine: GameEngine): GameObject {
+    const gameObject = new SerializedGameObjectNode({
+      gameEngine,
+      id: data.id,
+      name: data.name,
+      tag: data.tag,
+      layer: data.layer as Layer
+    });
+    gameObject.deserialize(data);
+    return gameObject;
+  }
+
+  public deserialize(data: SerializedGameObject): void {
+    this.id = data.id;
+    this.name = data.name;
+    this.tag = data.tag;
+    this.layer = data.layer as Layer;
+    this.enabled = data.enabled;
+
+    this.syncComponents(data.components);
+    this.syncChildren(data.children);
   }
 
   public start(): void {
@@ -154,8 +251,8 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
    * @param component the component to be removed from this game object's update loop. It MUST be one of the game object's components.
    */
   public removeComponentFromUpdate(component: Component): void {
-    if (!this.componentMap.has(component.constructor.name)) {
-      throw new Error(`This game object does not have a component of type ${component.constructor.name}`);
+    if (!this.componentMap.has(component.typeName)) {
+      throw new Error(`This game object does not have a component of type ${component.typeName}`);
     }
 
     if (!this.updatableComponents.includes(component)) {
@@ -166,11 +263,11 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public hasComponent<T extends Component>(component: new (...args: any[]) => T): boolean {
-    return this.componentMap.has(component.name);
+    return this.componentMap.has(Component.getTypeName(component));
   }
 
   public getComponent<T extends Component>(component: new (...args: any[]) => T): T | null {
-    const componentType = component.name;
+    const componentType = Component.getTypeName(component);
     const components = this.componentMap.get(componentType);
 
     if (components === undefined || components.length === 0) {
@@ -181,7 +278,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public getComponents<T extends Component>(component: new (...args: any[]) => T): T[] {
-    const componentType = component.name;
+    const componentType = Component.getTypeName(component);
     const components = this.componentMap.get(componentType);
 
     if (components === undefined || components.length === 0) {
@@ -195,8 +292,10 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     let { parent } = this.transform;
 
     while (parent !== null) {
-      if (parent.hasComponent(component)) {
-        return parent.getComponent(component);
+      const parentGameObject = parent.gameObject;
+
+      if (parentGameObject.hasComponent(component)) {
+        return parentGameObject.getComponent(component);
       }
 
       parent = parent.parent;
@@ -210,16 +309,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     const components: T[] = [];
 
     while (parent !== null) {
-      if (parent.hasComponent(component)) {
-        const parentComponent = parent.getComponent(component);
-
-        if (parentComponent === null) {
-          throw new Error('Error getting parent component');
-        }
-
-        components.push(parentComponent);
-      }
-
+      components.push(...parent.gameObject.getComponents(component));
       parent = parent.parent;
     }
 
@@ -227,7 +317,13 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public getComponentInChildren<T extends Component>(component: new (...args: any[]) => T): T | null {
-    const { children } = this.transform;
+    const selfComponent = this.getComponent(component);
+
+    if (selfComponent !== null) {
+      return selfComponent;
+    }
+
+    const children = [...this.transform.children];
 
     while (children.length > 0) {
       const child = children.pop();
@@ -236,8 +332,10 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
         throw new Error('Error getting child.');
       }
 
-      if (child.hasComponent(component)) {
-        return child.getComponent(component);
+      const childGameObject = child.gameObject;
+
+      if (childGameObject.hasComponent(component)) {
+        return childGameObject.getComponent(component);
       }
 
       for (const childsChild of child.children) {
@@ -249,8 +347,8 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public getComponentsInChildren<T extends Component>(component: new (...args: any[]) => T): T[] {
-    const { children } = this.transform;
-    const components: T[] = [];
+    const children = [...this.transform.children];
+    const components = this.getComponents(component);
 
     while (children.length > 0) {
       const child = children.pop();
@@ -259,15 +357,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
         throw new Error('Error getting child');
       }
 
-      if (child.gameObject.hasComponent(component)) {
-        const childComponent = child.getComponent(component);
-
-        if (childComponent === null) {
-          throw new Error('Error getting child component.');
-        }
-
-        components.push(childComponent);
-      }
+      components.push(...child.gameObject.getComponents(component));
 
       for (const childsChild of child.children) {
         children.push(childsChild);
@@ -278,12 +368,12 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public addComponent<T extends Component>(newComponent: Component): T {
-    const currentComponents = this.componentMap.get(newComponent.constructor.name);
+    const currentComponents = this.componentMap.get(newComponent.typeName);
 
     if (currentComponents !== undefined) {
       currentComponents.push(newComponent);
     } else {
-      this.componentMap.set(newComponent.constructor.name, [newComponent]);
+      this.componentMap.set(newComponent.typeName, [newComponent]);
     }
 
     this.componentAnalyzer.extractRenderablesCollidersAndRigidbodies(newComponent);
@@ -295,12 +385,31 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public removeComponent(component: Component): void {
-    if (!this.componentMap.has(component.constructor.name)) {
-      throw new Error(`This object does not have a ${component.constructor.name} component!`);
+    const typeName = component.typeName;
+    const components = this.componentMap.get(typeName);
+
+    if (components === undefined) {
+      throw new Error(`This object does not have a ${typeName} component!`);
     }
 
-    this.updatableComponents.splice(this.updatableComponents.indexOf(component), 1);
-    this.componentMap.delete(component.constructor.name);
+    const componentIndex = components.indexOf(component);
+
+    if (componentIndex === -1) {
+      throw new Error(`This specific ${typeName} component is not attached to this object!`);
+    }
+
+    components.splice(componentIndex, 1);
+
+    if (components.length === 0) {
+      this.componentMap.delete(typeName);
+    }
+
+    const updatableIndex = this.updatableComponents.indexOf(component);
+
+    if (updatableIndex !== -1) {
+      this.updatableComponents.splice(updatableIndex, 1);
+    }
+
     component.onDestroy();
   }
 
@@ -321,15 +430,112 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     return [];
   }
 
+  private syncComponents(serializedComponents: SerializedComponent[]): void {
+    const expectedCounts = new Map<string, number>();
+
+    for (const serializedComponent of serializedComponents) {
+      if (serializedComponent.typeName === Transform.typeName) {
+        continue;
+      }
+
+      expectedCounts.set(serializedComponent.typeName, (expectedCounts.get(serializedComponent.typeName) ?? 0) + 1);
+    }
+
+    for (const [typeName, components] of Array.from(this.componentMap.entries())) {
+      if (typeName === Transform.typeName) {
+        continue;
+      }
+
+      const expectedCount = expectedCounts.get(typeName) ?? 0;
+
+      while (components.length > expectedCount) {
+        const componentToRemove = components[components.length - 1];
+
+        if (componentToRemove === undefined) {
+          throw new Error('Error removing extra component.');
+        }
+
+        this.removeComponent(componentToRemove);
+      }
+    }
+
+    const processedCounts = new Map<string, number>();
+
+    for (const serializedComponent of serializedComponents) {
+      if (serializedComponent.typeName === Transform.typeName) {
+        this.transform.deserialize(serializedComponent.data);
+        continue;
+      }
+
+      const processedCount = processedCounts.get(serializedComponent.typeName) ?? 0;
+      const existingComponents = this.componentMap.get(serializedComponent.typeName) ?? [];
+      let component = existingComponents[processedCount];
+
+      if (component === undefined) {
+        component = this.createComponentFromSerialized(serializedComponent);
+        this.addComponent(component);
+      }
+
+      component.deserialize(serializedComponent.data);
+      processedCounts.set(serializedComponent.typeName, processedCount + 1);
+    }
+  }
+
+  private syncChildren(serializedChildren: SerializedGameObject[]): void {
+    const currentChildren = this.transform.children.map(child => child.gameObject);
+
+    for (let i = serializedChildren.length; i < currentChildren.length; i++) {
+      currentChildren[i].transform.parent = null;
+    }
+
+    for (let i = 0; i < serializedChildren.length; i++) {
+      const serializedChild = serializedChildren[i];
+      let childGameObject = currentChildren[i];
+
+      if (childGameObject === undefined) {
+        childGameObject = new SerializedGameObjectNode({
+          gameEngine: this.gameEngine,
+          id: serializedChild.id,
+          name: serializedChild.name,
+          tag: serializedChild.tag,
+          layer: serializedChild.layer as Layer
+        });
+        childGameObject.transform.parent = this.transform;
+      } else if (childGameObject.transform.parent !== this.transform) {
+        childGameObject.transform.parent = this.transform;
+      }
+
+      childGameObject.deserialize(serializedChild);
+    }
+  }
+
+  private createComponentFromSerialized(serializedComponent: SerializedComponent): Component {
+    registerBuiltinComponents();
+
+    const componentConstructor = ComponentRegistry.get(
+      serializedComponent.typeName
+    ) as SerializableComponentConstructor | undefined;
+
+    if (componentConstructor === undefined) {
+      throw new Error(`Component type ${serializedComponent.typeName} is not registered.`);
+    }
+
+    if (typeof componentConstructor.createFromSerialized !== 'function') {
+      throw new Error(`Component type ${serializedComponent.typeName} cannot be created from serialized data.`);
+    }
+
+    return componentConstructor.createFromSerialized(this, serializedComponent.data);
+  }
+
   private setComponents(components: Component[]): void {
     for (const component of components) {
       this.updatableComponents.push(component);
-      const currentComponents = this.componentMap.get(component.constructor.name);
+      const currentComponents = this.componentMap.get(component.typeName);
 
       if (currentComponents !== undefined) {
         currentComponents.push(component);
       } else {
-        this.componentMap.set(component.constructor.name, [component]);
+        this.componentMap.set(component.typeName, [component]);
       }
 
       this.componentAnalyzer.extractRenderablesCollidersAndRigidbodies(component);
@@ -341,4 +547,21 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
    */
   protected abstract getPrefabSettings(): PrefabSettings;
   protected abstract buildInitialComponents(config: TConfig): Component[];
+}
+
+class SerializedGameObjectNode extends GameObject {
+  protected override getPrefabSettings(): PrefabSettings {
+    return {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      name: 'serialized-game-object',
+      tag: 'serialized',
+      layer: Layer.Default
+    };
+  }
+
+  protected override buildInitialComponents(): Component[] {
+    return [];
+  }
 }

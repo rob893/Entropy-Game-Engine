@@ -24,12 +24,12 @@ export class Physics {
   public raycast(origin: Vector2, direction: Vector2, distance: number): RectangleCollider | null {
     let result: RectangleCollider | null = null;
     const hitColliders = this.raycastAll(origin, direction, distance);
-    let closestColliderDistance = -10;
+    let closestColliderDistance = Infinity;
 
     for (const collider of hitColliders) {
       const colliderDistance = Vector2.distance(origin, collider.transform.position);
 
-      if (colliderDistance > closestColliderDistance) {
+      if (colliderDistance < closestColliderDistance) {
         result = collider;
         closestColliderDistance = colliderDistance;
       }
@@ -40,7 +40,7 @@ export class Physics {
 
   public raycastAll(origin: Vector2, direction: Vector2, distance: number): RectangleCollider[] {
     const results: RectangleCollider[] = [];
-    const terminalPoint = Vector2.add(origin, direction.multiplyScalar(distance));
+    const terminalPoint = Vector2.add(origin, direction.clone().multiplyScalar(distance));
 
     for (const collider of this.physicsEngine.colliders) {
       if (

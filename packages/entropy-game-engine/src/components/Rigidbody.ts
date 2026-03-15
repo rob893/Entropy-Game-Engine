@@ -2,27 +2,39 @@ import { Component } from './Component';
 import { Vector2 } from '../core/helpers/Vector2';
 import { GameObject } from '../game-objects/GameObject';
 import { Topic } from '../core/helpers/Topic';
-import { Subscribable } from '../core';
+import { SerializedComponent, Subscribable } from '../core';
+import { readBoolean, readNumber, readVector2 } from '../core/helpers/Serialization';
 
 export class Rigidbody extends Component {
-  public readonly velocity: Vector2 = Vector2.zero;
+  public static override readonly typeName: string = 'Rigidbody';
+  public readonly velocity: Vector2 = new Vector2(0, 0);
+  public useGravity: boolean = false;
+  public drag: number = 0;
 
   /**
    * Mass in KG. 0 represents an infinite mass.
    */
   private _mass: number;
   private _inverseMass: number;
-  private _isKinomatic: boolean = false;
+  private _isKinematic: boolean = false;
   private readonly forces: Vector2[] = [];
-  private readonly _becameKinomatic = new Topic<Rigidbody>();
-  private readonly _becameNonKinomatic = new Topic<Rigidbody>();
+  private readonly _becameKinematic = new Topic<Rigidbody>();
+  private readonly _becameNonKinematic = new Topic<Rigidbody>();
 
-  public constructor(gameObject: GameObject, mass: number = 70, isKinomatic: boolean = false) {
+  public constructor(gameObject: GameObject, mass: number = 70, isKinematic: boolean = false) {
     super(gameObject);
 
     this._mass = mass;
     this._inverseMass = mass !== 0 ? 1 / mass : 0;
-    this.isKinomatic = isKinomatic;
+    this.isKinematic = isKinematic;
+  }
+
+  public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): Rigidbody {
+    const mass = readNumber(data.mass) ?? 70;
+    const isKinematic = readBoolean(data.isKinematic) ?? false;
+    const rigidbody = new Rigidbody(gameObject, mass, isKinematic);
+    rigidbody.deserialize(data);
+    return rigidbody;
   }
 
   /**
@@ -48,33 +60,76 @@ export class Rigidbody extends Component {
     return this._inverseMass;
   }
 
-  public set isKinomatic(isKinomatic: boolean) {
-    this._isKinomatic = isKinomatic;
+  public set isKinematic(isKinematic: boolean) {
+    this._isKinematic = isKinematic;
 
-    if (isKinomatic) {
-      this._becameKinomatic.publish(this);
+    if (isKinematic) {
+      this._becameKinematic.publish(this);
     } else {
-      this._becameNonKinomatic.publish(this);
+      this._becameNonKinematic.publish(this);
     }
   }
 
-  public get isKinomatic(): boolean {
-    return this._isKinomatic;
+  public get isKinematic(): boolean {
+    return this._isKinematic;
   }
 
-  public get becameKinomatic(): Subscribable<Rigidbody> {
-    return this._becameKinomatic;
+  public get becameKinematic(): Subscribable<Rigidbody> {
+    return this._becameKinematic;
   }
 
-  public get becameNonKinomatic(): Subscribable<Rigidbody> {
-    return this._becameNonKinomatic;
+  public get becameNonKinematic(): Subscribable<Rigidbody> {
+    return this._becameNonKinematic;
   }
 
-  public updatePhysics(): void {
+  public override serialize(): SerializedComponent {
+    return {
+      typeName: this.typeName,
+      data: {
+        mass: this._mass,
+        velocity: {
+          x: this.velocity.x,
+          y: this.velocity.y
+        },
+        useGravity: this.useGravity,
+        isKinematic: this.isKinematic,
+        drag: this.drag
+      }
+    };
+  }
+
+  public override deserialize(data: Record<string, unknown>): void {
+    const mass = readNumber(data.mass);
+    if (mass !== null) {
+      this.mass = mass;
+    }
+
+    const velocity = readVector2(data.velocity);
+    if (velocity !== null) {
+      this.velocity.x = velocity.x;
+      this.velocity.y = velocity.y;
+    }
+
+    const useGravity = readBoolean(data.useGravity);
+    if (useGravity !== null) {
+      this.useGravity = useGravity;
+    }
+
+    const isKinematic = readBoolean(data.isKinematic);
+    if (isKinematic !== null) {
+      this.isKinematic = isKinematic;
+    }
+
+    const drag = readNumber(data.drag);
+    if (drag !== null) {
+      this.drag = drag;
+    }
+  }
+
+  public updatePhysics(deltaTime: number): void {
     this.forces.forEach(force => this.velocity.add(force.divideScalar(this.mass)));
+    this.transform.translate(this.velocity.clone().multiplyScalar(deltaTime));
     this.forces.length = 0;
-
-    this.transform.translate(this.velocity);
   }
 
   public addForce(force: Vector2): void {

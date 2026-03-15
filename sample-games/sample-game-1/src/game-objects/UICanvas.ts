@@ -18,14 +18,14 @@ export class UICanvas extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'ui-canvas',
+      name: 'ui-canvas',
       tag: 'ui',
       layer: Layer.UI
     };
   }
 
   protected override buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
-    const button = new Button({ gameEngine: config.gameEngine, id: 'button1', x: 150, y: 150 });
+    const button = new Button({ gameEngine: config.gameEngine, name: 'button1', x: 150, y: 150 });
 
     button.getComponent(ClickedOnDetector)?.onClicked.subscribe(() => config.gameEngine.togglePause());
 

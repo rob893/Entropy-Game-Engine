@@ -27,8 +27,8 @@ export class GameEngine {
   private loadedScene: Scene | null = null;
   private gameLoopId: number | null = null;
   private gameInitialized: boolean = false;
-  private paused: boolean = false;
-  private gameObjects: GameObject[] = [];
+  private _paused: boolean = false;
+  private _gameObjects: GameObject[] = [];
   private _input: Input | null = null;
   private _physics: Physics | null = null;
   private _assetPool: AssetPool | null = null;
@@ -39,8 +39,9 @@ export class GameEngine {
   private prevFrameTime: number = 0;
   private fpsIntervalInMS: number = 0;
   private fpsCap: number = 60;
+  private _fixedTimeStep: number = 1 / 60;
+  private physicsAccumulator: number = 0;
   private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
-  private readonly gameObjectNumMap: Map<string, number> = new Map<string, number>();
   private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
   private readonly scenes: Map<number | string, Scene> = new Map<number | string, Scene>();
   private readonly _gameCanvas: HTMLCanvasElement;
@@ -70,6 +71,7 @@ export class GameEngine {
 
     collidingLayers.delete(Layer.Terrain);
     this.fpsLimit = configuration.fpsLimit ?? 60;
+    this.fixedTimeStep = configuration.fixedTimeStep ?? 1 / 60;
   }
 
   public get canvasContext(): CanvasRenderingContext2D {
@@ -104,6 +106,19 @@ export class GameEngine {
     }
 
     return this._time;
+  }
+
+  public get paused(): boolean {
+    return this._paused;
+  }
+
+  public set paused(value: boolean) {
+    this._paused = value;
+
+    if (!value && this._time !== null) {
+      this.physicsAccumulator = 0;
+      this.time.resetTime();
+    }
   }
 
   public get componentAnalyzer(): ComponentAnalyzer {
@@ -142,12 +157,28 @@ export class GameEngine {
     return this._gameCanvas;
   }
 
+  public get gameObjects(): readonly GameObject[] {
+    return [...this._gameObjects];
+  }
+
+  public get currentScene(): Scene | null {
+    return this.loadedScene;
+  }
+
+  public get gravity(): number {
+    return this.physicsEngine.gravity;
+  }
+
+  public set gravity(value: number) {
+    this.physicsEngine.gravity = value;
+  }
+
   public get loadedSceneId(): number {
     if (this.loadedScene === null) {
       throw new Error('No scene is currently loaded!');
     }
 
-    return this.loadedScene.loadOrder;
+    return this.getScenePrimaryId(this.loadedScene);
   }
 
   public get fpsLimit(): number {
@@ -157,6 +188,19 @@ export class GameEngine {
   public set fpsLimit(value: number) {
     this.fpsCap = value;
     this.fpsIntervalInMS = Math.floor(1000 / value);
+  }
+
+  public get fixedTimeStep(): number {
+    return this._fixedTimeStep;
+  }
+
+  public set fixedTimeStep(value: number) {
+    if (!Number.isFinite(value) || value <= 0) {
+      throw new Error('fixedTimeStep must be a positive number');
+    }
+
+    this._fixedTimeStep = value;
+    this.physicsAccumulator = 0;
   }
 
   public instantiate<T extends GameObject>(
@@ -278,7 +322,53 @@ export class GameEngine {
       return [];
     }
 
-    return gameObjects;
+    return [...gameObjects];
+  }
+
+  public syncGameObjectRegistration(gameObject: GameObject, previousId: string, previousTag: string): void {
+    const isRegistered = this.gameObjectMap.get(previousId) === gameObject || this._gameObjects.includes(gameObject);
+
+    if (!isRegistered) {
+      return;
+    }
+
+    if (previousId !== gameObject.id) {
+      const conflictingObject = this.gameObjectMap.get(gameObject.id);
+      if (conflictingObject !== undefined && conflictingObject !== gameObject) {
+        throw new Error(`Game object with id ${gameObject.id} is already registered.`);
+      }
+
+      if (this.gameObjectMap.get(previousId) === gameObject) {
+        this.gameObjectMap.delete(previousId);
+      }
+
+      this.gameObjectMap.set(gameObject.id, gameObject);
+    }
+
+    if (previousTag === gameObject.tag) {
+      return;
+    }
+
+    const previousTagObjects = this.tagMap.get(previousTag);
+    if (previousTagObjects !== undefined) {
+      const previousTagIndex = previousTagObjects.indexOf(gameObject);
+      if (previousTagIndex !== -1) {
+        previousTagObjects.splice(previousTagIndex, 1);
+      }
+
+      if (previousTagObjects.length === 0) {
+        this.tagMap.delete(previousTag);
+      }
+    }
+
+    const nextTagObjects = this.tagMap.get(gameObject.tag);
+    if (nextTagObjects !== undefined) {
+      if (!nextTagObjects.includes(gameObject)) {
+        nextTagObjects.push(gameObject);
+      }
+    } else {
+      this.tagMap.set(gameObject.tag, [gameObject]);
+    }
   }
 
   public printGameData(): void {
@@ -286,7 +376,7 @@ export class GameEngine {
     console.log(`Time since game start ${this.time.totalTime}s`);
     console.log(this.renderingEngine);
     console.log(this.physicsEngine);
-    this.gameObjects.forEach(go => console.log(go));
+    this._gameObjects.forEach(go => console.log(go));
   }
 
   public togglePause(): void {
@@ -295,12 +385,15 @@ export class GameEngine {
 
   public setScenes(scenes: Scene[]): void {
     for (const scene of scenes) {
-      if (this.scenes.has(scene.loadOrder) || this.scenes.has(scene.name)) {
-        console.error(`Duplicate scene load orders or name detected ${scene.loadOrder} ${scene.name}`);
-      }
+      for (const key of this.getSceneRegistrationKeys(scene)) {
+        const existingScene = this.scenes.get(key);
 
-      this.scenes.set(scene.loadOrder, scene);
-      this.scenes.set(scene.name, scene);
+        if (existingScene !== undefined && existingScene !== scene) {
+          console.error(`Duplicate scene identifier detected ${String(key)} ${scene.name}`);
+        }
+
+        this.scenes.set(key, scene);
+      }
     }
   }
 
@@ -319,6 +412,36 @@ export class GameEngine {
 
     this.loadedScene = scene;
     this.startGame();
+  }
+
+  private getScenePrimaryId(scene: Scene): number {
+    if (scene.sceneId !== undefined) {
+      return scene.sceneId;
+    }
+
+    if (scene.loadOrder !== undefined) {
+      return scene.loadOrder;
+    }
+
+    throw new Error(`Scene ${scene.name} must define sceneId or loadOrder.`);
+  }
+
+  private getSceneRegistrationKeys(scene: Scene): Array<number | string> {
+    const keys = new Set<number | string>([scene.name]);
+
+    if (scene.sceneId !== undefined) {
+      keys.add(scene.sceneId);
+    }
+
+    if (scene.loadOrder !== undefined) {
+      keys.add(scene.loadOrder);
+    }
+
+    if (keys.size === 1) {
+      throw new Error(`Scene ${scene.name} must define sceneId or loadOrder.`);
+    }
+
+    return [...keys];
   }
 
   private get physicsEngine(): PhysicsEngine {
@@ -342,10 +465,10 @@ export class GameEngine {
       this.gameObjectMap.delete(object.id);
     }
 
-    const index = this.gameObjects.indexOf(object);
+    const index = this._gameObjects.indexOf(object);
 
     if (index !== -1) {
-      this.gameObjects.splice(index, 1);
+      this._gameObjects.splice(index, 1);
     }
 
     const gameObjectsWithTag = this.tagMap.get(object.tag);
@@ -358,50 +481,15 @@ export class GameEngine {
       }
     }
 
-    //TODO: This still has a bug. Sometimes object ids are still not working correctly when creating and destroying objects (the old bug that used to console errors).
-    //For some reason, the id is being set here before being called a 'clone'.
-    const numGameObjects = this.gameObjectNumMap.get(object.id);
-    if (numGameObjects !== undefined) {
-      numGameObjects > 1
-        ? this.gameObjectNumMap.set(object.id, numGameObjects - 1)
-        : this.gameObjectNumMap.delete(object.id);
-    }
-
     object.onDestroy();
   }
 
   private registerGameObject(newGameObject: GameObject): void {
-    if (newGameObject.id === '') {
-      newGameObject.id = this.generateUniqueId();
-    }
+    const gameObjectsToRegister = this.collectGameObjects(newGameObject);
 
-    if (this.gameObjectMap.has(newGameObject.id)) {
-      const originalId = newGameObject.id;
-      const numOfSameGameObject = this.gameObjectNumMap.get(originalId);
-
-      if (numOfSameGameObject === undefined) {
-        throw new Error('Error in regitering the new game object');
-      }
-
-      newGameObject.id += ` Clone(${numOfSameGameObject})`;
-      this.gameObjectNumMap.set(originalId, numOfSameGameObject + 1);
-    } else {
-      this.gameObjectNumMap.set(newGameObject.id, 1);
-    }
-
-    const gameObjectsWithTag = this.tagMap.get(newGameObject.tag);
-    if (gameObjectsWithTag !== undefined) {
-      gameObjectsWithTag.push(newGameObject);
-    } else {
-      this.tagMap.set(newGameObject.tag, [newGameObject]);
-    }
-
-    this.gameObjectMap.set(newGameObject.id, newGameObject);
-    this.gameObjects.push(newGameObject);
-    newGameObject.start();
-
-    for (const child of newGameObject.transform.children) {
-      this.registerGameObject(child.gameObject);
+    for (const gameObject of gameObjectsToRegister) {
+      this.addGameObjectToCollections(gameObject);
+      gameObject.start();
     }
   }
 
@@ -420,17 +508,21 @@ export class GameEngine {
     }
 
     this.invokeTimeouts.clear();
+    this.physicsAccumulator = 0;
 
     this.input.clearListeners();
     this.tagMap.clear();
     this.gameObjectMap.clear();
-    this.gameObjectNumMap.clear();
-    this.gameObjects.length = 0;
+    this._gameObjects.length = 0;
     this.gameObjectsMarkedForDelete.length = 0;
 
     this.loadedScene = null;
     this._assetPool = null;
     this._componentAnalyzer = null;
+
+    if (this._renderingEngine !== null) {
+      this._renderingEngine.mainCamera = null;
+    }
     this._input = null;
     this._physics = null;
     this._sceneManager = null;
@@ -439,8 +531,13 @@ export class GameEngine {
   }
 
   private async initializeScene(scene: Scene): Promise<void> {
-    this._assetPool = await scene.getAssetPool();
-    const { terrainSpec } = scene;
+    this._assetPool = scene.getAssetPool !== undefined ? await scene.getAssetPool() : new AssetPool(new Map<string, unknown>());
+
+    if (scene.gravity !== undefined) {
+      this.gravity = scene.gravity;
+    }
+
+    const terrainSpec = scene.terrainSpec ?? null;
     let gameObjects: GameObject[] = [];
 
     if (terrainSpec !== null) {
@@ -454,8 +551,11 @@ export class GameEngine {
     }
 
     gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this)];
-    const skyBox = scene.getSkybox(this);
-    this.renderingEngine.background = skyBox;
+    const skyBox = scene.getSkybox !== undefined ? scene.getSkybox(this) : null;
+
+    if (skyBox !== null) {
+      this.renderingEngine.background = skyBox;
+    }
 
     if (skyBox instanceof GameObject) {
       gameObjects.push(skyBox);
@@ -482,7 +582,7 @@ export class GameEngine {
       ? this.configuration.collisionResolverGenerator(this)
       : new ImpulseCollisionResolver();
 
-    this._physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver, time);
+    this._physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver);
 
     this._renderingEngine = new RenderingEngine(this.canvasContext);
     this.renderingEngine.renderGizmos = this.developmentMode;
@@ -495,55 +595,41 @@ export class GameEngine {
   }
 
   private setGameObjects(gameObjects: GameObject[]): void {
-    this.gameObjects = [...gameObjects];
+    this._gameObjects = [];
 
-    for (const gameObject of this.gameObjects) {
-      if (this.gameObjectMap.has(gameObject.id)) {
-        const originalId = gameObject.id;
-        const numGameObjects = this.gameObjectNumMap.get(originalId);
+    for (const gameObject of gameObjects) {
+      const gameObjectsToRegister = this.collectGameObjects(gameObject);
 
-        if (numGameObjects === undefined) {
-          throw new Error('Error setting up initial game objects.');
-        }
-
-        gameObject.id += ` Clone(${numGameObjects})`;
-        this.gameObjectNumMap.set(originalId, numGameObjects + 1);
-      } else {
-        this.gameObjectNumMap.set(gameObject.id, 1);
-      }
-
-      this.gameObjectMap.set(gameObject.id, gameObject);
-
-      const gameObjectsWithTag = this.tagMap.get(gameObject.tag);
-      if (gameObjectsWithTag !== undefined) {
-        gameObjectsWithTag.push(gameObject);
-      } else {
-        this.tagMap.set(gameObject.tag, [gameObject]);
-      }
-
-      //Initialize children of gameObject
-      const {
-        transform: { children }
-      } = gameObject;
-
-      while (children.length > 0) {
-        const child = children.pop();
-
-        if (child === undefined) {
-          throw new Error('Error getting child');
-        }
-
-        this.gameObjects.push(child.gameObject);
-
-        for (const childsChild of child.children) {
-          children.push(childsChild);
-        }
+      for (const currentGameObject of gameObjectsToRegister) {
+        this.addGameObjectToCollections(currentGameObject);
       }
     }
   }
 
-  private generateUniqueId(): string {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  private addGameObjectToCollections(gameObject: GameObject): void {
+    if (this.gameObjectMap.has(gameObject.id)) {
+      throw new Error(`Game object with id ${gameObject.id} is already registered.`);
+    }
+
+    const gameObjectsWithTag = this.tagMap.get(gameObject.tag);
+    if (gameObjectsWithTag !== undefined) {
+      gameObjectsWithTag.push(gameObject);
+    } else {
+      this.tagMap.set(gameObject.tag, [gameObject]);
+    }
+
+    this.gameObjectMap.set(gameObject.id, gameObject);
+    this._gameObjects.push(gameObject);
+  }
+
+  private collectGameObjects(rootGameObject: GameObject): GameObject[] {
+    const gameObjects = [rootGameObject];
+
+    for (let i = 0; i < gameObjects.length; i++) {
+      gameObjects.push(...gameObjects[i].transform.children.map(child => child.gameObject));
+    }
+
+    return gameObjects;
   }
 
   private startGame(): void {
@@ -552,28 +638,10 @@ export class GameEngine {
     }
 
     //this.time.start();
+    this.physicsAccumulator = 0;
     this.paused = false;
 
-    this.gameObjects.forEach(go => {
-      go.start();
-      const {
-        transform: { children }
-      } = go;
-
-      while (children.length > 0) {
-        const child = children.pop();
-
-        if (child === undefined) {
-          throw new Error('Error getting child');
-        }
-
-        child.gameObject.start();
-
-        for (const childsChild of child.children) {
-          children.push(childsChild);
-        }
-      }
-    });
+    this._gameObjects.forEach(go => go.start());
 
     this.gameLoopId = requestAnimationFrame(timeStamp => this.gameLoop(timeStamp));
   }
@@ -594,9 +662,14 @@ export class GameEngine {
     }
 
     this.time.updateTime(timeStamp);
-    this.physicsEngine.updatePhysics();
+    this.physicsAccumulator += this.time.deltaTime;
 
-    for (const gameObject of this.gameObjects) {
+    while (this.physicsAccumulator >= this.fixedTimeStep) {
+      this.physicsEngine.updatePhysics(this.fixedTimeStep);
+      this.physicsAccumulator -= this.fixedTimeStep;
+    }
+
+    for (const gameObject of this._gameObjects) {
       if (gameObject.enabled) {
         gameObject.update();
       }
@@ -611,7 +684,7 @@ export class GameEngine {
 
     if (diff >= this.fpsIntervalInMS) {
       this.prevFrameTime = now;
-      this.update(timeStamp);
+      this.update(now);
     }
 
     this.gameLoopId = requestAnimationFrame(newTimeStamp => this.gameLoop(newTimeStamp));

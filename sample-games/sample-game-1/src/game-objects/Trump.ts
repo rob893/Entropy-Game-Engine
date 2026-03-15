@@ -70,7 +70,7 @@ export class Trump extends GameObject {
       x: 200,
       y: 300,
       rotation: 0,
-      id: 'trump',
+      name: 'trump',
       tag: '',
       layer: Layer.Default
     };

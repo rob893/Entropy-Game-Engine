@@ -11,6 +11,7 @@ export * from './RenderableBackground';
 export * from './RenderableGUI';
 export * from './RenderableGizmo';
 export * from './Scene';
+export * from './Serializable';
 export * from './SpriteData';
 export * from './TerrainCell';
 export * from './TerrainSpec';

@@ -24,7 +24,7 @@ export class Background extends GameObject implements RenderableBackground {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'background',
+      name: 'background',
       tag: 'background',
       layer: Layer.Default
     };

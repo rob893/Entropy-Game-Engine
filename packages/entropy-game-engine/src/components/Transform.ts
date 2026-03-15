@@ -2,9 +2,11 @@ import { Component } from './Component';
 import { Vector2 } from '../core/helpers/Vector2';
 import { Topic } from '../core/helpers/Topic';
 import { GameObject } from '../game-objects/GameObject';
-import { Subscribable, Unsubscribable } from '../core';
+import { SerializedComponent, Subscribable, Unsubscribable } from '../core';
+import { readNumber, readVector2 } from '../core/helpers/Serialization';
 
 export class Transform extends Component {
+  public static override readonly typeName: string = 'Transform';
   //Rotation in radians
   public rotation: number;
   //Position is the top left of the agent with width growing right and height growing down.
@@ -27,10 +29,10 @@ export class Transform extends Component {
     super(gameObject);
 
     this.position = new Vector2(x, y);
-    this.localPosition = Vector2.zero;
+    this.localPosition = new Vector2(0, 0);
     this.rotation = rotation;
     this.parent = parent;
-    this.scale = Vector2.one;
+    this.scale = new Vector2(1, 1);
   }
 
   public get onMoved(): Subscribable<void> {
@@ -64,6 +66,66 @@ export class Transform extends Component {
 
   public get children(): Transform[] {
     return [...this._children];
+  }
+
+  public override serialize(): SerializedComponent {
+    return {
+      typeName: this.typeName,
+      data: {
+        position: {
+          x: this.position.x,
+          y: this.position.y
+        },
+        rotation: this.rotation,
+        scale: {
+          x: this.scale.x,
+          y: this.scale.y
+        },
+        localPosition: {
+          x: this.localPosition.x,
+          y: this.localPosition.y
+        },
+        parentId: this.parent?.gameObject.id ?? null
+      }
+    };
+  }
+
+  public override deserialize(data: Record<string, unknown>): void {
+    const parentId = data.parentId;
+    if (parentId === null) {
+      this.parent = null;
+    } else if (typeof parentId === 'string') {
+      const parentGameObject = this.findGameObjectById(parentId);
+      if (parentGameObject !== null) {
+        this.parent = parentGameObject.transform;
+      }
+    }
+
+    const position = readVector2(data.position);
+    if (position !== null) {
+      this.setPosition(position.x, position.y);
+    }
+
+    const rotation = readNumber(data.rotation);
+    if (rotation !== null) {
+      this.rotation = rotation;
+    }
+
+    const scale = readVector2(data.scale);
+    if (scale !== null) {
+      this.scale.x = scale.x;
+      this.scale.y = scale.y;
+    }
+
+    const localPosition = readVector2(data.localPosition);
+    if (localPosition !== null) {
+      this.localPosition.x = localPosition.x;
+      this.localPosition.y = localPosition.y;
+
+      if (this.parent !== null) {
+        this.setPosition(this.parent.position.x + localPosition.x, this.parent.position.y + localPosition.y);
+      }
+    }
   }
 
   public translate(translation: Vector2): void {

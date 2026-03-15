@@ -1,0 +1,145 @@
+import { GameObject } from '../game-objects/GameObject';
+import { Terrain } from '../game-objects/Terrain';
+import { GameEngine } from './GameEngine';
+import { AssetPool } from './helpers/AssetPool';
+import { Scene } from './interfaces/Scene';
+import { SerializedScene, SerializedTerrain } from './interfaces/Serializable';
+import { SpriteData } from './interfaces/SpriteData';
+import { TerrainCell } from './interfaces/TerrainCell';
+import { TerrainSpec } from './interfaces/TerrainSpec';
+
+type LegacyTerrainSpec = Required<Pick<TerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
+
+type JSONTerrainSpec = Required<Pick<TerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> & Pick<TerrainSpec, 'tileSet'>;
+
+export class SceneSerializer {
+  public static serializeScene(engine: GameEngine, name: string, sceneId: number): SerializedScene {
+    const serializedScene: SerializedScene = {
+      name,
+      sceneId,
+      gameObjects: engine.gameObjects
+        .filter(gameObject => gameObject.transform.parent === null && !(gameObject instanceof Terrain))
+        .map(gameObject => gameObject.serialize())
+    };
+
+    if (engine.currentScene !== null) {
+      serializedScene.gravity = engine.gravity;
+    }
+
+    const terrain = engine.currentScene?.terrainSpec ? this.serializeTerrain(engine.currentScene.terrainSpec) : undefined;
+
+    if (terrain !== undefined) {
+      serializedScene.terrain = terrain;
+    }
+
+    return serializedScene;
+  }
+
+  public static createSceneFromJSON(data: SerializedScene): Scene {
+    return {
+      sceneId: data.sceneId,
+      loadOrder: data.sceneId,
+      name: data.name,
+      gravity: data.gravity,
+      terrainSpec: data.terrain ? this.createTerrainSpec(data.terrain) : null,
+      getStartingGameObjects: (engine: GameEngine) => data.gameObjects.map(gameObject => GameObject.deserialize(gameObject, engine)),
+      getAssetPool: () => Promise.resolve(new AssetPool(new Map<string, unknown>()))
+    };
+  }
+
+  public static fromJSON(json: string): Scene {
+    const data = JSON.parse(json) as SerializedScene;
+    return this.createSceneFromJSON(data);
+  }
+
+  public static toJSON(engine: GameEngine, name: string, sceneId: number): string {
+    return JSON.stringify(this.serializeScene(engine, name, sceneId), null, 2);
+  }
+
+  private static createTerrainSpec(data: SerializedTerrain): TerrainSpec {
+    return {
+      tileWidth: data.tileWidth,
+      tileHeight: data.tileHeight,
+      grid: data.grid.map(row => [...row]),
+      tileSet: data.tileSet === undefined ? undefined : { ...data.tileSet }
+    };
+  }
+
+  private static serializeTerrain(terrainSpec: TerrainSpec): SerializedTerrain | undefined {
+    if (this.isJSONTerrainSpec(terrainSpec)) {
+      return {
+        tileWidth: terrainSpec.tileWidth,
+        tileHeight: terrainSpec.tileHeight,
+        grid: terrainSpec.grid.map(row => [...row]),
+        tileSet: terrainSpec.tileSet === undefined ? undefined : { ...terrainSpec.tileSet }
+      };
+    }
+
+    if (!this.isLegacyTerrainSpec(terrainSpec)) {
+      return undefined;
+    }
+
+    const tileSet: Record<number, string> = {};
+    const tileIds = new Map<string, number>();
+    let nextTileId = 1;
+
+    const grid = terrainSpec.getSpec().map(row =>
+      row.map(cell => {
+        if (cell === null) {
+          return 0;
+        }
+
+        const tileId = this.getLegacyTerrainTileId(cell, terrainSpec.spriteSheetUrl, tileIds, tileSet, () => nextTileId++);
+        return cell.passable ? tileId : -tileId;
+      })
+    );
+
+    return {
+      tileWidth: terrainSpec.cellSize * terrainSpec.scale,
+      tileHeight: terrainSpec.cellSize * terrainSpec.scale,
+      grid,
+      tileSet: Object.keys(tileSet).length === 0 ? undefined : tileSet
+    };
+  }
+
+  private static getLegacyTerrainTileId(
+    cell: TerrainCell,
+    spriteSheetUrl: string,
+    tileIds: Map<string, number>,
+    tileSet: Record<number, string>,
+    getNextTileId: () => number
+  ): number {
+    const key = JSON.stringify(cell.spriteData);
+    const existingTileId = tileIds.get(key);
+
+    if (existingTileId !== undefined) {
+      return existingTileId;
+    }
+
+    const tileId = getNextTileId();
+    tileIds.set(key, tileId);
+    tileSet[tileId] = this.toSpriteSheetTilePath(spriteSheetUrl, cell.spriteData);
+    return tileId;
+  }
+
+  private static toSpriteSheetTilePath(spriteSheetUrl: string, spriteData: SpriteData): string {
+    return `${spriteSheetUrl}#${spriteData.sliceX},${spriteData.sliceY},${spriteData.sliceWidth},${spriteData.sliceHeight}`;
+  }
+
+  private static isJSONTerrainSpec(terrainSpec: TerrainSpec): terrainSpec is JSONTerrainSpec {
+    return (
+      typeof terrainSpec.tileWidth === 'number' &&
+      typeof terrainSpec.tileHeight === 'number' &&
+      Array.isArray(terrainSpec.grid)
+    );
+  }
+
+  private static isLegacyTerrainSpec(terrainSpec: TerrainSpec): terrainSpec is LegacyTerrainSpec {
+    return (
+      typeof terrainSpec.spriteSheetUrl === 'string' &&
+      typeof terrainSpec.scale === 'number' &&
+      typeof terrainSpec.cellSize === 'number' &&
+      typeof terrainSpec.getSpec === 'function'
+    );
+  }
+}

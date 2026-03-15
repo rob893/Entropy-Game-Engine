@@ -47,7 +47,6 @@ export class Animation {
 
   public updateAnimation(deltaTime: number): void {
     if (this.isComplete) {
-      this.onCompleted.publish();
       return;
     }
 
@@ -61,6 +60,7 @@ export class Animation {
 
     if (!this.loop && this.frameIndex === this.frames.length - 1) {
       this.finalFrameComplete = true;
+      this.onCompleted.publish();
       return;
     }
 

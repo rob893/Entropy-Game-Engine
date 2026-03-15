@@ -52,7 +52,7 @@ export class GameManager extends Component implements RenderableGUI {
 
   //     this.input.addKeyListener(EventType.KeyDown, 't', () => this.send());
 
-  //     const player = this.findGameObjectById('player');
+  //     const player = this.findGameObjectWithTag('player');
 
   //     if (player === null) {
   //         throw new Error('could not find player');

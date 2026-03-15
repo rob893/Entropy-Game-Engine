@@ -35,34 +35,34 @@ jobs:
       - name: Test
         run: npm test
 
-  publish_packages:
-    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[publish skip]')"
-    runs-on: ubuntu-latest
-    name: Publish Packages
-    needs:
-      - lint_and_test
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: "npm"
-      - name: Install dependencies
-        run: npm install
-      - name: Build packages
-        run: npm run compile
-      - name: Authenticate with NPM
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-          npm whoami
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Publish
-        run: npm publish --workspaces --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  # publish_packages:
+  #   if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[publish skip]')"
+  #   runs-on: ubuntu-latest
+  #   name: Publish Packages
+  #   needs:
+  #     - lint_and_test
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: "24"
+  #         cache: "npm"
+  #     - name: Install dependencies
+  #       run: npm install
+  #     - name: Build packages
+  #       run: npm run compile
+  #     - name: Authenticate with NPM
+  #       run: |
+  #         echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+  #         npm whoami
+  #       env:
+  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #     - name: Publish
+  #       run: npm publish --workspaces --access public --no-git-checks
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   deploy:
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[deploy skip]')"
@@ -70,7 +70,7 @@ jobs:
     name: Deploy to Remote Server
     needs:
       - lint_and_test
-      - publish_packages
+      # - publish_packages
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

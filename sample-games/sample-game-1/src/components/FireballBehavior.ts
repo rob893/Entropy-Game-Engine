@@ -37,7 +37,7 @@ export class FireballBehavior extends Component {
       return;
     }
 
-    if (manifold.getOtherCollider(this.collider).gameObject.id === 'player') {
+    if (manifold.getOtherCollider(this.collider).gameObject.name === 'player') {
       return;
     }
 

@@ -39,10 +39,10 @@ export const scene1: Scene = {
 
   getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
     return [
-      new GameManagerObject({ gameEngine, id: 'gameManager' }),
-      new Minotaur({ gameEngine, id: 'minotaur' }),
-      new Player({ gameEngine, id: 'player', x: 400, y: 250 }),
-      new UICanvas({ gameEngine, id: 'ui-canvas' })
+      new GameManagerObject({ gameEngine, name: 'gameManager' }),
+      new Minotaur({ gameEngine, name: 'minotaur' }),
+      new Player({ gameEngine, name: 'player', x: 400, y: 250 }),
+      new UICanvas({ gameEngine, name: 'ui-canvas' })
     ];
   },
 
@@ -135,8 +135,8 @@ export const scene3: Scene = {
     const midBox = Box.buildBox(gameEngine, 640, 520, 150, 20, 'midBox', 'border', Color.Brown);
 
     return [
-      new GameManagerObject({ gameEngine, id: 'gameManager' }),
-      new PlayerRB({ gameEngine, id: 'player' }),
+      new GameManagerObject({ gameEngine, name: 'gameManager' }),
+      new PlayerRB({ gameEngine, name: 'player' }),
       topBorder,
       bottomBorder,
       leftBorder,

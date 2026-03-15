@@ -20,5 +20,6 @@ export * from './TerrainBuilder';
 export * from './Vector2';
 export * from './ImageUtilities';
 export * from './Utilities';
+export * from './UUID';
 export * from './Subscription';
 export * from './Topic';

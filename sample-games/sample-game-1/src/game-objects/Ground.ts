@@ -18,7 +18,7 @@ export class Ground extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'ground',
+      name: 'ground',
       tag: 'ground',
       layer: Layer.Terrain
     };

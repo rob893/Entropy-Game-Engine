@@ -10,7 +10,7 @@ export class Weapon extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'weapon',
+      name: 'weapon',
       tag: '',
       layer: Layer.Default
     };

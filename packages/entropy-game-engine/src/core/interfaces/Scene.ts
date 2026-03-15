@@ -6,9 +6,11 @@ import { GameEngine } from '../GameEngine';
 
 export interface Scene {
   name: string;
-  loadOrder: number;
-  terrainSpec: TerrainSpec | null;
-  getSkybox(gameEngine: GameEngine): RenderableBackground;
+  sceneId?: number;
+  loadOrder?: number;
+  gravity?: number;
+  terrainSpec?: TerrainSpec | null;
+  getSkybox?(gameEngine: GameEngine): RenderableBackground | null;
   getStartingGameObjects(gameEngine: GameEngine): GameObject[];
-  getAssetPool(): Promise<AssetPool>;
+  getAssetPool?(): Promise<AssetPool>;
 }

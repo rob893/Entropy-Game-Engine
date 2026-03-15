@@ -18,9 +18,14 @@ export interface PrefabSettings {
   rotation: number;
 
   /**
-   * The unique string identifier of the object. If it shares the same id as an object, it will automatically be changed to {name} Clone(x)
+   * An optional stable identifier for the object.
    */
-  id: string;
+  id?: string;
+
+  /**
+   * The human-readable name of the object.
+   */
+  name: string;
 
   /**
    * The tag assocaited with the object. Tag can be used to group objects together (ie, 'enemy' tag for all enemies)

@@ -15,7 +15,7 @@ export class ScrollingBackground extends Component implements RenderableBackgrou
   }
 
   public override start(): void {
-    const gameManager = this.findGameObjectById('gameManager');
+    const gameManager = this.findGameObjectWithTag('gameManager');
 
     if (!gameManager) {
       throw new Error('no gameManager found');

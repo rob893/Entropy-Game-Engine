@@ -5,15 +5,13 @@ import { Terrain } from '../../game-objects/Terrain';
 import { TerrainSpec } from '../interfaces/TerrainSpec';
 import { GameEngine } from '../GameEngine';
 
+type LegacyTerrainSpec = Required<Pick<TerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
+type JSONTerrainSpec = Required<Pick<TerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> & Pick<TerrainSpec, 'tileSet'>;
+
 export class TerrainBuilder {
-  private readonly builderMap: Map<HTMLImageElement, Map<string, SpriteData[]>> = new Map<
-    HTMLImageElement,
-    Map<string, SpriteData[]>
-  >();
-  private readonly spriteSheetSet: Set<string> = new Set<string>();
   private readonly context: CanvasRenderingContext2D;
   private readonly canvas: HTMLCanvasElement;
-  private currentSpriteSheet: HTMLImageElement | null = null;
+  private readonly imageCache: Map<string, Promise<HTMLImageElement>> = new Map<string, Promise<HTMLImageElement>>();
 
   public constructor(width: number = 1024, height: number = 576) {
     this.canvas = document.createElement('canvas');
@@ -29,59 +27,107 @@ export class TerrainBuilder {
   }
 
   public async buildTerrain(gameEngine: GameEngine, terrainSpec: TerrainSpec): Promise<Terrain> {
-    await this.using(terrainSpec.spriteSheetUrl);
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    return new Promise(resolve => {
-      const { scale } = terrainSpec;
-      const terrainGrid = terrainSpec.getSpec();
-      const { cellSize } = terrainSpec;
-      const navGrid = new NavGrid(cellSize * scale);
-      const colliderOffsets: Vector2[] = [];
+    if (this.isLegacyTerrainSpec(terrainSpec)) {
+      return await this.buildLegacyTerrain(gameEngine, terrainSpec);
+    }
 
-      let x = 0;
-      let y = 0;
-      for (let i = 0; i < terrainGrid.length; i++) {
-        for (let j = 0; j < terrainGrid[i].length; j++) {
-          const gridCell = terrainGrid[i][j];
+    if (this.isJSONTerrainSpec(terrainSpec)) {
+      return await this.buildJSONTerrain(gameEngine, terrainSpec);
+    }
 
-          if (gridCell === null) {
-            x = j === terrainGrid[i].length - 1 ? 0 : x + cellSize * scale;
-            y = j === terrainGrid[i].length - 1 ? y + cellSize * scale : y;
-            continue;
-          }
+    throw new Error('Invalid terrain spec.');
+  }
 
-          navGrid.addCell({
-            passable: gridCell.passable,
-            weight: gridCell.weight,
-            position: new Vector2(x, y)
-          });
+  private async buildLegacyTerrain(gameEngine: GameEngine, terrainSpec: LegacyTerrainSpec): Promise<Terrain> {
+    const spriteSheet = await this.loadImage(terrainSpec.spriteSheetUrl);
+    const terrainGrid = terrainSpec.getSpec();
+    const navGrid = new NavGrid(terrainSpec.cellSize * terrainSpec.scale);
+    const colliderOffsets: Vector2[] = [];
 
-          if (!gridCell.passable) {
-            colliderOffsets.push(new Vector2(x, y));
-          }
+    let x = 0;
+    let y = 0;
+    for (let i = 0; i < terrainGrid.length; i++) {
+      for (let j = 0; j < terrainGrid[i].length; j++) {
+        const gridCell = terrainGrid[i][j];
 
-          const c = gridCell.spriteData;
+        if (gridCell === null) {
+          x = j === terrainGrid[i].length - 1 ? 0 : x + terrainSpec.cellSize * terrainSpec.scale;
+          y = j === terrainGrid[i].length - 1 ? y + terrainSpec.cellSize * terrainSpec.scale : y;
+          continue;
+        }
 
-          if (this.currentSpriteSheet === null) {
-            throw new Error('Error building terrain.');
-          }
+        navGrid.addCell({
+          passable: gridCell.passable,
+          weight: gridCell.weight,
+          position: new Vector2(x, y)
+        });
 
-          this.context.drawImage(
-            this.currentSpriteSheet,
-            c.sliceX,
-            c.sliceY,
-            c.sliceWidth,
-            c.sliceHeight,
-            x,
-            y,
-            c.sliceWidth * scale,
-            c.sliceHeight * scale
-          );
-          x = j === terrainGrid[i].length - 1 ? 0 : x + c.sliceWidth * scale;
-          y = j === terrainGrid[i].length - 1 ? y + c.sliceHeight * scale : y;
+        if (!gridCell.passable) {
+          colliderOffsets.push(new Vector2(x, y));
+        }
+
+        const spriteData = gridCell.spriteData;
+        this.context.drawImage(
+          spriteSheet,
+          spriteData.sliceX,
+          spriteData.sliceY,
+          spriteData.sliceWidth,
+          spriteData.sliceHeight,
+          x,
+          y,
+          spriteData.sliceWidth * terrainSpec.scale,
+          spriteData.sliceHeight * terrainSpec.scale
+        );
+
+        x = j === terrainGrid[i].length - 1 ? 0 : x + spriteData.sliceWidth * terrainSpec.scale;
+        y = j === terrainGrid[i].length - 1 ? y + spriteData.sliceHeight * terrainSpec.scale : y;
+      }
+    }
+
+    return await this.createTerrain(gameEngine, navGrid, colliderOffsets);
+  }
+
+  private async buildJSONTerrain(gameEngine: GameEngine, terrainSpec: JSONTerrainSpec): Promise<Terrain> {
+    const navGrid = new NavGrid(Math.max(terrainSpec.tileWidth, terrainSpec.tileHeight));
+    const colliderOffsets: Vector2[] = [];
+
+    for (let row = 0; row < terrainSpec.grid.length; row++) {
+      for (let column = 0; column < terrainSpec.grid[row].length; column++) {
+        const tileValue = terrainSpec.grid[row][column];
+
+        if (tileValue === 0) {
+          continue;
+        }
+
+        const x = column * terrainSpec.tileWidth;
+        const y = row * terrainSpec.tileHeight;
+        const passable = tileValue > 0;
+
+        navGrid.addCell({
+          passable,
+          weight: 0,
+          position: new Vector2(x, y)
+        });
+
+        if (!passable) {
+          colliderOffsets.push(new Vector2(x, y));
+        }
+
+        const assetPath = terrainSpec.tileSet?.[Math.abs(tileValue)];
+
+        if (assetPath !== undefined) {
+          await this.drawTile(assetPath, x, y, terrainSpec.tileWidth, terrainSpec.tileHeight);
         }
       }
+    }
 
+    return await this.createTerrain(gameEngine, navGrid, colliderOffsets);
+  }
+
+  private async createTerrain(gameEngine: GameEngine, navGrid: NavGrid, colliderOffsets: Vector2[]): Promise<Terrain> {
+    return await new Promise(resolve => {
       const image = new Image();
       image.src = this.canvas.toDataURL();
       image.onload = () => {
@@ -90,21 +136,91 @@ export class TerrainBuilder {
     });
   }
 
-  private async using(spriteSheet: string): Promise<TerrainBuilder> {
-    if (this.spriteSheetSet.has(spriteSheet)) {
-      console.warn('This builder is already using this sprite sheet!');
+  private async drawTile(assetPath: string, x: number, y: number, tileWidth: number, tileHeight: number): Promise<void> {
+    const spriteSheetTile = this.parseSpriteSheetTile(assetPath);
+
+    if (spriteSheetTile === null) {
+      const tileImage = await this.loadImage(assetPath);
+      this.context.drawImage(tileImage, x, y, tileWidth, tileHeight);
+      return;
     }
 
-    return new Promise(resolve => {
-      this.spriteSheetSet.add(spriteSheet);
+    const tileImage = await this.loadImage(spriteSheetTile.path);
+    this.context.drawImage(
+      tileImage,
+      spriteSheetTile.spriteData.sliceX,
+      spriteSheetTile.spriteData.sliceY,
+      spriteSheetTile.spriteData.sliceWidth,
+      spriteSheetTile.spriteData.sliceHeight,
+      x,
+      y,
+      tileWidth,
+      tileHeight
+    );
+  }
 
-      const spriteSheetImg = new Image();
-      spriteSheetImg.src = spriteSheet;
-      spriteSheetImg.onload = () => {
-        this.builderMap.set(spriteSheetImg, new Map<string, SpriteData[]>());
-        this.currentSpriteSheet = spriteSheetImg;
-        resolve(this);
-      };
+  private parseSpriteSheetTile(assetPath: string): { path: string; spriteData: SpriteData } | null {
+    const fragmentIndex = assetPath.lastIndexOf('#');
+
+    if (fragmentIndex === -1) {
+      return null;
+    }
+
+    const path = assetPath.slice(0, fragmentIndex);
+    const coordinates = assetPath
+      .slice(fragmentIndex + 1)
+      .split(',')
+      .map(value => Number(value));
+
+    if (coordinates.length !== 4 || coordinates.some(value => !Number.isFinite(value))) {
+      return null;
+    }
+
+    const [sliceX, sliceY, sliceWidth, sliceHeight] = coordinates;
+
+    return {
+      path,
+      spriteData: {
+        sliceX,
+        sliceY,
+        sliceWidth,
+        sliceHeight
+      }
+    };
+  }
+
+  private async loadImage(src: string): Promise<HTMLImageElement> {
+    const existingImage = this.imageCache.get(src);
+
+    if (existingImage !== undefined) {
+      return await existingImage;
+    }
+
+    const imagePromise = new Promise<HTMLImageElement>((resolve, reject) => {
+      const image = new Image();
+      image.src = src;
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error(`Unable to load terrain image: ${src}`));
     });
+
+    this.imageCache.set(src, imagePromise);
+    return await imagePromise;
+  }
+
+  private isLegacyTerrainSpec(terrainSpec: TerrainSpec): terrainSpec is LegacyTerrainSpec {
+    return (
+      typeof terrainSpec.spriteSheetUrl === 'string' &&
+      typeof terrainSpec.scale === 'number' &&
+      typeof terrainSpec.cellSize === 'number' &&
+      typeof terrainSpec.getSpec === 'function'
+    );
+  }
+
+  private isJSONTerrainSpec(terrainSpec: TerrainSpec): terrainSpec is JSONTerrainSpec {
+    return (
+      typeof terrainSpec.tileWidth === 'number' &&
+      typeof terrainSpec.tileHeight === 'number' &&
+      Array.isArray(terrainSpec.grid)
+    );
   }
 }

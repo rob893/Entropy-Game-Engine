@@ -25,8 +25,8 @@ export class GameManagerObject extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'gameManager',
-      tag: '',
+      name: 'gameManager',
+      tag: 'gameManager',
       layer: Layer.Default
     };
   }

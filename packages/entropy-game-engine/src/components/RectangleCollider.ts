@@ -7,9 +7,11 @@ import { Rigidbody } from './Rigidbody';
 import { Color } from '../core/enums/Color';
 import { PhysicalMaterial } from '../core/helpers/PhysicalMaterial';
 import { CollisionManifold } from '../core/helpers/CollisionManifold';
-import { Subscribable } from '../core';
+import { SerializedComponent, Subscribable } from '../core';
+import { isRecord, readBoolean, readNumber, readString, readVector2 } from '../core/helpers/Serialization';
 
 export class RectangleCollider extends Component implements RenderableGizmo {
+  public static override readonly typeName: string = 'RectangleCollider';
   public isTrigger: boolean = false;
   public physicalMaterial: PhysicalMaterial = PhysicalMaterial.zero;
   public readonly attachedRigidbody: Rigidbody | null;
@@ -57,6 +59,22 @@ export class RectangleCollider extends Component implements RenderableGizmo {
       transform.position.x + this._offset.x + width / 2,
       transform.position.y + this._offset.y
     );
+  }
+
+  public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): RectangleCollider {
+    const offset = readVector2(data.offset);
+    const width = readNumber(data.width) ?? 0;
+    const height = readNumber(data.height) ?? 0;
+    const attachedRigidbodyId = readString(data.attachedRigidbodyId);
+    let attachedRigidbody = gameObject.getComponent(Rigidbody);
+
+    if (attachedRigidbodyId !== null && attachedRigidbodyId !== gameObject.id) {
+      attachedRigidbody = gameObject.findGameObjectById(attachedRigidbodyId)?.getComponent(Rigidbody) ?? attachedRigidbody;
+    }
+
+    const collider = new RectangleCollider(gameObject, attachedRigidbody, width, height, offset?.x ?? 0, offset?.y ?? 0);
+    collider.deserialize(data);
+    return collider;
   }
 
   public get width(): number {
@@ -127,6 +145,59 @@ export class RectangleCollider extends Component implements RenderableGizmo {
 
   public get onResized(): Subscribable<void> {
     return this._onResize;
+  }
+
+  public override serialize(): SerializedComponent {
+    return {
+      typeName: this.typeName,
+      data: {
+        width: this.width,
+        height: this.height,
+        offset: {
+          x: this.offset.x,
+          y: this.offset.y
+        },
+        isTrigger: this.isTrigger,
+        attachedRigidbodyId: this.attachedRigidbody?.gameObject.id ?? null,
+        physicalMaterial: {
+          dynamicFriction: this.physicalMaterial.dynamicFriction,
+          staticFriction: this.physicalMaterial.staticFriction,
+          bounciness: this.physicalMaterial.bounciness
+        }
+      }
+    };
+  }
+
+  public override deserialize(data: Record<string, unknown>): void {
+    const width = readNumber(data.width);
+    if (width !== null) {
+      this.width = width;
+    }
+
+    const height = readNumber(data.height);
+    if (height !== null) {
+      this.height = height;
+    }
+
+    const offset = readVector2(data.offset);
+    if (offset !== null) {
+      this.offset = new Vector2(offset.x, offset.y);
+    }
+
+    const isTrigger = readBoolean(data.isTrigger);
+    if (isTrigger !== null) {
+      this.isTrigger = isTrigger;
+    }
+
+    if (isRecord(data.physicalMaterial)) {
+      const dynamicFriction = readNumber(data.physicalMaterial.dynamicFriction);
+      const staticFriction = readNumber(data.physicalMaterial.staticFriction);
+      const bounciness = readNumber(data.physicalMaterial.bounciness);
+
+      if (dynamicFriction !== null && staticFriction !== null && bounciness !== null) {
+        this.physicalMaterial = new PhysicalMaterial(dynamicFriction, staticFriction, bounciness);
+      }
+    }
   }
 
   public detectCollision(other: RectangleCollider): boolean {

@@ -4,7 +4,6 @@ import { CollisionDetector } from './interfaces/CollisionDetector';
 import { CollisionResolver } from './interfaces/CollisionResolver';
 import { CollisionManifold } from './helpers/CollisionManifold';
 import { Vector2 } from './helpers/Vector2';
-import { Time } from './Time';
 import { Component } from '../components/Component';
 
 export class PhysicsEngine {
@@ -13,16 +12,13 @@ export class PhysicsEngine {
   private readonly rigidbodies: Rigidbody[];
   private readonly collisionDetector: CollisionDetector;
   private readonly collisionResolver: CollisionResolver;
-  private readonly time: Time;
 
-  public constructor(collisionDetector: CollisionDetector, collisionResolver: CollisionResolver, time: Time) {
+  public constructor(collisionDetector: CollisionDetector, collisionResolver: CollisionResolver) {
     this.rigidbodies = [];
     this.gravity = 665;
     this.collisionDetector = collisionDetector;
     this.collisionResolver = collisionResolver;
     this.collisionDetector.onCollisionDetected.subscribe(manifold => this.resolveCollisions(manifold));
-
-    this.time = time;
   }
 
   public get colliders(): RectangleCollider[] {
@@ -33,22 +29,27 @@ export class PhysicsEngine {
     return [];
   }
 
-  public updatePhysics(): void {
-    this.collisionDetector.detectCollisions();
+  public updatePhysics(fixedDeltaTime: number): void {
     this.rigidbodies.forEach(rb => {
-      rb.addForce(Vector2.down.multiplyScalar(this.gravity).multiplyScalar(this.time.deltaTime)); //add gravity
-      rb.updatePhysics();
+      if (!rb.enabled || rb.isKinematic) {
+        return;
+      }
+
+      rb.velocity.add(new Vector2(0, this.gravity * fixedDeltaTime));
+      rb.updatePhysics(fixedDeltaTime);
     });
+
+    this.collisionDetector.detectCollisions();
   }
 
   public addRigidbody(rb: Rigidbody): void {
-    if (!rb.isKinomatic) {
+    if (!rb.isKinematic) {
       this.rigidbodies.push(rb);
     }
 
-    rb.becameKinomatic.subscribe(this.removeKinomaticRigidbody);
-    rb.becameNonKinomatic.subscribe(this.addNonKinomaticRigidbody);
-    rb.onDestroyed.subscribe(this.removeKinomaticRigidbody);
+    rb.becameKinematic.subscribe(this.removeKinematicRigidbody);
+    rb.becameNonKinematic.subscribe(this.addNonKinematicRigidbody);
+    rb.onDestroyed.subscribe(this.removeKinematicRigidbody);
   }
 
   public addCollider(collider: RectangleCollider): void {
@@ -64,7 +65,7 @@ export class PhysicsEngine {
     this.collisionResolver.resolveCollisions(collisionManifold);
   }
 
-  private readonly addNonKinomaticRigidbody = (rb: Rigidbody | undefined): void => {
+  private readonly addNonKinematicRigidbody = (rb: Rigidbody | undefined): void => {
     if (rb === undefined) {
       throw new Error('Invalid input');
     }
@@ -72,7 +73,7 @@ export class PhysicsEngine {
     this.rigidbodies.push(rb);
   };
 
-  private readonly removeKinomaticRigidbody = (rb: Component | undefined): void => {
+  private readonly removeKinematicRigidbody = (rb: Component | undefined): void => {
     if (!(rb instanceof Rigidbody)) {
       throw new Error('Invalid component passed in');
     }

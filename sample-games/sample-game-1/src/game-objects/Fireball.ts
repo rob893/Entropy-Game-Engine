@@ -25,7 +25,7 @@ export class Fireball extends GameObject {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'fireball',
+      name: 'fireball',
       tag: '',
       layer: Layer.Default
     };

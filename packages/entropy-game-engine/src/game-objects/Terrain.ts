@@ -82,7 +82,7 @@ export class Terrain extends GameObject implements RenderableBackground {
       x: 0,
       y: 0,
       rotation: 0,
-      id: 'terrain',
+      name: 'terrain',
       tag: 'terrain',
       layer: Layer.Terrain
     };

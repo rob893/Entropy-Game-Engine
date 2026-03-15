@@ -30,7 +30,7 @@ export class Player extends GameObject {
       x: 100,
       y: this.gameCanvas.height / 2,
       rotation: 0,
-      id: 'player',
+      name: 'player',
       tag: 'player',
       layer: Layer.Friendly
     };
