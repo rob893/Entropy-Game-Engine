@@ -8,7 +8,6 @@ import {
   RectangleCollider,
   Vector2
 } from '@entropy-engine/entropy-game-engine';
-import { CharacterAnimator } from '../CharacterAnimator';
 import { CharacterStats } from '../CharacterStats';
 import { Spawner } from '../../Spawner';
 import { Fireball } from '../../../game-objects/Fireball';

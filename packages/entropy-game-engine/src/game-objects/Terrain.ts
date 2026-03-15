@@ -7,7 +7,6 @@ import { Layer } from '../core/enums/Layer';
 import type { Component } from '../components/Component';
 import type { IPrefabSettings } from '../core/types';
 import type { GameEngine } from '../core/GameEngine';
-import { WeightedGraphVisualizer } from '../components/GraphVisualizer';
 
 export class Terrain extends GameObject implements IRenderableBackground {
   public readonly terrainImage: HTMLImageElement;

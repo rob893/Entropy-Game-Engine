@@ -1,5 +1,5 @@
 import { Component, ISubscribable, GameObject, Topic, Slider } from '@entropy-engine/entropy-game-engine';
-import { Damageable } from '../../types';
+import type { Damageable } from '../../types';
 import { CharacterAnimator } from './CharacterAnimator';
 import { PlayerAnimator } from './player/PlayerAnimator';
 

@@ -84,26 +84,26 @@ export class PlayerPhysicsMotor extends Component {
       this.animator.playRunAnimation(-1, 0);
     }
 
-    if (event.key === Key.Space) {
+    if (event.key === Key.Space.toString()) {
       this.rb.addForce(Vector2.up.multiplyScalar(600));
     }
 
-    if (event.key === Key.Backspace) {
+    if (event.key === Key.Backspace.toString()) {
       //this.ball.parent = this.ball.parent === null ? this.transform : null;
       //this.rb.isKinematic = !this.rb.isKinematic;
     }
   }
 
   private onKeyUp(event: KeyboardEvent): void {
-    if (event.key == 'd') {
+    if (event.key === 'd') {
       this.movingRight = false;
-    } else if (event.key == 'a') {
+    } else if (event.key === 'a') {
       this.movingLeft = false;
     }
 
-    if (event.key == 'w') {
+    if (event.key === 'w') {
       this.movingUp = false;
-    } else if (event.key == 's') {
+    } else if (event.key === 's') {
       this.movingDown = false;
     }
 

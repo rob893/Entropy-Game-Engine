@@ -12,7 +12,7 @@ import {
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';
-import { CharacterAnimations } from '../types';
+import type { CharacterAnimations } from '../types';
 import { NPCController } from '../components/characters/npc/NPCController';
 import { SearchingState } from '../components/characters/npc/SearchingState';
 import { ChaseState } from '../components/characters/npc/ChaseState';
@@ -31,7 +31,7 @@ export class Minotaur extends GameObject {
     const navAgent = new NavAgent(this, this.terrain.navGrid);
     components.push(navAgent);
 
-    const minotaurSpriteSheet = this.assetPool.getAsset<SpriteSheet>('minotaurSpriteSheet');
+    const minotaurSpriteSheet = this.assetPool.getAsset('minotaurSpriteSheet') as SpriteSheet;
 
     const attack1R = new Animation(minotaurSpriteSheet.getFrames(4), 0.075);
     const attack2R = new Animation(minotaurSpriteSheet.getFrames(7), 0.075);

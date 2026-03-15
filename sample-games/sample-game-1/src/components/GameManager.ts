@@ -25,9 +25,15 @@ export class GameManager extends Component implements IRenderableGUI {
   public constructor(gameObject: GameObject) {
     super(gameObject);
 
-    this.input.addKeyListener(EventType.KeyDown, '1', async () => await this.sceneManager.loadScene(1));
-    this.input.addKeyListener(EventType.KeyDown, '2', async () => await this.sceneManager.loadScene(2));
-    this.input.addKeyListener(EventType.KeyDown, '3', async () => await this.sceneManager.loadScene(3));
+    this.input.addKeyListener(EventType.KeyDown, '1', () => {
+      void this.sceneManager.loadScene(1);
+    });
+    this.input.addKeyListener(EventType.KeyDown, '2', () => {
+      void this.sceneManager.loadScene(2);
+    });
+    this.input.addKeyListener(EventType.KeyDown, '3', () => {
+      void this.sceneManager.loadScene(3);
+    });
     this.input.addKeyListener(EventType.KeyDown, 'p', () => this.printGameData());
     this.input.addKeyListener(EventType.KeyDown, 'i', () => this.testInstantiate());
     this.input.addKeyListener(EventType.KeyDown, Key.Escape, () => this.togglePause());

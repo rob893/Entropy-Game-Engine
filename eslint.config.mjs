@@ -1,70 +1,83 @@
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import eslintConfigPrettier from 'eslint-config-prettier';
-import vitest from '@vitest/eslint-plugin';
+// @ts-check
 
-export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
-  eslintConfigPrettier,
+import eslint from '@eslint/js';
+import { defineConfig } from 'eslint/config';
+import { fileURLToPath } from 'node:url';
+import tseslint from 'typescript-eslint';
+import importPlugin from 'eslint-plugin-import';
+import prettierConfig from 'eslint-config-prettier';
+
+const tsconfigRootDir = fileURLToPath(new URL('.', import.meta.url));
+
+export default defineConfig(
   {
     ignores: [
-      '**/node_modules/',
-      '**/dist/',
-      '**/coverage/',
-      '**/compiled/',
-      '**/templates/',
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/coverage/**',
+      '**/compiled/**',
+      '**/templates/**',
       'commitlint.config.js',
-      'eslint.config.mjs'
+      'eslint.config.mjs',
+      '@types/**'
     ]
   },
+  eslint.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {
       parserOptions: {
-        project: './tsconfig.eslint.json',
-        tsconfigRootDir: import.meta.dirname
+        project: ['tsconfig.eslint.json'],
+        tsconfigRootDir
+      }
+    }
+  },
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module'
       }
     },
+    plugins: {
+      import: importPlugin
+    },
     rules: {
-      '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true }],
-      '@typescript-eslint/member-ordering': 'off',
-      '@typescript-eslint/no-for-in-array': 'error',
-      '@typescript-eslint/no-this-alias': 'error',
-      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
-      '@typescript-eslint/prefer-readonly': 'error',
-      '@typescript-eslint/require-await': 'error',
-      '@typescript-eslint/no-duplicate-enum-values': 'off',
-      '@typescript-eslint/no-unused-expressions': 'off',
-      'prefer-exponentiation-operator': 'error',
-      'prefer-object-spread': 'error',
-      'prefer-rest-params': 'error',
-      'prefer-template': 'error',
-      'camelcase': 'error',
-      'no-debugger': 'warn',
-      '@typescript-eslint/no-inferrable-types': 'off',
+      'import/first': 'error',
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          'newlines-between': 'never',
+          alphabetize: { order: 'asc', caseInsensitive: true }
+        }
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [{ group: ['@/*'], message: 'Use relative paths instead of the @/ alias.' }]
+        }
+      ],
+      'no-var': 'error',
+      '@typescript-eslint/no-deprecated': 'error',
+      'no-undef': 'off'
+    }
+  },
+  // Relaxed rules for test files
+  {
+    files: ['**/src/**/__tests__/**/*.{ts,tsx}', '**/src/**/*.test.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/no-empty-function': 'off',
-      '@typescript-eslint/no-explicit-any': 'off'
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/require-await': 'off'
     }
   },
-  {
-    files: ['**/*.test.ts', '**/*.test.js'],
-    plugins: { vitest },
-    rules: {
-      ...vitest.configs.recommended.rules,
-      '@typescript-eslint/no-non-null-assertion': 'off'
-    }
-  },
-  {
-    files: ['**/*.d.ts'],
-    rules: {
-      '@typescript-eslint/no-empty-object-type': 'off'
-    }
-  },
-  {
-    files: ['packages/entropy-cli/**/*'],
-    rules: {
-      '@typescript-eslint/no-require-imports': 'off'
-    }
-  }
+  prettierConfig
 );

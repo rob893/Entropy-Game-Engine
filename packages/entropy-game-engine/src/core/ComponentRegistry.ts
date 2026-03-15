@@ -1,7 +1,6 @@
-import type { Component } from '../components/Component';
-import type { GameObject } from '../game-objects/GameObject';
+import type { Component, SerializableComponentType } from '../components/Component';
 
-type ComponentConstructor = new (gameObject: GameObject, ...args: any[]) => Component;
+type ComponentConstructor = SerializableComponentType<Component>;
 
 export class ComponentRegistry {
   private static readonly registry = new Map<string, ComponentConstructor>();

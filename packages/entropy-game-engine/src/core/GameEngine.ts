@@ -55,9 +55,7 @@ export class GameEngine {
 
     this.layerCollisionMatrix = new Map<Layer, Set<Layer>>();
 
-    const layers = Object.keys(Layer)
-      .filter(c => typeof Layer[c as any] === 'number')
-      .map(k => Number(Layer[k as any]));
+    const layers = Object.values(Layer).filter((value): value is Layer => typeof value === 'number');
 
     for (const layer of layers) {
       this.layerCollisionMatrix.set(layer, new Set(layers));
@@ -531,7 +529,8 @@ export class GameEngine {
   }
 
   private async initializeScene(scene: IScene): Promise<void> {
-    this._assetPool = scene.getAssetPool !== undefined ? await scene.getAssetPool() : new AssetPool(new Map<string, unknown>());
+    this._assetPool =
+      scene.getAssetPool !== undefined ? await scene.getAssetPool() : new AssetPool(new Map<string, unknown>());
 
     if (scene.gravity !== undefined) {
       this.gravity = scene.gravity;
@@ -643,7 +642,7 @@ export class GameEngine {
 
     this._gameObjects.forEach(go => go.start());
 
-    this.gameLoopId = requestAnimationFrame(timeStamp => this.gameLoop(timeStamp));
+    this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
   }
 
   private update(timeStamp: number): void {
@@ -678,7 +677,7 @@ export class GameEngine {
     this.renderingEngine.renderScene();
   }
 
-  private gameLoop(timeStamp: number): void {
+  private gameLoop(): void {
     const now = performance.now();
     const diff = now - this.prevFrameTime;
 
@@ -687,6 +686,6 @@ export class GameEngine {
       this.update(now);
     }
 
-    this.gameLoopId = requestAnimationFrame(newTimeStamp => this.gameLoop(newTimeStamp));
+    this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
   }
 }

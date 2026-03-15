@@ -38,7 +38,7 @@ export const scene1: IScene = {
   },
 
   getAssetPool(): Promise<AssetPool> {
-    const pool = new Map();
+    const pool = new Map<string, unknown>();
     return Promise.resolve(new AssetPool(pool));
   }
 };

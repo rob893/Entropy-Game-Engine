@@ -34,7 +34,7 @@ export class TextRenderer extends Component implements IRenderableGUI {
       fontColor: (readString(data.color) ?? undefined) as Color | undefined,
       text: readString(data.text) ?? undefined,
       x: readNumber(data.x) ?? undefined,
-      y: readNumber(data.y) ?? undefined,
+      y: readNumber(data.y) ?? undefined
     });
     textRenderer.deserialize(data);
     return textRenderer;

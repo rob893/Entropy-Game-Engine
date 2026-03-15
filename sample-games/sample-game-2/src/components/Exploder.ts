@@ -1,4 +1,4 @@
-import { AudioSource, Component, GameObject, Rigidbody, Vector2 } from '@entropy-engine/entropy-game-engine';
+import { AudioSource, Component, GameObject } from '@entropy-engine/entropy-game-engine';
 
 export class Exploder extends Component {
   private readonly audioSource: AudioSource;

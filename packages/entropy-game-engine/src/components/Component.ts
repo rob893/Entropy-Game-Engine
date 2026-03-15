@@ -6,11 +6,20 @@ import type { Time } from '../core/Time';
 import type { AssetPool } from '../core/helpers/AssetPool';
 import type { SceneManager } from '../core/helpers/SceneManager';
 import type { Physics } from '../core/physics/Physics';
-import { GameEngine } from '../core/GameEngine';
 import type { Vector2 } from '../core/helpers/Vector2';
 import type { Terrain } from '../game-objects/Terrain';
 import type { IGameObjectConstructionParams } from '../core/types';
 import type { ISerializedComponent, ISubscribable } from '../core';
+
+export type ComponentType<T extends Component = Component> = {
+  readonly prototype: T;
+  readonly name: string;
+  readonly typeName?: string;
+};
+
+export type SerializableComponentType<T extends Component = Component> = ComponentType<T> & {
+  createFromSerialized?: (gameObject: GameObject, data: Record<string, unknown>) => T;
+};
 
 export abstract class Component {
   public static readonly typeName: string = 'Component';
@@ -47,14 +56,14 @@ export abstract class Component {
     return this.isEnabled;
   }
 
-  public static getTypeName(component: { name: string; typeName?: string }): string {
+  public static getTypeName<T extends Component>(component: ComponentType<T>): string {
     return Object.prototype.hasOwnProperty.call(component, 'typeName') && component.typeName !== undefined
       ? component.typeName
       : component.name;
   }
 
   public get typeName(): string {
-    return Component.getTypeName(this.constructor as { name: string; typeName?: string });
+    return Component.getTypeName(this.constructor as ComponentType<Component>);
   }
 
   public get tag(): string {
@@ -84,7 +93,9 @@ export abstract class Component {
     };
   }
 
-  public deserialize(_data: Record<string, unknown>): void {}
+  public deserialize(data: Record<string, unknown>): void {
+    Object.keys(data);
+  }
 
   public onEnabled(): void {}
 
@@ -105,35 +116,35 @@ export abstract class Component {
   }
 
   //These are simply short cut methods to access the gameObject's functionality from a component quicker.
-  public hasComponent<T extends Component>(component: new (...args: any[]) => T): boolean {
+  public hasComponent<T extends Component>(component: ComponentType<T>): boolean {
     return this.gameObject.hasComponent(component);
   }
 
-  public getComponent<T extends Component>(component: new (...args: any[]) => T): T | null {
+  public getComponent<T extends Component>(component: ComponentType<T>): T | null {
     return this.gameObject.getComponent(component);
   }
 
-  public getComponents<T extends Component>(component: new (...args: any[]) => T): T[] {
+  public getComponents<T extends Component>(component: ComponentType<T>): T[] {
     return this.gameObject.getComponents(component);
   }
 
-  public getComponentInParent<T extends Component>(component: new (...args: any[]) => T): T | null {
+  public getComponentInParent<T extends Component>(component: ComponentType<T>): T | null {
     return this.gameObject.getComponentInParent(component);
   }
 
-  public getComponentsInParent<T extends Component>(component: new (...args: any[]) => T): T[] {
+  public getComponentsInParent<T extends Component>(component: ComponentType<T>): T[] {
     return this.gameObject.getComponentsInParent(component);
   }
 
-  public getComponentInChildren<T extends Component>(component: new (...args: any[]) => T): T | null {
+  public getComponentInChildren<T extends Component>(component: ComponentType<T>): T | null {
     return this.gameObject.getComponentInChildren(component);
   }
 
-  public getComponentsInChildren<T extends Component>(component: new (...args: any[]) => T): T[] {
+  public getComponentsInChildren<T extends Component>(component: ComponentType<T>): T[] {
     return this.gameObject.getComponentsInChildren(component);
   }
 
-  public addComponent<T extends Component>(newComponent: Component): T {
+  public addComponent<T extends Component>(newComponent: T): T {
     return this.gameObject.addComponent(newComponent);
   }
 

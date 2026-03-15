@@ -1,4 +1,4 @@
-import { Component, GameObject, RectangleCollider, Vector2 } from '@entropy-engine/entropy-game-engine';
+import { Component, GameObject, Vector2 } from '@entropy-engine/entropy-game-engine';
 import { Border } from '../game-objects/Border';
 import { ScoreManager } from './ScoreManager';
 

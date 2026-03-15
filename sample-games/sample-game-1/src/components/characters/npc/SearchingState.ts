@@ -1,4 +1,4 @@
-import { State } from '../../../types';
+import type { State } from '../../../types';
 import { NPCController } from './NPCController';
 import { CharacterAnimator } from '../CharacterAnimator';
 import { Component, GameObject } from '@entropy-engine/entropy-game-engine';
@@ -36,7 +36,7 @@ export class SearchingState extends Component implements State {
     context.currentTarget = null;
   }
 
-  public onExit(context: NPCController): void {
+  public onExit(): void {
     this.timer = 0;
   }
 }

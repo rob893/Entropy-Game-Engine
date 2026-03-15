@@ -10,11 +10,9 @@ import {
   RectangleCollider,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
-import { PlayerAnimations } from '../types';
+import type { PlayerAnimations } from '../types';
 import { CharacterStats } from '../components/characters/CharacterStats';
 import { PlayerMotor } from '../components/characters/player/PlayerMotor';
-import { Spawner } from '../components/Spawner';
-import { Minotaur } from './Minotaur';
 import { Healthbar } from './Healthbar';
 import { DirectionalAnimation } from '../helpers/DirectionalAnimation';
 import { PlayerAnimator } from '../components/characters/player/PlayerAnimator';
@@ -27,16 +25,17 @@ export class Player extends GameObject {
     collider.physicalMaterial = PhysicalMaterial.bouncy;
     components.push(collider);
 
-    const idleFrames = this.assetPool.getAsset<SpriteSheet>('knightIdleSpriteSheet').getFrames(1);
+    const knightIdleSpriteSheet = this.assetPool.getAsset('knightIdleSpriteSheet') as SpriteSheet;
+    const idleFrames = knightIdleSpriteSheet.getFrames(1);
 
     const initialAnimation = new Animation(idleFrames, 0.2);
     const animator = new Animator(this, 75, 75, initialAnimation);
     components.push(animator);
 
-    const knightSheet = this.assetPool.getAsset<SpriteSheet>('knightSpriteSheet');
-    const knightRunSheet = this.assetPool.getAsset<SpriteSheet>('knightRunSpriteSheet');
-    const knightIdleSheet = this.assetPool.getAsset<SpriteSheet>('knightIdleSpriteSheet');
-    const knightAttack1Sheet = this.assetPool.getAsset<SpriteSheet>('knightAttack1SpriteSheet');
+    const knightSheet = this.assetPool.getAsset('knightSpriteSheet') as SpriteSheet;
+    const knightRunSheet = this.assetPool.getAsset('knightRunSpriteSheet') as SpriteSheet;
+    const knightIdleSheet = knightIdleSpriteSheet;
+    const knightAttack1Sheet = this.assetPool.getAsset('knightAttack1SpriteSheet') as SpriteSheet;
     // const knightAttack2Sheet = this.assetPool.getAsset<SpriteSheet>('knightAttack2SpriteSheet');
 
     const attack1Animation = new DirectionalAnimation(

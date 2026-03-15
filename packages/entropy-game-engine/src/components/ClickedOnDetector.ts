@@ -22,7 +22,8 @@ export class ClickedOnDetector extends Component {
 
   public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): ClickedOnDetector {
     const colliderGameObjectId = readString(data.colliderGameObjectId);
-    const colliderGameObject = colliderGameObjectId === null ? gameObject : gameObject.findGameObjectById(colliderGameObjectId) ?? gameObject;
+    const colliderGameObject =
+      colliderGameObjectId === null ? gameObject : (gameObject.findGameObjectById(colliderGameObjectId) ?? gameObject);
     const collider = colliderGameObject.getComponent(RectangleCollider);
 
     if (collider === null) {
@@ -45,7 +46,7 @@ export class ClickedOnDetector extends Component {
     };
   }
 
-  public override deserialize(_data: Record<string, unknown>): void {}
+  public override deserialize(): void {}
 
   private handleClickEvent(): void {
     const mousePosition = this.input.canvasMousePosition;

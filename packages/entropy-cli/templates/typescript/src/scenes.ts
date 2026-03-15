@@ -3,13 +3,13 @@ import {
   Color,
   GameEngine,
   GameObject,
-  RectangleBackground,
-  Scene
+  IScene,
+  RectangleBackground
 } from '@entropy-engine/entropy-game-engine';
 import { SampleGameObject } from './game-objects/SampleGameObject';
 import { Box } from './game-objects/Box';
 
-export const scene1: Scene = {
+export const scene1: IScene = {
   name: 'Scene1',
   loadOrder: 1,
   terrainSpec: null,
@@ -29,7 +29,7 @@ export const scene1: Scene = {
   },
 
   getAssetPool(): Promise<AssetPool> {
-    const pool = new Map();
+    const pool = new Map<string, unknown>();
     return Promise.resolve(new AssetPool(pool));
   }
 };

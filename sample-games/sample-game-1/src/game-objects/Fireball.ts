@@ -12,7 +12,8 @@ import { FireballBehavior } from '../components/FireballBehavior';
 
 export class Fireball extends GameObject {
   protected buildInitialComponents(): Component[] {
-    const fireballAnimation = new Animation(this.assetPool.getAsset<SpriteSheet>('redFireball').getFrames(), 0.1);
+    const fireballSpriteSheet = this.assetPool.getAsset('redFireball') as SpriteSheet;
+    const fireballAnimation = new Animation(fireballSpriteSheet.getFrames(), 0.1);
     const collider = new RectangleCollider(this, null, 20, 20);
     collider.isTrigger = true;
     const fireballBehavior = new FireballBehavior(this, collider);

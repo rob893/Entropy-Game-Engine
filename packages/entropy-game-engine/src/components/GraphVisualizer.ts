@@ -22,7 +22,11 @@ export class GraphVisualizer extends Component implements IRenderableGizmo {
   }
 
   public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): GraphVisualizer {
-    return new GraphVisualizer(gameObject, gameObject.terrain.navGrid, (readString(data.defaultColor) ?? Color.LightGreen) as Color);
+    return new GraphVisualizer(
+      gameObject,
+      gameObject.terrain.navGrid,
+      (readString(data.defaultColor) ?? Color.LightGreen) as Color
+    );
   }
 
   public override serialize(): ISerializedComponent {
@@ -34,7 +38,7 @@ export class GraphVisualizer extends Component implements IRenderableGizmo {
     };
   }
 
-  public override deserialize(_data: Record<string, unknown>): void {}
+  public override deserialize(): void {}
 
   public renderGizmo(context: CanvasRenderingContext2D): void {
     for (const cell of this.graph.graphCells) {
@@ -50,6 +54,10 @@ export class GraphVisualizer extends Component implements IRenderableGizmo {
   }
 
   protected getColorForCell(cell: IGraphCell): Color {
+    if (cell.position === undefined) {
+      throw new Error('Graph cells must define a position.');
+    }
+
     return this.defaultColor;
   }
 }
@@ -71,7 +79,10 @@ export class WeightedGraphVisualizer extends GraphVisualizer {
     this.unpassableColor = unpassableColor;
   }
 
-  public static override createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): WeightedGraphVisualizer {
+  public static override createFromSerialized(
+    gameObject: GameObject,
+    data: Record<string, unknown>
+  ): WeightedGraphVisualizer {
     return new WeightedGraphVisualizer(
       gameObject,
       gameObject.terrain.navGrid,
@@ -90,7 +101,7 @@ export class WeightedGraphVisualizer extends GraphVisualizer {
     };
   }
 
-  public override deserialize(_data: Record<string, unknown>): void {}
+  public override deserialize(): void {}
 
   protected override getColorForCell(cell: IGraphCell): Color {
     if (!this.isWeightedGraphCell(cell)) {

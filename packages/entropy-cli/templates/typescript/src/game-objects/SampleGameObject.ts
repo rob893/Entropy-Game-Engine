@@ -1,7 +1,6 @@
 import {
   Component,
   GameObject,
-  GameObjectConstructionParams,
   Layer,
   PhysicalMaterial,
   PrefabSettings,
@@ -23,7 +22,7 @@ export class SampleGameObject extends GameObject {
     };
   }
 
-  protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(): Component[] {
     const components: Component[] = [];
 
     components.push(new RectangleRenderer(this, 15, 15, 'white'));
@@ -40,7 +39,7 @@ export class SampleGameObject extends GameObject {
     return components;
   }
 
-  protected override buildAndReturnChildGameObjects(_config: GameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(): GameObject[] {
     return [];
   }
 }

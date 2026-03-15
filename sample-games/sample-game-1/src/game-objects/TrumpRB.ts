@@ -22,7 +22,8 @@ export class TrumpRB extends GameObject {
     collider.physicalMaterial = PhysicalMaterial.bouncy;
     components.push(collider);
 
-    const trumpIdleFrames = this.assetPool.getAsset<SpriteSheet>('minotaurSpriteSheet').getFrames(1);
+    const minotaurSpriteSheet = this.assetPool.getAsset('minotaurSpriteSheet') as SpriteSheet;
+    const trumpIdleFrames = minotaurSpriteSheet.getFrames(1);
 
     const initialAnimation = new Animation(trumpIdleFrames, 0.1);
     components.push(new Animator(this, 75, 75, initialAnimation));

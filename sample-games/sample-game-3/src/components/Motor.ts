@@ -52,7 +52,7 @@ export class Motor extends Component {
       this.movingDown = true;
     }
 
-    if (event.key === Key.Space) {
+    if (event.key === ' ') {
       this.rb.addForce(Vector2.up.multiplyScalar(600));
     }
   }

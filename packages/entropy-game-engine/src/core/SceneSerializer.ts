@@ -10,7 +10,8 @@ import type { ITerrainSpec } from './types';
 
 type LegacyTerrainSpec = Required<Pick<ITerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
 
-type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> & Pick<ITerrainSpec, 'tileSet'>;
+type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> &
+  Pick<ITerrainSpec, 'tileSet'>;
 
 export class SceneSerializer {
   public static serializeScene(engine: GameEngine, name: string, sceneId: number): ISerializedScene {
@@ -26,7 +27,9 @@ export class SceneSerializer {
       serializedScene.gravity = engine.gravity;
     }
 
-    const terrain = engine.currentScene?.terrainSpec ? this.serializeTerrain(engine.currentScene.terrainSpec) : undefined;
+    const terrain = engine.currentScene?.terrainSpec
+      ? this.serializeTerrain(engine.currentScene.terrainSpec)
+      : undefined;
 
     if (terrain !== undefined) {
       serializedScene.terrain = terrain;
@@ -42,7 +45,8 @@ export class SceneSerializer {
       name: data.name,
       gravity: data.gravity,
       terrainSpec: data.terrain ? this.createTerrainSpec(data.terrain) : null,
-      getStartingGameObjects: (engine: GameEngine) => data.gameObjects.map(gameObject => GameObject.deserialize(gameObject, engine)),
+      getStartingGameObjects: (engine: GameEngine) =>
+        data.gameObjects.map(gameObject => GameObject.deserialize(gameObject, engine)),
       getAssetPool: () => Promise.resolve(new AssetPool(new Map<string, unknown>()))
     };
   }
@@ -89,7 +93,13 @@ export class SceneSerializer {
           return 0;
         }
 
-        const tileId = this.getLegacyTerrainTileId(cell, terrainSpec.spriteSheetUrl, tileIds, tileSet, () => nextTileId++);
+        const tileId = this.getLegacyTerrainTileId(
+          cell,
+          terrainSpec.spriteSheetUrl,
+          tileIds,
+          tileSet,
+          () => nextTileId++
+        );
         return cell.passable ? tileId : -tileId;
       })
     );

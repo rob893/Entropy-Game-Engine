@@ -1,5 +1,5 @@
 import { Component, GameObject, NavAgent, Vector2 } from '@entropy-engine/entropy-game-engine';
-import { State } from '../../../types';
+import type { State } from '../../../types';
 import { CharacterStats } from '../CharacterStats';
 import { CharacterAnimator } from '../CharacterAnimator';
 import { NPCController } from './NPCController';
@@ -55,7 +55,7 @@ export class ChaseState extends Component implements State {
     this.targetStats = target.getComponent(CharacterStats);
   }
 
-  public onExit(context: NPCController): void {
+  public onExit(): void {
     this.targetStats = null;
   }
 

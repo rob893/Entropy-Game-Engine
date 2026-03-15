@@ -8,6 +8,8 @@ import {
   IScene,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
+
+type SceneAsset = AudioClip | SpriteSheet;
 import { Scene1TerrainSpec } from './terrains/Scene1TerrainSpec';
 import { GameManagerObject } from './game-objects/GameManagerObject';
 import { Player } from './game-objects/Player';
@@ -47,7 +49,7 @@ export const scene1: IScene = {
   },
 
   async getAssetPool(): Promise<AssetPool> {
-    const assets = new Map<string, any>();
+    const assets = new Map<string, SceneAsset>();
 
     //Need to await all assets here because edge breaks if we try to load them all at the same time.
     const knightMapping = new Map<number, number>([
@@ -146,7 +148,7 @@ export const scene3: IScene = {
   },
 
   async getAssetPool(): Promise<AssetPool> {
-    const assets = new Map<string, any>();
+    const assets = new Map<string, SceneAsset>();
 
     const minotaurMapping = new Map<number, number>([
       [1, 5],

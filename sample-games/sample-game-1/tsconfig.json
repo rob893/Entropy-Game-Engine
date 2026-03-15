@@ -1,10 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "composite": false,
     "declarationMap": false,
-    "declaration": false
+    "declaration": false,
+    "paths": {
+      "@entropy-engine/entropy-game-engine": ["../../packages/entropy-game-engine/src"],
+      "@entropy-engine/entropy-game-engine/*": ["../../packages/entropy-game-engine/src/*"]
+    }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "vite.config.ts"],
   "exclude": ["**/__tests__", "**/__mocks__"]
 }

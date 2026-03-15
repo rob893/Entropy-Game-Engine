@@ -1,7 +1,6 @@
 import {
   Component,
   GameObject,
-  IGameObjectConstructionParams,
   Layer,
   PhysicalMaterial,
   IPrefabSettings,
@@ -23,7 +22,7 @@ export class SampleGameObject extends GameObject {
     };
   }
 
-  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(): Component[] {
     const components: Component[] = [];
 
     components.push(new RectangleRenderer(this, 15, 15, 'white'));
@@ -40,7 +39,7 @@ export class SampleGameObject extends GameObject {
     return components;
   }
 
-  protected override buildAndReturnChildGameObjects(_config: IGameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(): GameObject[] {
     return [];
   }
 }

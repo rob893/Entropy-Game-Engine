@@ -1,17 +1,10 @@
-import {
-  Component,
-  FPSCounter,
-  GameObject,
-  IGameObjectConstructionParams,
-  Layer,
-  IPrefabSettings
-} from '@entropy-engine/entropy-game-engine';
+import { Component, FPSCounter, GameObject, Layer, IPrefabSettings } from '@entropy-engine/entropy-game-engine';
 import { BorderManager } from '../components/BorderManager';
 import { ScoreManager } from '../components/ScoreManager';
 import { MissileSpawner } from '../components/MissileSpawner';
 
 export class GameManager extends GameObject {
-  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(): Component[] {
     const scoreManager = new ScoreManager(this);
     const borderManager = new BorderManager(this, scoreManager);
     const missileSpawner = new MissileSpawner(this, borderManager, scoreManager);

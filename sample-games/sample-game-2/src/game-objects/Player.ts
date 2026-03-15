@@ -3,21 +3,31 @@ import {
   Animator,
   Component,
   GameObject,
-  IGameObjectConstructionParams,
   Layer,
   IPrefabSettings,
-  RectangleCollider,
-  SpriteSheet
+  RectangleCollider
 } from '@entropy-engine/entropy-game-engine';
 import { PlayerMotor } from '../components/PlayerMotor';
 
-export class Player extends GameObject {
-  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
-    const helicopterFrames = this.assetPool.getAsset<SpriteSheet>('helicopterSpriteSheet').getFrames();
+type SpriteSheetAsset = {
+  getFrames(rows?: number | number[]): HTMLImageElement[];
+};
 
+function isSpriteSheetAsset(value: unknown): value is SpriteSheetAsset {
+  return typeof value === 'object' && value !== null && 'getFrames' in value && typeof value.getFrames === 'function';
+}
+
+export class Player extends GameObject {
+  protected buildInitialComponents(): Component[] {
     const collider = new RectangleCollider(this, null, 60, 30);
 
-    const animation = new Animation(helicopterFrames);
+    const helicopterSpriteSheet = this.assetPool.getAsset<unknown>('helicopterSpriteSheet');
+
+    if (!isSpriteSheetAsset(helicopterSpriteSheet)) {
+      throw new Error('Helicopter sprite sheet unavailable.');
+    }
+
+    const animation = new Animation(helicopterSpriteSheet.getFrames());
     const animator = new Animator(this, 60, 30, animation);
 
     const motor = new PlayerMotor(this);

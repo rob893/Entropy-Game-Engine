@@ -25,7 +25,12 @@ export class ImageRenderer extends Component implements IRenderable {
   public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): ImageRenderer {
     const renderWidth = readNumber(data.renderWidth) ?? 0;
     const renderHeight = readNumber(data.renderHeight) ?? 0;
-    const imageRenderer = new ImageRenderer(gameObject, renderWidth, renderHeight, createImageFromSource(readString(data.imageSource)));
+    const imageRenderer = new ImageRenderer(
+      gameObject,
+      renderWidth,
+      renderHeight,
+      createImageFromSource(readString(data.imageSource))
+    );
     imageRenderer.deserialize(data);
     return imageRenderer;
   }

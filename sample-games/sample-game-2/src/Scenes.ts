@@ -1,25 +1,22 @@
 import {
   AssetPool,
   AudioClip,
-  Color,
   GameEngine,
   GameObject,
   ImageUtilities,
-  RectangleBackground,
   IRenderableBackground,
   IScene,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
+import ExplosionSound from './assets/audio/explosion.mp3';
+import BackgroundImage from './assets/images/grassbg1.png';
+import BrickImage from './assets/images/brick.png';
+import Explosion from './assets/images/explosion.png';
 import HelicopterSpriteSheet from './assets/images/helicopter.png';
 import MissileSpriteSheet from './assets/images/missile.png';
-import BrickImage from './assets/images/brick.png';
-import BackgroundImage from './assets/images/grassbg1.png';
-import Explosion from './assets/images/explosion.png';
-import ExplosionSound from './assets/audio/explosion.mp3';
-import { Player } from './game-objects/Player';
 import { Background } from './game-objects/Background';
-import { Border } from './game-objects/Border';
 import { GameManager } from './game-objects/GameManager';
+import { Player } from './game-objects/Player';
 
 export const scene1: IScene = {
   name: 'Scene1',
@@ -37,7 +34,7 @@ export const scene1: IScene = {
   },
 
   async getAssetPool(): Promise<AssetPool> {
-    const assets = new Map<string, any>();
+    const assets = new Map<string, unknown>();
 
     const helicopterSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(HelicopterSpriteSheet, 3, 1, { right: 3 });
     const explosionSpriteSheet = await SpriteSheet.buildSpriteSheetAsync(Explosion, 5, 5);

@@ -74,7 +74,9 @@ function buildSerializableObject(): SerializableTestGameObject {
   rigidbody.useGravity = true;
   rigidbody.drag = 0.25;
 
-  const collider = gameObject.addComponent<RectangleCollider>(new RectangleCollider(gameObject, rigidbody, 20, 30, 4, 6));
+  const collider = gameObject.addComponent<RectangleCollider>(
+    new RectangleCollider(gameObject, rigidbody, 20, 30, 4, 6)
+  );
   collider.isTrigger = true;
   collider.physicalMaterial = new PhysicalMaterial(0.2, 0.4, 0.6);
 

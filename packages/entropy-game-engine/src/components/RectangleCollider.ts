@@ -69,10 +69,18 @@ export class RectangleCollider extends Component implements IRenderableGizmo {
     let attachedRigidbody = gameObject.getComponent(Rigidbody);
 
     if (attachedRigidbodyId !== null && attachedRigidbodyId !== gameObject.id) {
-      attachedRigidbody = gameObject.findGameObjectById(attachedRigidbodyId)?.getComponent(Rigidbody) ?? attachedRigidbody;
+      attachedRigidbody =
+        gameObject.findGameObjectById(attachedRigidbodyId)?.getComponent(Rigidbody) ?? attachedRigidbody;
     }
 
-    const collider = new RectangleCollider(gameObject, attachedRigidbody, width, height, offset?.x ?? 0, offset?.y ?? 0);
+    const collider = new RectangleCollider(
+      gameObject,
+      attachedRigidbody,
+      width,
+      height,
+      offset?.x ?? 0,
+      offset?.y ?? 0
+    );
     collider.deserialize(data);
     return collider;
   }

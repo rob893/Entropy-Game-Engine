@@ -1,17 +1,9 @@
-import {
-  GameObject,
-  Layer,
-  Component,
-  IPrefabSettings,
-  FPSCounter,
-  // WeightedGraphVisualizer,
-  IGameObjectConstructionParams
-} from '@entropy-engine/entropy-game-engine';
+import { Component, FPSCounter, GameObject, IPrefabSettings, Layer } from '@entropy-engine/entropy-game-engine';
 import { GameManager } from '../components/GameManager';
 import { MouseManager } from '../components/MouseManager';
 
 export class GameManagerObject extends GameObject {
-  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(): Component[] {
     return [
       // new WeightedGraphVisualizer(this, this.terrain.navGrid),
       new GameManager(this),

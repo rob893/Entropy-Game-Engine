@@ -13,13 +13,12 @@ import { Exploder } from '../components/Exploder';
 
 export class Explosion extends GameObject {
   protected buildInitialComponents(): Component[] {
-    const explosionAnimation = new Animation(
-      this.assetPool.getAsset<SpriteSheet>('explosionSpriteSheet').getFrames(),
-      0.04
-    );
+    const explosionSpriteSheet = this.assetPool.getAsset('explosionSpriteSheet') as SpriteSheet;
+    const explosionSound = this.assetPool.getAsset('explosionSound') as AudioClip;
+    const explosionAnimation = new Animation(explosionSpriteSheet.getFrames(), 0.04);
     explosionAnimation.loop = false;
 
-    const audioSource = new AudioSource(this, this.assetPool.getAsset<AudioClip>('explosionSound'));
+    const audioSource = new AudioSource(this, explosionSound);
 
     return [audioSource, new Animator(this, 75, 75, explosionAnimation), new Exploder(this, audioSource)];
   }

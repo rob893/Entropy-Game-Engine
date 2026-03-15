@@ -1,7 +1,6 @@
 import {
   Component,
   GameObject,
-  IGameObjectConstructionParams,
   Layer,
   IPrefabSettings,
   IRenderableBackground
@@ -29,7 +28,7 @@ export class Background extends GameObject implements IRenderableBackground {
       layer: Layer.Default
     };
   }
-  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(): Component[] {
     const backgroundImage = this.assetPool.getAsset<HTMLImageElement>('backgroundImage');
 
     const scrollingBackground = new ScrollingBackground(this, backgroundImage);

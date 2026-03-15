@@ -5,7 +5,6 @@ import {
   AudioSource,
   Component,
   GameObject,
-  IGameObjectConstructionParams,
   Layer,
   PhysicalMaterial,
   IPrefabSettings,
@@ -13,7 +12,7 @@ import {
   Rigidbody,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
-import { CharacterAnimations } from '../types';
+import type { CharacterAnimations } from '../types';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';
 import { PlayerHealth } from '../components/characters/player/PlayerHealth';
 import { PlayerPhysicsMotor } from '../components/characters/player/PlayerPhysicsMotor';
@@ -29,7 +28,7 @@ export class PlayerRB extends GameObject {
     collider.physicalMaterial = PhysicalMaterial.bouncy;
     components.push(collider);
 
-    const minotaurSpriteSheet = this.assetPool.getAsset<SpriteSheet>('minotaurSpriteSheet');
+    const minotaurSpriteSheet = this.assetPool.getAsset('minotaurSpriteSheet') as SpriteSheet;
 
     const attack1R = new Animation(minotaurSpriteSheet.getFrames(4), 0.075);
     const attack2R = new Animation(minotaurSpriteSheet.getFrames(7), 0.075);
@@ -83,7 +82,7 @@ export class PlayerRB extends GameObject {
     };
   }
 
-  protected override buildAndReturnChildGameObjects(config: IGameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(): GameObject[] {
     // const ball = new ThrowableBall(gameEngineAPIs, 'ball');
 
     // ball.transform.setPosition(this.transform.position.x, this.transform.position.y - 20);

@@ -99,7 +99,7 @@ const scene1: IScene = {
   },
 
   async getAssetPool(): Promise<AssetPool> {
-    return await null!;
+    return Promise.resolve(null!);
   }
 };
 
@@ -187,7 +187,9 @@ test('Tests various GameObject functions', () => {
 
   expect(testGameObject2.getComponentInChildren(TestComponent)).toBeInstanceOf(TestComponent);
   expect(testGameObject2.getComponentInChildren(TestComponent2)).toBe(testGameObject2.getComponent(TestComponent2));
-  expect(testGameObject2.getComponentsInChildren(TestComponent2)).toEqual([testGameObject2.getComponent(TestComponent2)]);
+  expect(testGameObject2.getComponentsInChildren(TestComponent2)).toEqual([
+    testGameObject2.getComponent(TestComponent2)
+  ]);
 
   const childGameObject = testGameObject2.transform.children[0].gameObject;
 

@@ -69,11 +69,11 @@ export class AudioSource extends Component {
   }
 
   public play(): void {
-    this.audioElement.play();
+    void this.audioElement.play();
   }
 
   public playOneShot(): void {
-    this.audioClip.clip.play();
+    void this.audioClip.clip.play();
   }
 
   public pause(): void {

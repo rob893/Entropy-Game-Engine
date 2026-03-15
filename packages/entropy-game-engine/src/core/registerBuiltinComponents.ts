@@ -2,7 +2,7 @@ import { Animator } from '../components/Animator';
 import { AudioSource } from '../components/AudioSource';
 import { Camera } from '../components/Camera';
 import { ClickedOnDetector } from '../components/ClickedOnDetector';
-import type { Component } from '../components/Component';
+import type { Component, SerializableComponentType } from '../components/Component';
 import { FPSCounter } from '../components/FPSCounter';
 import { GraphVisualizer, WeightedGraphVisualizer } from '../components/GraphVisualizer';
 import { ImageRenderer } from '../components/ImageRenderer';
@@ -31,7 +31,7 @@ const builtinComponents = [
   [FPSCounter.typeName, FPSCounter],
   [GraphVisualizer.typeName, GraphVisualizer],
   [WeightedGraphVisualizer.typeName, WeightedGraphVisualizer]
-] satisfies ReadonlyArray<readonly [string, new (...args: any[]) => Component]>;
+] satisfies ReadonlyArray<readonly [string, SerializableComponentType<Component>]>;
 
 let builtinComponentsRegistered = false;
 

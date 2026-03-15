@@ -6,7 +6,8 @@ import type { ITerrainSpec } from '../types';
 import type { GameEngine } from '../GameEngine';
 
 type LegacyTerrainSpec = Required<Pick<ITerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
-type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> & Pick<ITerrainSpec, 'tileSet'>;
+type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> &
+  Pick<ITerrainSpec, 'tileSet'>;
 
 export class TerrainBuilder {
   private readonly context: CanvasRenderingContext2D;
@@ -136,7 +137,13 @@ export class TerrainBuilder {
     });
   }
 
-  private async drawTile(assetPath: string, x: number, y: number, tileWidth: number, tileHeight: number): Promise<void> {
+  private async drawTile(
+    assetPath: string,
+    x: number,
+    y: number,
+    tileWidth: number,
+    tileHeight: number
+  ): Promise<void> {
     const spriteSheetTile = this.parseSpriteSheetTile(assetPath);
 
     if (spriteSheetTile === null) {

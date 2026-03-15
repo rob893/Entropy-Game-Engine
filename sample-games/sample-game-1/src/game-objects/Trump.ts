@@ -10,7 +10,7 @@ import {
   RectangleCollider,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
-import { CharacterAnimations } from '../types';
+import type { CharacterAnimations } from '../types';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';
 import { EnemyMotor } from '../components/characters/npc/EnemyMotor';
 
@@ -25,14 +25,13 @@ export class Trump extends GameObject {
     const navAgent = new NavAgent(this, this.terrain.navGrid);
     components.push(navAgent);
 
-    const trumpIdleFrames = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet').getFrames(4);
+    const trumpIdleSpriteSheet = this.assetPool.getAsset('trumpIdleSpriteSheet') as SpriteSheet;
+    const trumpRunSpriteSheet = this.assetPool.getAsset('trumpRunSpriteSheet') as SpriteSheet;
+    const trumpIdleFrames = trumpIdleSpriteSheet.getFrames(4);
 
     const initialAnimation = new Animation(trumpIdleFrames, 0.1);
     const animator = new Animator(this, 75, 75, initialAnimation);
     components.push(animator);
-
-    const trumpRunSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpRunSpriteSheet');
-    const trumpIdleSpriteSheet = this.assetPool.getAsset<SpriteSheet>('trumpIdleSpriteSheet');
 
     const runRightAnimation = new Animation(trumpRunSpriteSheet.getFrames(2), 0.075);
     const runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);

@@ -1,5 +1,5 @@
 import { Transform } from '../components/Transform';
-import { Component } from '../components/Component';
+import { Component, type ComponentType, type SerializableComponentType } from '../components/Component';
 import type { GameEngine } from '../core/GameEngine';
 import { Layer } from '../core/enums/Layer';
 import type { IPrefabSettings } from '../core/types';
@@ -16,9 +16,7 @@ import type { IGameObjectConstructionParams } from '../core/types';
 import { ComponentRegistry } from '../core/ComponentRegistry';
 import type { ISerializedComponent, ISerializedGameObject } from '../core/types';
 
-type SerializableComponentConstructor = (new (gameObject: GameObject, ...args: any[]) => Component) & {
-  createFromSerialized?: (gameObject: GameObject, data: Record<string, unknown>) => Component;
-};
+type SerializableComponentConstructor = SerializableComponentType<Component>;
 
 export abstract class GameObject<TConfig extends IGameObjectConstructionParams = IGameObjectConstructionParams> {
   public name: string;
@@ -109,8 +107,14 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     this.isEnabled = enabled;
 
     for (const component of this.updatableComponents) {
-      if (component.enabled) {
-        enabled ? component.onEnabled() : component.onDisable();
+      if (!component.enabled) {
+        continue;
+      }
+
+      if (enabled) {
+        component.onEnabled();
+      } else {
+        component.onDisable();
       }
     }
   }
@@ -261,11 +265,11 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     this.updatableComponents.splice(this.updatableComponents.indexOf(component), 1);
   }
 
-  public hasComponent<T extends Component>(component: new (...args: any[]) => T): boolean {
+  public hasComponent<T extends Component>(component: ComponentType<T>): boolean {
     return this.componentMap.has(Component.getTypeName(component));
   }
 
-  public getComponent<T extends Component>(component: new (...args: any[]) => T): T | null {
+  public getComponent<T extends Component>(component: ComponentType<T>): T | null {
     const componentType = Component.getTypeName(component);
     const components = this.componentMap.get(componentType);
 
@@ -276,7 +280,7 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     return components[0] as T;
   }
 
-  public getComponents<T extends Component>(component: new (...args: any[]) => T): T[] {
+  public getComponents<T extends Component>(component: ComponentType<T>): T[] {
     const componentType = Component.getTypeName(component);
     const components = this.componentMap.get(componentType);
 
@@ -287,7 +291,7 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     return [...components] as T[];
   }
 
-  public getComponentInParent<T extends Component>(component: new (...args: any[]) => T): T | null {
+  public getComponentInParent<T extends Component>(component: ComponentType<T>): T | null {
     let { parent } = this.transform;
 
     while (parent !== null) {
@@ -303,7 +307,7 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     return null;
   }
 
-  public getComponentsInParent<T extends Component>(component: new (...args: any[]) => T): T[] {
+  public getComponentsInParent<T extends Component>(component: ComponentType<T>): T[] {
     let { parent } = this.transform;
     const components: T[] = [];
 
@@ -315,7 +319,7 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     return components;
   }
 
-  public getComponentInChildren<T extends Component>(component: new (...args: any[]) => T): T | null {
+  public getComponentInChildren<T extends Component>(component: ComponentType<T>): T | null {
     const selfComponent = this.getComponent(component);
 
     if (selfComponent !== null) {
@@ -345,7 +349,7 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     return null;
   }
 
-  public getComponentsInChildren<T extends Component>(component: new (...args: any[]) => T): T[] {
+  public getComponentsInChildren<T extends Component>(component: ComponentType<T>): T[] {
     const children = [...this.transform.children];
     const components = this.getComponents(component);
 
@@ -366,7 +370,7 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     return components;
   }
 
-  public addComponent<T extends Component>(newComponent: Component): T {
+  public addComponent<T extends Component>(newComponent: T): T {
     const currentComponents = this.componentMap.get(newComponent.typeName);
 
     if (currentComponents !== undefined) {
@@ -380,7 +384,7 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     newComponent.enabled = true;
     newComponent.start();
 
-    return newComponent as T;
+    return newComponent;
   }
 
   public removeComponent(component: Component): void {
@@ -426,6 +430,7 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
    * @param gameEngine The game engine
    */
   protected buildAndReturnChildGameObjects(config: TConfig): GameObject[] {
+    Object.keys(config);
     return [];
   }
 
@@ -509,9 +514,9 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
   }
 
   private createComponentFromSerialized(serializedComponent: ISerializedComponent): Component {
-    const componentConstructor = ComponentRegistry.get(
-      serializedComponent.typeName
-    ) as SerializableComponentConstructor | undefined;
+    const componentConstructor = ComponentRegistry.get(serializedComponent.typeName) as
+      | SerializableComponentConstructor
+      | undefined;
 
     if (componentConstructor === undefined) {
       throw new Error(`Component type ${serializedComponent.typeName} is not registered.`);

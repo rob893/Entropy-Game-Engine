@@ -1,7 +1,6 @@
-import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
-export default defineConfig({
+export default {
   resolve: {
     alias: {
       '@entropy-engine/entropy-game-engine': resolve(__dirname, '../../packages/entropy-game-engine/src')
@@ -16,4 +15,4 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: true
   }
-});
+};

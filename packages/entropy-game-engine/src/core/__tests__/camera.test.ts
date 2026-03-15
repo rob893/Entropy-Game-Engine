@@ -26,7 +26,10 @@ class EmptyGameObject extends GameObject {
 }
 
 class WorldRenderComponent extends Component {
-  public constructor(gameObject: GameObject, private readonly events: string[]) {
+  public constructor(
+    gameObject: GameObject,
+    private readonly events: string[]
+  ) {
     super(gameObject);
   }
 
@@ -38,7 +41,10 @@ class WorldRenderComponent extends Component {
 class GuiRenderComponent extends Component {
   public readonly zIndex: number = 0;
 
-  public constructor(gameObject: GameObject, private readonly events: string[]) {
+  public constructor(
+    gameObject: GameObject,
+    private readonly events: string[]
+  ) {
     super(gameObject);
   }
 

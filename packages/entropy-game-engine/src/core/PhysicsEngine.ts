@@ -26,7 +26,13 @@ export class PhysicsEngine {
   }
 
   public getPossibleColliders(origin: Vector2, radius: number): RectangleCollider[] {
-    return [];
+    const maxDistanceSquared = radius * radius;
+
+    return this.collisionDetector.colliders.filter(collider => {
+      const deltaX = collider.transform.position.x - origin.x;
+      const deltaY = collider.transform.position.y - origin.y;
+      return deltaX * deltaX + deltaY * deltaY <= maxDistanceSquared;
+    });
   }
 
   public updatePhysics(fixedDeltaTime: number): void {

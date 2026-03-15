@@ -3,7 +3,13 @@ import type { GameObject } from '../game-objects/GameObject';
 import type { Animation } from '../core/helpers/Animation';
 import type { IRenderable } from '../core/types';
 import type { ISerializedComponent } from '../core';
-import { createAnimationFromSource, getElementSource, readBoolean, readNumber, readString } from '../core/helpers/Serialization';
+import {
+  createAnimationFromSource,
+  getElementSource,
+  readBoolean,
+  readNumber,
+  readString
+} from '../core/helpers/Serialization';
 
 export class Animator extends Component implements IRenderable {
   public static override readonly typeName: string = 'Animator';

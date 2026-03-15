@@ -1,44 +1,61 @@
-import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
+import chalk from 'chalk';
+import { execa } from 'execa';
 import { Listr } from 'listr2';
 import { projectInstall } from 'pkg-install';
-import { execa } from 'execa';
-import { Options } from './index.js';
+import type { Options } from './index.js';
 
-async function copyTemplateFiles(options: any): Promise<void> {
+type ResolvedOptions = Options & {
+  template: string;
+  targetDirectory: string;
+  templateDirectory: string;
+};
+
+function resolveOptions(options: Options): ResolvedOptions {
+  const targetDirectory = options.targetDirectory ?? process.cwd();
+
+  if (!options.template) {
+    throw new Error('No template defined');
+  }
+
+  const templateDirectory = path.resolve(import.meta.dirname, '../../templates', options.template.toLowerCase());
+
+  return {
+    ...options,
+    template: options.template,
+    targetDirectory,
+    templateDirectory
+  };
+}
+
+async function copyTemplateFiles(
+  options: Pick<ResolvedOptions, 'templateDirectory' | 'targetDirectory'>
+): Promise<void> {
   await fs.promises.cp(options.templateDirectory, options.targetDirectory, {
     recursive: true,
     force: false
   });
 }
 
-async function initGit(options: any): Promise<boolean> {
+async function initGit(options: Pick<ResolvedOptions, 'targetDirectory'>): Promise<boolean> {
   const result = await execa('git', ['init'], {
     cwd: options.targetDirectory
   });
+
   if (result.failed) {
     return Promise.reject(new Error('Failed to initialize git'));
   }
+
   return true;
 }
 
 export async function createProject(options: Options): Promise<boolean> {
-  options = {
-    ...options,
-    targetDirectory: options.targetDirectory || process.cwd()
-  };
-
-  if (!options.template) {
-    throw new Error('No template defined');
-  }
-
-  const templateDir = path.resolve(import.meta.dirname, '../../templates', options.template.toLowerCase());
-  options.templateDirectory = templateDir;
+  const resolvedOptions = resolveOptions(options);
 
   try {
-    await fs.promises.access(templateDir, fs.constants.R_OK);
-  } catch (err) {
+    await fs.promises.access(resolvedOptions.templateDirectory, fs.constants.R_OK);
+  } catch {
     console.error('%s Invalid template name', chalk.red.bold('ERROR'));
     process.exit(1);
   }
@@ -46,20 +63,20 @@ export async function createProject(options: Options): Promise<boolean> {
   const tasks = new Listr([
     {
       title: 'Copy project files',
-      task: () => copyTemplateFiles(options)
+      task: () => copyTemplateFiles(resolvedOptions)
     },
     {
       title: 'Initialize git',
-      task: () => initGit(options),
-      enabled: () => options.git
+      task: () => initGit(resolvedOptions),
+      enabled: () => resolvedOptions.git
     },
     {
       title: 'Install dependencies',
       task: () =>
         projectInstall({
-          cwd: options.targetDirectory
+          cwd: resolvedOptions.targetDirectory
         }),
-      skip: () => (!options.runInstall ? 'Pass --install to automatically install dependencies' : false)
+      skip: () => (!resolvedOptions.runInstall ? 'Pass --install to automatically install dependencies' : false)
     }
   ]);
 

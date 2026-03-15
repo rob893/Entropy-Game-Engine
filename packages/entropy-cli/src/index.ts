@@ -1,31 +1,62 @@
 import arg from 'arg';
 import chalk from 'chalk';
-import inquirer from 'inquirer';
+import inquirer, { type Question } from 'inquirer';
 import { createRequire } from 'module';
 import { createProject } from './lib.js';
 
 const require = createRequire(import.meta.url);
-const pkg = require('../package.json');
+
+interface PackageJson {
+  version: string;
+}
+
+export interface ParsedArgs {
+  _: string[];
+  '--git'?: boolean;
+  '--yes'?: boolean;
+  '--install'?: boolean;
+  '--version'?: boolean;
+}
 
 export interface Options {
   skipPrompts: boolean;
   git: boolean;
   runInstall: boolean;
-  args: any;
+  args: ParsedArgs;
   template?: string;
   command?: string;
   targetDirectory?: string;
   templateDirectory?: string;
 }
 
+interface PromptAnswers {
+  template?: 'TypeScript' | 'JavaScript';
+  git?: boolean;
+  runInstall?: boolean;
+}
+
 export const commands = new Set<string>(['init']);
 
+function getPackageJson(): unknown {
+  return require('../package.json') as unknown;
+}
+
+function isPackageJson(value: unknown): value is PackageJson {
+  return typeof value === 'object' && value !== null && 'version' in value && typeof value.version === 'string';
+}
+
 function getCLIVersion(): string {
-  return pkg.version;
+  const packageJson = getPackageJson();
+
+  if (!isPackageJson(packageJson)) {
+    throw new Error('Unable to determine CLI version.');
+  }
+
+  return packageJson.version;
 }
 
 function parseArgumentsIntoOptions(rawArgs: string[]): Options {
-  const args = arg(
+  const args: ParsedArgs = arg(
     {
       '--git': Boolean,
       '--yes': Boolean,
@@ -41,31 +72,31 @@ function parseArgumentsIntoOptions(rawArgs: string[]): Options {
     }
   );
 
-  const command = commands.has(args._[0]) ? args._[0] : undefined;
-  const templateIndex = 1;
-  const template = args._[templateIndex];
+  const requestedCommand = args._[0];
+  const command = requestedCommand !== undefined && commands.has(requestedCommand) ? requestedCommand : undefined;
+  const template = args._[1];
 
   return {
-    skipPrompts: args['--yes'] || false,
-    git: args['--git'] || false,
-    runInstall: args['--install'] || false,
+    skipPrompts: args['--yes'] ?? false,
+    git: args['--git'] ?? false,
+    runInstall: args['--install'] ?? false,
     template,
     command,
     args
   };
 }
 
-async function promptForMissingOptions(options: Options): Promise<any> {
+async function promptForMissingOptions(options: Options): Promise<Options> {
   const defaultTemplate = 'TypeScript';
 
   if (options.skipPrompts) {
     return {
       ...options,
-      template: options.template || defaultTemplate
+      template: options.template ?? defaultTemplate
     };
   }
 
-  const questions = [];
+  const questions: Question<PromptAnswers>[] = [];
   const javaScriptResponses = [
     "Don't use JavaScript.",
     'You really should not use JavaScript for this...',
@@ -87,9 +118,13 @@ async function promptForMissingOptions(options: Options): Promise<any> {
       default: defaultTemplate
     });
 
-    const templateAnswer = await inquirer.prompt(questions);
+    const templateAnswer = await inquirer.prompt<PromptAnswers>(questions);
+
     questions.length = 0;
-    options.template = templateAnswer.template;
+    options = {
+      ...options,
+      template: templateAnswer.template
+    };
   }
 
   if (!options.git) {
@@ -110,12 +145,13 @@ async function promptForMissingOptions(options: Options): Promise<any> {
     });
   }
 
-  const answers = await inquirer.prompt(questions);
+  const answers = questions.length > 0 ? await inquirer.prompt<PromptAnswers>(questions) : {};
+
   return {
     ...options,
-    template: options.template || answers.template,
-    git: options.git || answers.git,
-    runInstall: options.runInstall || answers.runInstall
+    template: options.template ?? answers.template ?? defaultTemplate,
+    git: options.git || (answers.git ?? false),
+    runInstall: options.runInstall || (answers.runInstall ?? false)
   };
 }
 
@@ -136,7 +172,9 @@ export async function cli(args: string[]): Promise<void> {
 
     options = await promptForMissingOptions(options);
     await createProject(options);
-  } catch (error) {
-    console.error(error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+
+    console.error(message);
   }
 }

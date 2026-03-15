@@ -1,17 +1,15 @@
 import {
   Component,
   GameObject,
-  IGameObjectConstructionParams,
   ImageRenderer,
   Layer,
   IPrefabSettings,
   RectangleCollider
 } from '@entropy-engine/entropy-game-engine';
 import { Scroller } from '../components/Scroller';
-import { Destroyer } from '../components/Destroyer';
 
 export class Border extends GameObject {
-  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(): Component[] {
     const collider = new RectangleCollider(this, null, 20, 200);
 
     const brickImage = this.assetPool.getAsset<HTMLImageElement>('brickImage');
