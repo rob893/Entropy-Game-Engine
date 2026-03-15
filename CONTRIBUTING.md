@@ -14,7 +14,7 @@ All commits must follow the conventional commits specification which is defined 
 1. All pull requests should be made against the `dev` branch.
 2. Ensure code changes have appropriate tests.
 3. Update the README.md with details of changes.
-4. Versioning is done automatically via lerna. Do not manually bump version numbers.
+4. Versioning is done manually. Bump version numbers in the relevant package.json files before publishing.
 5. You may merge the Pull Request in once you have the sign-off of two other developers, or if you
    do not have permission to do that, you may request the second reviewer to merge it for you.
 
@@ -22,7 +22,7 @@ All commits must follow the conventional commits specification which is defined 
 
 ### General Rules
 
-- Follow the linting and prettier formatter guidelines as defined by the eslintrc file and prettierrc file.
+- Follow the linting and prettier formatter guidelines as defined by the eslint.config.mjs file and prettierrc file.
 
 ### Files
 

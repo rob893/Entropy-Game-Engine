@@ -1,26 +1,20 @@
 import chalk from 'chalk';
 import fs from 'fs';
-import ncp from 'ncp';
 import path from 'path';
-import { promisify } from 'util';
-import Listr from 'listr';
+import { Listr } from 'listr2';
 import { projectInstall } from 'pkg-install';
-import { Options } from './index';
+import { execa } from 'execa';
+import { Options } from './index.js';
 
-const access = promisify(fs.access);
-const copy = promisify(ncp);
-
-function copyTemplateFiles(options: any): Promise<void> {
-  return copy(options.templateDirectory, options.targetDirectory, {
-    clobber: false
+async function copyTemplateFiles(options: any): Promise<void> {
+  await fs.promises.cp(options.templateDirectory, options.targetDirectory, {
+    recursive: true,
+    force: false
   });
 }
 
 async function initGit(options: any): Promise<boolean> {
-  // Need to await import execa due to it being esm module
-  const result = await (
-    await import('execa')
-  ).execa('git', ['init'], {
+  const result = await execa('git', ['init'], {
     cwd: options.targetDirectory
   });
   if (result.failed) {
@@ -39,11 +33,11 @@ export async function createProject(options: Options): Promise<boolean> {
     throw new Error('No template defined');
   }
 
-  const templateDir = path.resolve(__dirname, '../templates', options.template.toLowerCase());
+  const templateDir = path.resolve(import.meta.dirname, '../../templates', options.template.toLowerCase());
   options.templateDirectory = templateDir;
 
   try {
-    await access(templateDir, fs.constants.R_OK);
+    await fs.promises.access(templateDir, fs.constants.R_OK);
   } catch (err) {
     console.error('%s Invalid template name', chalk.red.bold('ERROR'));
     process.exit(1);
@@ -65,7 +59,7 @@ export async function createProject(options: Options): Promise<boolean> {
         projectInstall({
           cwd: options.targetDirectory
         }),
-      skip: () => (!options.runInstall ? 'Pass --install to automatically install dependencies' : undefined)
+      skip: () => (!options.runInstall ? 'Pass --install to automatically install dependencies' : false)
     }
   ]);
 

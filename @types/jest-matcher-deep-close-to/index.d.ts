@@ -1,13 +1,13 @@
-declare module 'jest-matcher-deep-close-to' {
-  global {
-    namespace jest {
-      interface Matchers<R> {
-        toBeDeepCloseTo: (expected: number | number[] | object, decimals?: number) => R;
-        toMatchCloseTo: (expected: number | number[] | object, decimals?: number) => R;
-      }
-    }
-  }
+import 'vitest';
 
+declare module 'vitest' {
+  interface Assertion<T = any> {
+    toBeDeepCloseTo: (expected: number | number[] | object, decimals?: number) => void;
+    toMatchCloseTo: (expected: number | number[] | object, decimals?: number) => void;
+  }
+}
+
+declare module 'jest-matcher-deep-close-to' {
   export function toBeDeepCloseTo(
     received: number | number[] | object,
     expected: number | number[] | object,

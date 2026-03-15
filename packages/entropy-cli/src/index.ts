@@ -1,8 +1,10 @@
 import arg from 'arg';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { createProject } from './lib';
+import { createRequire } from 'module';
+import { createProject } from './lib.js';
 
+const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
 
 export interface Options {

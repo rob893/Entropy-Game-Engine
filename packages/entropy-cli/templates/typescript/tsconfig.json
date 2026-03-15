@@ -15,11 +15,13 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "target": "es2017",
+    "target": "es2020",
     "pretty": true,
     "moduleResolution": "node",
     "module": "ESNext",
-    "allowSyntheticDefaultImports": true
+    "skipLibCheck": true,
+    "esModuleInterop": true
   },
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

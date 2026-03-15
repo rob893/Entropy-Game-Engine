@@ -6,6 +6,5 @@
     "declaration": false
   },
   "include": ["src/**/*"],
-  "exclude": ["**/__tests__", "**/__mocks__"],
-  "references": [{ "path": "../../packages/entropy-game-engine" }]
+  "exclude": ["**/__tests__", "**/__mocks__"]
 }

@@ -1,4 +1,4 @@
-import 'jest-canvas-mock';
+import 'vitest-canvas-mock';
 import { Component } from '../../components/Component';
 import { GameObject } from '../GameObject';
 import { PrefabSettings } from '../../core/interfaces/PrefabSettings';

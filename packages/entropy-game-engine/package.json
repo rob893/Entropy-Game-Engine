@@ -21,9 +21,9 @@
   "types": "dist/index",
   "scripts": {
     "build": "npm run clean-dist && npm run compile",
-    "clean-dist": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
+    "clean-dist": "node -e \"require('fs').rmSync('./dist',{recursive:true,force:true}); require('fs').rmSync('./tsconfig.tsbuildinfo',{force:true});\"",
     "compile": "tsc -p tsconfig.json",
-    "prepare": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "publishConfig": {
     "access": "public"

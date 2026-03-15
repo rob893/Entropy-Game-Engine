@@ -36,37 +36,23 @@ jobs:
     steps:
       - name: Checkout
         if: github.event.inputs.git-ref == ''
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Checkout (Custom Ref)
         if: github.event.inputs.git-ref != ''
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.git-ref }}
           fetch-depth: 0
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
-          node-version: "16"
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: "24"
+          cache: "npm"
       - name: Install dependencies
         run: npm install
       - name: Build packages
         run: npm run compile
-      - name: Authenticate with GitHub
-        run: |
-          # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"
-          git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
-          git checkout $BRANCH
-          git config user.name "Github Actions"
-          git config user.email "bot@github.com"
-      - name: Stash changes
-        run: git stash
       - name: Authenticate with NPM
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
@@ -74,6 +60,4 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish
-        run: npx lerna publish --yes
-        env:
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: npm publish --workspaces --access public --no-git-checks

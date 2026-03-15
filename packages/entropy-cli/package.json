@@ -4,6 +4,7 @@
   "description": "CLI for Entropy Game Engine",
   "author": "Robert Herber <rwherber@gmail.com>",
   "license": "MIT",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rob893/Entropy-Game-Engine.git"
@@ -18,13 +19,13 @@
     "url": "https://github.com/rob893/Entropy-Game-Engine/issues"
   },
   "homepage": "https://github.com/rob893/Entropy-Game-Engine#readme",
-  "main": "dist/index",
-  "types": "dist/index",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "npm run clean-dist && npm run compile",
-    "clean-dist": "rm -rf ./dist && rm -rf tsconfig.tsbuildinfo",
+    "clean-dist": "node -e \"require('fs').rmSync('./dist',{recursive:true,force:true}); require('fs').rmSync('./tsconfig.tsbuildinfo',{force:true});\"",
     "compile": "tsc -p tsconfig.json",
-    "prepare": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "publishConfig": {
     "access": "public"
@@ -35,18 +36,14 @@
   },
   "dependencies": {
     "arg": "^5.0.2",
-    "chalk": "^4.1.2",
-    "esm": "^3.2.25",
-    "execa": "^6.1.0",
-    "inquirer": "^8.2.4",
-    "listr": "^0.14.3",
-    "ncp": "^2.0.0",
+    "chalk": "^5.6.2",
+    "execa": "^9.6.1",
+    "inquirer": "^13.3.0",
+    "listr2": "^10.2.1",
     "pkg-install": "^1.0.0"
   },
   "devDependencies": {
-    "@types/inquirer": "^8.2.1",
-    "@types/listr": "^0.14.4",
-    "@types/ncp": "^2.0.5",
-    "typescript": "^4.7.4"
+    "@types/node": "^25.5.0",
+    "typescript": "^5.7.0"
   }
 }

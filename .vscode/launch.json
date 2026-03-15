@@ -2,9 +2,7 @@
   // Use IntelliSense to learn about possible attributes.
   // Hover to view descriptions of existing attributes.
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-  // For launch against localhost, be sure to have webpack dev server running (npm run dev) and the port numbers the same.
-  // For Attach to Chrome must have "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 in target and
-  // Chrome must be ran as administrator
+  // For launch against localhost, be sure to have the Vite dev server running (npm start) and the port numbers the same.
   "version": "0.2.0",
   "configurations": [
     {
@@ -25,87 +23,42 @@
     },
     {
       "type": "chrome",
-      "request": "attach",
-      "name": "Attach to Chrome",
-      "port": 9222,
+      "request": "launch",
+      "name": "Launch Chrome - Game 1",
       "url": "http://localhost:8080",
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-1",
-      "sourceMapPathOverrides": {
-        "webpack://@entropy-engine/sample-game-1/../packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
-        "webpack://@entropy-engine/sample-game-1/*": "${webRoot}/*"
-      }
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-1"
     },
     {
       "type": "chrome",
       "request": "launch",
-      "name": "Launch Chrome against localhost",
-      "url": "http://localhost:8080",
-      "port": 9223,
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-1",
-      "sourceMapPathOverrides": {
-        "webpack://@entropy-engine/sample-game-1/../packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
-        "webpack://@entropy-engine/sample-game-1/*": "${webRoot}/*"
-      }
-    },
-    {
-      "type": "chrome",
-      "request": "attach",
-      "name": "Attach to Chrome 2",
-      "port": 9222,
-      "url": "http://localhost:8080",
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-2",
-      "sourceMapPathOverrides": {
-        "webpack://@entropy-engine/sample-game-2/../packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
-        "webpack://@entropy-engine/sample-game-2/*": "${webRoot}/*"
-      }
+      "name": "Launch Chrome - Game 2",
+      "url": "http://localhost:8081",
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-2"
     },
     {
       "type": "chrome",
       "request": "launch",
-      "name": "Launch Chrome against localhost 2",
-      "url": "http://localhost:8080",
-      "port": 9223,
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-2",
-      "sourceMapPathOverrides": {
-        "webpack://@entropy-engine/sample-game-2/../packages/entropy-game-engine/*": "${workspaceFolder}/packages/entropy-game-engine/*",
-        "webpack://@entropy-engine/sample-game-2/*": "${webRoot}/*"
-      }
+      "name": "Launch Chrome - Game 3",
+      "url": "http://localhost:8082",
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-3"
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "Jest All",
-      "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runInBand"],
+      "name": "Vitest All",
+      "program": "${workspaceFolder}/node_modules/.bin/vitest",
+      "args": ["run"],
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "windows": {
-        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
-      }
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "Jest Current File",
-      "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runTestsByPath", "${relativeFile}"],
+      "name": "Vitest Current File",
+      "program": "${workspaceFolder}/node_modules/.bin/vitest",
+      "args": ["run", "${relativeFile}"],
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "windows": {
-        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
-      }
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Jest Selected Test Name",
-      "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runTestsByPath", "${relativeFile}", "-t=${selectedText}$"],
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "windows": {
-        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
-      }
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

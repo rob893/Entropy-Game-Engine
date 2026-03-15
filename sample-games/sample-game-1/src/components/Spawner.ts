@@ -5,7 +5,7 @@ export class Spawner extends Component {
   public spawnX = 725;
   public spawnY = 350;
 
-  private cancelToken = { cancel: false };
+  private readonly cancelToken = { cancel: false };
   private readonly objectsToSpawn: (new (constructionParams: GameObjectConstructionParams) => GameObject)[];
 
   public constructor(

@@ -23,16 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Lint and Test
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "16"
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: "24"
+          cache: "npm"
       - name: Install dependencies
         run: npm install
       - name: Lint
@@ -47,31 +42,17 @@ jobs:
     needs:
       - lint_and_test
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
-          node-version: "16"
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: "24"
+          cache: "npm"
       - name: Install dependencies
         run: npm install
       - name: Build packages
         run: npm run compile
-      - name: Authenticate with GitHub
-        run: |
-          # git config http.https://github.com/.extraheader "AUTHORIZATION: basic $(echo x-access-token:${{secrets.GITHUB_TOKEN}} | base64)"
-          git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
-          git checkout "${GITHUB_REF:11}"
-          git config user.name "Github Actions"
-          git config user.email "bot@github.com"
-      - name: Stash changes
-        run: git stash
       - name: Authenticate with NPM
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
@@ -79,28 +60,23 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish
-        run: npx lerna publish --yes
+        run: npm publish --workspaces --access public --no-git-checks
         env:
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   deploy:
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[deploy skip]')"
     runs-on: ubuntu-latest
-    name: Deply to Remote Server
+    name: Deploy to Remote Server
     needs:
       - lint_and_test
       - publish_packages
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "16"
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: "24"
+          cache: "npm"
       - name: Install dependencies
         run: npm install
       - name: Build packages
@@ -115,7 +91,7 @@ jobs:
       - name: Get timestamp
         run: echo "TIMESTAMP=$(date +'%s')" >> $GITHUB_ENV
       - name: Upload build
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: game-build-v${{ steps.package-version.outputs.version }}-${{ env.TIMESTAMP }}
           path: ./sample-games/sample-game-1/dist

@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": true
+  },
+  "include": ["packages/**/*.ts", "sample-games/**/*.ts", "@types/**/*.d.ts", "*.config.*", "vitest.config.ts"],
+  "exclude": ["**/node_modules", "**/dist", "**/templates"]
+}
