@@ -1,5 +1,4 @@
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
-
 import { AStarSearch } from '../AStarSearch';
 import { NavGrid } from '../NavGrid';
 import { Vector2 } from '../Vector2';
@@ -27,7 +26,6 @@ test('A star path finding', (): void => {
     }
     graphVisual += '\n';
   }
-  //console.log(graphVisual);
 
   //Straight line path
   let path = AStarSearch.findPath(graph, new Vector2(0, 0), new Vector2(2, 0));

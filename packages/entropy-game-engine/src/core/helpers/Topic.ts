@@ -1,9 +1,10 @@
-import { Utilities } from './Utilities';
 import { Subscription } from './Subscription';
 import type { ISubscribable } from './types';
+import { Utilities } from './Utilities';
 
 export class Topic<T> implements ISubscribable<T> {
   private readonly handlers: Array<(eventData: T) => void> = [];
+
   private readonly subscriptions: Subscription<T>[] = [];
 
   public publish(eventData: T): void {

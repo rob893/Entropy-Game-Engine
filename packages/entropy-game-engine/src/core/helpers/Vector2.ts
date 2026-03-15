@@ -1,5 +1,6 @@
 export class Vector2 {
   public x: number = 0;
+
   public y: number = 0;
 
   public constructor(x: number, y: number) {
@@ -35,6 +36,27 @@ export class Vector2 {
 
   public static get one(): Vector2 {
     return new Vector2(1, 1);
+  }
+
+  public get sqrMagnitude(): number {
+    return this.x * this.x + this.y * this.y;
+  }
+
+  public get magnitude(): number {
+    return Math.sqrt(this.sqrMagnitude);
+  }
+
+  /**
+   * Return a new normalized copy of the vector. The calling vector will remain unmodified.
+   */
+  public get normalized(): Vector2 {
+    const { magnitude } = this;
+
+    if (magnitude === 0) {
+      return Vector2.zero;
+    }
+
+    return Vector2.divide(this, new Vector2(magnitude, magnitude));
   }
 
   public static clone(from: Vector2): Vector2 {
@@ -151,27 +173,6 @@ export class Vector2 {
     }
 
     return vector.divide(new Vector2(magnitude, magnitude));
-  }
-
-  public get sqrMagnitude(): number {
-    return this.x * this.x + this.y * this.y;
-  }
-
-  public get magnitude(): number {
-    return Math.sqrt(this.sqrMagnitude);
-  }
-
-  /**
-   * Return a new normalized copy of the vector. The calling vector will remain unmodified.
-   */
-  public get normalized(): Vector2 {
-    const { magnitude } = this;
-
-    if (magnitude === 0) {
-      return Vector2.zero;
-    }
-
-    return Vector2.divide(this, new Vector2(magnitude, magnitude));
   }
 
   /**

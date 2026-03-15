@@ -4,15 +4,15 @@ import chalk from 'chalk';
 import { execa } from 'execa';
 import { Listr } from 'listr2';
 import { projectInstall } from 'pkg-install';
-import type { Options } from './index.js';
+import type { IOptions } from './index.js';
 
-type ResolvedOptions = Options & {
+type ResolvedOptions = IOptions & {
   template: string;
   targetDirectory: string;
   templateDirectory: string;
 };
 
-function resolveOptions(options: Options): ResolvedOptions {
+function resolveOptions(options: IOptions): ResolvedOptions {
   const targetDirectory = options.targetDirectory ?? process.cwd();
 
   if (!options.template) {
@@ -50,7 +50,7 @@ async function initGit(options: Pick<ResolvedOptions, 'targetDirectory'>): Promi
   return true;
 }
 
-export async function createProject(options: Options): Promise<boolean> {
+export async function createProject(options: IOptions): Promise<boolean> {
   const resolvedOptions = resolveOptions(options);
 
   try {

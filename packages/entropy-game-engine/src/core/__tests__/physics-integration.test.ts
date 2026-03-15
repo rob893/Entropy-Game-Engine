@@ -1,15 +1,14 @@
 import 'vitest-canvas-mock';
 import { describe, expect, it, vi } from 'vitest';
 import { Rigidbody } from '../../components/Rigidbody';
+import type { GameObject } from '../../game-objects/GameObject';
 import { GameEngine } from '../GameEngine';
-import { Time } from '../Time';
-import { Vector2 } from '../helpers/Vector2';
-import { Topic } from '../helpers/Topic';
 import type { CollisionManifold } from '../helpers/CollisionManifold';
+import { Topic } from '../helpers/Topic';
+import { Vector2 } from '../helpers/Vector2';
 import { PhysicsEngine } from '../PhysicsEngine';
 import type { ICollisionDetector } from '../types';
 import type { ICollisionResolver } from '../types';
-import type { GameObject } from '../../game-objects/GameObject';
 
 const createFakeGameObject = (): GameObject => {
   const position = new Vector2(0, 0);
@@ -46,9 +45,9 @@ const collisionResolver: ICollisionResolver = {
 };
 
 type MutableGameEngine = GameEngine & {
-  _physicsEngine: { updatePhysics: (fixedDeltaTime: number) => void };
-  _renderingEngine: { renderScene: () => void };
-  _time: Time;
+  createEnginesAndAPIs: () => void;
+  physicsEngine: PhysicsEngine;
+  renderingEngine: { renderScene: () => void };
   update: (timeStamp: number) => void;
 };
 
@@ -90,12 +89,12 @@ describe('GameEngine fixed timestep', () => {
     const gameCanvas = document.createElement('canvas');
     const gameEngine = new GameEngine({ gameCanvas });
     const mutableGameEngine = gameEngine as unknown as MutableGameEngine;
-    const physicsEngine = { updatePhysics: vi.fn() };
-    const renderingEngine = { renderScene: vi.fn() };
 
-    mutableGameEngine._physicsEngine = physicsEngine;
-    mutableGameEngine._renderingEngine = renderingEngine;
-    mutableGameEngine._time = new Time();
+    mutableGameEngine.createEnginesAndAPIs();
+
+    const physicsUpdateSpy = vi.spyOn(mutableGameEngine.physicsEngine, 'updatePhysics');
+    vi.spyOn(mutableGameEngine.renderingEngine, 'renderScene').mockImplementation(() => {});
+
     gameEngine.fixedTimeStep = 0.02;
 
     mutableGameEngine.update(0);
@@ -105,8 +104,8 @@ describe('GameEngine fixed timestep', () => {
     mutableGameEngine.update(45);
 
     expect(gameEngine.fixedTimeStep).toBe(0.02);
-    expect(physicsEngine.updatePhysics).toHaveBeenNthCalledWith(1, 0.02);
-    expect(physicsEngine.updatePhysics).toHaveBeenNthCalledWith(2, 0.02);
-    expect(physicsEngine.updatePhysics).toHaveBeenCalledTimes(2);
+    expect(physicsUpdateSpy).toHaveBeenNthCalledWith(1, 0.02);
+    expect(physicsUpdateSpy).toHaveBeenNthCalledWith(2, 0.02);
+    expect(physicsUpdateSpy).toHaveBeenCalledTimes(2);
   });
 });

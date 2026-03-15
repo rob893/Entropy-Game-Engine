@@ -3,14 +3,21 @@ import type { ISubscribable } from './types';
 
 export class Animation {
   public loop: boolean = true;
+
   public playToFinish: boolean = false;
 
   private frameIndex: number = 0;
+
   private timer: number = 0;
+
   private computedTimeBetweenFrames: number;
+
   private finalFrameComplete: boolean = false;
+
   private readonly frames: HTMLImageElement[];
+
   private readonly timeBetweenFrames: number;
+
   private readonly onCompleted = new Topic<void>();
 
   public constructor(frames: HTMLImageElement[], timeBetweenFrames: number = 0) {

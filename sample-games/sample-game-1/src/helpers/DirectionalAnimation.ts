@@ -2,6 +2,7 @@ import { Animation } from '@entropy-engine/entropy-game-engine';
 
 export class DirectionalAnimation {
   private readonly animationMap: Map<-1 | 0 | 1, Map<-1 | 0 | 1, Animation>>;
+
   private readonly anims: Animation[] = [];
 
   public constructor(

@@ -1,5 +1,6 @@
 export class Stopwatch {
   private elapsedMs: number = 0;
+
   private startTime: number = 0;
 
   public get elapsedMilliseconds(): number {

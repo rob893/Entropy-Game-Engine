@@ -1,10 +1,11 @@
-import type { State } from '../../../types';
-import { NPCController } from './NPCController';
-import { CharacterAnimator } from '../CharacterAnimator';
 import { Component, GameObject } from '@entropy-engine/entropy-game-engine';
+import type { IState } from '../../../types';
+import { CharacterAnimator } from '../CharacterAnimator';
+import { NPCController } from './NPCController';
 
-export class SearchingState extends Component implements State {
+export class SearchingState extends Component implements IState {
   private timer = 0;
+
   private readonly animator: CharacterAnimator;
 
   public constructor(gameObject: GameObject, animator: CharacterAnimator) {

@@ -6,9 +6,9 @@ import {
   RectangleBackground,
   IScene
 } from '@entropy-engine/entropy-game-engine';
-import { SampleGameObject } from './game-objects/SampleGameObject';
 import { Box } from './game-objects/Box';
 import { GameManager } from './game-objects/GameManager';
+import { SampleGameObject } from './game-objects/SampleGameObject';
 
 export const scene1: IScene = {
   name: 'Scene1',

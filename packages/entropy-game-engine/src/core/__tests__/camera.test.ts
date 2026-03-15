@@ -2,9 +2,9 @@ import 'vitest-canvas-mock';
 import { Camera } from '../../components/Camera';
 import { Component } from '../../components/Component';
 import { GameObject } from '../../game-objects/GameObject';
+import { Layer } from '../enums/Layer';
 import { GameEngine } from '../GameEngine';
 import type { RenderingEngine } from '../RenderingEngine';
-import { Layer } from '../enums/Layer';
 import type { IPrefabSettings } from '../types';
 
 class EmptyGameObject extends GameObject {

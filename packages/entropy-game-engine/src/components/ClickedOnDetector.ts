@@ -1,15 +1,17 @@
+import type { ISerializedComponent, ISubscribable } from '../core';
+import { EventType } from '../core/enums/EventType';
+import { Geometry } from '../core/helpers/Geometry';
+import { readString } from '../core/helpers/Serialization';
+import { Topic } from '../core/helpers/Topic';
+import type { GameObject } from '../game-objects/GameObject';
 import { Component } from './Component';
 import { RectangleCollider } from './RectangleCollider';
-import type { GameObject } from '../game-objects/GameObject';
-import { Topic } from '../core/helpers/Topic';
-import { Geometry } from '../core/helpers/Geometry';
-import { EventType } from '../core/enums/EventType';
-import type { ISerializedComponent, ISubscribable } from '../core';
-import { readString } from '../core/helpers/Serialization';
 
 export class ClickedOnDetector extends Component {
   public static override readonly typeName: string = 'ClickedOnDetector';
+
   private readonly collider: RectangleCollider;
+
   private readonly onClickedOn: Topic<void> = new Topic<void>();
 
   public constructor(gameObject: GameObject, collider: RectangleCollider) {
@@ -18,6 +20,10 @@ export class ClickedOnDetector extends Component {
     this.collider = collider;
 
     this.input.addMouseListener(EventType.Click, 0, () => this.handleClickEvent());
+  }
+
+  public get onClicked(): ISubscribable<void> {
+    return this.onClickedOn;
   }
 
   public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): ClickedOnDetector {
@@ -31,10 +37,6 @@ export class ClickedOnDetector extends Component {
     }
 
     return new ClickedOnDetector(gameObject, collider);
-  }
-
-  public get onClicked(): ISubscribable<void> {
-    return this.onClickedOn;
   }
 
   public override serialize(): ISerializedComponent {

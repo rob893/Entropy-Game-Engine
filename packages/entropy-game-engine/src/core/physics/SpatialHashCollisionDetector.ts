@@ -1,22 +1,27 @@
 import type { RectangleCollider } from '../../components/RectangleCollider';
-import type { Vector2 } from '../helpers/Vector2';
 import type { Layer } from '../enums/Layer';
-import type { CollisionManifold } from '../helpers/CollisionManifold';
-import { BaseCollisionDetector } from './BaseCollisionDetector';
 import type { ISubscribable } from '../helpers';
+import type { CollisionManifold } from '../helpers/CollisionManifold';
+import type { Vector2 } from '../helpers/Vector2';
+import { BaseCollisionDetector } from './BaseCollisionDetector';
 
 export class SpatialHashCollisionDetector extends BaseCollisionDetector {
   private readonly colliderSpacialMapKeys: Map<RectangleCollider, Set<string>> = new Map<
     RectangleCollider,
     Set<string>
   >();
+
   private readonly spatialMap: Map<string, Set<RectangleCollider>> = new Map<string, Set<RectangleCollider>>();
+
   private readonly collisionMap: Map<RectangleCollider, Set<RectangleCollider>> = new Map<
     RectangleCollider,
     Set<RectangleCollider>
   >();
+
   private readonly cellSize: number;
+
   private readonly gameMapWidth: number;
+
   private readonly gameMapHeight: number;
 
   public constructor(

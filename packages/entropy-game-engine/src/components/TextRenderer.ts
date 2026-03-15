@@ -1,19 +1,26 @@
-import { Component } from './Component';
-import type { IRenderableGUI } from '../core/types';
-import { Color } from '../core/enums/Color';
-import type { GameObject } from '../game-objects/GameObject';
 import type { ISerializedComponent } from '../core';
+import { Color } from '../core/enums/Color';
 import { readNumber, readString } from '../core/helpers/Serialization';
+import type { IRenderableGUI } from '../core/types';
+import type { GameObject } from '../game-objects/GameObject';
+import { Component } from './Component';
 import type { ITextRendererParams } from './types';
 
 export class TextRenderer extends Component implements IRenderableGUI {
   public static override readonly typeName: string = 'TextRenderer';
+
   public fontSize: number;
+
   public fontFamily: string;
+
   public fontColor: Color;
+
   public text: string;
+
   public x: number;
+
   public y: number;
+
   public zIndex: number = 0;
 
   public constructor(gameObject: GameObject, config: ITextRendererParams) {

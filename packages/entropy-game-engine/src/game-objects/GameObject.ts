@@ -1,35 +1,43 @@
-import { Transform } from '../components/Transform';
 import { Component, type ComponentType, type SerializableComponentType } from '../components/Component';
-import type { GameEngine } from '../core/GameEngine';
-import { Layer } from '../core/enums/Layer';
-import type { IPrefabSettings } from '../core/types';
-import type { ComponentAnalyzer } from '../core/helpers/ComponentAnalyzer';
-import { generateUUID } from '../core/helpers/UUID';
-import type { Input } from '../core/helpers/Input';
-import type { Physics } from '../core/physics/Physics';
-import type { SceneManager } from '../core/helpers/SceneManager';
-import type { AssetPool } from '../core/helpers/AssetPool';
-import type { Time } from '../core/Time';
-import type { Vector2 } from '../core/helpers/Vector2';
-import type { Terrain } from './Terrain';
-import type { IGameObjectConstructionParams } from '../core/types';
+import { Transform } from '../components/Transform';
 import { ComponentRegistry } from '../core/ComponentRegistry';
+import { Layer } from '../core/enums/Layer';
+import type { GameEngine } from '../core/GameEngine';
+import type { AssetPool } from '../core/helpers/AssetPool';
+import type { ComponentAnalyzer } from '../core/helpers/ComponentAnalyzer';
+import type { Input } from '../core/helpers/Input';
+import type { SceneManager } from '../core/helpers/SceneManager';
+import { generateUUID } from '../core/helpers/UUID';
+import type { Vector2 } from '../core/helpers/Vector2';
+import type { Physics } from '../core/physics/Physics';
+import type { Time } from '../core/Time';
+import type { IPrefabSettings } from '../core/types';
+import type { IGameObjectConstructionParams } from '../core/types';
 import type { ISerializedComponent, ISerializedGameObject } from '../core/types';
+import type { Terrain } from './Terrain';
 
 type SerializableComponentConstructor = SerializableComponentType<Component>;
 
 export abstract class GameObject<TConfig extends IGameObjectConstructionParams = IGameObjectConstructionParams> {
   public name: string;
+
   public readonly transform: Transform;
 
-  private _id: string;
-  private _tag: string;
-  private _layer: Layer;
   private isEnabled: boolean;
+
   private readonly updatableComponents: Component[] = [];
+
   private readonly componentMap: Map<string, Component[]> = new Map<string, Component[]>();
+
   private readonly componentAnalyzer: ComponentAnalyzer;
+
   private readonly gameEngine: GameEngine;
+
+  #id: string;
+
+  #tag: string;
+
+  #layer: Layer;
 
   public constructor(config: TConfig) {
     const { gameEngine, name, x, y, rotation, tag, layer, id } = config;
@@ -40,12 +48,12 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
 
     const prefabSettings = this.getPrefabSettings();
 
-    this._id = id ?? prefabSettings.id ?? generateUUID();
+    this.#id = id ?? prefabSettings.id ?? generateUUID();
     this.name = name ?? prefabSettings.name;
     this.transform = new Transform(this, x ?? prefabSettings.x, y ?? prefabSettings.y);
     this.transform.rotation = rotation ?? prefabSettings.rotation;
-    this._tag = tag ?? prefabSettings.tag;
-    this._layer = layer ?? prefabSettings.layer;
+    this.#tag = tag ?? prefabSettings.tag;
+    this.#layer = layer ?? prefabSettings.layer;
 
     const initialComponents = this.buildInitialComponents(config); //move this into prefab settings
     initialComponents.push(this.transform);
@@ -60,39 +68,39 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
   }
 
   public get id(): string {
-    return this._id;
+    return this.#id;
   }
 
   public set id(value: string) {
-    if (value === this._id) {
+    if (value === this.#id) {
       return;
     }
 
-    const previousId = this._id;
-    this._id = value;
-    this.gameEngine.syncGameObjectRegistration(this, previousId, this._tag);
+    const previousId = this.#id;
+    this.#id = value;
+    this.gameEngine.syncGameObjectRegistration(this, previousId, this.#tag);
   }
 
   public get tag(): string {
-    return this._tag;
+    return this.#tag;
   }
 
   public set tag(value: string) {
-    if (value === this._tag) {
+    if (value === this.#tag) {
       return;
     }
 
-    const previousTag = this._tag;
-    this._tag = value;
-    this.gameEngine.syncGameObjectRegistration(this, this._id, previousTag);
+    const previousTag = this.#tag;
+    this.#tag = value;
+    this.gameEngine.syncGameObjectRegistration(this, this.#id, previousTag);
   }
 
   public get layer(): Layer {
-    return this._layer;
+    return this.#layer;
   }
 
   public set layer(value: Layer) {
-    this._layer = value;
+    this.#layer = value;
   }
 
   public get enabled(): boolean {
@@ -151,6 +159,18 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     return this.gameEngine.terrain;
   }
 
+  public static deserialize(data: ISerializedGameObject, gameEngine: GameEngine): GameObject {
+    const gameObject = new SerializedGameObjectNode({
+      gameEngine,
+      id: data.id,
+      name: data.name,
+      tag: data.tag,
+      layer: data.layer as Layer
+    });
+    gameObject.deserialize(data);
+    return gameObject;
+  }
+
   public serialize(): ISerializedGameObject {
     const components: ISerializedComponent[] = [];
     this.componentMap.forEach(componentGroup => {
@@ -177,18 +197,6 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
       components: [this.transform.serialize(), ...components],
       children
     };
-  }
-
-  public static deserialize(data: ISerializedGameObject, gameEngine: GameEngine): GameObject {
-    const gameObject = new SerializedGameObjectNode({
-      gameEngine,
-      id: data.id,
-      name: data.name,
-      tag: data.tag,
-      layer: data.layer as Layer
-    });
-    gameObject.deserialize(data);
-    return gameObject;
   }
 
   public deserialize(data: ISerializedGameObject): void {

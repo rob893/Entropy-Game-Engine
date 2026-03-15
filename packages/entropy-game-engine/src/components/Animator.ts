@@ -1,8 +1,5 @@
-import { Component } from './Component';
-import type { GameObject } from '../game-objects/GameObject';
-import type { Animation } from '../core/helpers/Animation';
-import type { IRenderable } from '../core/types';
 import type { ISerializedComponent } from '../core';
+import type { Animation } from '../core/helpers/Animation';
 import {
   createAnimationFromSource,
   getElementSource,
@@ -10,13 +7,21 @@ import {
   readNumber,
   readString
 } from '../core/helpers/Serialization';
+import type { IRenderable } from '../core/types';
+import type { GameObject } from '../game-objects/GameObject';
+import { Component } from './Component';
 
 export class Animator extends Component implements IRenderable {
   public static override readonly typeName: string = 'Animator';
+
   private animation: Animation;
+
   private renderWidth: number;
+
   private renderHeight: number;
+
   private halfRWidth: number;
+
   private halfRHeight: number;
 
   public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, initialAnimation: Animation) {
@@ -29,6 +34,10 @@ export class Animator extends Component implements IRenderable {
     this.animation = initialAnimation;
   }
 
+  public get currentAnimation(): Animation {
+    return this.animation;
+  }
+
   public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): Animator {
     const animator = new Animator(
       gameObject,
@@ -38,10 +47,6 @@ export class Animator extends Component implements IRenderable {
     );
     animator.deserialize(data);
     return animator;
-  }
-
-  public get currentAnimation(): Animation {
-    return this.animation;
   }
 
   public override serialize(): ISerializedComponent {

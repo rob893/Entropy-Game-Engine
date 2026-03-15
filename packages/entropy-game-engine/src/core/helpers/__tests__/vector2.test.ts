@@ -1,5 +1,4 @@
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
-
 import { Vector2 } from '../Vector2';
 
 expect.extend({ toBeDeepCloseTo, toMatchCloseTo });

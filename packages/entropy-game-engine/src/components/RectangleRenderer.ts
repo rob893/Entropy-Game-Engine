@@ -1,15 +1,19 @@
-import { Component } from './Component';
-import type { GameObject } from '../game-objects/GameObject';
-import type { IRenderable } from '../core/types';
 import type { Color, ISerializedComponent } from '../core';
 import { readNumber, readString } from '../core/helpers/Serialization';
+import type { IRenderable } from '../core/types';
+import type { GameObject } from '../game-objects/GameObject';
+import { Component } from './Component';
 import type { IRectangleRendererOptions } from './types';
 
 export class RectangleRenderer extends Component implements IRenderable {
   public static override readonly typeName: string = 'RectangleRenderer';
+
   public renderWidth: number;
+
   public renderHeight: number;
+
   public color?: string;
+
   public borderColor?: string;
 
   public constructor(gameObject: GameObject, options: IRectangleRendererOptions);

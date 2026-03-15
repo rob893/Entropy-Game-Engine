@@ -1,19 +1,30 @@
 import { AudioSource, Component, GameObject } from '@entropy-engine/entropy-game-engine';
-import type { Damageable } from '../../../types';
+import type { IDamageable } from '../../../types';
 import { GameManager } from '../../GameManager';
 
-export class PlayerHealth extends Component implements Damageable {
-  private _health: number;
-  private _isDead: boolean;
+export class PlayerHealth extends Component implements IDamageable {
   private gameManager: GameManager | null = null;
+
   private readonly audioSource: AudioSource;
+
+  #health: number;
+
+  #isDead: boolean;
 
   public constructor(gameObject: GameObject, audioSource: AudioSource, health: number = 100) {
     super(gameObject);
 
-    this._health = health;
-    this._isDead = false;
+    this.#health = health;
+    this.#isDead = false;
     this.audioSource = audioSource;
+  }
+
+  public get health(): number {
+    return this.#health;
+  }
+
+  public get isDead(): boolean {
+    return this.#isDead;
   }
 
   public override start(): void {
@@ -26,32 +37,24 @@ export class PlayerHealth extends Component implements Damageable {
     this.gameManager = gm.getComponent(GameManager);
   }
 
-  public get health(): number {
-    return this._health;
-  }
-
-  public get isDead(): boolean {
-    return this._isDead;
-  }
-
   public sayOuch(): void {
     this.audioSource.playOneShot();
   }
 
   public takeDamage(amount: number): void {
-    this._health -= amount;
+    this.#health -= amount;
 
     if (this.gameManager !== null) {
       this.gameManager.showMessage(`You were hit for ${amount} damage!`, 1, 'red');
     }
 
-    if (this._health <= 0) {
+    if (this.#health <= 0) {
       this.die();
     }
   }
 
   public die(): void {
-    this._isDead = true;
+    this.#isDead = true;
     //this.gameManager.endGame();
     console.log('You are dead!');
   }

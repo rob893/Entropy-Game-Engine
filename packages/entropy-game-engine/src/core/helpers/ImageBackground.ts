@@ -2,6 +2,7 @@ import type { IRenderableBackground } from '../types';
 
 export class ImageBackground implements IRenderableBackground {
   private readonly gameCanvas: HTMLCanvasElement;
+
   private readonly image: HTMLImageElement;
 
   public constructor(gameCanvas: HTMLCanvasElement, imageSrc: string) {

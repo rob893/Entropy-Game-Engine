@@ -1,8 +1,15 @@
 export class AudioClip {
   private readonly audioElements: HTMLAudioElement[] = [];
+
   private index: number = 0;
 
   private constructor() {}
+
+  public get clip(): HTMLAudioElement {
+    this.index = (this.index + 1) % this.audioElements.length;
+
+    return this.audioElements[this.index];
+  }
 
   public static async buildAudioClipAsync(audioURL: string, numberOfClones: number = 1): Promise<AudioClip> {
     const audioClip = new AudioClip();
@@ -10,12 +17,6 @@ export class AudioClip {
     await audioClip.initializeAudioClip(audioURL, numberOfClones);
 
     return audioClip;
-  }
-
-  public get clip(): HTMLAudioElement {
-    this.index = (this.index + 1) % this.audioElements.length;
-
-    return this.audioElements[this.index];
   }
 
   private async initializeAudioClip(audioURL: string, numberOfClones: number): Promise<void> {

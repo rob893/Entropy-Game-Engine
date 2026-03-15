@@ -2,10 +2,13 @@ import { Component, GameObject, IGameObjectConstructionParams, Vector2 } from '@
 
 export class Spawner extends Component {
   public spawnRate = 10;
+
   public spawnX = 725;
+
   public spawnY = 350;
 
   private readonly cancelToken = { cancel: false };
+
   private readonly objectsToSpawn: (new (constructionParams: IGameObjectConstructionParams) => GameObject)[];
 
   public constructor(

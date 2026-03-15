@@ -1,16 +1,16 @@
+import { createRequire } from 'module';
 import arg from 'arg';
 import chalk from 'chalk';
 import inquirer, { type Question } from 'inquirer';
-import { createRequire } from 'module';
 import { createProject } from './lib.js';
 
 const require = createRequire(import.meta.url);
 
-interface PackageJson {
+interface IPackageJson {
   version: string;
 }
 
-export interface ParsedArgs {
+export interface IParsedArgs {
   _: string[];
   '--git'?: boolean;
   '--yes'?: boolean;
@@ -18,18 +18,18 @@ export interface ParsedArgs {
   '--version'?: boolean;
 }
 
-export interface Options {
+export interface IOptions {
   skipPrompts: boolean;
   git: boolean;
   runInstall: boolean;
-  args: ParsedArgs;
+  args: IParsedArgs;
   template?: string;
   command?: string;
   targetDirectory?: string;
   templateDirectory?: string;
 }
 
-interface PromptAnswers {
+interface IPromptAnswers {
   template?: 'TypeScript' | 'JavaScript';
   git?: boolean;
   runInstall?: boolean;
@@ -41,7 +41,7 @@ function getPackageJson(): unknown {
   return require('../package.json') as unknown;
 }
 
-function isPackageJson(value: unknown): value is PackageJson {
+function isPackageJson(value: unknown): value is IPackageJson {
   return typeof value === 'object' && value !== null && 'version' in value && typeof value.version === 'string';
 }
 
@@ -55,8 +55,8 @@ function getCLIVersion(): string {
   return packageJson.version;
 }
 
-function parseArgumentsIntoOptions(rawArgs: string[]): Options {
-  const args: ParsedArgs = arg(
+function parseArgumentsIntoOptions(rawArgs: string[]): IOptions {
+  const args: IParsedArgs = arg(
     {
       '--git': Boolean,
       '--yes': Boolean,
@@ -86,7 +86,7 @@ function parseArgumentsIntoOptions(rawArgs: string[]): Options {
   };
 }
 
-async function promptForMissingOptions(options: Options): Promise<Options> {
+async function promptForMissingOptions(options: IOptions): Promise<IOptions> {
   const defaultTemplate = 'TypeScript';
 
   if (options.skipPrompts) {
@@ -96,7 +96,7 @@ async function promptForMissingOptions(options: Options): Promise<Options> {
     };
   }
 
-  const questions: Question<PromptAnswers>[] = [];
+  const questions: Question<IPromptAnswers>[] = [];
   const javaScriptResponses = [
     "Don't use JavaScript.",
     'You really should not use JavaScript for this...',
@@ -118,7 +118,7 @@ async function promptForMissingOptions(options: Options): Promise<Options> {
       default: defaultTemplate
     });
 
-    const templateAnswer = await inquirer.prompt<PromptAnswers>(questions);
+    const templateAnswer = await inquirer.prompt<IPromptAnswers>(questions);
 
     questions.length = 0;
     options = {
@@ -145,7 +145,7 @@ async function promptForMissingOptions(options: Options): Promise<Options> {
     });
   }
 
-  const answers = questions.length > 0 ? await inquirer.prompt<PromptAnswers>(questions) : {};
+  const answers = questions.length > 0 ? await inquirer.prompt<IPromptAnswers>(questions) : {};
 
   return {
     ...options,

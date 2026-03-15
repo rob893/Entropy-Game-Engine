@@ -1,19 +1,24 @@
-import { Component } from './Component';
-import { Color } from '../core/enums/Color';
-import type { GameObject } from '../game-objects/GameObject';
-import type { IRenderableGUI } from '../core/types';
 import type { ISerializedComponent } from '../core';
+import { Color } from '../core/enums/Color';
 import { readNumber, readString } from '../core/helpers/Serialization';
+import type { IRenderableGUI } from '../core/types';
+import type { GameObject } from '../game-objects/GameObject';
+import { Component } from './Component';
 
 export class Slider extends Component implements IRenderableGUI {
   public static override readonly typeName: string = 'Slider';
+
   public fillColor: Color;
+
   public backgroundColor: Color;
+
   public renderWidth: number;
+
   public renderHeight: number;
+
   public zIndex: number = 0;
 
-  private _fillAmount: number = 100;
+  #fillAmount: number = 100;
 
   public constructor(
     gameObject: GameObject,
@@ -30,6 +35,20 @@ export class Slider extends Component implements IRenderableGUI {
     this.renderHeight = renderHeight;
   }
 
+  public get fillAmount(): number {
+    return this.#fillAmount;
+  }
+
+  public set fillAmount(amount: number) {
+    if (amount < 0) {
+      amount = 0;
+    } else if (amount > 100) {
+      amount = 100;
+    }
+
+    this.#fillAmount = amount;
+  }
+
   public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): Slider {
     const slider = new Slider(
       gameObject,
@@ -40,20 +59,6 @@ export class Slider extends Component implements IRenderableGUI {
     );
     slider.deserialize(data);
     return slider;
-  }
-
-  public get fillAmount(): number {
-    return this._fillAmount;
-  }
-
-  public set fillAmount(amount: number) {
-    if (amount < 0) {
-      amount = 0;
-    } else if (amount > 100) {
-      amount = 100;
-    }
-
-    this._fillAmount = amount;
   }
 
   public override serialize(): ISerializedComponent {
@@ -113,7 +118,7 @@ export class Slider extends Component implements IRenderableGUI {
     );
 
     //draw fill
-    const fillWidth = (this._fillAmount / 100) * this.renderWidth;
+    const fillWidth = (this.#fillAmount / 100) * this.renderWidth;
     context.fillStyle = this.fillColor;
     context.fillRect(
       this.transform.position.x - this.renderWidth / 2,

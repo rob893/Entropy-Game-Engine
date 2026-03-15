@@ -1,62 +1,65 @@
 import { Component, GameObject, Transform } from '@entropy-engine/entropy-game-engine';
-import type { State } from '../../../types';
+import type { IState } from '../../../types';
 import { CharacterStats } from '../CharacterStats';
 
 export class NPCController extends Component {
   public currentTarget: Transform | null = null;
 
-  private _currentState: State;
+  private readonly myStats: CharacterStats;
 
-  private readonly _searchingState: State;
-  private readonly _chaseState: State;
-  private readonly _attackState: State;
-  private readonly _myStats: CharacterStats;
+  #currentState: IState;
+
+  readonly #searchingState: IState;
+
+  readonly #chaseState: IState;
+
+  readonly #attackState: IState;
 
   public constructor(
     gameObject: GameObject,
     myStats: CharacterStats,
-    searchingState: State,
-    chaseState: State,
-    attackState: State
+    searchingState: IState,
+    chaseState: IState,
+    attackState: IState
   ) {
     super(gameObject);
 
-    this._myStats = myStats;
-    this._searchingState = searchingState;
-    this._chaseState = chaseState;
-    this._attackState = attackState;
+    this.myStats = myStats;
+    this.#searchingState = searchingState;
+    this.#chaseState = chaseState;
+    this.#attackState = attackState;
 
-    this._currentState = searchingState;
+    this.#currentState = searchingState;
     searchingState.onEnter(this);
   }
 
-  public get currentState(): State {
-    return this._currentState;
+  public get currentState(): IState {
+    return this.#currentState;
   }
 
-  public get searchingState(): State {
-    return this._searchingState;
+  public get searchingState(): IState {
+    return this.#searchingState;
   }
 
-  public get chaseState(): State {
-    return this._chaseState;
+  public get chaseState(): IState {
+    return this.#chaseState;
   }
 
-  public get attackState(): State {
-    return this._attackState;
+  public get attackState(): IState {
+    return this.#attackState;
   }
 
   public override update(): void {
-    if (this._myStats.isDead) {
+    if (this.myStats.isDead) {
       return;
     }
 
-    this._currentState.performBehavior(this);
+    this.#currentState.performBehavior(this);
   }
 
-  public setState(nextState: State): void {
-    this._currentState.onExit(this);
-    this._currentState = nextState;
+  public setState(nextState: IState): void {
+    this.#currentState.onExit(this);
+    this.#currentState = nextState;
     nextState.onEnter(this);
   }
 }

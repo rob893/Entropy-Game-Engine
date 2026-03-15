@@ -8,16 +8,20 @@ import {
   Rigidbody,
   Vector2
 } from '@entropy-engine/entropy-game-engine';
-import { TrumpRB } from '../game-objects/TrumpRB';
 import cursorImage from '../assets/images/cursors/cursor_final.png';
+import { TrumpRB } from '../game-objects/TrumpRB';
 
 export class GameManager extends Component implements IRenderableGUI {
   public zIndex: number = 0;
 
   private sceneMessage: string = '';
+
   private messageColor: string = '';
+
   private messageTimer: number = 0;
+
   private messageLength: number = 0;
+
   private gameOver: boolean = false;
   //private playerTransform: Transform | null = null;
   //private hubConnection: HubConnection | null = null;

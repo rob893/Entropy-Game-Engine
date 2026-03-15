@@ -1,15 +1,16 @@
-import { Topic } from '../helpers/Topic';
-import { CollisionManifold } from '../helpers/CollisionManifold';
-import { Vector2 } from '../helpers/Vector2';
-import type { Layer } from '../enums/Layer';
 import type { RectangleCollider } from '../../components/RectangleCollider';
-import type { ICollisionDetector } from '../types';
+import type { Layer } from '../enums/Layer';
 import type { ISubscribable } from '../helpers';
+import { CollisionManifold } from '../helpers/CollisionManifold';
+import { Topic } from '../helpers/Topic';
+import { Vector2 } from '../helpers/Vector2';
+import type { ICollisionDetector } from '../types';
 
 export abstract class BaseCollisionDetector implements ICollisionDetector {
   public readonly colliders: RectangleCollider[] = [];
 
   protected readonly _onCollisionDetected: Topic<CollisionManifold> = new Topic<CollisionManifold>();
+
   protected readonly layerCollisionMatrix: Map<Layer, Set<Layer>>;
 
   public constructor(layerCollisionMatrix: Map<Layer, Set<Layer>>) {

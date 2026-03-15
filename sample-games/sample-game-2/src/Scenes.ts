@@ -9,9 +9,9 @@ import {
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import ExplosionSound from './assets/audio/explosion.mp3';
-import BackgroundImage from './assets/images/grassbg1.png';
 import BrickImage from './assets/images/brick.png';
 import Explosion from './assets/images/explosion.png';
+import BackgroundImage from './assets/images/grassbg1.png';
 import HelicopterSpriteSheet from './assets/images/helicopter.png';
 import MissileSpriteSheet from './assets/images/missile.png';
 import { Background } from './game-objects/Background';

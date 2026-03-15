@@ -2,6 +2,7 @@ import type { IComparable } from '../types';
 
 export class BinaryHeap<T extends IComparable> {
   private readonly heapArray: T[] = [];
+
   private readonly minHeap: boolean;
 
   public constructor(minHeap: boolean = true, items?: Iterable<T>) {
@@ -12,6 +13,14 @@ export class BinaryHeap<T extends IComparable> {
         this.add(item);
       }
     }
+  }
+
+  public get isEmpty(): boolean {
+    return this.heapArray.length === 0;
+  }
+
+  public get count(): number {
+    return this.heapArray.length;
   }
 
   public static from<T extends IComparable>(items: Iterable<T>, minHeap: boolean = true): BinaryHeap<T> {
@@ -104,14 +113,6 @@ export class BinaryHeap<T extends IComparable> {
     }
 
     return true;
-  }
-
-  public get isEmpty(): boolean {
-    return this.heapArray.length === 0;
-  }
-
-  public get count(): number {
-    return this.heapArray.length;
   }
 
   public add(item: T): void {

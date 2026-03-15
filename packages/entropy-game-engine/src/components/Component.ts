@@ -1,15 +1,15 @@
-import type { GameObject } from '../game-objects/GameObject';
-import type { Transform } from './Transform';
-import { Topic } from '../core/helpers/Topic';
-import type { Input } from '../core/helpers/Input';
-import type { Time } from '../core/Time';
-import type { AssetPool } from '../core/helpers/AssetPool';
-import type { SceneManager } from '../core/helpers/SceneManager';
-import type { Physics } from '../core/physics/Physics';
-import type { Vector2 } from '../core/helpers/Vector2';
-import type { Terrain } from '../game-objects/Terrain';
-import type { IGameObjectConstructionParams } from '../core/types';
 import type { ISerializedComponent, ISubscribable } from '../core';
+import type { AssetPool } from '../core/helpers/AssetPool';
+import type { Input } from '../core/helpers/Input';
+import type { SceneManager } from '../core/helpers/SceneManager';
+import { Topic } from '../core/helpers/Topic';
+import type { Vector2 } from '../core/helpers/Vector2';
+import type { Physics } from '../core/physics/Physics';
+import type { Time } from '../core/Time';
+import type { IGameObjectConstructionParams } from '../core/types';
+import type { GameObject } from '../game-objects/GameObject';
+import type { Terrain } from '../game-objects/Terrain';
+import type { Transform } from './Transform';
 
 export type ComponentType<T extends Component = Component> = {
   readonly prototype: T;
@@ -27,7 +27,8 @@ export abstract class Component {
   public readonly gameObject: GameObject;
 
   private isEnabled: boolean = true;
-  private readonly _onDestroyed = new Topic<Component>();
+
+  readonly #onDestroyed = new Topic<Component>();
 
   public constructor(gameObject: GameObject, enabled: boolean = true) {
     this.gameObject = gameObject;
@@ -56,12 +57,6 @@ export abstract class Component {
     return this.isEnabled;
   }
 
-  public static getTypeName<T extends Component>(component: ComponentType<T>): string {
-    return Object.prototype.hasOwnProperty.call(component, 'typeName') && component.typeName !== undefined
-      ? component.typeName
-      : component.name;
-  }
-
   public get typeName(): string {
     return Component.getTypeName(this.constructor as ComponentType<Component>);
   }
@@ -83,7 +78,41 @@ export abstract class Component {
   }
 
   public get onDestroyed(): ISubscribable<Component> {
-    return this._onDestroyed;
+    return this.#onDestroyed;
+  }
+
+  protected get input(): Input {
+    return this.gameObject.input;
+  }
+
+  protected get time(): Time {
+    return this.gameObject.time;
+  }
+
+  protected get assetPool(): AssetPool {
+    return this.gameObject.assetPool;
+  }
+
+  protected get sceneManager(): SceneManager {
+    return this.gameObject.sceneManager;
+  }
+
+  protected get physics(): Physics {
+    return this.gameObject.physics;
+  }
+
+  protected get gameCanvas(): HTMLCanvasElement {
+    return this.gameObject.gameCanvas;
+  }
+
+  protected get terrain(): Terrain {
+    return this.gameObject.terrain;
+  }
+
+  public static getTypeName<T extends Component>(component: ComponentType<T>): string {
+    return Object.prototype.hasOwnProperty.call(component, 'typeName') && component.typeName !== undefined
+      ? component.typeName
+      : component.name;
   }
 
   public serialize(): ISerializedComponent {
@@ -112,7 +141,7 @@ export abstract class Component {
   public onDisable(): void {}
 
   public onDestroy(): void {
-    this._onDestroyed.publish(this);
+    this.#onDestroyed.publish(this);
   }
 
   //These are simply short cut methods to access the gameObject's functionality from a component quicker.
@@ -150,34 +179,6 @@ export abstract class Component {
 
   public removeComponent(component: Component): void {
     this.gameObject.removeComponent(component);
-  }
-
-  protected get input(): Input {
-    return this.gameObject.input;
-  }
-
-  protected get time(): Time {
-    return this.gameObject.time;
-  }
-
-  protected get assetPool(): AssetPool {
-    return this.gameObject.assetPool;
-  }
-
-  protected get sceneManager(): SceneManager {
-    return this.gameObject.sceneManager;
-  }
-
-  protected get physics(): Physics {
-    return this.gameObject.physics;
-  }
-
-  protected get gameCanvas(): HTMLCanvasElement {
-    return this.gameObject.gameCanvas;
-  }
-
-  protected get terrain(): Terrain {
-    return this.gameObject.terrain;
   }
 
   protected findGameObjectById(id: string): GameObject | null {

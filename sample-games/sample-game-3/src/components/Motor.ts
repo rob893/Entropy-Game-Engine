@@ -2,10 +2,15 @@ import { Component, EventType, GameObject, Key, Rigidbody, Vector2 } from '@entr
 
 export class Motor extends Component {
   private movingRight: boolean = false;
+
   private movingLeft: boolean = false;
+
   private movingUp: boolean = false;
+
   private movingDown: boolean = false;
+
   private readonly speed: number;
+
   private readonly rb: Rigidbody;
 
   public constructor(gameObject: GameObject, rb: Rigidbody) {

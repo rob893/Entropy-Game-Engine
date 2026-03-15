@@ -8,8 +8,9 @@ import {
 import { Explosion } from '../game-objects/Explosion';
 
 export class FireballBehavior extends Component {
-  private _movementDirection: Vector2 = Vector2.zero;
   private readonly collider: RectangleCollider;
+
+  #movementDirection: Vector2 = Vector2.zero;
 
   public constructor(gameObject: GameObject, collider: RectangleCollider) {
     super(gameObject);
@@ -19,11 +20,11 @@ export class FireballBehavior extends Component {
   }
 
   public get movementDirection(): Vector2 {
-    return this._movementDirection.clone();
+    return this.#movementDirection.clone();
   }
 
   public set movementDirection(newDirection: Vector2) {
-    this._movementDirection = newDirection;
+    this.#movementDirection = newDirection;
     this.transform.lookAt(this.input.canvasMousePosition);
     this.transform.rotation += 5;
   }

@@ -1,26 +1,36 @@
-import { Vector2 } from './Vector2';
-import { EventType } from '../enums/EventType';
-import type { ICanvasMouseEvent } from '../types';
-import type { MouseButton } from '../enums/MouseButton';
 import type { Key } from '../enums';
+import { EventType } from '../enums/EventType';
+import type { MouseButton } from '../enums/MouseButton';
+import type { ICanvasMouseEvent } from '../types';
+import { Vector2 } from './Vector2';
 
 export class Input {
-  private boundingRect: ClientRect | DOMRect;
+  private boundingRect: DOMRect;
+
   private previousKeyHandled: string | null = null;
+
   private readonly gameCanvas: HTMLCanvasElement;
+
   private readonly keyMap = new Map<
     EventType.KeyDown | EventType.KeyUp,
     Map<string, ((event: KeyboardEvent) => void)[]>
   >();
+
   private readonly mouseMap = new Map<
     EventType.Click | EventType.MouseDown | EventType.MouseUp,
     Map<number, ((event: ICanvasMouseEvent) => void)[]>
   >();
+
   private readonly genericEventMap = new Map<EventType, ((event: Event) => void)[]>();
+
   private readonly currentListeners = new Map<EventType, (event: Event) => void>();
+
   private readonly reservedEvents = new Set([EventType.Click, EventType.KeyDown, EventType.KeyUp]);
+
   private readonly keyDownSet = new Set<string>();
+
   private readonly mouseButtonDownSet = new Set<number>();
+
   private readonly currentMousePosition = Vector2.zero;
 
   public constructor(gameCanvas: HTMLCanvasElement) {

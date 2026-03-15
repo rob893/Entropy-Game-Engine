@@ -1,9 +1,11 @@
-import SpriteSheet from '../assets/images/DungeonTileset.png';
 import { ISpriteData, ITerrainCell, ITerrainSpec } from '@entropy-engine/entropy-game-engine';
+import SpriteSheet from '../assets/images/DungeonTileset.png';
 
 export class Scene1TerrainSpec implements ITerrainSpec {
   public readonly cellSize: number = 16;
+
   public readonly scale: number = 1;
+
   public readonly spriteSheetUrl: string = SpriteSheet;
 
   private readonly topWall: ISpriteData = {
@@ -12,30 +14,35 @@ export class Scene1TerrainSpec implements ITerrainSpec {
     sliceWidth: this.cellSize,
     sliceHeight: this.cellSize
   };
+
   private readonly midWall: ISpriteData = {
     sliceX: 16,
     sliceY: 16,
     sliceWidth: this.cellSize,
     sliceHeight: this.cellSize
   };
+
   private readonly rightWall: ISpriteData = {
     sliceX: 0,
     sliceY: 128,
     sliceWidth: this.cellSize,
     sliceHeight: this.cellSize
   };
+
   private readonly leftWall: ISpriteData = {
     sliceX: 16,
     sliceY: 128,
     sliceWidth: this.cellSize,
     sliceHeight: this.cellSize
   };
+
   private readonly bottomWall: ISpriteData = {
     sliceX: 36,
     sliceY: 124,
     sliceWidth: this.cellSize,
     sliceHeight: this.cellSize
   };
+
   //private readonly bottomRCornerWall: ISpriteData = { sliceX: 48, sliceY: 124, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
   //private readonly topRCornerWall: ISpriteData = { sliceX: 48, sliceY: 144, sliceWidth: this.cellSize, sliceHeight: this.cellSize };
   private readonly sideWallEndRight: ISpriteData = {
@@ -44,18 +51,21 @@ export class Scene1TerrainSpec implements ITerrainSpec {
     sliceWidth: this.cellSize,
     sliceHeight: this.cellSize
   };
+
   private readonly sideWallEndLeft: ISpriteData = {
     sliceX: 16,
     sliceY: 144,
     sliceWidth: this.cellSize,
     sliceHeight: this.cellSize
   };
+
   private readonly floorTile: ISpriteData = {
     sliceX: 16,
     sliceY: 64,
     sliceWidth: this.cellSize,
     sliceHeight: this.cellSize
   };
+
   private readonly floorHole: ISpriteData = {
     sliceX: 96,
     sliceY: 144,

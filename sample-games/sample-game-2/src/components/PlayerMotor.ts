@@ -4,6 +4,7 @@ import { ScoreManager } from './ScoreManager';
 
 export class PlayerMotor extends Component {
   private dy: number = 0;
+
   private scoreManager: ScoreManager | null = null;
 
   public override start(): void {

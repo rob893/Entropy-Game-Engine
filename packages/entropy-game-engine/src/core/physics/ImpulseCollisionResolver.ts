@@ -1,7 +1,10 @@
-import type { ICollisionResolver } from '../types';
-import { Vector2 } from '../helpers/Vector2';
 import type { Rigidbody } from '../../components/Rigidbody';
 import type { CollisionManifold } from '../helpers/CollisionManifold';
+import { Vector2 } from '../helpers/Vector2';
+import type { ICollisionResolver } from '../types';
+
+const PENETRATION_CORRECTION_PERCENT = 0.2;
+const PENETRATION_SLOP = 0.01;
 
 export class ImpulseCollisionResolver implements ICollisionResolver {
   public resolveCollisions(collisionManifold: CollisionManifold): void {
@@ -77,9 +80,9 @@ export class ImpulseCollisionResolver implements ICollisionResolver {
   }
 
   private positionalCorrection(rbA: Rigidbody, rbB: Rigidbody, normal: Vector2, penetration: number): void {
-    const percent = 0.2; // usually 20% to 80%
-    const slop = 0.01; // usually 0.01 to 0.1
-    const correction = (Math.max(penetration - slop, 0) / (rbA.inverseMass + rbB.inverseMass)) * percent;
+    const correction =
+      (Math.max(penetration - PENETRATION_SLOP, 0) / (rbA.inverseMass + rbB.inverseMass)) *
+      PENETRATION_CORRECTION_PERCENT;
     const correctionVector = normal.clone().multiplyScalar(correction);
 
     if (!rbA.isKinematic) {

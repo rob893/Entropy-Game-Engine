@@ -8,27 +8,27 @@ import {
   IScene,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
-
-type SceneAsset = AudioClip | SpriteSheet;
-import { Scene1TerrainSpec } from './terrains/Scene1TerrainSpec';
-import { GameManagerObject } from './game-objects/GameManagerObject';
-import { Player } from './game-objects/Player';
-import { PlayerRB } from './game-objects/PlayerRB';
-import KnightSheet from './assets/images/knight.png';
-import MinotaurSheet from './assets/images/minotaur.png';
-import TrumpIdle from './assets/images/trump_idle.png';
-import TrumpRun from './assets/images/trump_run.png';
-import KnightRun from './assets/images/characters/male-knight/Male_Knight_Run.png';
-import KnightIdle from './assets/images/characters/male-knight/Male_Knight_Idle6.png';
-import KnightAttack1 from './assets/images/characters/male-knight/Male_Knight_Attack One Handed Overhead.png';
-import KnightAttack2 from './assets/images/characters/male-knight/Male_Knight_Attack One Handed Side Slash.png';
-import Explosion from './assets/images/explosion.png';
-import RedFireball from './assets/images/redFireball.png';
 import ExplosionSound from './assets/audio/explosion.mp3';
 import HurtSound from './assets/audio/fat_1_male_hit_1.wav';
-import { Minotaur } from './game-objects/Minotaur';
+import KnightAttack1 from './assets/images/characters/male-knight/Male_Knight_Attack One Handed Overhead.png';
+import KnightAttack2 from './assets/images/characters/male-knight/Male_Knight_Attack One Handed Side Slash.png';
+import KnightIdle from './assets/images/characters/male-knight/Male_Knight_Idle6.png';
+import KnightRun from './assets/images/characters/male-knight/Male_Knight_Run.png';
+import Explosion from './assets/images/explosion.png';
+import KnightSheet from './assets/images/knight.png';
+import MinotaurSheet from './assets/images/minotaur.png';
+import RedFireball from './assets/images/redFireball.png';
+import TrumpIdle from './assets/images/trump_idle.png';
+import TrumpRun from './assets/images/trump_run.png';
 import { Box } from './game-objects/Box';
+import { GameManagerObject } from './game-objects/GameManagerObject';
+import { Minotaur } from './game-objects/Minotaur';
+import { Player } from './game-objects/Player';
+import { PlayerRB } from './game-objects/PlayerRB';
 import { UICanvas } from './game-objects/UICanvas';
+import { Scene1TerrainSpec } from './terrains/Scene1TerrainSpec';
+
+type SceneAsset = AudioClip | SpriteSheet;
 
 export const scene1: IScene = {
   name: 'Scene1',

@@ -1,12 +1,14 @@
 import type { IWeightedGraph } from '../types';
-import { Vector2 } from './Vector2';
 import type { IWeightedGraphCell } from '../types';
+import { Vector2 } from './Vector2';
 
 export class NavGrid<T extends IWeightedGraphCell = IWeightedGraphCell> implements IWeightedGraph<T> {
   public readonly cellSize: number;
 
   private readonly cells: Map<string, T> = new Map<string, T>();
+
   private readonly unpassableCells: Set<string> = new Set<string>();
+
   private readonly directions: Vector2[];
 
   public constructor(cellSize: number) {

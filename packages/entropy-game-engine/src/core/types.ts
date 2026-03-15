@@ -1,11 +1,11 @@
-import type { GameObject } from '../game-objects/GameObject';
-import type { AssetPool } from './helpers/AssetPool';
-import type { GameEngine } from './GameEngine';
-import type { Layer } from './enums/Layer';
-import type { Vector2 } from './helpers/Vector2';
 import type { RectangleCollider } from '../components/RectangleCollider';
+import type { GameObject } from '../game-objects/GameObject';
+import type { Layer } from './enums/Layer';
+import type { GameEngine } from './GameEngine';
+import type { AssetPool } from './helpers/AssetPool';
 import type { CollisionManifold } from './helpers/CollisionManifold';
 import type { ISubscribable } from './helpers/types';
+import type { Vector2 } from './helpers/Vector2';
 
 export interface IScene {
   name: string;

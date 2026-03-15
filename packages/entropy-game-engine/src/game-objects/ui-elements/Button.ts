@@ -1,18 +1,19 @@
-import { GameObject } from '../GameObject';
+import { ClickedOnDetector } from '../../components/ClickedOnDetector';
 import type { Component } from '../../components/Component';
 import { RectangleCollider } from '../../components/RectangleCollider';
 import { RectangleRenderer } from '../../components/RectangleRenderer';
-import { Color } from '../../core/enums/Color';
-import type { IPrefabSettings } from '../../core/types';
-import { Layer } from '../../core/enums/Layer';
-import { ClickedOnDetector } from '../../components/ClickedOnDetector';
 import { TextRenderer } from '../../components/TextRenderer';
+import { Color } from '../../core/enums/Color';
+import { Layer } from '../../core/enums/Layer';
+import type { IPrefabSettings } from '../../core/types';
 import type { IGameObjectConstructionParams } from '../../core/types';
+import { GameObject } from '../GameObject';
 
 type ButtonConfig = IGameObjectConstructionParams & { height?: number; width?: number };
 
 export class Button extends GameObject<ButtonConfig> {
   public height: number;
+
   public width: number;
 
   public constructor(config: ButtonConfig) {

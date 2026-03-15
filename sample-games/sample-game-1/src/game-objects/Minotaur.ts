@@ -12,12 +12,12 @@ import {
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';
-import type { CharacterAnimations } from '../types';
+import { CharacterStats } from '../components/characters/CharacterStats';
+import { AttackState } from '../components/characters/npc/AttackState';
+import { ChaseState } from '../components/characters/npc/ChaseState';
 import { NPCController } from '../components/characters/npc/NPCController';
 import { SearchingState } from '../components/characters/npc/SearchingState';
-import { ChaseState } from '../components/characters/npc/ChaseState';
-import { AttackState } from '../components/characters/npc/AttackState';
-import { CharacterStats } from '../components/characters/CharacterStats';
+import type { ICharacterAnimations } from '../types';
 import { Healthbar } from './Healthbar';
 
 export class Minotaur extends GameObject {
@@ -39,7 +39,7 @@ export class Minotaur extends GameObject {
     const attack1L = new Animation(minotaurSpriteSheet.getFrames(14), 0.075);
     const attack2L = new Animation(minotaurSpriteSheet.getFrames(17), 0.075);
 
-    const animations: CharacterAnimations = {
+    const animations: ICharacterAnimations = {
       rightAttackAnimations: [attack1R, attack2R],
       leftAttackAnimations: [attack1L, attack2L],
       runLeftAnimation: new Animation(minotaurSpriteSheet.getFrames(12), 0.075),

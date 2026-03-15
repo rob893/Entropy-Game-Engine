@@ -1,8 +1,8 @@
-import { Vector2 } from '../helpers/Vector2';
 import type { RectangleCollider } from '../../components/RectangleCollider';
-import { Geometry } from '../helpers/Geometry';
-import type { PhysicsEngine } from '../PhysicsEngine';
 import type { Layer } from '../enums/Layer';
+import { Geometry } from '../helpers/Geometry';
+import { Vector2 } from '../helpers/Vector2';
+import type { PhysicsEngine } from '../PhysicsEngine';
 
 export class Physics {
   private readonly physicsEngine: PhysicsEngine;

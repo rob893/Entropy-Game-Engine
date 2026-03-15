@@ -7,6 +7,7 @@ export class ScrollingBackground extends Component implements IRenderableBackgro
   private readonly backgroundImage: HTMLImageElement;
 
   private x: number = 0;
+
   private scoreManager: ScoreManager | null = null;
 
   public constructor(gameObject: GameObject, backgroundImage: HTMLImageElement) {

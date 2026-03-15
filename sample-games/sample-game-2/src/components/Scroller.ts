@@ -3,6 +3,7 @@ import { ScoreManager } from './ScoreManager';
 
 export class Scroller extends Component {
   public xScrollSpeed: number = 0;
+
   public yScrollSpeed: number = 0;
 
   private scoreManager: ScoreManager | null = null;

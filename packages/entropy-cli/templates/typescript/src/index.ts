@@ -1,5 +1,5 @@
 import { Color, GameEngine } from '@entropy-engine/entropy-game-engine';
-import { scene1 } from './scenes';
+import { scene1 } from './Scenes';
 import backgroundImage from './assets/images/background.jpg';
 
 function setBodyStyles({ style }: HTMLBodyElement): void {

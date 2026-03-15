@@ -1,15 +1,20 @@
-import { Component } from './Component';
-import type { IRenderable } from '../core/types';
-import type { GameObject } from '../game-objects/GameObject';
 import type { ISerializedComponent } from '../core';
 import { createImageFromSource, getElementSource, readNumber, readString } from '../core/helpers/Serialization';
+import type { IRenderable } from '../core/types';
+import type { GameObject } from '../game-objects/GameObject';
+import { Component } from './Component';
 
 export class ImageRenderer extends Component implements IRenderable {
   public static override readonly typeName: string = 'ImageRenderer';
+
   private image: HTMLImageElement;
+
   private renderWidth: number;
+
   private renderHeight: number;
+
   private halfRWidth: number;
+
   private halfRHeight: number;
 
   public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, image: HTMLImageElement) {

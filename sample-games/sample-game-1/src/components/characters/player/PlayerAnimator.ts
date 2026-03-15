@@ -1,12 +1,14 @@
 import { Animation, Animator, Component, GameObject } from '@entropy-engine/entropy-game-engine';
-import type { PlayerAnimations } from '../../../types';
+import type { IPlayerAnimations } from '../../../types';
 
 export class PlayerAnimator extends Component {
   private facingRight: boolean = true;
-  private readonly animations: PlayerAnimations;
+
+  private readonly animations: IPlayerAnimations;
+
   private readonly animator: Animator;
 
-  public constructor(gameObject: GameObject, animator: Animator, animations: PlayerAnimations) {
+  public constructor(gameObject: GameObject, animator: Animator, animations: IPlayerAnimations) {
     super(gameObject);
 
     animations.attackAnimations.forEach(attackAnims => {

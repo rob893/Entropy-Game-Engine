@@ -1,36 +1,41 @@
+const MAX_DELTA_TIME = 0.1;
+
 export class Time {
-  private _deltaTime: number = 0;
-  private _totalTime: number = 0;
-  private _timeScale: number = 1.0;
   private prevTime: number | null = null;
 
+  #deltaTime: number = 0;
+
+  #totalTime: number = 0;
+
+  #timeScale: number = 1.0;
+
   public get deltaTime(): number {
-    return this._deltaTime;
+    return this.#deltaTime;
   }
 
   public get totalTime(): number {
-    return this._totalTime;
+    return this.#totalTime;
   }
 
   public get timeScale(): number {
-    return this._timeScale;
+    return this.#timeScale;
   }
 
   public set timeScale(value: number) {
-    this._timeScale = value;
+    this.#timeScale = value;
   }
 
   public updateTime(timeSincePageLoad: number): void {
     if (this.prevTime === null) {
       this.prevTime = timeSincePageLoad;
-      this._deltaTime = 0;
+      this.#deltaTime = 0;
       return;
     }
 
-    this._deltaTime = Math.min((timeSincePageLoad - this.prevTime) / 1000, 0.1);
-    this._deltaTime *= this._timeScale;
+    this.#deltaTime = Math.min((timeSincePageLoad - this.prevTime) / 1000, MAX_DELTA_TIME);
+    this.#deltaTime *= this.#timeScale;
     this.prevTime = timeSincePageLoad;
-    this._totalTime += this._deltaTime;
+    this.#totalTime += this.#deltaTime;
   }
 
   public resetTime(): void {

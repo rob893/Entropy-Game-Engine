@@ -2,6 +2,7 @@ import type { IUnsubscribable } from './types';
 
 export class Subscription<T> implements IUnsubscribable {
   private unsubscribeLogic: (() => void) | null;
+
   private handler: ((eventData: T) => void) | null;
 
   public constructor(unsubscribeLogic: () => void, handler: (eventData: T) => void) {

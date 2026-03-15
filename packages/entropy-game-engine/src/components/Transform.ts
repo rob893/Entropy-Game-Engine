@@ -1,23 +1,30 @@
-import { Component } from './Component';
-import { Vector2 } from '../core/helpers/Vector2';
-import { Topic } from '../core/helpers/Topic';
-import type { GameObject } from '../game-objects/GameObject';
 import type { ISerializedComponent, ISubscribable, IUnsubscribable } from '../core';
 import { readNumber, readVector2 } from '../core/helpers/Serialization';
+import { Topic } from '../core/helpers/Topic';
+import { Vector2 } from '../core/helpers/Vector2';
+import type { GameObject } from '../game-objects/GameObject';
+import { Component } from './Component';
 
 export class Transform extends Component {
   public static override readonly typeName: string = 'Transform';
+
   //Rotation in radians
   public rotation: number;
+
   //Position is the top left of the agent with width growing right and height growing down.
   public readonly position: Vector2;
+
   public readonly localPosition: Vector2;
+
   public readonly scale: Vector2;
 
-  private _parent: Transform | null = null;
   private parentOnMoved: IUnsubscribable | null = null;
-  private readonly _children: Transform[] = [];
+
   private readonly onMove = new Topic<void>();
+
+  #parent: Transform | null = null;
+
+  readonly #children: Transform[] = [];
 
   public constructor(
     gameObject: GameObject,
@@ -40,18 +47,18 @@ export class Transform extends Component {
   }
 
   public get parent(): Transform | null {
-    return this._parent;
+    return this.#parent;
   }
 
   public set parent(newParent: Transform | null) {
-    if (this._parent !== null) {
-      this._parent._children.splice(this._parent._children.indexOf(this), 1);
+    if (this.#parent !== null) {
+      this.#parent.#children.splice(this.#parent.#children.indexOf(this), 1);
       this.parentOnMoved?.unsubscribe();
       this.parentOnMoved = null;
     }
 
     if (newParent !== null) {
-      newParent._children.push(this);
+      newParent.#children.push(this);
       this.parentOnMoved = newParent.onMoved.subscribe(this.updatePositionBasedOnParent);
 
       this.localPosition.x = this.position.x - newParent.position.x;
@@ -61,11 +68,11 @@ export class Transform extends Component {
       this.localPosition.y = 0;
     }
 
-    this._parent = newParent;
+    this.#parent = newParent;
   }
 
   public get children(): Transform[] {
-    return [...this._children];
+    return [...this.#children];
   }
 
   public override serialize(): ISerializedComponent {
@@ -162,10 +169,10 @@ export class Transform extends Component {
   }
 
   private readonly updatePositionBasedOnParent = (): void => {
-    if (this._parent === null) {
+    if (this.#parent === null) {
       return;
     }
 
-    this.setPosition(this._parent.position.x + this.localPosition.x, this._parent.position.y + this.localPosition.y);
+    this.setPosition(this.#parent.position.x + this.localPosition.x, this.#parent.position.y + this.localPosition.y);
   };
 }

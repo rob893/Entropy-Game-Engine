@@ -1,14 +1,14 @@
 import 'vitest-canvas-mock';
-import { AssetPool } from '../helpers/AssetPool';
-import { GameEngine } from '../GameEngine';
+import type { Component } from '../../components/Component';
+import { GameObject, RectangleCollider, Rigidbody } from '../../index';
 import { Layer } from '../enums/Layer';
+import { GameEngine } from '../GameEngine';
+import { AssetPool } from '../helpers/AssetPool';
+import { PhysicalMaterial } from '../helpers/PhysicalMaterial';
+import type { RectangleBackground } from '../helpers/RectangleBackground';
 import type { IPrefabSettings } from '../types';
 import type { IScene } from '../types';
 import type { ISerializedGameObject } from '../types';
-import type { RectangleBackground } from '../helpers/RectangleBackground';
-import type { Component } from '../../components/Component';
-import { GameObject, RectangleCollider, Rigidbody } from '../../index';
-import { PhysicalMaterial } from '../helpers/PhysicalMaterial';
 
 class SerializableTestGameObject extends GameObject {
   protected override getPrefabSettings(): IPrefabSettings {

@@ -1,14 +1,20 @@
+import { Component, EventType, GameObject, Key, Rigidbody, Vector2 } from '@entropy-engine/entropy-game-engine';
 import { ThrowableBall } from '../../../game-objects/ThrowableBall';
 import { CharacterAnimator } from '../CharacterAnimator';
-import { Component, EventType, GameObject, Key, Rigidbody, Vector2 } from '@entropy-engine/entropy-game-engine';
 
 export class PlayerPhysicsMotor extends Component {
   private movingRight: boolean = false;
+
   private movingLeft: boolean = false;
+
   private movingUp: boolean = false;
+
   private movingDown: boolean = false;
+
   private readonly speed: number;
+
   private readonly animator: CharacterAnimator;
+
   private readonly rb: Rigidbody;
 
   public constructor(gameObject: GameObject, rb: Rigidbody, animator: CharacterAnimator) {

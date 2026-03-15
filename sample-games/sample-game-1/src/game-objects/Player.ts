@@ -7,15 +7,22 @@ import {
   Layer,
   PhysicalMaterial,
   IPrefabSettings,
-  RectangleCollider,
-  SpriteSheet
+  RectangleCollider
 } from '@entropy-engine/entropy-game-engine';
-import type { PlayerAnimations } from '../types';
 import { CharacterStats } from '../components/characters/CharacterStats';
-import { PlayerMotor } from '../components/characters/player/PlayerMotor';
-import { Healthbar } from './Healthbar';
-import { DirectionalAnimation } from '../helpers/DirectionalAnimation';
 import { PlayerAnimator } from '../components/characters/player/PlayerAnimator';
+import { PlayerMotor } from '../components/characters/player/PlayerMotor';
+import { DirectionalAnimation } from '../helpers/DirectionalAnimation';
+import type { IPlayerAnimations } from '../types';
+import { Healthbar } from './Healthbar';
+
+type SpriteSheetAsset = {
+  getFrames(rows?: number | number[]): HTMLImageElement[];
+};
+
+function isSpriteSheetAsset(value: unknown): value is SpriteSheetAsset {
+  return typeof value === 'object' && value !== null && 'getFrames' in value && typeof (value as Record<string, unknown>).getFrames === 'function';
+}
 
 export class Player extends GameObject {
   protected buildInitialComponents(): Component[] {
@@ -25,18 +32,34 @@ export class Player extends GameObject {
     collider.physicalMaterial = PhysicalMaterial.bouncy;
     components.push(collider);
 
-    const knightIdleSpriteSheet = this.assetPool.getAsset('knightIdleSpriteSheet') as SpriteSheet;
+    const knightIdleSpriteSheet = this.assetPool.getAsset<unknown>('knightIdleSpriteSheet');
+
+    if (!isSpriteSheetAsset(knightIdleSpriteSheet)) {
+      throw new Error('Knight idle sprite sheet unavailable.');
+    }
+
     const idleFrames = knightIdleSpriteSheet.getFrames(1);
 
     const initialAnimation = new Animation(idleFrames, 0.2);
     const animator = new Animator(this, 75, 75, initialAnimation);
     components.push(animator);
 
-    const knightSheet = this.assetPool.getAsset('knightSpriteSheet') as SpriteSheet;
-    const knightRunSheet = this.assetPool.getAsset('knightRunSpriteSheet') as SpriteSheet;
+    const knightSheet = this.assetPool.getAsset<unknown>('knightSpriteSheet');
+    if (!isSpriteSheetAsset(knightSheet)) {
+      throw new Error('Knight sprite sheet unavailable.');
+    }
+
+    const knightRunSheet = this.assetPool.getAsset<unknown>('knightRunSpriteSheet');
+    if (!isSpriteSheetAsset(knightRunSheet)) {
+      throw new Error('Knight run sprite sheet unavailable.');
+    }
+
     const knightIdleSheet = knightIdleSpriteSheet;
-    const knightAttack1Sheet = this.assetPool.getAsset('knightAttack1SpriteSheet') as SpriteSheet;
-    // const knightAttack2Sheet = this.assetPool.getAsset<SpriteSheet>('knightAttack2SpriteSheet');
+
+    const knightAttack1Sheet = this.assetPool.getAsset<unknown>('knightAttack1SpriteSheet');
+    if (!isSpriteSheetAsset(knightAttack1Sheet)) {
+      throw new Error('Knight attack 1 sprite sheet unavailable.');
+    }
 
     const attack1Animation = new DirectionalAnimation(
       {
@@ -66,12 +89,7 @@ export class Player extends GameObject {
       new Animation(knightRunSheet.getFrames(3), 0.075)
     );
 
-    // const rightAttackAnimation1 = new Animation(knightSheet.getFrames(2), 0.075);
-    // const rightAttackAnimation2 = new Animation(knightSheet.getFrames(4), 0.075);
-    // const leftAttackAnimation1 = new Animation(knightSheet.getFrames(1), 0.075);
-    // const leftAttackAnimation2 = new Animation(knightSheet.getFrames(3), 0.075);
-
-    const playerAnimations: PlayerAnimations = {
+    const playerAnimations: IPlayerAnimations = {
       attackAnimations: [attack1Animation],
       runAnimations: runAnimation,
       idleRightAnimation: new Animation(knightIdleSheet.getFrames(1), 0.2),
@@ -89,7 +107,6 @@ export class Player extends GameObject {
     components.push(myStats);
 
     components.push(new PlayerMotor(this, collider, playerAnimator, myStats));
-    //components.push(new Spawner(this, [Minotaur]));
 
     return components;
   }

@@ -1,14 +1,18 @@
 import { Component, GameObject, NavAgent, Vector2 } from '@entropy-engine/entropy-game-engine';
-import type { State } from '../../../types';
-import { CharacterStats } from '../CharacterStats';
+import type { IState } from '../../../types';
 import { CharacterAnimator } from '../CharacterAnimator';
+import { CharacterStats } from '../CharacterStats';
 import { NPCController } from './NPCController';
 
-export class ChaseState extends Component implements State {
+export class ChaseState extends Component implements IState {
   private readonly navAgent: NavAgent;
+
   private readonly animator: CharacterAnimator;
+
   private readonly myStats: CharacterStats;
+
   private timer: number = 0;
+
   private targetStats: CharacterStats | null = null;
 
   public constructor(gameObject: GameObject, navAgent: NavAgent, animator: CharacterAnimator, myStats: CharacterStats) {

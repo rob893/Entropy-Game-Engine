@@ -5,6 +5,7 @@ import { defineConfig } from 'eslint/config';
 import { fileURLToPath } from 'node:url';
 import tseslint from 'typescript-eslint';
 import importPlugin from 'eslint-plugin-import';
+import stylistic from '@stylistic/eslint-plugin';
 import prettierConfig from 'eslint-config-prettier';
 
 const tsconfigRootDir = fileURLToPath(new URL('.', import.meta.url));
@@ -33,7 +34,7 @@ export default defineConfig(
     }
   },
   {
-    files: ['src/**/*.{ts,tsx}'],
+    files: ['**/src/**/*.{ts,tsx}'],
     languageOptions: {
       parserOptions: {
         ecmaVersion: 'latest',
@@ -41,7 +42,8 @@ export default defineConfig(
       }
     },
     plugins: {
-      import: importPlugin
+      import: importPlugin,
+      '@stylistic': stylistic
     },
     rules: {
       'import/first': 'error',
@@ -61,6 +63,74 @@ export default defineConfig(
       ],
       'no-var': 'error',
       '@typescript-eslint/no-deprecated': 'error',
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'interface',
+          format: ['PascalCase'],
+          prefix: ['I']
+        },
+        {
+          selector: 'typeAlias',
+          format: ['PascalCase']
+        },
+        {
+          selector: 'class',
+          format: ['PascalCase']
+        },
+        {
+          selector: 'enum',
+          format: ['PascalCase']
+        },
+        {
+          selector: 'enumMember',
+          format: ['PascalCase']
+        },
+        {
+          selector: ['method', 'function'],
+          format: ['camelCase']
+        },
+        {
+          selector: 'typeParameter',
+          format: ['PascalCase']
+        }
+      ],
+      '@typescript-eslint/member-ordering': [
+        'error',
+        {
+          default: {
+            memberTypes: [
+              'public-static-field',
+              'protected-static-field',
+              'private-static-field',
+              '#private-static-field',
+
+              'public-instance-field',
+              'protected-instance-field',
+              'private-instance-field',
+              '#private-instance-field',
+
+              'constructor',
+
+              ['public-get', 'public-set'],
+              ['protected-get', 'protected-set'],
+              ['private-get', 'private-set'],
+
+              'public-static-method',
+              'public-instance-method',
+
+              'protected-static-method',
+              'protected-instance-method',
+
+              'private-static-method',
+              'private-instance-method',
+              '#private-static-method',
+              '#private-instance-method'
+            ]
+          }
+        }
+      ],
+      '@stylistic/lines-between-class-members': ['error', 'always'],
       'no-undef': 'off'
     }
   },
@@ -76,7 +146,10 @@ export default defineConfig(
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/unbound-method': 'off',
-      '@typescript-eslint/require-await': 'off'
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+      '@typescript-eslint/member-ordering': 'off',
+      '@stylistic/lines-between-class-members': 'off'
     }
   },
   prettierConfig

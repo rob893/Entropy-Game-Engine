@@ -28,6 +28,7 @@ export class Background extends GameObject implements IRenderableBackground {
       layer: Layer.Default
     };
   }
+
   protected buildInitialComponents(): Component[] {
     const backgroundImage = this.assetPool.getAsset<HTMLImageElement>('backgroundImage');
 

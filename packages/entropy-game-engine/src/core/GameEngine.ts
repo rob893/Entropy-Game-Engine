@@ -1,56 +1,86 @@
-import { PhysicsEngine } from './PhysicsEngine';
+import type { Transform } from '../components/Transform';
 import { GameObject } from '../game-objects/GameObject';
-import { Time } from './Time';
-import { RenderingEngine } from './RenderingEngine';
-import { TerrainBuilder } from './helpers/TerrainBuilder';
-import type { IScene } from './types';
-import { Input } from './helpers/Input';
-import { ComponentAnalyzer } from './helpers/ComponentAnalyzer';
-import { SceneManager } from './helpers/SceneManager';
+import type { Terrain } from '../game-objects/Terrain';
 import { Layer } from './enums/Layer';
-import { SpatialHashCollisionDetector } from './physics/SpatialHashCollisionDetector';
+import { AssetPool } from './helpers/AssetPool';
+import { ComponentAnalyzer } from './helpers/ComponentAnalyzer';
+import { Input } from './helpers/Input';
+import { SceneManager } from './helpers/SceneManager';
+import { TerrainBuilder } from './helpers/TerrainBuilder';
+import type { Vector2 } from './helpers/Vector2';
 import { ImpulseCollisionResolver } from './physics/ImpulseCollisionResolver';
 import { Physics } from './physics/Physics';
-import type { Vector2 } from './helpers/Vector2';
-import type { Transform } from '../components/Transform';
-import { AssetPool } from './helpers/AssetPool';
-import type { Terrain } from '../game-objects/Terrain';
+import { SpatialHashCollisionDetector } from './physics/SpatialHashCollisionDetector';
+import { PhysicsEngine } from './PhysicsEngine';
+import { RenderingEngine } from './RenderingEngine';
+import { Time } from './Time';
+import type { IScene } from './types';
 import type { IGameObjectConstructionParams } from './types';
 import type { IGameEngineConfiguration } from './types';
 
+const DEFAULT_FPS_CAP = 60;
+const DEFAULT_FIXED_TIME_STEP = 1 / 60;
+const MS_PER_SECOND = 1000;
+
 export class GameEngine {
   public developmentMode: boolean = true;
+
   public readonly layerCollisionMatrix: Map<Layer, Set<Layer>>;
 
-  private _physicsEngine: PhysicsEngine | null = null;
-  private _renderingEngine: RenderingEngine | null = null;
   private loadedScene: IScene | null = null;
+
   private gameLoopId: number | null = null;
+
   private gameInitialized: boolean = false;
-  private _paused: boolean = false;
-  private _gameObjects: GameObject[] = [];
-  private _input: Input | null = null;
-  private _physics: Physics | null = null;
-  private _assetPool: AssetPool | null = null;
-  private _time: Time | null = null;
-  private _sceneManager: SceneManager | null = null;
-  private _terrain: Terrain | null = null;
-  private _componentAnalyzer: ComponentAnalyzer | null = null;
+
   private prevFrameTime: number = 0;
+
   private fpsIntervalInMS: number = 0;
-  private fpsCap: number = 60;
-  private _fixedTimeStep: number = 1 / 60;
+
+  private fpsCap: number = DEFAULT_FPS_CAP;
+
   private physicsAccumulator: number = 0;
+
   private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
+
   private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
+
   private readonly scenes: Map<number | string, IScene> = new Map<number | string, IScene>();
-  private readonly _gameCanvas: HTMLCanvasElement;
+
   private readonly invokeTimeouts: Set<number> = new Set<number>();
+
   private readonly gameObjectsMarkedForDelete: GameObject[] = [];
+
   private readonly configuration: IGameEngineConfiguration;
 
+  #physicsEngine: PhysicsEngine | null = null;
+
+  #renderingEngine: RenderingEngine | null = null;
+
+  #paused: boolean = false;
+
+  #gameObjects: GameObject[] = [];
+
+  #input: Input | null = null;
+
+  #physics: Physics | null = null;
+
+  #assetPool: AssetPool | null = null;
+
+  #time: Time | null = null;
+
+  #sceneManager: SceneManager | null = null;
+
+  #terrain: Terrain | null = null;
+
+  #componentAnalyzer: ComponentAnalyzer | null = null;
+
+  #fixedTimeStep: number = DEFAULT_FIXED_TIME_STEP;
+
+  readonly #gameCanvas: HTMLCanvasElement;
+
   public constructor(configuration: IGameEngineConfiguration) {
-    this._gameCanvas = configuration.gameCanvas;
+    this.#gameCanvas = configuration.gameCanvas;
     this.configuration = configuration;
 
     this.layerCollisionMatrix = new Map<Layer, Set<Layer>>();
@@ -68,95 +98,61 @@ export class GameEngine {
     }
 
     collidingLayers.delete(Layer.Terrain);
-    this.fpsLimit = configuration.fpsLimit ?? 60;
-    this.fixedTimeStep = configuration.fixedTimeStep ?? 1 / 60;
+    this.fpsLimit = configuration.fpsLimit ?? DEFAULT_FPS_CAP;
+    this.fixedTimeStep = configuration.fixedTimeStep ?? DEFAULT_FIXED_TIME_STEP;
   }
 
   public get canvasContext(): CanvasRenderingContext2D {
-    const context = this.gameCanvas.getContext('2d');
-
-    if (context === null) {
-      throw new Error('No context!');
-    }
-
-    return context;
+    return this.assertInitialized(this.gameCanvas.getContext('2d'), 'Canvas context');
   }
 
   public get input(): Input {
-    if (this._input === null) {
-      throw new Error('Input is null');
-    }
-
-    return this._input;
+    return this.assertInitialized(this.#input, 'Input');
   }
 
   public get physics(): Physics {
-    if (this._physics === null) {
-      throw new Error('Physics is null');
-    }
-
-    return this._physics;
+    return this.assertInitialized(this.#physics, 'Physics');
   }
 
   public get time(): Time {
-    if (this._time === null) {
-      throw new Error('Time is null');
-    }
-
-    return this._time;
+    return this.assertInitialized(this.#time, 'Time');
   }
 
   public get paused(): boolean {
-    return this._paused;
+    return this.#paused;
   }
 
   public set paused(value: boolean) {
-    this._paused = value;
+    this.#paused = value;
 
-    if (!value && this._time !== null) {
+    if (!value && this.#time !== null) {
       this.physicsAccumulator = 0;
       this.time.resetTime();
     }
   }
 
   public get componentAnalyzer(): ComponentAnalyzer {
-    if (this._componentAnalyzer === null) {
-      throw new Error('Component Analyzer is null');
-    }
-
-    return this._componentAnalyzer;
+    return this.assertInitialized(this.#componentAnalyzer, 'Component Analyzer');
   }
 
   public get sceneManager(): SceneManager {
-    if (this._sceneManager === null) {
-      throw new Error('Scene Manager Analyzer is null');
-    }
-
-    return this._sceneManager;
+    return this.assertInitialized(this.#sceneManager, 'Scene Manager');
   }
 
   public get terrain(): Terrain {
-    if (this._terrain === null) {
-      throw new Error('Terrain is null');
-    }
-
-    return this._terrain;
+    return this.assertInitialized(this.#terrain, 'Terrain');
   }
 
   public get assetPool(): AssetPool {
-    if (this._assetPool === null) {
-      throw new Error('Asset pool is null');
-    }
-
-    return this._assetPool;
+    return this.assertInitialized(this.#assetPool, 'Asset Pool');
   }
 
   public get gameCanvas(): HTMLCanvasElement {
-    return this._gameCanvas;
+    return this.#gameCanvas;
   }
 
   public get gameObjects(): readonly GameObject[] {
-    return [...this._gameObjects];
+    return [...this.#gameObjects];
   }
 
   public get currentScene(): IScene | null {
@@ -172,11 +168,7 @@ export class GameEngine {
   }
 
   public get loadedSceneId(): number {
-    if (this.loadedScene === null) {
-      throw new Error('No scene is currently loaded!');
-    }
-
-    return this.getScenePrimaryId(this.loadedScene);
+    return this.getScenePrimaryId(this.assertInitialized(this.loadedScene, 'Loaded scene'));
   }
 
   public get fpsLimit(): number {
@@ -185,11 +177,11 @@ export class GameEngine {
 
   public set fpsLimit(value: number) {
     this.fpsCap = value;
-    this.fpsIntervalInMS = Math.floor(1000 / value);
+    this.fpsIntervalInMS = Math.floor(MS_PER_SECOND / value);
   }
 
   public get fixedTimeStep(): number {
-    return this._fixedTimeStep;
+    return this.#fixedTimeStep;
   }
 
   public set fixedTimeStep(value: number) {
@@ -197,8 +189,16 @@ export class GameEngine {
       throw new Error('fixedTimeStep must be a positive number');
     }
 
-    this._fixedTimeStep = value;
+    this.#fixedTimeStep = value;
     this.physicsAccumulator = 0;
+  }
+
+  private get physicsEngine(): PhysicsEngine {
+    return this.assertInitialized(this.#physicsEngine, 'Physics Engine');
+  }
+
+  private get renderingEngine(): RenderingEngine {
+    return this.assertInitialized(this.#renderingEngine, 'Rendering Engine');
   }
 
   public instantiate<T extends GameObject>(
@@ -276,7 +276,7 @@ export class GameEngine {
     const timeout = window.setTimeout(() => {
       funcToInvoke();
       this.invokeTimeouts.delete(timeout);
-    }, 1000 * time);
+    }, MS_PER_SECOND * time);
 
     this.invokeTimeouts.add(timeout);
   }
@@ -324,7 +324,7 @@ export class GameEngine {
   }
 
   public syncGameObjectRegistration(gameObject: GameObject, previousId: string, previousTag: string): void {
-    const isRegistered = this.gameObjectMap.get(previousId) === gameObject || this._gameObjects.includes(gameObject);
+    const isRegistered = this.gameObjectMap.get(previousId) === gameObject || this.#gameObjects.includes(gameObject);
 
     if (!isRegistered) {
       return;
@@ -374,7 +374,7 @@ export class GameEngine {
     console.log(`Time since game start ${this.time.totalTime}s`);
     console.log(this.renderingEngine);
     console.log(this.physicsEngine);
-    this._gameObjects.forEach(go => console.log(go));
+    this.#gameObjects.forEach(go => console.log(go));
   }
 
   public togglePause(): void {
@@ -442,20 +442,12 @@ export class GameEngine {
     return [...keys];
   }
 
-  private get physicsEngine(): PhysicsEngine {
-    if (this._physicsEngine === null) {
-      throw new Error('Physics Engine is null');
+  private assertInitialized<T>(value: T | null, name: string): T {
+    if (value === null) {
+      throw new Error(`${name} is not initialized. Ensure the game engine has been started.`);
     }
 
-    return this._physicsEngine;
-  }
-
-  private get renderingEngine(): RenderingEngine {
-    if (this._renderingEngine === null) {
-      throw new Error('Rendering Engine is null');
-    }
-
-    return this._renderingEngine;
+    return value;
   }
 
   private removeReferencesToGameObject(object: GameObject): void {
@@ -463,10 +455,10 @@ export class GameEngine {
       this.gameObjectMap.delete(object.id);
     }
 
-    const index = this._gameObjects.indexOf(object);
+    const index = this.#gameObjects.indexOf(object);
 
     if (index !== -1) {
-      this._gameObjects.splice(index, 1);
+      this.#gameObjects.splice(index, 1);
     }
 
     const gameObjectsWithTag = this.tagMap.get(object.tag);
@@ -511,25 +503,25 @@ export class GameEngine {
     this.input.clearListeners();
     this.tagMap.clear();
     this.gameObjectMap.clear();
-    this._gameObjects.length = 0;
+    this.#gameObjects.length = 0;
     this.gameObjectsMarkedForDelete.length = 0;
 
     this.loadedScene = null;
-    this._assetPool = null;
-    this._componentAnalyzer = null;
+    this.#assetPool = null;
+    this.#componentAnalyzer = null;
 
-    if (this._renderingEngine !== null) {
-      this._renderingEngine.mainCamera = null;
+    if (this.#renderingEngine !== null) {
+      this.#renderingEngine.mainCamera = null;
     }
-    this._input = null;
-    this._physics = null;
-    this._sceneManager = null;
-    this._terrain = null;
-    this._time = null;
+    this.#input = null;
+    this.#physics = null;
+    this.#sceneManager = null;
+    this.#terrain = null;
+    this.#time = null;
   }
 
   private async initializeScene(scene: IScene): Promise<void> {
-    this._assetPool =
+    this.#assetPool =
       scene.getAssetPool !== undefined ? await scene.getAssetPool() : new AssetPool(new Map<string, unknown>());
 
     if (scene.gravity !== undefined) {
@@ -540,13 +532,13 @@ export class GameEngine {
     let gameObjects: GameObject[] = [];
 
     if (terrainSpec !== null) {
-      const terrianBuilder = new TerrainBuilder(this._gameCanvas.width, this._gameCanvas.height);
+      const terrianBuilder = new TerrainBuilder(this.#gameCanvas.width, this.#gameCanvas.height);
       const terrain = await terrianBuilder.buildTerrain(this, terrainSpec);
 
       gameObjects.push(terrain);
 
       this.renderingEngine.terrain = terrain;
-      this._terrain = terrain;
+      this.#terrain = terrain;
     }
 
     gameObjects = [...gameObjects, ...scene.getStartingGameObjects(this)];
@@ -571,8 +563,8 @@ export class GameEngine {
     const collisionDetector = this.configuration.collisionDetectorGenerator
       ? this.configuration.collisionDetectorGenerator(this)
       : new SpatialHashCollisionDetector(
-          this._gameCanvas.width,
-          this._gameCanvas.height,
+          this.#gameCanvas.width,
+          this.#gameCanvas.height,
           this.layerCollisionMatrix,
           100
         );
@@ -581,20 +573,20 @@ export class GameEngine {
       ? this.configuration.collisionResolverGenerator(this)
       : new ImpulseCollisionResolver();
 
-    this._physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver);
+    this.#physicsEngine = new PhysicsEngine(collisionDetector, collisionResolver);
 
-    this._renderingEngine = new RenderingEngine(this.canvasContext);
+    this.#renderingEngine = new RenderingEngine(this.canvasContext);
     this.renderingEngine.renderGizmos = this.developmentMode;
 
-    this._input = new Input(this._gameCanvas);
-    this._componentAnalyzer = new ComponentAnalyzer(this.physicsEngine, this.renderingEngine);
-    this._sceneManager = new SceneManager(this);
-    this._time = time;
-    this._physics = new Physics(this.physicsEngine);
+    this.#input = new Input(this.#gameCanvas);
+    this.#componentAnalyzer = new ComponentAnalyzer(this.physicsEngine, this.renderingEngine);
+    this.#sceneManager = new SceneManager(this);
+    this.#time = time;
+    this.#physics = new Physics(this.physicsEngine);
   }
 
   private setGameObjects(gameObjects: GameObject[]): void {
-    this._gameObjects = [];
+    this.#gameObjects = [];
 
     for (const gameObject of gameObjects) {
       const gameObjectsToRegister = this.collectGameObjects(gameObject);
@@ -618,7 +610,7 @@ export class GameEngine {
     }
 
     this.gameObjectMap.set(gameObject.id, gameObject);
-    this._gameObjects.push(gameObject);
+    this.#gameObjects.push(gameObject);
   }
 
   private collectGameObjects(rootGameObject: GameObject): GameObject[] {
@@ -636,11 +628,10 @@ export class GameEngine {
       throw new Error('The game is not initialized yet!');
     }
 
-    //this.time.start();
     this.physicsAccumulator = 0;
     this.paused = false;
 
-    this._gameObjects.forEach(go => go.start());
+    this.#gameObjects.forEach(go => go.start());
 
     this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
   }
@@ -668,7 +659,7 @@ export class GameEngine {
       this.physicsAccumulator -= this.fixedTimeStep;
     }
 
-    for (const gameObject of this._gameObjects) {
+    for (const gameObject of this.#gameObjects) {
       if (gameObject.enabled) {
         gameObject.update();
       }

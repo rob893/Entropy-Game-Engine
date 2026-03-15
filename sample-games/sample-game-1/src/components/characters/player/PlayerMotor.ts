@@ -8,20 +8,25 @@ import {
   RectangleCollider,
   Vector2
 } from '@entropy-engine/entropy-game-engine';
-import { CharacterStats } from '../CharacterStats';
-import { Spawner } from '../../Spawner';
 import { Fireball } from '../../../game-objects/Fireball';
 import { FireballBehavior } from '../../FireballBehavior';
+import { Spawner } from '../../Spawner';
+import { CharacterStats } from '../CharacterStats';
 import { PlayerAnimator } from './PlayerAnimator';
 
 export class PlayerMotor extends Component {
   public speed: number = 5;
 
   private xVelocity: -1 | 0 | 1 = 0;
+
   private yVelocity: -1 | 0 | 1 = 0;
+
   private jumping: boolean = false;
+
   private readonly animator: PlayerAnimator;
+
   private readonly collider: RectangleCollider;
+
   private readonly myStats: CharacterStats;
 
   public constructor(
@@ -45,6 +50,10 @@ export class PlayerMotor extends Component {
     this.speed = 2;
   }
 
+  public get isMoving(): boolean {
+    return this.xVelocity !== 0 || this.yVelocity !== 0;
+  }
+
   public override start(): void {
     const spawner = this.getComponent(Spawner);
 
@@ -59,10 +68,6 @@ export class PlayerMotor extends Component {
     if (!this.myStats.isDead) {
       this.move();
     }
-  }
-
-  public get isMoving(): boolean {
-    return this.xVelocity !== 0 || this.yVelocity !== 0;
   }
 
   private move(): void {

@@ -1,8 +1,9 @@
-import { BinaryHeap } from './BinaryHeap';
 import type { IComparable } from '../types';
+import { BinaryHeap } from './BinaryHeap';
 
 class QueueItem<T> implements IComparable {
   public readonly item: T;
+
   public readonly priority: number;
 
   public constructor(item: T, priority: number) {

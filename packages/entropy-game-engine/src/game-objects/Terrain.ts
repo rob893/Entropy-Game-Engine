@@ -1,15 +1,16 @@
-import type { NavGrid } from '../core/helpers/NavGrid';
-import { RectangleCollider } from '../components/RectangleCollider';
-import type { IRenderableBackground } from '../core/types';
-import { GameObject } from './GameObject';
-import type { Vector2 } from '../core/helpers/Vector2';
-import { Layer } from '../core/enums/Layer';
 import type { Component } from '../components/Component';
-import type { IPrefabSettings } from '../core/types';
+import { RectangleCollider } from '../components/RectangleCollider';
+import { Layer } from '../core/enums/Layer';
 import type { GameEngine } from '../core/GameEngine';
+import type { NavGrid } from '../core/helpers/NavGrid';
+import type { Vector2 } from '../core/helpers/Vector2';
+import type { IRenderableBackground } from '../core/types';
+import type { IPrefabSettings } from '../core/types';
+import { GameObject } from './GameObject';
 
 export class Terrain extends GameObject implements IRenderableBackground {
   public readonly terrainImage: HTMLImageElement;
+
   public readonly navGrid: NavGrid;
 
   public constructor(
@@ -64,8 +65,6 @@ export class Terrain extends GameObject implements IRenderableBackground {
       }
     }
 
-    // Uncomment this to have the navgrid drawn in development mode.
-    //this.addComponent(new WeightedGraphVisualizer(this, navGrid));
   }
 
   public renderBackground(context: CanvasRenderingContext2D): void {

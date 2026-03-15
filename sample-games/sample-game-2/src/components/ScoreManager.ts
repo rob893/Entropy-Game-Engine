@@ -9,14 +9,17 @@ import {
 
 export class ScoreManager extends Component implements IRenderableGUI {
   public readonly zIndex = 1;
+
   /** increase to slow down difficulty progression, decrease to speed up difficulty progression */
   public readonly progressDenom: number = 20;
 
   private readonly drawX: number;
 
   private timer: number = 0;
-  private _score: number = 0;
-  private _playing: boolean = false;
+
+  #score: number = 0;
+
+  #playing: boolean = false;
 
   public constructor(gameObject: GameObject) {
     super(gameObject);
@@ -24,11 +27,11 @@ export class ScoreManager extends Component implements IRenderableGUI {
   }
 
   public get score(): number {
-    return this._score;
+    return this.#score;
   }
 
   public get playing(): boolean {
-    return this._playing;
+    return this.#playing;
   }
 
   public override start(): void {
@@ -44,16 +47,16 @@ export class ScoreManager extends Component implements IRenderableGUI {
       throw new Error('No collider attached to player');
     }
 
-    playerCollider.onCollided.subscribe(() => (this._playing = false));
+    playerCollider.onCollided.subscribe(() => (this.#playing = false));
   }
 
   public override update(): void {
-    if (!this._playing) {
+    if (!this.#playing) {
       if (
         (this.input.getKey(Key.Space) || this.input.getMouseButton(MouseButton.LeftMouseButton)) &&
-        this._score === 0
+        this.#score === 0
       ) {
-        this._playing = true;
+        this.#playing = true;
       }
 
       return;
@@ -62,7 +65,7 @@ export class ScoreManager extends Component implements IRenderableGUI {
     this.timer += this.time.deltaTime;
 
     if (this.timer > 0.1) {
-      this._score++;
+      this.#score++;
       this.timer = 0;
     }
   }
@@ -70,9 +73,9 @@ export class ScoreManager extends Component implements IRenderableGUI {
   public renderGUI(context: CanvasRenderingContext2D): void {
     context.font = '20px Arial';
     context.fillStyle = 'white';
-    context.fillText(`Score: ${this._score}`, this.drawX, 20);
+    context.fillText(`Score: ${this.#score}`, this.drawX, 20);
 
-    if (!this._playing && this._score === 0) {
+    if (!this.#playing && this.#score === 0) {
       context.fillText(
         'Press Space or left click to move up!',
         this.gameCanvas.width / 2 - 150,
@@ -88,9 +91,9 @@ export class ScoreManager extends Component implements IRenderableGUI {
         this.gameCanvas.width / 2 - 150,
         this.gameCanvas.height / 2 + 25
       );
-    } else if (!this._playing) {
+    } else if (!this.#playing) {
       context.fillText('You lose!', this.gameCanvas.width / 2 - 50, this.gameCanvas.height / 2 - 15);
-      context.fillText(`Your score: ${this._score}`, this.gameCanvas.width / 2 - 50, this.gameCanvas.height / 2 + 15);
+      context.fillText(`Your score: ${this.#score}`, this.gameCanvas.width / 2 - 50, this.gameCanvas.height / 2 + 15);
     }
   }
 }

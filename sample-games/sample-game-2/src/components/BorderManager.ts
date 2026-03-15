@@ -4,16 +4,25 @@ import { ScoreManager } from './ScoreManager';
 
 export class BorderManager extends Component {
   private readonly scoreManager: ScoreManager;
+
   private readonly topBorders: Border[] = [];
+
   private readonly bottomBorders: Border[] = [];
+
   private readonly borderWidth: number;
+
   private readonly borderHeight: number;
+
   private readonly maxBorderHeightStart = 30;
+
   private readonly minBorderHeightStart = 5;
 
   private maxBorderHeight: number;
+
   private minBorderHeight: number;
+
   private topGoingDown: boolean = false;
+
   private bottomGoingDown: boolean = false;
 
   public constructor(gameObject: GameObject, scoreManager: ScoreManager, borderWidth?: number, borderHeight?: number) {

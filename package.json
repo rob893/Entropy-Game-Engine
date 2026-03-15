@@ -43,9 +43,10 @@
   },
   "homepage": "https://github.com/rob893/Entropy-Game-Engine#readme",
   "devDependencies": {
-    "@commitlint/cli": "^20.4.4",
-    "@commitlint/config-conventional": "^20.4.4",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^9.39.4",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@vitest/coverage-v8": "^4.1.0",
     "@vitest/eslint-plugin": "^1.6.12",
     "eslint": "^9.39.4",

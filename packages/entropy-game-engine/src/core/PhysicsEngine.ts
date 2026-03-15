@@ -1,21 +1,25 @@
-import { Rigidbody } from '../components/Rigidbody';
+import type { Component } from '../components/Component';
 import { RectangleCollider } from '../components/RectangleCollider';
-import type { ICollisionDetector } from './types';
-import type { ICollisionResolver } from './types';
+import { Rigidbody } from '../components/Rigidbody';
 import type { CollisionManifold } from './helpers/CollisionManifold';
 import { Vector2 } from './helpers/Vector2';
-import type { Component } from '../components/Component';
+import type { ICollisionDetector } from './types';
+import type { ICollisionResolver } from './types';
+
+const DEFAULT_GRAVITY = 665;
 
 export class PhysicsEngine {
   public gravity: number;
 
   private readonly rigidbodies: Rigidbody[];
+
   private readonly collisionDetector: ICollisionDetector;
+
   private readonly collisionResolver: ICollisionResolver;
 
   public constructor(collisionDetector: ICollisionDetector, collisionResolver: ICollisionResolver) {
     this.rigidbodies = [];
-    this.gravity = 665;
+    this.gravity = DEFAULT_GRAVITY;
     this.collisionDetector = collisionDetector;
     this.collisionResolver = collisionResolver;
     this.collisionDetector.onCollisionDetected.subscribe(manifold => this.resolveCollisions(manifold));

@@ -10,9 +10,9 @@ import {
   RectangleCollider,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
-import type { CharacterAnimations } from '../types';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';
 import { EnemyMotor } from '../components/characters/npc/EnemyMotor';
+import type { ICharacterAnimations } from '../types';
 
 export class Trump extends GameObject {
   protected buildInitialComponents(): Component[] {
@@ -37,7 +37,7 @@ export class Trump extends GameObject {
     const runLeftAnimation = new Animation(trumpRunSpriteSheet.getFrames(4), 0.075);
     const idleAnimation = new Animation(trumpIdleSpriteSheet.getFrames(1), 0.1);
 
-    const animations: CharacterAnimations = {
+    const animations: ICharacterAnimations = {
       rightAttackAnimations: [idleAnimation],
       leftAttackAnimations: [idleAnimation],
       runLeftAnimation: runLeftAnimation,

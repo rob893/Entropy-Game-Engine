@@ -1,13 +1,16 @@
 import { Animation, Animator, Component, GameObject } from '@entropy-engine/entropy-game-engine';
-import type { CharacterAnimations } from '../../types';
+import type { ICharacterAnimations } from '../../types';
 
 export class CharacterAnimator extends Component {
   private facingRight: boolean = true;
-  private readonly animations: CharacterAnimations;
+
+  private readonly animations: ICharacterAnimations;
+
   private readonly animator: Animator;
+
   private readonly runAnimations: Map<-1 | 0 | 1, Map<-1 | 0 | 1, Animation>>;
 
-  public constructor(gameObject: GameObject, animator: Animator, animations: CharacterAnimations) {
+  public constructor(gameObject: GameObject, animator: Animator, animations: ICharacterAnimations) {
     super(gameObject);
 
     animations.leftAttackAnimations.forEach(anim => {

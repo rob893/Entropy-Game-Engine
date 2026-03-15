@@ -3,8 +3,11 @@ import { CharacterAnimator } from '../CharacterAnimator';
 
 export class EnemyMotor extends Component {
   private playerTransform: Transform | null = null;
+
   private timer: number = 0;
+
   private readonly navAgent: NavAgent;
+
   private readonly animator: CharacterAnimator;
 
   public constructor(gameObject: GameObject, navAgent: NavAgent, animator: CharacterAnimator) {

@@ -1,61 +1,68 @@
+import type { Camera } from '../components/Camera';
+import { Component } from '../components/Component';
+import type { Terrain } from '../game-objects/Terrain';
+import type { IUnsubscribable } from './helpers';
 import type { IRenderable } from './types';
 import type { IRenderableGizmo } from './types';
 import type { IRenderableGUI } from './types';
 import type { IRenderableBackground } from './types';
-import type { IUnsubscribable } from './helpers';
-import type { Terrain } from '../game-objects/Terrain';
-import type { Camera } from '../components/Camera';
-import { Component } from '../components/Component';
 
 export class RenderingEngine {
   public renderGizmos: boolean;
 
-  private _background: IRenderableBackground | null;
-  private _terrain: Terrain | null;
-  private _mainCamera: Camera | null;
   private readonly renderableObjects: IRenderable[];
+
   private readonly renderableGizmos: IRenderableGizmo[];
+
   private readonly renderableGUIElements: IRenderableGUI[];
-  private readonly _canvasContext: CanvasRenderingContext2D;
+
   private mainCameraDestroyedSubscription: IUnsubscribable | null;
 
+  #background: IRenderableBackground | null;
+
+  #terrain: Terrain | null;
+
+  #mainCamera: Camera | null;
+
+  readonly #canvasContext: CanvasRenderingContext2D;
+
   public constructor(context: CanvasRenderingContext2D) {
-    this._canvasContext = context;
+    this.#canvasContext = context;
     this.renderableObjects = [];
     this.renderableGizmos = [];
     this.renderableGUIElements = [];
     this.renderGizmos = false;
-    this._terrain = null;
-    this._background = null;
-    this._mainCamera = null;
+    this.#terrain = null;
+    this.#background = null;
+    this.#mainCamera = null;
     this.mainCameraDestroyedSubscription = null;
   }
 
   public set terrain(terrain: Terrain) {
-    this._terrain = terrain;
+    this.#terrain = terrain;
   }
 
   public set background(background: IRenderableBackground) {
-    this._background = background;
+    this.#background = background;
   }
 
   public get canvasContext(): CanvasRenderingContext2D {
-    return this._canvasContext;
+    return this.#canvasContext;
   }
 
   public get mainCamera(): Camera | null {
-    return this._mainCamera;
+    return this.#mainCamera;
   }
 
   public set mainCamera(camera: Camera | null) {
     this.mainCameraDestroyedSubscription?.unsubscribe();
     this.mainCameraDestroyedSubscription = null;
-    this._mainCamera = camera;
+    this.#mainCamera = camera;
 
     if (camera !== null) {
       this.mainCameraDestroyedSubscription = camera.onDestroyed.subscribe(() => {
-        if (this._mainCamera === camera) {
-          this._mainCamera = null;
+        if (this.#mainCamera === camera) {
+          this.#mainCamera = null;
           this.mainCameraDestroyedSubscription = null;
         }
       });
@@ -106,47 +113,49 @@ export class RenderingEngine {
   }
 
   public renderScene(): void {
-    this._canvasContext.clearRect(0, 0, this._canvasContext.canvas.width, this._canvasContext.canvas.height);
+    this.#canvasContext.clearRect(0, 0, this.#canvasContext.canvas.width, this.#canvasContext.canvas.height);
 
-    if (this._background !== null) {
-      this._background.renderBackground(this._canvasContext);
+    if (this.#background !== null) {
+      this.#background.renderBackground(this.#canvasContext);
     }
 
-    const camera = this._mainCamera !== null && this._mainCamera.enabled ? this._mainCamera : null;
+    const camera = this.#mainCamera !== null && this.#mainCamera.enabled ? this.#mainCamera : null;
 
     if (camera !== null) {
-      camera.viewportWidth = this._canvasContext.canvas.width;
-      camera.viewportHeight = this._canvasContext.canvas.height;
-      camera.applyTransform(this._canvasContext);
+      camera.viewportWidth = this.#canvasContext.canvas.width;
+      camera.viewportHeight = this.#canvasContext.canvas.height;
+      camera.applyTransform(this.#canvasContext);
     }
 
     try {
-      if (this._terrain !== null) {
-        this._terrain.renderBackground(this._canvasContext);
+      if (this.#terrain !== null) {
+        this.#terrain.renderBackground(this.#canvasContext);
       }
 
       for (const object of this.renderableObjects) {
         if (object.enabled) {
-          object.render(this._canvasContext);
+          object.render(this.#canvasContext);
         }
       }
 
       if (this.renderGizmos) {
         for (const gizmo of this.renderableGizmos) {
           if (gizmo.enabled) {
-            gizmo.renderGizmo(this._canvasContext);
+            gizmo.renderGizmo(this.#canvasContext);
           }
         }
       }
+    } catch (error) {
+      console.error('Rendering error:', error);
     } finally {
       if (camera !== null) {
-        camera.restoreTransform(this._canvasContext);
+        camera.restoreTransform(this.#canvasContext);
       }
     }
 
     for (const guiElement of this.renderableGUIElements) {
       if (guiElement.enabled) {
-        guiElement.renderGUI(this._canvasContext);
+        guiElement.renderGUI(this.#canvasContext);
       }
     }
   }

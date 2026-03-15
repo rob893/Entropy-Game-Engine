@@ -1,6 +1,6 @@
-import { Vector2 } from './Vector2';
 import type { IWeightedGraph } from '../types';
 import { PriorityQueue } from './PriorityQueue';
+import { Vector2 } from './Vector2';
 
 export class AStarSearch {
   public static findPath(graph: IWeightedGraph, start: Vector2, goal: Vector2): Vector2[] | null {

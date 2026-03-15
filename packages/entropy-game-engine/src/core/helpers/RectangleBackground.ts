@@ -2,6 +2,7 @@ import type { IRenderableBackground } from '../types';
 
 export class RectangleBackground implements IRenderableBackground {
   private readonly gameCanvas: HTMLCanvasElement;
+
   private readonly color: string;
 
   public constructor(gameCanvas: HTMLCanvasElement, color: string) {

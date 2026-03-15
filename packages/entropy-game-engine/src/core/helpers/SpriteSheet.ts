@@ -1,4 +1,4 @@
-interface TrimBy {
+interface ITrimBy {
   top?: number;
   bottom?: number;
   left?: number;
@@ -20,7 +20,7 @@ export class SpriteSheet {
     spriteSheetUrl: string,
     framesPerRow: number,
     numRows: number,
-    trimEdgesBy?: number | TrimBy,
+    trimEdgesBy?: number | ITrimBy,
     rowFrameMap?: Map<number, number>
   ): Promise<SpriteSheet> {
     const spriteSheet = new SpriteSheet();
@@ -73,7 +73,7 @@ export class SpriteSheet {
     spriteSheetUrl: string,
     framesPerRow: number,
     numRows: number,
-    trimEdgesBy: number | TrimBy,
+    trimEdgesBy: number | ITrimBy,
     rowFrameMap: Map<number, number>
   ): Promise<void> {
     return new Promise((resolve, reject) => {

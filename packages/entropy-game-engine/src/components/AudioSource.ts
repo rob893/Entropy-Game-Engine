@@ -1,12 +1,14 @@
-import { Component } from './Component';
-import type { GameObject } from '../game-objects/GameObject';
-import type { AudioClip } from '../core/helpers/AudioClip';
 import type { ISerializedComponent } from '../core';
+import type { AudioClip } from '../core/helpers/AudioClip';
 import { createAudioClipFromSource, getElementSource, readBoolean, readString } from '../core/helpers/Serialization';
+import type { GameObject } from '../game-objects/GameObject';
+import { Component } from './Component';
 
 export class AudioSource extends Component {
   public static override readonly typeName: string = 'AudioSource';
+
   private audioElement: HTMLAudioElement;
+
   private audioClip: AudioClip;
 
   public constructor(gameObject: GameObject, audioClip: AudioClip) {
@@ -16,14 +18,22 @@ export class AudioSource extends Component {
     this.audioClip = audioClip;
   }
 
+  public get isPlaying(): boolean {
+    return !this.audioElement.paused;
+  }
+
+  public set loop(loop: boolean) {
+    this.audioElement.loop = loop;
+  }
+
+  public set playOnStart(playOnStart: boolean) {
+    this.audioElement.autoplay = playOnStart;
+  }
+
   public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): AudioSource {
     const audioSource = new AudioSource(gameObject, createAudioClipFromSource(readString(data.source)));
     audioSource.deserialize(data);
     return audioSource;
-  }
-
-  public get isPlaying(): boolean {
-    return !this.audioElement.paused;
   }
 
   public override serialize(): ISerializedComponent {
@@ -53,14 +63,6 @@ export class AudioSource extends Component {
     if (playOnStart !== null) {
       this.playOnStart = playOnStart;
     }
-  }
-
-  public set loop(loop: boolean) {
-    this.audioElement.loop = loop;
-  }
-
-  public set playOnStart(playOnStart: boolean) {
-    this.audioElement.autoplay = playOnStart;
   }
 
   public setClip(audioClip: AudioClip): void {

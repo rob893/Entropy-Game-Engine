@@ -1,6 +1,6 @@
 import { Color, GameEngine, SimpleCollisionDetector } from '@entropy-engine/entropy-game-engine';
-import { scene1 } from './Scenes';
 import backgroundImage from './assets/images/background.jpg';
+import { scene1 } from './Scenes';
 
 function setBodyStyles({ style }: HTMLBodyElement): void {
   style.backgroundColor = Color.BlueGrey;

@@ -8,6 +8,7 @@ export class MissileSpawner extends Component {
   private timer: number = 0;
 
   private readonly borderManager: BorderManager;
+
   private readonly scoreManager: ScoreManager;
 
   public constructor(gameObject: GameObject, borderManager: BorderManager, scoreManager: ScoreManager) {

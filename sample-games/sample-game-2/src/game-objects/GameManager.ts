@@ -1,7 +1,7 @@
 import { Component, FPSCounter, GameObject, Layer, IPrefabSettings } from '@entropy-engine/entropy-game-engine';
 import { BorderManager } from '../components/BorderManager';
-import { ScoreManager } from '../components/ScoreManager';
 import { MissileSpawner } from '../components/MissileSpawner';
+import { ScoreManager } from '../components/ScoreManager';
 
 export class GameManager extends GameObject {
   protected buildInitialComponents(): Component[] {

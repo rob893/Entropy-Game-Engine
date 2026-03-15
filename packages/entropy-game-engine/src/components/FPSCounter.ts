@@ -1,15 +1,18 @@
-import { Component } from './Component';
-import type { IRenderableGUI } from '../core/types';
-import type { GameObject } from '../game-objects/GameObject';
 import type { ISerializedComponent } from '../core';
 import { readNumber } from '../core/helpers/Serialization';
+import type { IRenderableGUI } from '../core/types';
+import type { GameObject } from '../game-objects/GameObject';
+import { Component } from './Component';
 
 export class FPSCounter extends Component implements IRenderableGUI {
   public static override readonly typeName: string = 'FPSCounter';
+
   public zIndex: number = 0;
 
   private numFrames: number = 0;
+
   private timer: number = 0;
+
   private FPS: number = 0;
 
   public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): FPSCounter {

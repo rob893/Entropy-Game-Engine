@@ -1,17 +1,19 @@
-import { Component } from './Component';
-import type { IRenderableGizmo } from '../core/types';
+import type { ISerializedComponent } from '../core';
 import { Color } from '../core/enums/Color';
-import type { GameObject } from '../game-objects/GameObject';
+import { readString } from '../core/helpers/Serialization';
+import type { IRenderableGizmo } from '../core/types';
 import type { IWeightedGraph } from '../core/types';
 import type { IWeightedGraphCell } from '../core/types';
 import type { IGraph } from '../core/types';
 import type { IGraphCell } from '../core/types';
-import type { ISerializedComponent } from '../core';
-import { readString } from '../core/helpers/Serialization';
+import type { GameObject } from '../game-objects/GameObject';
+import { Component } from './Component';
 
 export class GraphVisualizer extends Component implements IRenderableGizmo {
   public static override readonly typeName: string = 'GraphVisualizer';
+
   private readonly graph: IGraph;
+
   private readonly defaultColor: Color;
 
   public constructor(gameObject: GameObject, graph: IGraph, defaultColor: Color = Color.LightGreen) {
@@ -64,7 +66,9 @@ export class GraphVisualizer extends Component implements IRenderableGizmo {
 
 export class WeightedGraphVisualizer extends GraphVisualizer {
   public static override readonly typeName: string = 'WeightedGraphVisualizer';
+
   private readonly passableColor: Color;
+
   private readonly unpassableColor: Color;
 
   public constructor(

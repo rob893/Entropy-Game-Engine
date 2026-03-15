@@ -3,8 +3,11 @@ import type { Vector2 } from './Vector2';
 
 export class CollisionManifold {
   public readonly colliderA: RectangleCollider;
+
   public readonly colliderB: RectangleCollider;
+
   public readonly penetrationDepth: number;
+
   public readonly collisionNormal: Vector2;
 
   public constructor(

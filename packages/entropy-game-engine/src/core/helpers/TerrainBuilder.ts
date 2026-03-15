@@ -1,9 +1,9 @@
+import { Terrain } from '../../game-objects/Terrain';
+import type { GameEngine } from '../GameEngine';
 import type { ISpriteData } from '../types';
+import type { ITerrainSpec } from '../types';
 import { NavGrid } from './NavGrid';
 import { Vector2 } from './Vector2';
-import { Terrain } from '../../game-objects/Terrain';
-import type { ITerrainSpec } from '../types';
-import type { GameEngine } from '../GameEngine';
 
 type LegacyTerrainSpec = Required<Pick<ITerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
 type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> &
@@ -11,7 +11,9 @@ type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 
 
 export class TerrainBuilder {
   private readonly context: CanvasRenderingContext2D;
+
   private readonly canvas: HTMLCanvasElement;
+
   private readonly imageCache: Map<string, Promise<HTMLImageElement>> = new Map<string, Promise<HTMLImageElement>>();
 
   public constructor(width: number = 1024, height: number = 576) {

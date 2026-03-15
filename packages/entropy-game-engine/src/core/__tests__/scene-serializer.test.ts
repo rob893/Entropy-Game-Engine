@@ -1,11 +1,11 @@
 import 'vitest-canvas-mock';
 import type { Component } from '../../components/Component';
 import { GameObject, RectangleCollider, Rigidbody } from '../../index';
-import { GameEngine } from '../GameEngine';
-import { SceneSerializer } from '../SceneSerializer';
 import { Layer } from '../enums/Layer';
+import { GameEngine } from '../GameEngine';
 import { AssetPool } from '../helpers/AssetPool';
 import { PhysicalMaterial } from '../helpers/PhysicalMaterial';
+import { SceneSerializer } from '../SceneSerializer';
 import type { IPrefabSettings } from '../types';
 import type { IScene } from '../types';
 import type { ISerializedScene } from '../types';

@@ -1,16 +1,16 @@
 import 'vitest-canvas-mock';
 import { Component } from '../../components/Component';
-import { GameObject } from '../GameObject';
+import { Rigidbody } from '../../components/Rigidbody';
+import { Transform } from '../../components/Transform';
+import { Layer } from '../../core/enums/Layer';
+import { GameEngine } from '../../core/GameEngine';
+import type { AssetPool } from '../../core/helpers/AssetPool';
+import type { RectangleBackground } from '../../core/helpers/RectangleBackground';
+import { Vector2 } from '../../core/helpers/Vector2';
 import type { IPrefabSettings } from '../../core/types';
 import type { IGameObjectConstructionParams } from '../../core/types';
-import type { RectangleBackground } from '../../core/helpers/RectangleBackground';
-import { GameEngine } from '../../core/GameEngine';
 import type { IScene } from '../../core/types';
-import { Layer } from '../../core/enums/Layer';
-import type { AssetPool } from '../../core/helpers/AssetPool';
-import { Transform } from '../../components/Transform';
-import { Vector2 } from '../../core/helpers/Vector2';
-import { Rigidbody } from '../../components/Rigidbody';
+import { GameObject } from '../GameObject';
 
 class TestComponent extends Component {}
 

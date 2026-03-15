@@ -12,10 +12,10 @@ import {
   Rigidbody,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
-import type { CharacterAnimations } from '../types';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';
 import { PlayerHealth } from '../components/characters/player/PlayerHealth';
 import { PlayerPhysicsMotor } from '../components/characters/player/PlayerPhysicsMotor';
+import type { ICharacterAnimations } from '../types';
 
 export class PlayerRB extends GameObject {
   protected buildInitialComponents(): Component[] {
@@ -36,7 +36,7 @@ export class PlayerRB extends GameObject {
     const attack1L = new Animation(minotaurSpriteSheet.getFrames(14), 0.075);
     const attack2L = new Animation(minotaurSpriteSheet.getFrames(17), 0.075);
 
-    const animations: CharacterAnimations = {
+    const animations: ICharacterAnimations = {
       rightAttackAnimations: [attack1R, attack2R],
       leftAttackAnimations: [attack1L, attack2L],
       runLeftAnimation: new Animation(minotaurSpriteSheet.getFrames(12), 0.075),

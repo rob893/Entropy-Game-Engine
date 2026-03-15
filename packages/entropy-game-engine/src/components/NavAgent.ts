@@ -1,35 +1,35 @@
-import { Component } from './Component';
-import type { IRenderableGizmo } from '../core/types';
-import { Vector2 } from '../core/helpers/Vector2';
-import { Color } from '../core/enums/Color';
-import type { NavGrid } from '../core/helpers/NavGrid';
-import { AStarSearch } from '../core/helpers/AStarSearch';
-import type { GameObject } from '../game-objects/GameObject';
-import { Topic } from '../core/helpers/Topic';
 import type { ISerializedComponent } from '../core';
+import { Color } from '../core/enums/Color';
+import { AStarSearch } from '../core/helpers/AStarSearch';
+import type { NavGrid } from '../core/helpers/NavGrid';
 import { readNumber, readVector2 } from '../core/helpers/Serialization';
+import { Topic } from '../core/helpers/Topic';
+import { Vector2 } from '../core/helpers/Vector2';
+import type { IRenderableGizmo } from '../core/types';
+import type { GameObject } from '../game-objects/GameObject';
+import { Component } from './Component';
 
 export class NavAgent extends Component implements IRenderableGizmo {
   public static override readonly typeName: string = 'NavAgent';
+
   public speed: number = 1;
+
   public readonly onDirectionChanged = new Topic<Vector2>();
+
   public readonly onPathCompleted = new Topic<void>();
 
   private path: Vector2[] | null = null;
+
   private nextPosition: Vector2 | null = null;
+
   private pathIndex: number = 0;
+
   private readonly navGrid: NavGrid;
 
   public constructor(gameObject: GameObject, navGrid: NavGrid) {
     super(gameObject);
 
     this.navGrid = navGrid;
-  }
-
-  public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): NavAgent {
-    const navAgent = new NavAgent(gameObject, gameObject.terrain.navGrid);
-    navAgent.deserialize(data);
-    return navAgent;
   }
 
   public get heading(): Vector2 | null {
@@ -50,6 +50,12 @@ export class NavAgent extends Component implements IRenderableGizmo {
     }
 
     return this.path[this.path.length - 1];
+  }
+
+  public static createFromSerialized(gameObject: GameObject, data: Record<string, unknown>): NavAgent {
+    const navAgent = new NavAgent(gameObject, gameObject.terrain.navGrid);
+    navAgent.deserialize(data);
+    return navAgent;
   }
 
   public override serialize(): ISerializedComponent {

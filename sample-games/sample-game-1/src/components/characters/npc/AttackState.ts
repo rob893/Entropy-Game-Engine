@@ -1,13 +1,16 @@
 import { Component, GameObject, Transform, Vector2 } from '@entropy-engine/entropy-game-engine';
-import type { State } from '../../../types';
-import { CharacterStats } from '../CharacterStats';
+import type { IState } from '../../../types';
 import { CharacterAnimator } from '../CharacterAnimator';
+import { CharacterStats } from '../CharacterStats';
 import { NPCController } from './NPCController';
 
-export class AttackState extends Component implements State {
+export class AttackState extends Component implements IState {
   private targetStats: CharacterStats | null = null;
+
   private attackTimer: number = 0;
+
   private readonly animator: CharacterAnimator;
+
   private readonly myStats: CharacterStats;
 
   public constructor(gameObject: GameObject, animator: CharacterAnimator, myStats: CharacterStats) {

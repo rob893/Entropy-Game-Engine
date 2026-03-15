@@ -1,3 +1,4 @@
+export * from './BaseCollisionDetector';
 export * from './ImpulseCollisionResolver';
 export * from './Physics';
 export * from './RaycastHit';
