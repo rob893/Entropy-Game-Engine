@@ -1,7 +1,7 @@
-import { Component, GameObject, RenderableBackground } from '@entropy-engine/entropy-game-engine';
+import { Component, GameObject, IRenderableBackground } from '@entropy-engine/entropy-game-engine';
 import { ScoreManager } from './ScoreManager';
 
-export class ScrollingBackground extends Component implements RenderableBackground {
+export class ScrollingBackground extends Component implements IRenderableBackground {
   public scrollSpeed: number = 300;
 
   private readonly backgroundImage: HTMLImageElement;

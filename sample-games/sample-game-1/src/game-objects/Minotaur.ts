@@ -3,16 +3,16 @@ import {
   Animator,
   Component,
   GameObject,
-  GameObjectConstructionParams,
+  IGameObjectConstructionParams,
   Layer,
   NavAgent,
   PhysicalMaterial,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';
-import { CharacterAnimations } from '../interfaces/CharacterAnimations';
+import { CharacterAnimations } from '../types';
 import { NPCController } from '../components/characters/npc/NPCController';
 import { SearchingState } from '../components/characters/npc/SearchingState';
 import { ChaseState } from '../components/characters/npc/ChaseState';
@@ -81,7 +81,7 @@ export class Minotaur extends GameObject {
     return components;
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 200,
       y: 300,
@@ -92,7 +92,7 @@ export class Minotaur extends GameObject {
     };
   }
 
-  protected override buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(config: IGameObjectConstructionParams): GameObject[] {
     const healthBar = new Healthbar(config);
 
     healthBar.transform.setPosition(this.transform.position.x, this.transform.position.y - 70);

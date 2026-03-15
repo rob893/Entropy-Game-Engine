@@ -1,4 +1,4 @@
-import { GameEngine } from '../GameEngine';
+import type { GameEngine } from '../GameEngine';
 
 export class SceneManager {
   private readonly gameEngine: GameEngine;

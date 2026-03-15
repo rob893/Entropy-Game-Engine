@@ -1,16 +1,16 @@
 import { Vector2 } from '../core/helpers/Vector2';
 import { Component } from './Component';
 import { Topic } from '../core/helpers/Topic';
-import { GameObject } from '../game-objects/GameObject';
-import { RenderableGizmo } from '../core/interfaces/RenderableGizmo';
+import type { GameObject } from '../game-objects/GameObject';
+import type { IRenderableGizmo } from '../core/types';
 import { Rigidbody } from './Rigidbody';
 import { Color } from '../core/enums/Color';
 import { PhysicalMaterial } from '../core/helpers/PhysicalMaterial';
-import { CollisionManifold } from '../core/helpers/CollisionManifold';
-import { SerializedComponent, Subscribable } from '../core';
+import type { CollisionManifold } from '../core/helpers/CollisionManifold';
+import type { ISerializedComponent, ISubscribable } from '../core';
 import { isRecord, readBoolean, readNumber, readString, readVector2 } from '../core/helpers/Serialization';
 
-export class RectangleCollider extends Component implements RenderableGizmo {
+export class RectangleCollider extends Component implements IRenderableGizmo {
   public static override readonly typeName: string = 'RectangleCollider';
   public isTrigger: boolean = false;
   public physicalMaterial: PhysicalMaterial = PhysicalMaterial.zero;
@@ -139,15 +139,15 @@ export class RectangleCollider extends Component implements RenderableGizmo {
     return new Vector2(this.topLeft.x + this._width / 2, this.topLeft.y + this._height / 2);
   }
 
-  public get onCollided(): Subscribable<CollisionManifold> {
+  public get onCollided(): ISubscribable<CollisionManifold> {
     return this._onCollided;
   }
 
-  public get onResized(): Subscribable<void> {
+  public get onResized(): ISubscribable<void> {
     return this._onResize;
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {

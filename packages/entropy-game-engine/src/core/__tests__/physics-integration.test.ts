@@ -5,11 +5,11 @@ import { GameEngine } from '../GameEngine';
 import { Time } from '../Time';
 import { Vector2 } from '../helpers/Vector2';
 import { Topic } from '../helpers/Topic';
-import { CollisionManifold } from '../helpers/CollisionManifold';
+import type { CollisionManifold } from '../helpers/CollisionManifold';
 import { PhysicsEngine } from '../PhysicsEngine';
-import { CollisionDetector } from '../interfaces/CollisionDetector';
-import { CollisionResolver } from '../interfaces/CollisionResolver';
-import { GameObject } from '../../game-objects/GameObject';
+import type { ICollisionDetector } from '../types';
+import type { ICollisionResolver } from '../types';
+import type { GameObject } from '../../game-objects/GameObject';
 
 const createFakeGameObject = (): GameObject => {
   const position = new Vector2(0, 0);
@@ -28,7 +28,7 @@ const createFakeGameObject = (): GameObject => {
   } as unknown as GameObject;
 };
 
-const createCollisionDetector = (): CollisionDetector => {
+const createCollisionDetector = (): ICollisionDetector => {
   const collisions = new Topic<CollisionManifold>();
 
   return {
@@ -41,7 +41,7 @@ const createCollisionDetector = (): CollisionDetector => {
   };
 };
 
-const collisionResolver: CollisionResolver = {
+const collisionResolver: ICollisionResolver = {
   resolveCollisions: vi.fn()
 };
 

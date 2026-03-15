@@ -3,16 +3,16 @@ import {
   Animator,
   Component,
   GameObject,
-  GameObjectConstructionParams,
+  IGameObjectConstructionParams,
   Layer,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { MissileMotor } from '../components/MissileMotor';
 
 export class Missile extends GameObject {
-  protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
     const missleFrames = this.assetPool.getAsset<SpriteSheet>('missileSpriteSheet').getFrames();
 
     const collider = new RectangleCollider(this, null, 60, 15);
@@ -25,7 +25,7 @@ export class Missile extends GameObject {
     return [collider, animator, motor];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

@@ -1,9 +1,9 @@
-import { CollisionResolver } from '../interfaces/CollisionResolver';
+import type { ICollisionResolver } from '../types';
 import { Vector2 } from '../helpers/Vector2';
-import { Rigidbody } from '../../components/Rigidbody';
-import { CollisionManifold } from '../helpers/CollisionManifold';
+import type { Rigidbody } from '../../components/Rigidbody';
+import type { CollisionManifold } from '../helpers/CollisionManifold';
 
-export class ImpulseCollisionResolver implements CollisionResolver {
+export class ImpulseCollisionResolver implements ICollisionResolver {
   public resolveCollisions(collisionManifold: CollisionManifold): void {
     const { colliderA } = collisionManifold;
     const { colliderB } = collisionManifold;

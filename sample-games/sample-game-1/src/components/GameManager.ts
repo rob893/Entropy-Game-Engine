@@ -4,14 +4,14 @@ import {
   EventType,
   GameObject,
   Key,
-  RenderableGUI,
+  IRenderableGUI,
   Rigidbody,
   Vector2
 } from '@entropy-engine/entropy-game-engine';
 import { TrumpRB } from '../game-objects/TrumpRB';
 import cursorImage from '../assets/images/cursors/cursor_final.png';
 
-export class GameManager extends Component implements RenderableGUI {
+export class GameManager extends Component implements IRenderableGUI {
   public zIndex: number = 0;
 
   private sceneMessage: string = '';

@@ -2,7 +2,7 @@ import { Animator } from '../components/Animator';
 import { AudioSource } from '../components/AudioSource';
 import { Camera } from '../components/Camera';
 import { ClickedOnDetector } from '../components/ClickedOnDetector';
-import { Component } from '../components/Component';
+import type { Component } from '../components/Component';
 import { FPSCounter } from '../components/FPSCounter';
 import { GraphVisualizer, WeightedGraphVisualizer } from '../components/GraphVisualizer';
 import { ImageRenderer } from '../components/ImageRenderer';

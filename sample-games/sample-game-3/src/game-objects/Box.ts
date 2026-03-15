@@ -5,7 +5,7 @@ import {
   GameObject,
   Layer,
   PhysicalMaterial,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   RectangleRenderer,
   Rigidbody
@@ -59,7 +59,7 @@ export class Box extends GameObject {
     return [rb, renderer, collider];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

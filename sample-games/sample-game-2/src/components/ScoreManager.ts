@@ -4,10 +4,10 @@ import {
   Key,
   MouseButton,
   RectangleCollider,
-  RenderableGUI
+  IRenderableGUI
 } from '@entropy-engine/entropy-game-engine';
 
-export class ScoreManager extends Component implements RenderableGUI {
+export class ScoreManager extends Component implements IRenderableGUI {
   public readonly zIndex = 1;
   /** increase to slow down difficulty progression, decrease to speed up difficulty progression */
   public readonly progressDenom: number = 20;

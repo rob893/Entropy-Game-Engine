@@ -3,16 +3,16 @@ import {
   Animator,
   Component,
   GameObject,
-  GameObjectConstructionParams,
+  IGameObjectConstructionParams,
   Layer,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { PlayerMotor } from '../components/PlayerMotor';
 
 export class Player extends GameObject {
-  protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
     const helicopterFrames = this.assetPool.getAsset<SpriteSheet>('helicopterSpriteSheet').getFrames();
 
     const collider = new RectangleCollider(this, null, 60, 30);
@@ -25,7 +25,7 @@ export class Player extends GameObject {
     return [collider, animator, motor];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 100,
       y: this.gameCanvas.height / 2,

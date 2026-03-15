@@ -6,8 +6,8 @@ import {
   GameObject,
   ImageUtilities,
   RectangleBackground,
-  RenderableBackground,
-  Scene,
+  IRenderableBackground,
+  IScene,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import HelicopterSpriteSheet from './assets/images/helicopter.png';
@@ -21,12 +21,12 @@ import { Background } from './game-objects/Background';
 import { Border } from './game-objects/Border';
 import { GameManager } from './game-objects/GameManager';
 
-export const scene1: Scene = {
+export const scene1: IScene = {
   name: 'Scene1',
   loadOrder: 1,
   terrainSpec: null,
 
-  getSkybox(gameEngine: GameEngine): RenderableBackground {
+  getSkybox(gameEngine: GameEngine): IRenderableBackground {
     return new Background({ gameEngine });
   },
 

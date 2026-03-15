@@ -1,9 +1,9 @@
-import { RectangleCollider } from '../../components/RectangleCollider';
-import { Vector2 } from '../helpers/Vector2';
-import { Layer } from '../enums/Layer';
-import { CollisionManifold } from '../helpers/CollisionManifold';
+import type { RectangleCollider } from '../../components/RectangleCollider';
+import type { Vector2 } from '../helpers/Vector2';
+import type { Layer } from '../enums/Layer';
+import type { CollisionManifold } from '../helpers/CollisionManifold';
 import { BaseCollisionDetector } from './BaseCollisionDetector';
-import { Subscribable } from '../helpers';
+import type { ISubscribable } from '../helpers';
 
 export class SpatialHashCollisionDetector extends BaseCollisionDetector {
   private readonly colliderSpacialMapKeys: Map<RectangleCollider, Set<string>> = new Map<
@@ -33,7 +33,7 @@ export class SpatialHashCollisionDetector extends BaseCollisionDetector {
     this.buildSpatialMapCells();
   }
 
-  public override get onCollisionDetected(): Subscribable<CollisionManifold> {
+  public override get onCollisionDetected(): ISubscribable<CollisionManifold> {
     return this._onCollisionDetected;
   }
 

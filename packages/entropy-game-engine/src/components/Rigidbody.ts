@@ -1,8 +1,8 @@
 import { Component } from './Component';
 import { Vector2 } from '../core/helpers/Vector2';
-import { GameObject } from '../game-objects/GameObject';
+import type { GameObject } from '../game-objects/GameObject';
 import { Topic } from '../core/helpers/Topic';
-import { SerializedComponent, Subscribable } from '../core';
+import type { ISerializedComponent, ISubscribable } from '../core';
 import { readBoolean, readNumber, readVector2 } from '../core/helpers/Serialization';
 
 export class Rigidbody extends Component {
@@ -74,15 +74,15 @@ export class Rigidbody extends Component {
     return this._isKinematic;
   }
 
-  public get becameKinematic(): Subscribable<Rigidbody> {
+  public get becameKinematic(): ISubscribable<Rigidbody> {
     return this._becameKinematic;
   }
 
-  public get becameNonKinematic(): Subscribable<Rigidbody> {
+  public get becameNonKinematic(): ISubscribable<Rigidbody> {
     return this._becameNonKinematic;
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {

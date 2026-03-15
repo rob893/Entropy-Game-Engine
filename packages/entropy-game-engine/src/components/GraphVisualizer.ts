@@ -1,20 +1,20 @@
 import { Component } from './Component';
-import { RenderableGizmo } from '../core/interfaces/RenderableGizmo';
+import type { IRenderableGizmo } from '../core/types';
 import { Color } from '../core/enums/Color';
-import { GameObject } from '../game-objects/GameObject';
-import { WeightedGraph } from '../core/interfaces/WeightedGraph';
-import { WeightedGraphCell } from '../core/interfaces/WeightedGraphCell';
-import { Graph } from '../core/interfaces/Graph';
-import { GraphCell } from '../core/interfaces/GraphCell';
-import { SerializedComponent } from '../core';
+import type { GameObject } from '../game-objects/GameObject';
+import type { IWeightedGraph } from '../core/types';
+import type { IWeightedGraphCell } from '../core/types';
+import type { IGraph } from '../core/types';
+import type { IGraphCell } from '../core/types';
+import type { ISerializedComponent } from '../core';
 import { readString } from '../core/helpers/Serialization';
 
-export class GraphVisualizer extends Component implements RenderableGizmo {
+export class GraphVisualizer extends Component implements IRenderableGizmo {
   public static override readonly typeName: string = 'GraphVisualizer';
-  private readonly graph: Graph;
+  private readonly graph: IGraph;
   private readonly defaultColor: Color;
 
-  public constructor(gameObject: GameObject, graph: Graph, defaultColor: Color = Color.LightGreen) {
+  public constructor(gameObject: GameObject, graph: IGraph, defaultColor: Color = Color.LightGreen) {
     super(gameObject);
 
     this.graph = graph;
@@ -25,7 +25,7 @@ export class GraphVisualizer extends Component implements RenderableGizmo {
     return new GraphVisualizer(gameObject, gameObject.terrain.navGrid, (readString(data.defaultColor) ?? Color.LightGreen) as Color);
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {
@@ -49,7 +49,7 @@ export class GraphVisualizer extends Component implements RenderableGizmo {
     }
   }
 
-  protected getColorForCell(cell: GraphCell): Color {
+  protected getColorForCell(cell: IGraphCell): Color {
     return this.defaultColor;
   }
 }
@@ -61,7 +61,7 @@ export class WeightedGraphVisualizer extends GraphVisualizer {
 
   public constructor(
     gameObject: GameObject,
-    weightedGraph: WeightedGraph,
+    weightedGraph: IWeightedGraph,
     passableColor: Color = Color.Blue,
     unpassableColor: Color = Color.Red
   ) {
@@ -80,7 +80,7 @@ export class WeightedGraphVisualizer extends GraphVisualizer {
     );
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {
@@ -92,7 +92,7 @@ export class WeightedGraphVisualizer extends GraphVisualizer {
 
   public override deserialize(_data: Record<string, unknown>): void {}
 
-  protected override getColorForCell(cell: GraphCell): Color {
+  protected override getColorForCell(cell: IGraphCell): Color {
     if (!this.isWeightedGraphCell(cell)) {
       throw new Error('This must only be used with weighted graphs');
     }
@@ -100,7 +100,7 @@ export class WeightedGraphVisualizer extends GraphVisualizer {
     return cell.passable ? this.passableColor : this.unpassableColor;
   }
 
-  private isWeightedGraphCell(cell: GraphCell): cell is WeightedGraphCell {
-    return (cell as WeightedGraphCell).passable !== undefined && (cell as WeightedGraphCell).weight !== undefined;
+  private isWeightedGraphCell(cell: IGraphCell): cell is IWeightedGraphCell {
+    return (cell as IWeightedGraphCell).passable !== undefined && (cell as IWeightedGraphCell).weight !== undefined;
   }
 }

@@ -1,19 +1,17 @@
 import 'vitest-canvas-mock';
-import { Component } from '../../components/Component';
-import { RectangleCollider } from '../../components/RectangleCollider';
-import { Rigidbody } from '../../components/Rigidbody';
-import { GameObject } from '../../game-objects/GameObject';
+import type { Component } from '../../components/Component';
+import { GameObject, RectangleCollider, Rigidbody } from '../../index';
 import { GameEngine } from '../GameEngine';
 import { SceneSerializer } from '../SceneSerializer';
 import { Layer } from '../enums/Layer';
 import { AssetPool } from '../helpers/AssetPool';
 import { PhysicalMaterial } from '../helpers/PhysicalMaterial';
-import { PrefabSettings } from '../interfaces/PrefabSettings';
-import { Scene } from '../interfaces/Scene';
-import { SerializedScene } from '../interfaces/Serializable';
+import type { IPrefabSettings } from '../types';
+import type { IScene } from '../types';
+import type { ISerializedScene } from '../types';
 
 class SceneSerializerTestGameObject extends GameObject {
-  protected override getPrefabSettings(): PrefabSettings {
+  protected override getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,
@@ -42,7 +40,7 @@ function createGameEngine(): GameEngine {
 
 async function createInitializedEngine(): Promise<GameEngine> {
   const engine = createGameEngine();
-  const bootstrapScene: Scene = {
+  const bootstrapScene: IScene = {
     name: 'Bootstrap',
     loadOrder: 0,
     terrainSpec: null,
@@ -96,7 +94,7 @@ function buildSerializableObject(gameEngine: GameEngine, includeChild: boolean =
 
 test('serializes a simple scene to JSON', async () => {
   const engine = createGameEngine();
-  const codeDefinedScene: Scene = {
+  const codeDefinedScene: IScene = {
     name: 'Code Scene',
     loadOrder: 1,
     terrainSpec: null,
@@ -122,7 +120,7 @@ test('serializes a simple scene to JSON', async () => {
 test('deserializes JSON back to a Scene object', async () => {
   const sourceEngine = await createInitializedEngine();
   const serializedGameObject = buildSerializableObject(sourceEngine).serialize();
-  const jsonScene: SerializedScene = {
+  const jsonScene: ISerializedScene = {
     name: 'JSON Scene',
     sceneId: 5,
     gravity: 123,
@@ -145,7 +143,7 @@ test('deserializes JSON back to a Scene object', async () => {
 
 test('SceneSerializer.toJSON produces valid JSON output with no circular references', async () => {
   const engine = createGameEngine();
-  const codeDefinedScene: Scene = {
+  const codeDefinedScene: IScene = {
     name: 'Code Scene',
     loadOrder: 3,
     terrainSpec: null,
@@ -157,7 +155,7 @@ test('SceneSerializer.toJSON produces valid JSON output with no circular referen
   await engine.loadScene(3);
 
   const json = SceneSerializer.toJSON(engine, 'JSON Output', 77);
-  const parsedJson = JSON.parse(json) as SerializedScene;
+  const parsedJson = JSON.parse(json) as ISerializedScene;
 
   expect(parsedJson).toEqual(SceneSerializer.serializeScene(engine, 'JSON Output', 77));
 });
@@ -166,7 +164,7 @@ test('code-defined scenes still work alongside JSON scenes', async () => {
   const sourceEngine = await createInitializedEngine();
   const serializedGameObject = buildSerializableObject(sourceEngine).serialize();
 
-  const codeDefinedScene: Scene = {
+  const codeDefinedScene: IScene = {
     name: 'Code Scene',
     loadOrder: 1,
     terrainSpec: null,

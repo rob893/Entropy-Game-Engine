@@ -1,5 +1,5 @@
-import { Component, Subscribable, GameObject, Topic, Slider } from '@entropy-engine/entropy-game-engine';
-import { Damageable } from '../../interfaces/Damageable';
+import { Component, ISubscribable, GameObject, Topic, Slider } from '@entropy-engine/entropy-game-engine';
+import { Damageable } from '../../types';
 import { CharacterAnimator } from './CharacterAnimator';
 import { PlayerAnimator } from './player/PlayerAnimator';
 
@@ -44,7 +44,7 @@ export class CharacterStats extends Component implements Damageable {
     return this._health;
   }
 
-  public get onDeath(): Subscribable<void> {
+  public get onDeath(): ISubscribable<void> {
     return this.onDie;
   }
 

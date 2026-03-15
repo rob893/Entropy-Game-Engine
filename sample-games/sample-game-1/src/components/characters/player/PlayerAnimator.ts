@@ -1,5 +1,5 @@
 import { Animation, Animator, Component, GameObject } from '@entropy-engine/entropy-game-engine';
-import { CharacterAnimations, PlayerAnimations } from '../../../interfaces/CharacterAnimations';
+import { CharacterAnimations, PlayerAnimations } from '../../../types';
 
 export class PlayerAnimator extends Component {
   private facingRight: boolean = true;

@@ -3,16 +3,16 @@ import { Camera } from '../../components/Camera';
 import { Component } from '../../components/Component';
 import { GameObject } from '../../game-objects/GameObject';
 import { GameEngine } from '../GameEngine';
-import { RenderingEngine } from '../RenderingEngine';
+import type { RenderingEngine } from '../RenderingEngine';
 import { Layer } from '../enums/Layer';
-import { PrefabSettings } from '../interfaces/PrefabSettings';
+import type { IPrefabSettings } from '../types';
 
 class EmptyGameObject extends GameObject {
   protected override buildInitialComponents(): Component[] {
     return [];
   }
 
-  protected override getPrefabSettings(): PrefabSettings {
+  protected override getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

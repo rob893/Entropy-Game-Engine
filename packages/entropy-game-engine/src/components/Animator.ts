@@ -1,11 +1,11 @@
 import { Component } from './Component';
-import { GameObject } from '../game-objects/GameObject';
-import { Animation } from '../core/helpers/Animation';
-import { Renderable } from '../core/interfaces/Renderable';
-import { SerializedComponent } from '../core';
+import type { GameObject } from '../game-objects/GameObject';
+import type { Animation } from '../core/helpers/Animation';
+import type { IRenderable } from '../core/types';
+import type { ISerializedComponent } from '../core';
 import { createAnimationFromSource, getElementSource, readBoolean, readNumber, readString } from '../core/helpers/Serialization';
 
-export class Animator extends Component implements Renderable {
+export class Animator extends Component implements IRenderable {
   public static override readonly typeName: string = 'Animator';
   private animation: Animation;
   private renderWidth: number;
@@ -38,7 +38,7 @@ export class Animator extends Component implements Renderable {
     return this.animation;
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {

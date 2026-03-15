@@ -1,16 +1,16 @@
-import { GameObject } from '../game-objects/GameObject';
-import { Transform } from './Transform';
+import type { GameObject } from '../game-objects/GameObject';
+import type { Transform } from './Transform';
 import { Topic } from '../core/helpers/Topic';
-import { Input } from '../core/helpers/Input';
-import { Time } from '../core/Time';
-import { AssetPool } from '../core/helpers/AssetPool';
-import { SceneManager } from '../core/helpers/SceneManager';
-import { Physics } from '../core/physics/Physics';
+import type { Input } from '../core/helpers/Input';
+import type { Time } from '../core/Time';
+import type { AssetPool } from '../core/helpers/AssetPool';
+import type { SceneManager } from '../core/helpers/SceneManager';
+import type { Physics } from '../core/physics/Physics';
 import { GameEngine } from '../core/GameEngine';
-import { Vector2 } from '../core/helpers/Vector2';
-import { Terrain } from '../game-objects/Terrain';
-import { GameObjectConstructionParams } from '../core/interfaces/GameObjectConstructionParams';
-import { SerializedComponent, Subscribable } from '../core';
+import type { Vector2 } from '../core/helpers/Vector2';
+import type { Terrain } from '../game-objects/Terrain';
+import type { IGameObjectConstructionParams } from '../core/types';
+import type { ISerializedComponent, ISubscribable } from '../core';
 
 export abstract class Component {
   public static readonly typeName: string = 'Component';
@@ -73,11 +73,11 @@ export abstract class Component {
     return this.gameObject.transform;
   }
 
-  public get onDestroyed(): Subscribable<Component> {
+  public get onDestroyed(): ISubscribable<Component> {
     return this._onDestroyed;
   }
 
-  public serialize(): SerializedComponent {
+  public serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {}
@@ -182,7 +182,7 @@ export abstract class Component {
   }
 
   protected instantiate<T extends GameObject>(
-    type: new (constructionParams: GameObjectConstructionParams) => T,
+    type: new (constructionParams: IGameObjectConstructionParams) => T,
     position?: Vector2,
     rotation?: number,
     parent?: Transform

@@ -1,15 +1,15 @@
 import { Component } from './Component';
-import { RenderableGizmo } from '../core/interfaces/RenderableGizmo';
+import type { IRenderableGizmo } from '../core/types';
 import { Vector2 } from '../core/helpers/Vector2';
 import { Color } from '../core/enums/Color';
-import { NavGrid } from '../core/helpers/NavGrid';
+import type { NavGrid } from '../core/helpers/NavGrid';
 import { AStarSearch } from '../core/helpers/AStarSearch';
-import { GameObject } from '../game-objects/GameObject';
+import type { GameObject } from '../game-objects/GameObject';
 import { Topic } from '../core/helpers/Topic';
-import { SerializedComponent } from '../core';
+import type { ISerializedComponent } from '../core';
 import { readNumber, readVector2 } from '../core/helpers/Serialization';
 
-export class NavAgent extends Component implements RenderableGizmo {
+export class NavAgent extends Component implements IRenderableGizmo {
   public static override readonly typeName: string = 'NavAgent';
   public speed: number = 1;
   public readonly onDirectionChanged = new Topic<Vector2>();
@@ -52,7 +52,7 @@ export class NavAgent extends Component implements RenderableGizmo {
     return this.path[this.path.length - 1];
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {

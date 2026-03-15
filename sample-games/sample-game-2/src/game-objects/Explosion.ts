@@ -6,7 +6,7 @@ import {
   Component,
   GameObject,
   Layer,
-  PrefabSettings,
+  IPrefabSettings,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { Exploder } from '../components/Exploder';
@@ -24,7 +24,7 @@ export class Explosion extends GameObject {
     return [audioSource, new Animator(this, 75, 75, explosionAnimation), new Exploder(this, audioSource)];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

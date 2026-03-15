@@ -4,13 +4,13 @@ import {
   GameEngine,
   GameObject,
   RectangleBackground,
-  Scene
+  IScene
 } from '@entropy-engine/entropy-game-engine';
 import { SampleGameObject } from './game-objects/SampleGameObject';
 import { Box } from './game-objects/Box';
 import { GameManager } from './game-objects/GameManager';
 
-export const scene1: Scene = {
+export const scene1: IScene = {
   name: 'Scene1',
   loadOrder: 1,
   terrainSpec: null,

@@ -1,27 +1,26 @@
 import { Transform } from '../components/Transform';
 import { Component } from '../components/Component';
-import { GameEngine } from '../core/GameEngine';
+import type { GameEngine } from '../core/GameEngine';
 import { Layer } from '../core/enums/Layer';
-import { PrefabSettings } from '../core/interfaces/PrefabSettings';
-import { ComponentAnalyzer } from '../core/helpers/ComponentAnalyzer';
+import type { IPrefabSettings } from '../core/types';
+import type { ComponentAnalyzer } from '../core/helpers/ComponentAnalyzer';
 import { generateUUID } from '../core/helpers/UUID';
-import { Input } from '../core/helpers/Input';
-import { Physics } from '../core/physics/Physics';
-import { SceneManager } from '../core/helpers/SceneManager';
-import { AssetPool } from '../core/helpers/AssetPool';
-import { Time } from '../core/Time';
-import { Vector2 } from '../core/helpers/Vector2';
-import { Terrain } from './Terrain';
-import { GameObjectConstructionParams } from '../core/interfaces/GameObjectConstructionParams';
+import type { Input } from '../core/helpers/Input';
+import type { Physics } from '../core/physics/Physics';
+import type { SceneManager } from '../core/helpers/SceneManager';
+import type { AssetPool } from '../core/helpers/AssetPool';
+import type { Time } from '../core/Time';
+import type { Vector2 } from '../core/helpers/Vector2';
+import type { Terrain } from './Terrain';
+import type { IGameObjectConstructionParams } from '../core/types';
 import { ComponentRegistry } from '../core/ComponentRegistry';
-import { registerBuiltinComponents } from '../core/registerBuiltinComponents';
-import { SerializedComponent, SerializedGameObject } from '../core/interfaces/Serializable';
+import type { ISerializedComponent, ISerializedGameObject } from '../core/types';
 
 type SerializableComponentConstructor = (new (gameObject: GameObject, ...args: any[]) => Component) & {
   createFromSerialized?: (gameObject: GameObject, data: Record<string, unknown>) => Component;
 };
 
-export abstract class GameObject<TConfig extends GameObjectConstructionParams = GameObjectConstructionParams> {
+export abstract class GameObject<TConfig extends IGameObjectConstructionParams = IGameObjectConstructionParams> {
   public name: string;
   public readonly transform: Transform;
 
@@ -148,8 +147,8 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     return this.gameEngine.terrain;
   }
 
-  public serialize(): SerializedGameObject {
-    const components: SerializedComponent[] = [];
+  public serialize(): ISerializedGameObject {
+    const components: ISerializedComponent[] = [];
     this.componentMap.forEach(componentGroup => {
       for (const component of componentGroup) {
         if (component instanceof Transform) {
@@ -160,7 +159,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
       }
     });
 
-    const children: SerializedGameObject[] = [];
+    const children: ISerializedGameObject[] = [];
     for (const child of this.transform.children) {
       children.push(child.gameObject.serialize());
     }
@@ -176,7 +175,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     };
   }
 
-  public static deserialize(data: SerializedGameObject, gameEngine: GameEngine): GameObject {
+  public static deserialize(data: ISerializedGameObject, gameEngine: GameEngine): GameObject {
     const gameObject = new SerializedGameObjectNode({
       gameEngine,
       id: data.id,
@@ -188,7 +187,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     return gameObject;
   }
 
-  public deserialize(data: SerializedGameObject): void {
+  public deserialize(data: ISerializedGameObject): void {
     this.id = data.id;
     this.name = data.name;
     this.tag = data.tag;
@@ -224,7 +223,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   }
 
   public instantiate<T extends GameObject>(
-    type: new (constructionParams: GameObjectConstructionParams) => T,
+    type: new (constructionParams: IGameObjectConstructionParams) => T,
     position?: Vector2,
     rotation?: number,
     parent?: Transform
@@ -430,7 +429,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     return [];
   }
 
-  private syncComponents(serializedComponents: SerializedComponent[]): void {
+  private syncComponents(serializedComponents: ISerializedComponent[]): void {
     const expectedCounts = new Map<string, number>();
 
     for (const serializedComponent of serializedComponents) {
@@ -481,7 +480,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     }
   }
 
-  private syncChildren(serializedChildren: SerializedGameObject[]): void {
+  private syncChildren(serializedChildren: ISerializedGameObject[]): void {
     const currentChildren = this.transform.children.map(child => child.gameObject);
 
     for (let i = serializedChildren.length; i < currentChildren.length; i++) {
@@ -509,9 +508,7 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
     }
   }
 
-  private createComponentFromSerialized(serializedComponent: SerializedComponent): Component {
-    registerBuiltinComponents();
-
+  private createComponentFromSerialized(serializedComponent: ISerializedComponent): Component {
     const componentConstructor = ComponentRegistry.get(
       serializedComponent.typeName
     ) as SerializableComponentConstructor | undefined;
@@ -545,12 +542,12 @@ export abstract class GameObject<TConfig extends GameObjectConstructionParams = 
   /**
    * These settings are overridden by non-default constructor values.
    */
-  protected abstract getPrefabSettings(): PrefabSettings;
+  protected abstract getPrefabSettings(): IPrefabSettings;
   protected abstract buildInitialComponents(config: TConfig): Component[];
 }
 
 class SerializedGameObjectNode extends GameObject {
-  protected override getPrefabSettings(): PrefabSettings {
+  protected override getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

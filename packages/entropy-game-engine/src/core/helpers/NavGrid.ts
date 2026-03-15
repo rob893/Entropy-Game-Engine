@@ -1,8 +1,8 @@
-import { WeightedGraph } from '../interfaces/WeightedGraph';
+import type { IWeightedGraph } from '../types';
 import { Vector2 } from './Vector2';
-import { WeightedGraphCell } from '../interfaces/WeightedGraphCell';
+import type { IWeightedGraphCell } from '../types';
 
-export class NavGrid<T extends WeightedGraphCell = WeightedGraphCell> implements WeightedGraph<T> {
+export class NavGrid<T extends IWeightedGraphCell = IWeightedGraphCell> implements IWeightedGraph<T> {
   public readonly cellSize: number;
 
   private readonly cells: Map<string, T> = new Map<string, T>();

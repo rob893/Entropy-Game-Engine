@@ -1,10 +1,10 @@
 import { Component } from './Component';
 import { RectangleCollider } from './RectangleCollider';
-import { GameObject } from '../game-objects/GameObject';
+import type { GameObject } from '../game-objects/GameObject';
 import { Topic } from '../core/helpers/Topic';
 import { Geometry } from '../core/helpers/Geometry';
 import { EventType } from '../core/enums/EventType';
-import { SerializedComponent, Subscribable } from '../core';
+import type { ISerializedComponent, ISubscribable } from '../core';
 import { readString } from '../core/helpers/Serialization';
 
 export class ClickedOnDetector extends Component {
@@ -32,11 +32,11 @@ export class ClickedOnDetector extends Component {
     return new ClickedOnDetector(gameObject, collider);
   }
 
-  public get onClicked(): Subscribable<void> {
+  public get onClicked(): ISubscribable<void> {
     return this.onClickedOn;
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {

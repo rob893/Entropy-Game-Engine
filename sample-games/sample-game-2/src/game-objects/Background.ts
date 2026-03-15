@@ -1,14 +1,14 @@
 import {
   Component,
   GameObject,
-  GameObjectConstructionParams,
+  IGameObjectConstructionParams,
   Layer,
-  PrefabSettings,
-  RenderableBackground
+  IPrefabSettings,
+  IRenderableBackground
 } from '@entropy-engine/entropy-game-engine';
 import { ScrollingBackground } from '../components/ScrollingBackground';
 
-export class Background extends GameObject implements RenderableBackground {
+export class Background extends GameObject implements IRenderableBackground {
   private scrollingBackground?: ScrollingBackground;
 
   public renderBackground(context: CanvasRenderingContext2D): void {
@@ -19,7 +19,7 @@ export class Background extends GameObject implements RenderableBackground {
     this.scrollingBackground.renderBackground(context);
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,
@@ -29,7 +29,7 @@ export class Background extends GameObject implements RenderableBackground {
       layer: Layer.Default
     };
   }
-  protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
     const backgroundImage = this.assetPool.getAsset<HTMLImageElement>('backgroundImage');
 
     const scrollingBackground = new ScrollingBackground(this, backgroundImage);

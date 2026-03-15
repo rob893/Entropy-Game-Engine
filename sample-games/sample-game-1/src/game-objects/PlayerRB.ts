@@ -5,15 +5,15 @@ import {
   AudioSource,
   Component,
   GameObject,
-  GameObjectConstructionParams,
+  IGameObjectConstructionParams,
   Layer,
   PhysicalMaterial,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   Rigidbody,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
-import { CharacterAnimations } from '../interfaces/CharacterAnimations';
+import { CharacterAnimations } from '../types';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';
 import { PlayerHealth } from '../components/characters/player/PlayerHealth';
 import { PlayerPhysicsMotor } from '../components/characters/player/PlayerPhysicsMotor';
@@ -72,7 +72,7 @@ export class PlayerRB extends GameObject {
     return components;
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 400,
       y: 250,
@@ -83,7 +83,7 @@ export class PlayerRB extends GameObject {
     };
   }
 
-  protected override buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(config: IGameObjectConstructionParams): GameObject[] {
     // const ball = new ThrowableBall(gameEngineAPIs, 'ball');
 
     // ball.transform.setPosition(this.transform.position.x, this.transform.position.y - 20);

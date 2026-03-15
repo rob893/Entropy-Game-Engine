@@ -5,7 +5,7 @@ import {
   GameObject,
   Layer,
   PhysicalMaterial,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   Rigidbody,
   SpriteSheet
@@ -30,7 +30,7 @@ export class TrumpRB extends GameObject {
     return components;
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 400,
       y: 250,

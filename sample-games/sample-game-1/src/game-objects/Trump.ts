@@ -6,11 +6,11 @@ import {
   Layer,
   NavAgent,
   PhysicalMaterial,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
-import { CharacterAnimations } from '../interfaces/CharacterAnimations';
+import { CharacterAnimations } from '../types';
 import { CharacterAnimator } from '../components/characters/CharacterAnimator';
 import { EnemyMotor } from '../components/characters/npc/EnemyMotor';
 
@@ -65,7 +65,7 @@ export class Trump extends GameObject {
     return components;
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 200,
       y: 300,

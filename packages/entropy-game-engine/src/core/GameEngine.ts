@@ -3,7 +3,7 @@ import { GameObject } from '../game-objects/GameObject';
 import { Time } from './Time';
 import { RenderingEngine } from './RenderingEngine';
 import { TerrainBuilder } from './helpers/TerrainBuilder';
-import { Scene } from './interfaces/Scene';
+import type { IScene } from './types';
 import { Input } from './helpers/Input';
 import { ComponentAnalyzer } from './helpers/ComponentAnalyzer';
 import { SceneManager } from './helpers/SceneManager';
@@ -11,12 +11,12 @@ import { Layer } from './enums/Layer';
 import { SpatialHashCollisionDetector } from './physics/SpatialHashCollisionDetector';
 import { ImpulseCollisionResolver } from './physics/ImpulseCollisionResolver';
 import { Physics } from './physics/Physics';
-import { Vector2 } from './helpers/Vector2';
-import { Transform } from '../components/Transform';
+import type { Vector2 } from './helpers/Vector2';
+import type { Transform } from '../components/Transform';
 import { AssetPool } from './helpers/AssetPool';
-import { Terrain } from '../game-objects/Terrain';
-import { GameObjectConstructionParams } from './interfaces/GameObjectConstructionParams';
-import { GameEngineConfiguration } from './interfaces/GameEngineConfiguration';
+import type { Terrain } from '../game-objects/Terrain';
+import type { IGameObjectConstructionParams } from './types';
+import type { IGameEngineConfiguration } from './types';
 
 export class GameEngine {
   public developmentMode: boolean = true;
@@ -24,7 +24,7 @@ export class GameEngine {
 
   private _physicsEngine: PhysicsEngine | null = null;
   private _renderingEngine: RenderingEngine | null = null;
-  private loadedScene: Scene | null = null;
+  private loadedScene: IScene | null = null;
   private gameLoopId: number | null = null;
   private gameInitialized: boolean = false;
   private _paused: boolean = false;
@@ -43,13 +43,13 @@ export class GameEngine {
   private physicsAccumulator: number = 0;
   private readonly gameObjectMap: Map<string, GameObject> = new Map<string, GameObject>();
   private readonly tagMap: Map<string, GameObject[]> = new Map<string, GameObject[]>();
-  private readonly scenes: Map<number | string, Scene> = new Map<number | string, Scene>();
+  private readonly scenes: Map<number | string, IScene> = new Map<number | string, IScene>();
   private readonly _gameCanvas: HTMLCanvasElement;
   private readonly invokeTimeouts: Set<number> = new Set<number>();
   private readonly gameObjectsMarkedForDelete: GameObject[] = [];
-  private readonly configuration: GameEngineConfiguration;
+  private readonly configuration: IGameEngineConfiguration;
 
-  public constructor(configuration: GameEngineConfiguration) {
+  public constructor(configuration: IGameEngineConfiguration) {
     this._gameCanvas = configuration.gameCanvas;
     this.configuration = configuration;
 
@@ -161,7 +161,7 @@ export class GameEngine {
     return [...this._gameObjects];
   }
 
-  public get currentScene(): Scene | null {
+  public get currentScene(): IScene | null {
     return this.loadedScene;
   }
 
@@ -204,7 +204,7 @@ export class GameEngine {
   }
 
   public instantiate<T extends GameObject>(
-    type: new (constructionParams: GameObjectConstructionParams) => T,
+    type: new (constructionParams: IGameObjectConstructionParams) => T,
     position?: Vector2,
     rotation?: number,
     parent?: Transform
@@ -383,7 +383,7 @@ export class GameEngine {
     this.paused = !this.paused;
   }
 
-  public setScenes(scenes: Scene[]): void {
+  public setScenes(scenes: IScene[]): void {
     for (const scene of scenes) {
       for (const key of this.getSceneRegistrationKeys(scene)) {
         const existingScene = this.scenes.get(key);
@@ -401,7 +401,7 @@ export class GameEngine {
     const scene = this.scenes.get(loadOrderOrName);
 
     if (scene === undefined) {
-      throw new Error(`Scene ${loadOrderOrName} not found.`);
+      throw new Error(`IScene ${loadOrderOrName} not found.`);
     }
 
     this.endCurrentScene();
@@ -414,7 +414,7 @@ export class GameEngine {
     this.startGame();
   }
 
-  private getScenePrimaryId(scene: Scene): number {
+  private getScenePrimaryId(scene: IScene): number {
     if (scene.sceneId !== undefined) {
       return scene.sceneId;
     }
@@ -423,10 +423,10 @@ export class GameEngine {
       return scene.loadOrder;
     }
 
-    throw new Error(`Scene ${scene.name} must define sceneId or loadOrder.`);
+    throw new Error(`IScene ${scene.name} must define sceneId or loadOrder.`);
   }
 
-  private getSceneRegistrationKeys(scene: Scene): Array<number | string> {
+  private getSceneRegistrationKeys(scene: IScene): Array<number | string> {
     const keys = new Set<number | string>([scene.name]);
 
     if (scene.sceneId !== undefined) {
@@ -438,7 +438,7 @@ export class GameEngine {
     }
 
     if (keys.size === 1) {
-      throw new Error(`Scene ${scene.name} must define sceneId or loadOrder.`);
+      throw new Error(`IScene ${scene.name} must define sceneId or loadOrder.`);
     }
 
     return [...keys];
@@ -530,7 +530,7 @@ export class GameEngine {
     this._time = null;
   }
 
-  private async initializeScene(scene: Scene): Promise<void> {
+  private async initializeScene(scene: IScene): Promise<void> {
     this._assetPool = scene.getAssetPool !== undefined ? await scene.getAssetPool() : new AssetPool(new Map<string, unknown>());
 
     if (scene.gravity !== undefined) {

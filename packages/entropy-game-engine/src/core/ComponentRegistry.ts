@@ -1,5 +1,5 @@
-import { Component } from '../components/Component';
-import { GameObject } from '../game-objects/GameObject';
+import type { Component } from '../components/Component';
+import type { GameObject } from '../game-objects/GameObject';
 
 type ComponentConstructor = new (gameObject: GameObject, ...args: any[]) => Component;
 

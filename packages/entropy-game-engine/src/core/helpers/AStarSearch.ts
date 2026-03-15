@@ -1,9 +1,9 @@
 import { Vector2 } from './Vector2';
-import { WeightedGraph } from '../interfaces/WeightedGraph';
+import type { IWeightedGraph } from '../types';
 import { PriorityQueue } from './PriorityQueue';
 
 export class AStarSearch {
-  public static findPath(graph: WeightedGraph, start: Vector2, goal: Vector2): Vector2[] | null {
+  public static findPath(graph: IWeightedGraph, start: Vector2, goal: Vector2): Vector2[] | null {
     if (graph.isUnpassable(goal)) {
       return null;
     }

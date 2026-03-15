@@ -1,10 +1,10 @@
 import { Component } from './Component';
-import { RenderableGUI } from '../core/interfaces/RenderableGUI';
-import { GameObject } from '../game-objects/GameObject';
-import { SerializedComponent } from '../core';
+import type { IRenderableGUI } from '../core/types';
+import type { GameObject } from '../game-objects/GameObject';
+import type { ISerializedComponent } from '../core';
 import { readNumber } from '../core/helpers/Serialization';
 
-export class FPSCounter extends Component implements RenderableGUI {
+export class FPSCounter extends Component implements IRenderableGUI {
   public static override readonly typeName: string = 'FPSCounter';
   public zIndex: number = 0;
 
@@ -18,7 +18,7 @@ export class FPSCounter extends Component implements RenderableGUI {
     return fpsCounter;
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {

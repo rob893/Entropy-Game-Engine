@@ -1,7 +1,7 @@
 import { Component } from './Component';
-import { GameObject } from '../game-objects/GameObject';
-import { AudioClip } from '../core/helpers/AudioClip';
-import { SerializedComponent } from '../core';
+import type { GameObject } from '../game-objects/GameObject';
+import type { AudioClip } from '../core/helpers/AudioClip';
+import type { ISerializedComponent } from '../core';
 import { createAudioClipFromSource, getElementSource, readBoolean, readString } from '../core/helpers/Serialization';
 
 export class AudioSource extends Component {
@@ -26,7 +26,7 @@ export class AudioSource extends Component {
     return !this.audioElement.paused;
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {

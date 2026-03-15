@@ -1,11 +1,10 @@
-import { Topic } from './Topic';
-import { Unsubscribable } from './types';
+import type { IUnsubscribable } from './types';
 
-export class Subscription<T> implements Unsubscribable {
-  private unsubscribeLogic: ((subscription: Subscription<T>) => void) | null;
+export class Subscription<T> implements IUnsubscribable {
+  private unsubscribeLogic: (() => void) | null;
   private handler: ((eventData: T) => void) | null;
 
-  public constructor(unsubscribeLogic: (subscription: Subscription<T>) => void, handler: (eventData: T) => void) {
+  public constructor(unsubscribeLogic: () => void, handler: (eventData: T) => void) {
     this.unsubscribeLogic = unsubscribeLogic;
     this.handler = handler;
   }
@@ -22,7 +21,7 @@ export class Subscription<T> implements Unsubscribable {
 
   public unsubscribe(): void {
     if (this.unsubscribeLogic) {
-      this.unsubscribeLogic(this);
+      this.unsubscribeLogic();
       this.unsubscribeLogic = null;
       this.handler = null;
     }

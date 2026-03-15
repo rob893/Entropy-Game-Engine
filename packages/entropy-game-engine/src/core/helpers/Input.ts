@@ -1,8 +1,8 @@
 import { Vector2 } from './Vector2';
 import { EventType } from '../enums/EventType';
-import { CanvasMouseEvent } from '../interfaces/CanvasMouseEvent';
-import { MouseButton } from '../enums/MouseButton';
-import { Key } from '../enums';
+import type { ICanvasMouseEvent } from '../types';
+import type { MouseButton } from '../enums/MouseButton';
+import type { Key } from '../enums';
 
 export class Input {
   private boundingRect: ClientRect | DOMRect;
@@ -14,7 +14,7 @@ export class Input {
   >();
   private readonly mouseMap = new Map<
     EventType.Click | EventType.MouseDown | EventType.MouseUp,
-    Map<number, ((event: CanvasMouseEvent) => void)[]>
+    Map<number, ((event: ICanvasMouseEvent) => void)[]>
   >();
   private readonly genericEventMap = new Map<EventType, ((event: Event) => void)[]>();
   private readonly currentListeners = new Map<EventType, (event: Event) => void>();
@@ -108,7 +108,7 @@ export class Input {
   public addMouseListener(
     type: EventType.MouseDown | EventType.MouseUp | EventType.Click,
     mouseButton: 0 | 1 | 2 | MouseButton,
-    handler: (event: CanvasMouseEvent) => void
+    handler: (event: ICanvasMouseEvent) => void
   ): void {
     if (!this.currentListeners.has(type)) {
       document.addEventListener(type, this.invokeMouseHandlers);
@@ -116,7 +116,7 @@ export class Input {
     }
 
     if (!this.mouseMap.has(type)) {
-      this.mouseMap.set(type, new Map<number, ((event: CanvasMouseEvent) => void)[]>());
+      this.mouseMap.set(type, new Map<number, ((event: ICanvasMouseEvent) => void)[]>());
     }
 
     const mouseButtonMap = this.mouseMap.get(type);
@@ -229,7 +229,7 @@ export class Input {
       return;
     }
 
-    const canvasMouseEvent = event as CanvasMouseEvent;
+    const canvasMouseEvent = event as ICanvasMouseEvent;
     this.updateCursorPosition(event);
     canvasMouseEvent.cursorPositionOnCanvas = this.canvasMousePosition;
 

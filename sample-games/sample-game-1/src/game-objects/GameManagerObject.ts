@@ -2,16 +2,16 @@ import {
   GameObject,
   Layer,
   Component,
-  PrefabSettings,
+  IPrefabSettings,
   FPSCounter,
   // WeightedGraphVisualizer,
-  GameObjectConstructionParams
+  IGameObjectConstructionParams
 } from '@entropy-engine/entropy-game-engine';
 import { GameManager } from '../components/GameManager';
 import { MouseManager } from '../components/MouseManager';
 
 export class GameManagerObject extends GameObject {
-  protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
     return [
       // new WeightedGraphVisualizer(this, this.terrain.navGrid),
       new GameManager(this),
@@ -20,7 +20,7 @@ export class GameManagerObject extends GameObject {
     ];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

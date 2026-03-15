@@ -3,14 +3,14 @@ import {
   Animator,
   Component,
   GameObject,
-  GameObjectConstructionParams,
+  IGameObjectConstructionParams,
   Layer,
   PhysicalMaterial,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
-import { PlayerAnimations } from '../interfaces/CharacterAnimations';
+import { PlayerAnimations } from '../types';
 import { CharacterStats } from '../components/characters/CharacterStats';
 import { PlayerMotor } from '../components/characters/player/PlayerMotor';
 import { Spawner } from '../components/Spawner';
@@ -95,7 +95,7 @@ export class Player extends GameObject {
     return components;
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,
@@ -106,7 +106,7 @@ export class Player extends GameObject {
     };
   }
 
-  protected override buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(config: IGameObjectConstructionParams): GameObject[] {
     const healthBar = new Healthbar(config);
 
     healthBar.transform.setPosition(this.transform.position.x, this.transform.position.y - 60);

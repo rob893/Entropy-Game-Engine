@@ -1,23 +1,23 @@
-import { Renderable } from './interfaces/Renderable';
-import { RenderableGizmo } from './interfaces/RenderableGizmo';
-import { RenderableGUI } from './interfaces/RenderableGUI';
-import { RenderableBackground } from './interfaces/RenderableBackground';
-import { Unsubscribable } from './helpers';
-import { Terrain } from '../game-objects/Terrain';
-import { Camera } from '../components/Camera';
+import type { IRenderable } from './types';
+import type { IRenderableGizmo } from './types';
+import type { IRenderableGUI } from './types';
+import type { IRenderableBackground } from './types';
+import type { IUnsubscribable } from './helpers';
+import type { Terrain } from '../game-objects/Terrain';
+import type { Camera } from '../components/Camera';
 import { Component } from '../components/Component';
 
 export class RenderingEngine {
   public renderGizmos: boolean;
 
-  private _background: RenderableBackground | null;
+  private _background: IRenderableBackground | null;
   private _terrain: Terrain | null;
   private _mainCamera: Camera | null;
-  private readonly renderableObjects: Renderable[];
-  private readonly renderableGizmos: RenderableGizmo[];
-  private readonly renderableGUIElements: RenderableGUI[];
+  private readonly renderableObjects: IRenderable[];
+  private readonly renderableGizmos: IRenderableGizmo[];
+  private readonly renderableGUIElements: IRenderableGUI[];
   private readonly _canvasContext: CanvasRenderingContext2D;
-  private mainCameraDestroyedSubscription: Unsubscribable | null;
+  private mainCameraDestroyedSubscription: IUnsubscribable | null;
 
   public constructor(context: CanvasRenderingContext2D) {
     this._canvasContext = context;
@@ -35,7 +35,7 @@ export class RenderingEngine {
     this._terrain = terrain;
   }
 
-  public set background(background: RenderableBackground) {
+  public set background(background: IRenderableBackground) {
     this._background = background;
   }
 
@@ -62,7 +62,7 @@ export class RenderingEngine {
     }
   }
 
-  public addRenderableObject(object: Renderable): void {
+  public addRenderableObject(object: IRenderable): void {
     this.renderableObjects.push(object);
 
     if (object instanceof Component) {
@@ -76,7 +76,7 @@ export class RenderingEngine {
     }
   }
 
-  public addRenderableGizmo(gizmo: RenderableGizmo): void {
+  public addRenderableGizmo(gizmo: IRenderableGizmo): void {
     this.renderableGizmos.push(gizmo);
 
     if (gizmo instanceof Component) {
@@ -90,7 +90,7 @@ export class RenderingEngine {
     }
   }
 
-  public addRenderableGUIElement(guiElement: RenderableGUI): void {
+  public addRenderableGUIElement(guiElement: IRenderableGUI): void {
     this.renderableGUIElements.push(guiElement);
     this.renderableGUIElements.sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
 

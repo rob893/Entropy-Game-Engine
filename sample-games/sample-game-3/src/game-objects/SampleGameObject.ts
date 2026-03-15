@@ -1,10 +1,10 @@
 import {
   Component,
   GameObject,
-  GameObjectConstructionParams,
+  IGameObjectConstructionParams,
   Layer,
   PhysicalMaterial,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   RectangleRenderer,
   Rigidbody
@@ -12,7 +12,7 @@ import {
 import { Motor } from '../components/Motor';
 
 export class SampleGameObject extends GameObject {
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 100,
       y: 100,
@@ -23,7 +23,7 @@ export class SampleGameObject extends GameObject {
     };
   }
 
-  protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
     const components: Component[] = [];
 
     components.push(new RectangleRenderer(this, 15, 15, 'white'));
@@ -40,7 +40,7 @@ export class SampleGameObject extends GameObject {
     return components;
   }
 
-  protected override buildAndReturnChildGameObjects(_config: GameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(_config: IGameObjectConstructionParams): GameObject[] {
     return [];
   }
 }

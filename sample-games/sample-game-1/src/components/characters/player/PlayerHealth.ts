@@ -1,5 +1,5 @@
 import { AudioSource, Component, GameObject } from '@entropy-engine/entropy-game-engine';
-import { Damageable } from '../../../interfaces/Damageable';
+import { Damageable } from '../../../types';
 import { GameManager } from '../../GameManager';
 
 export class PlayerHealth extends Component implements Damageable {

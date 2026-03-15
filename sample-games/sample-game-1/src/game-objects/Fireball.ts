@@ -4,7 +4,7 @@ import {
   Component,
   GameObject,
   Layer,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
@@ -20,7 +20,7 @@ export class Fireball extends GameObject {
     return [new Animator(this, 50, 25, fireballAnimation), collider, fireballBehavior];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

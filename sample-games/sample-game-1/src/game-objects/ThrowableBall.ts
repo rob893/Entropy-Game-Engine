@@ -3,7 +3,7 @@ import {
   GameObject,
   Layer,
   PhysicalMaterial,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   RectangleRenderer,
   Rigidbody
@@ -27,7 +27,7 @@ export class ThrowableBall extends GameObject {
     return components;
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

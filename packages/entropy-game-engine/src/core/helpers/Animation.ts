@@ -1,5 +1,5 @@
 import { Topic } from './Topic';
-import { Subscribable } from './types';
+import type { ISubscribable } from './types';
 
 export class Animation {
   public loop: boolean = true;
@@ -19,7 +19,7 @@ export class Animation {
     this.computedTimeBetweenFrames = timeBetweenFrames;
   }
 
-  public get onAnimationComplete(): Subscribable<void> {
+  public get onAnimationComplete(): ISubscribable<void> {
     return this.onCompleted;
   }
 

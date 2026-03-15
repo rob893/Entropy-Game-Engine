@@ -1,12 +1,12 @@
-import { SpriteData } from '../interfaces/SpriteData';
+import type { ISpriteData } from '../types';
 import { NavGrid } from './NavGrid';
 import { Vector2 } from './Vector2';
 import { Terrain } from '../../game-objects/Terrain';
-import { TerrainSpec } from '../interfaces/TerrainSpec';
-import { GameEngine } from '../GameEngine';
+import type { ITerrainSpec } from '../types';
+import type { GameEngine } from '../GameEngine';
 
-type LegacyTerrainSpec = Required<Pick<TerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
-type JSONTerrainSpec = Required<Pick<TerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> & Pick<TerrainSpec, 'tileSet'>;
+type LegacyTerrainSpec = Required<Pick<ITerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
+type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> & Pick<ITerrainSpec, 'tileSet'>;
 
 export class TerrainBuilder {
   private readonly context: CanvasRenderingContext2D;
@@ -26,7 +26,7 @@ export class TerrainBuilder {
     this.context = context;
   }
 
-  public async buildTerrain(gameEngine: GameEngine, terrainSpec: TerrainSpec): Promise<Terrain> {
+  public async buildTerrain(gameEngine: GameEngine, terrainSpec: ITerrainSpec): Promise<Terrain> {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     if (this.isLegacyTerrainSpec(terrainSpec)) {
@@ -159,7 +159,7 @@ export class TerrainBuilder {
     );
   }
 
-  private parseSpriteSheetTile(assetPath: string): { path: string; spriteData: SpriteData } | null {
+  private parseSpriteSheetTile(assetPath: string): { path: string; spriteData: ISpriteData } | null {
     const fragmentIndex = assetPath.lastIndexOf('#');
 
     if (fragmentIndex === -1) {
@@ -207,7 +207,7 @@ export class TerrainBuilder {
     return await imagePromise;
   }
 
-  private isLegacyTerrainSpec(terrainSpec: TerrainSpec): terrainSpec is LegacyTerrainSpec {
+  private isLegacyTerrainSpec(terrainSpec: ITerrainSpec): terrainSpec is LegacyTerrainSpec {
     return (
       typeof terrainSpec.spriteSheetUrl === 'string' &&
       typeof terrainSpec.scale === 'number' &&
@@ -216,7 +216,7 @@ export class TerrainBuilder {
     );
   }
 
-  private isJSONTerrainSpec(terrainSpec: TerrainSpec): terrainSpec is JSONTerrainSpec {
+  private isJSONTerrainSpec(terrainSpec: ITerrainSpec): terrainSpec is JSONTerrainSpec {
     return (
       typeof terrainSpec.tileWidth === 'number' &&
       typeof terrainSpec.tileHeight === 'number' &&

@@ -5,7 +5,7 @@ import {
   GameEngine,
   GameObject,
   RectangleBackground,
-  Scene,
+  IScene,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import { Scene1TerrainSpec } from './terrains/Scene1TerrainSpec';
@@ -28,7 +28,7 @@ import { Minotaur } from './game-objects/Minotaur';
 import { Box } from './game-objects/Box';
 import { UICanvas } from './game-objects/UICanvas';
 
-export const scene1: Scene = {
+export const scene1: IScene = {
   name: 'Scene1',
   loadOrder: 1,
   terrainSpec: new Scene1TerrainSpec(3),
@@ -118,7 +118,7 @@ export const scene1: Scene = {
   }
 };
 
-export const scene3: Scene = {
+export const scene3: IScene = {
   name: 'Scene3',
   loadOrder: 3,
   terrainSpec: null,

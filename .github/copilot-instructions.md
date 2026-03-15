@@ -65,6 +65,10 @@ Games define `Scene` objects with factory functions for GameObjects, pass them t
 
 ## Conventions
 
+### General
+
+- `any` is not allowed.
+
 ### File Naming
 
 - **One class per file**, PascalCase filename matching the class name: `MyClass.ts`
@@ -77,6 +81,7 @@ Games define `Scene` objects with factory functions for GameObjects, pass them t
 - Mark never-reassigned members as `readonly`
 - Single quotes, 120 char line width, no trailing commas, 2-space indent
 - Prefer template literals, exponentiation operator, object spread, rest params
+- This is a 'C#' style engine, so OOP patterns are common and interfaces use the 'I' prefix
 
 ### Testing
 

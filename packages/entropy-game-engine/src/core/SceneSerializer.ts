@@ -1,20 +1,20 @@
 import { GameObject } from '../game-objects/GameObject';
 import { Terrain } from '../game-objects/Terrain';
-import { GameEngine } from './GameEngine';
+import type { GameEngine } from './GameEngine';
 import { AssetPool } from './helpers/AssetPool';
-import { Scene } from './interfaces/Scene';
-import { SerializedScene, SerializedTerrain } from './interfaces/Serializable';
-import { SpriteData } from './interfaces/SpriteData';
-import { TerrainCell } from './interfaces/TerrainCell';
-import { TerrainSpec } from './interfaces/TerrainSpec';
+import type { IScene } from './types';
+import type { ISerializedScene, ISerializedTerrain } from './types';
+import type { ISpriteData } from './types';
+import type { ITerrainCell } from './types';
+import type { ITerrainSpec } from './types';
 
-type LegacyTerrainSpec = Required<Pick<TerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
+type LegacyTerrainSpec = Required<Pick<ITerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
 
-type JSONTerrainSpec = Required<Pick<TerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> & Pick<TerrainSpec, 'tileSet'>;
+type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> & Pick<ITerrainSpec, 'tileSet'>;
 
 export class SceneSerializer {
-  public static serializeScene(engine: GameEngine, name: string, sceneId: number): SerializedScene {
-    const serializedScene: SerializedScene = {
+  public static serializeScene(engine: GameEngine, name: string, sceneId: number): ISerializedScene {
+    const serializedScene: ISerializedScene = {
       name,
       sceneId,
       gameObjects: engine.gameObjects
@@ -35,7 +35,7 @@ export class SceneSerializer {
     return serializedScene;
   }
 
-  public static createSceneFromJSON(data: SerializedScene): Scene {
+  public static createSceneFromJSON(data: ISerializedScene): IScene {
     return {
       sceneId: data.sceneId,
       loadOrder: data.sceneId,
@@ -47,8 +47,8 @@ export class SceneSerializer {
     };
   }
 
-  public static fromJSON(json: string): Scene {
-    const data = JSON.parse(json) as SerializedScene;
+  public static fromJSON(json: string): IScene {
+    const data = JSON.parse(json) as ISerializedScene;
     return this.createSceneFromJSON(data);
   }
 
@@ -56,7 +56,7 @@ export class SceneSerializer {
     return JSON.stringify(this.serializeScene(engine, name, sceneId), null, 2);
   }
 
-  private static createTerrainSpec(data: SerializedTerrain): TerrainSpec {
+  private static createTerrainSpec(data: ISerializedTerrain): ITerrainSpec {
     return {
       tileWidth: data.tileWidth,
       tileHeight: data.tileHeight,
@@ -65,7 +65,7 @@ export class SceneSerializer {
     };
   }
 
-  private static serializeTerrain(terrainSpec: TerrainSpec): SerializedTerrain | undefined {
+  private static serializeTerrain(terrainSpec: ITerrainSpec): ISerializedTerrain | undefined {
     if (this.isJSONTerrainSpec(terrainSpec)) {
       return {
         tileWidth: terrainSpec.tileWidth,
@@ -103,7 +103,7 @@ export class SceneSerializer {
   }
 
   private static getLegacyTerrainTileId(
-    cell: TerrainCell,
+    cell: ITerrainCell,
     spriteSheetUrl: string,
     tileIds: Map<string, number>,
     tileSet: Record<number, string>,
@@ -122,11 +122,11 @@ export class SceneSerializer {
     return tileId;
   }
 
-  private static toSpriteSheetTilePath(spriteSheetUrl: string, spriteData: SpriteData): string {
+  private static toSpriteSheetTilePath(spriteSheetUrl: string, spriteData: ISpriteData): string {
     return `${spriteSheetUrl}#${spriteData.sliceX},${spriteData.sliceY},${spriteData.sliceWidth},${spriteData.sliceHeight}`;
   }
 
-  private static isJSONTerrainSpec(terrainSpec: TerrainSpec): terrainSpec is JSONTerrainSpec {
+  private static isJSONTerrainSpec(terrainSpec: ITerrainSpec): terrainSpec is JSONTerrainSpec {
     return (
       typeof terrainSpec.tileWidth === 'number' &&
       typeof terrainSpec.tileHeight === 'number' &&
@@ -134,7 +134,7 @@ export class SceneSerializer {
     );
   }
 
-  private static isLegacyTerrainSpec(terrainSpec: TerrainSpec): terrainSpec is LegacyTerrainSpec {
+  private static isLegacyTerrainSpec(terrainSpec: ITerrainSpec): terrainSpec is LegacyTerrainSpec {
     return (
       typeof terrainSpec.spriteSheetUrl === 'string' &&
       typeof terrainSpec.scale === 'number' &&

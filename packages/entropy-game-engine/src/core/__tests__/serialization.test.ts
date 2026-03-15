@@ -2,18 +2,16 @@ import 'vitest-canvas-mock';
 import { AssetPool } from '../helpers/AssetPool';
 import { GameEngine } from '../GameEngine';
 import { Layer } from '../enums/Layer';
-import { PrefabSettings } from '../interfaces/PrefabSettings';
-import { Scene } from '../interfaces/Scene';
-import { SerializedGameObject } from '../interfaces/Serializable';
-import { RectangleBackground } from '../helpers/RectangleBackground';
-import { Component } from '../../components/Component';
-import { GameObject } from '../../game-objects/GameObject';
-import { RectangleCollider } from '../../components/RectangleCollider';
-import { Rigidbody } from '../../components/Rigidbody';
+import type { IPrefabSettings } from '../types';
+import type { IScene } from '../types';
+import type { ISerializedGameObject } from '../types';
+import type { RectangleBackground } from '../helpers/RectangleBackground';
+import type { Component } from '../../components/Component';
+import { GameObject, RectangleCollider, Rigidbody } from '../../index';
 import { PhysicalMaterial } from '../helpers/PhysicalMaterial';
 
 class SerializableTestGameObject extends GameObject {
-  protected override getPrefabSettings(): PrefabSettings {
+  protected override getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,
@@ -29,7 +27,7 @@ class SerializableTestGameObject extends GameObject {
   }
 }
 
-const serializationScene: Scene = {
+const serializationScene: IScene = {
   name: 'SerializationScene',
   loadOrder: 99,
   terrainSpec: null,
@@ -141,7 +139,7 @@ test('serialized GameObject output is valid JSON with no circular references', (
 });
 
 test('roundtrips through JSON stringify/parse and deserialize', () => {
-  const serialized = JSON.parse(JSON.stringify(buildSerializableObject().serialize())) as SerializedGameObject;
+  const serialized = JSON.parse(JSON.stringify(buildSerializableObject().serialize())) as ISerializedGameObject;
   const deserializedObject = new SerializableTestGameObject({ gameEngine });
 
   deserializedObject.deserialize(serialized);

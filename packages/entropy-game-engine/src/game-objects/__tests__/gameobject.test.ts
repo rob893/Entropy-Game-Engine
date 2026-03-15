@@ -1,13 +1,13 @@
 import 'vitest-canvas-mock';
 import { Component } from '../../components/Component';
 import { GameObject } from '../GameObject';
-import { PrefabSettings } from '../../core/interfaces/PrefabSettings';
-import { GameObjectConstructionParams } from '../../core/interfaces/GameObjectConstructionParams';
-import { RectangleBackground } from '../../core/helpers/RectangleBackground';
+import type { IPrefabSettings } from '../../core/types';
+import type { IGameObjectConstructionParams } from '../../core/types';
+import type { RectangleBackground } from '../../core/helpers/RectangleBackground';
 import { GameEngine } from '../../core/GameEngine';
-import { Scene } from '../../core/interfaces/Scene';
+import type { IScene } from '../../core/types';
 import { Layer } from '../../core/enums/Layer';
-import { AssetPool } from '../../core/helpers/AssetPool';
+import type { AssetPool } from '../../core/helpers/AssetPool';
 import { Transform } from '../../components/Transform';
 import { Vector2 } from '../../core/helpers/Vector2';
 import { Rigidbody } from '../../components/Rigidbody';
@@ -40,7 +40,7 @@ class TestGameObject extends GameObject {
     return [new TestComponent(this)];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,
@@ -57,11 +57,11 @@ class TestGameObject2 extends GameObject {
     return [new TestComponent2(this)];
   }
 
-  protected override buildAndReturnChildGameObjects(config: GameObjectConstructionParams): GameObject[] {
+  protected override buildAndReturnChildGameObjects(config: IGameObjectConstructionParams): GameObject[] {
     return [new TestGameObject({ gameEngine: config.gameEngine, name: 'test-child' })];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 50,
       y: 75,
@@ -73,7 +73,7 @@ class TestGameObject2 extends GameObject {
   }
 }
 
-const scene1: Scene = {
+const scene1: IScene = {
   name: 'Scene1',
   loadOrder: 1,
   terrainSpec: null,

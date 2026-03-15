@@ -1,6 +1,6 @@
-import { RenderableBackground } from '../interfaces/RenderableBackground';
+import type { IRenderableBackground } from '../types';
 
-export class ImageBackground implements RenderableBackground {
+export class ImageBackground implements IRenderableBackground {
   private readonly gameCanvas: HTMLCanvasElement;
   private readonly image: HTMLImageElement;
 

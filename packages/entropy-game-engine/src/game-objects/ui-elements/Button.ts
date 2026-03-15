@@ -1,15 +1,15 @@
 import { GameObject } from '../GameObject';
-import { Component } from '../../components/Component';
+import type { Component } from '../../components/Component';
 import { RectangleCollider } from '../../components/RectangleCollider';
 import { RectangleRenderer } from '../../components/RectangleRenderer';
 import { Color } from '../../core/enums/Color';
-import { PrefabSettings } from '../../core/interfaces/PrefabSettings';
+import type { IPrefabSettings } from '../../core/types';
 import { Layer } from '../../core/enums/Layer';
 import { ClickedOnDetector } from '../../components/ClickedOnDetector';
 import { TextRenderer } from '../../components/TextRenderer';
-import { GameObjectConstructionParams } from '../../core/interfaces/GameObjectConstructionParams';
+import type { IGameObjectConstructionParams } from '../../core/types';
 
-type ButtonConfig = GameObjectConstructionParams & { height?: number; width?: number };
+type ButtonConfig = IGameObjectConstructionParams & { height?: number; width?: number };
 
 export class Button extends GameObject<ButtonConfig> {
   public height: number;
@@ -47,7 +47,7 @@ export class Button extends GameObject<ButtonConfig> {
     return [renderer, collider, clickedOnDetector, textRenderer];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

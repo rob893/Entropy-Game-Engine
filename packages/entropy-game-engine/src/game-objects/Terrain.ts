@@ -1,15 +1,15 @@
-import { NavGrid } from '../core/helpers/NavGrid';
+import type { NavGrid } from '../core/helpers/NavGrid';
 import { RectangleCollider } from '../components/RectangleCollider';
-import { RenderableBackground } from '../core/interfaces/RenderableBackground';
+import type { IRenderableBackground } from '../core/types';
 import { GameObject } from './GameObject';
-import { Vector2 } from '../core/helpers/Vector2';
+import type { Vector2 } from '../core/helpers/Vector2';
 import { Layer } from '../core/enums/Layer';
-import { Component } from '../components/Component';
-import { PrefabSettings } from '../core/interfaces/PrefabSettings';
-import { GameEngine } from '../core/GameEngine';
+import type { Component } from '../components/Component';
+import type { IPrefabSettings } from '../core/types';
+import type { GameEngine } from '../core/GameEngine';
 import { WeightedGraphVisualizer } from '../components/GraphVisualizer';
 
-export class Terrain extends GameObject implements RenderableBackground {
+export class Terrain extends GameObject implements IRenderableBackground {
   public readonly terrainImage: HTMLImageElement;
   public readonly navGrid: NavGrid;
 
@@ -77,7 +77,7 @@ export class Terrain extends GameObject implements RenderableBackground {
     return [];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

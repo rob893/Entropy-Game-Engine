@@ -1,28 +1,22 @@
 import { Component } from './Component';
-import { GameObject } from '../game-objects/GameObject';
-import { Renderable } from '../core/interfaces/Renderable';
-import { Color, SerializedComponent } from '../core';
+import type { GameObject } from '../game-objects/GameObject';
+import type { IRenderable } from '../core/types';
+import type { Color, ISerializedComponent } from '../core';
 import { readNumber, readString } from '../core/helpers/Serialization';
+import type { IRectangleRendererOptions } from './types';
 
-export interface RectangleRendererOptions {
-  renderWidth: number;
-  renderHeight: number;
-  fillColor?: Color;
-  borderColor?: Color;
-}
-
-export class RectangleRenderer extends Component implements Renderable {
+export class RectangleRenderer extends Component implements IRenderable {
   public static override readonly typeName: string = 'RectangleRenderer';
   public renderWidth: number;
   public renderHeight: number;
   public color?: string;
   public borderColor?: string;
 
-  public constructor(gameObject: GameObject, options: RectangleRendererOptions);
+  public constructor(gameObject: GameObject, options: IRectangleRendererOptions);
   public constructor(gameObject: GameObject, renderWidth: number, renderHeight: number, color: string);
   public constructor(
     gameObject: GameObject,
-    renderWidthOrOptions: number | RectangleRendererOptions,
+    renderWidthOrOptions: number | IRectangleRendererOptions,
     renderHeight?: number,
     color?: string
   ) {
@@ -33,7 +27,7 @@ export class RectangleRenderer extends Component implements Renderable {
       this.renderHeight = renderHeight;
       this.color = color;
     } else {
-      const { renderHeight, renderWidth, borderColor, fillColor } = renderWidthOrOptions as RectangleRendererOptions;
+      const { renderHeight, renderWidth, borderColor, fillColor } = renderWidthOrOptions as IRectangleRendererOptions;
       this.renderWidth = renderWidth;
       this.renderHeight = renderHeight;
 
@@ -58,7 +52,7 @@ export class RectangleRenderer extends Component implements Renderable {
     return rectangleRenderer;
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {

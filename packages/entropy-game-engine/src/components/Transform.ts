@@ -1,8 +1,8 @@
 import { Component } from './Component';
 import { Vector2 } from '../core/helpers/Vector2';
 import { Topic } from '../core/helpers/Topic';
-import { GameObject } from '../game-objects/GameObject';
-import { SerializedComponent, Subscribable, Unsubscribable } from '../core';
+import type { GameObject } from '../game-objects/GameObject';
+import type { ISerializedComponent, ISubscribable, IUnsubscribable } from '../core';
 import { readNumber, readVector2 } from '../core/helpers/Serialization';
 
 export class Transform extends Component {
@@ -15,7 +15,7 @@ export class Transform extends Component {
   public readonly scale: Vector2;
 
   private _parent: Transform | null = null;
-  private parentOnMoved: Unsubscribable | null = null;
+  private parentOnMoved: IUnsubscribable | null = null;
   private readonly _children: Transform[] = [];
   private readonly onMove = new Topic<void>();
 
@@ -35,7 +35,7 @@ export class Transform extends Component {
     this.scale = new Vector2(1, 1);
   }
 
-  public get onMoved(): Subscribable<void> {
+  public get onMoved(): ISubscribable<void> {
     return this.onMove;
   }
 
@@ -68,7 +68,7 @@ export class Transform extends Component {
     return [...this._children];
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {

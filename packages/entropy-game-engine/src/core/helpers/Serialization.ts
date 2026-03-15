@@ -1,15 +1,9 @@
 import { Animation } from './Animation';
-import { AudioClip } from './AudioClip';
+import type { AudioClip } from './AudioClip';
+import type { ISerializedVector2Value, ISerializedBoundsValue } from './types';
 
-export interface SerializedVector2Value {
-  x: number;
-  y: number;
-}
-
-export interface SerializedBoundsValue {
-  min: SerializedVector2Value;
-  max: SerializedVector2Value;
-}
+// Re-export for convenience
+export type { ISerializedVector2Value, ISerializedBoundsValue };
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -27,7 +21,7 @@ export function readBoolean(value: unknown): boolean | null {
   return typeof value === 'boolean' ? value : null;
 }
 
-export function readVector2(value: unknown): SerializedVector2Value | null {
+export function readVector2(value: unknown): ISerializedVector2Value | null {
   if (!isRecord(value)) {
     return null;
   }
@@ -42,7 +36,7 @@ export function readVector2(value: unknown): SerializedVector2Value | null {
   return { x, y };
 }
 
-export function readBounds(value: unknown): SerializedBoundsValue | null {
+export function readBounds(value: unknown): ISerializedBoundsValue | null {
   if (!isRecord(value)) {
     return null;
   }

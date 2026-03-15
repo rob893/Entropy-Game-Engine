@@ -1,6 +1,6 @@
-import { Comparable } from '../interfaces/Comparable';
+import type { IComparable } from '../types';
 
-export class BinaryHeap<T extends Comparable> {
+export class BinaryHeap<T extends IComparable> {
   private readonly heapArray: T[] = [];
   private readonly minHeap: boolean;
 
@@ -14,7 +14,7 @@ export class BinaryHeap<T extends Comparable> {
     }
   }
 
-  public static from<T extends Comparable>(items: Iterable<T>, minHeap: boolean = true): BinaryHeap<T> {
+  public static from<T extends IComparable>(items: Iterable<T>, minHeap: boolean = true): BinaryHeap<T> {
     const heap = new BinaryHeap<T>(minHeap);
 
     for (const item of items) {
@@ -24,12 +24,12 @@ export class BinaryHeap<T extends Comparable> {
     return heap;
   }
 
-  public static isBinaryHeap(heap: Comparable[] | BinaryHeap<Comparable>): boolean {
+  public static isBinaryHeap(heap: IComparable[] | BinaryHeap<IComparable>): boolean {
     return BinaryHeap.isMaxBinaryHeap(heap) || BinaryHeap.isMinBinaryHeap(heap);
   }
 
-  public static isMinBinaryHeap(heap: Comparable[] | BinaryHeap<Comparable>): boolean {
-    let heapArray: Comparable[];
+  public static isMinBinaryHeap(heap: IComparable[] | BinaryHeap<IComparable>): boolean {
+    let heapArray: IComparable[];
 
     if (heap instanceof BinaryHeap) {
       heapArray = heap.heapArray;
@@ -67,8 +67,8 @@ export class BinaryHeap<T extends Comparable> {
     return true;
   }
 
-  public static isMaxBinaryHeap(heap: Comparable[] | BinaryHeap<Comparable>): boolean {
-    let heapArray: Comparable[];
+  public static isMaxBinaryHeap(heap: IComparable[] | BinaryHeap<IComparable>): boolean {
+    let heapArray: IComparable[];
 
     if (heap instanceof BinaryHeap) {
       heapArray = heap.heapArray;

@@ -2,19 +2,19 @@ import {
   Component,
   FPSCounter,
   GameObject,
-  GameObjectConstructionParams,
+  IGameObjectConstructionParams,
   Layer,
-  PrefabSettings
+  IPrefabSettings
 } from '@entropy-engine/entropy-game-engine';
 
 export class GameManager extends GameObject {
-  protected buildInitialComponents(_config: GameObjectConstructionParams): Component[] {
+  protected buildInitialComponents(_config: IGameObjectConstructionParams): Component[] {
     const fpsCounter = new FPSCounter(this);
 
     return [fpsCounter];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

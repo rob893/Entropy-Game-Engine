@@ -1,10 +1,10 @@
 import { Component } from './Component';
-import { Renderable } from '../core/interfaces/Renderable';
-import { GameObject } from '../game-objects/GameObject';
-import { SerializedComponent } from '../core';
+import type { IRenderable } from '../core/types';
+import type { GameObject } from '../game-objects/GameObject';
+import type { ISerializedComponent } from '../core';
 import { createImageFromSource, getElementSource, readNumber, readString } from '../core/helpers/Serialization';
 
-export class ImageRenderer extends Component implements Renderable {
+export class ImageRenderer extends Component implements IRenderable {
   public static override readonly typeName: string = 'ImageRenderer';
   private image: HTMLImageElement;
   private renderWidth: number;
@@ -30,7 +30,7 @@ export class ImageRenderer extends Component implements Renderable {
     return imageRenderer;
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {

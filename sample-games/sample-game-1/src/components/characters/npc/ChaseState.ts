@@ -1,5 +1,5 @@
 import { Component, GameObject, NavAgent, Vector2 } from '@entropy-engine/entropy-game-engine';
-import { State } from '../../../interfaces/State';
+import { State } from '../../../types';
 import { CharacterStats } from '../CharacterStats';
 import { CharacterAnimator } from '../CharacterAnimator';
 import { NPCController } from './NPCController';

@@ -1,4 +1,4 @@
-import { Component, GameObject, GameObjectConstructionParams, Vector2 } from '@entropy-engine/entropy-game-engine';
+import { Component, GameObject, IGameObjectConstructionParams, Vector2 } from '@entropy-engine/entropy-game-engine';
 
 export class Spawner extends Component {
   public spawnRate = 10;
@@ -6,11 +6,11 @@ export class Spawner extends Component {
   public spawnY = 350;
 
   private readonly cancelToken = { cancel: false };
-  private readonly objectsToSpawn: (new (constructionParams: GameObjectConstructionParams) => GameObject)[];
+  private readonly objectsToSpawn: (new (constructionParams: IGameObjectConstructionParams) => GameObject)[];
 
   public constructor(
     gameObject: GameObject,
-    objectsToSpawn: (new (constructionParams: GameObjectConstructionParams) => GameObject)[]
+    objectsToSpawn: (new (constructionParams: IGameObjectConstructionParams) => GameObject)[]
   ) {
     super(gameObject);
 

@@ -3,7 +3,7 @@ import {
   Component,
   GameObject,
   Layer,
-  PrefabSettings,
+  IPrefabSettings,
   RectangleCollider,
   RectangleRenderer
 } from '@entropy-engine/entropy-game-engine';
@@ -13,7 +13,7 @@ export class Ground extends GameObject {
     return [new RectangleCollider(this, null, 20, 20), new RectangleRenderer(this, 20, 20, Color.Brown)];
   }
 
-  protected getPrefabSettings(): PrefabSettings {
+  protected getPrefabSettings(): IPrefabSettings {
     return {
       x: 0,
       y: 0,

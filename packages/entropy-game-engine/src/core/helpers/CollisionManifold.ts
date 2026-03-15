@@ -1,5 +1,5 @@
-import { RectangleCollider } from '../../components/RectangleCollider';
-import { Vector2 } from './Vector2';
+import type { RectangleCollider } from '../../components/RectangleCollider';
+import type { Vector2 } from './Vector2';
 
 export class CollisionManifold {
   public readonly colliderA: RectangleCollider;

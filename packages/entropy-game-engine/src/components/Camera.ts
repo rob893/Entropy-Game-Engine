@@ -1,8 +1,8 @@
 import { Component } from './Component';
-import { Transform } from './Transform';
+import type { Transform } from './Transform';
 import { Vector2 } from '../core/helpers/Vector2';
-import { GameObject } from '../game-objects/GameObject';
-import { SerializedComponent } from '../core';
+import type { GameObject } from '../game-objects/GameObject';
+import type { ISerializedComponent } from '../core';
 import { readBounds, readNumber, readString } from '../core/helpers/Serialization';
 
 export class Camera extends Component {
@@ -46,7 +46,7 @@ export class Camera extends Component {
     this._smoothSpeed = Math.max(0, value);
   }
 
-  public override serialize(): SerializedComponent {
+  public override serialize(): ISerializedComponent {
     return {
       typeName: this.typeName,
       data: {
