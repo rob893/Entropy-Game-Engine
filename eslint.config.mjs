@@ -15,6 +15,7 @@ export default defineConfig(
     ignores: [
       '**/node_modules/**',
       '**/dist/**',
+      '**/dist-electron/**',
       '**/coverage/**',
       '**/compiled/**',
       '**/templates/**',
@@ -132,6 +133,48 @@ export default defineConfig(
       ],
       '@stylistic/lines-between-class-members': ['error', 'always'],
       'no-undef': 'off'
+    }
+  },
+  // Allow PascalCase function names in React components (TSX files)
+  {
+    files: ['**/src/**/*.tsx'],
+    rules: {
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'interface',
+          format: ['PascalCase'],
+          prefix: ['I']
+        },
+        {
+          selector: 'typeAlias',
+          format: ['PascalCase']
+        },
+        {
+          selector: 'class',
+          format: ['PascalCase']
+        },
+        {
+          selector: 'enum',
+          format: ['PascalCase']
+        },
+        {
+          selector: 'enumMember',
+          format: ['PascalCase']
+        },
+        {
+          selector: ['method'],
+          format: ['camelCase']
+        },
+        {
+          selector: ['function'],
+          format: ['camelCase', 'PascalCase']
+        },
+        {
+          selector: 'typeParameter',
+          format: ['PascalCase']
+        }
+      ]
     }
   },
   // Relaxed rules for test files

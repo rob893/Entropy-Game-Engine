@@ -171,6 +171,15 @@ export class GameObjectRegistry {
     }
   }
 
+  public registerGameObject(newGameObject: GameObject): void {
+    const gameObjectsToRegister = this.collectGameObjects(newGameObject);
+
+    for (const gameObject of gameObjectsToRegister) {
+      this.addGameObjectToCollections(gameObject);
+      gameObject.start();
+    }
+  }
+
   public clear(): void {
     this.tagMap.clear();
     this.gameObjectMap.clear();
@@ -222,15 +231,6 @@ export class GameObjectRegistry {
     }
 
     object.onDestroy();
-  }
-
-  private registerGameObject(newGameObject: GameObject): void {
-    const gameObjectsToRegister = this.collectGameObjects(newGameObject);
-
-    for (const gameObject of gameObjectsToRegister) {
-      this.addGameObjectToCollections(gameObject);
-      gameObject.start();
-    }
   }
 
   private addGameObjectToCollections(gameObject: GameObject): void {

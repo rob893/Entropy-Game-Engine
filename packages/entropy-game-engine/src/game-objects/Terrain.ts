@@ -13,16 +13,28 @@ export class Terrain extends GameObject implements IRenderableBackground {
 
   public readonly navGrid: NavGrid;
 
+  private readonly layerImages: HTMLImageElement[] | null;
+
+  private readonly layerVisibility: boolean[];
+
+  private readonly layerOpacity: number[];
+
   public constructor(
     gameEngine: GameEngine,
     terrainImage: HTMLImageElement,
     navGrid: NavGrid,
-    colliderPositions: Vector2[]
+    colliderPositions: Vector2[],
+    layerImages?: HTMLImageElement[],
+    layerVisibility?: boolean[],
+    layerOpacity?: number[]
   ) {
     super({ gameEngine });
 
     this.terrainImage = terrainImage;
     this.navGrid = navGrid;
+    this.layerImages = layerImages ?? null;
+    this.layerVisibility = layerVisibility ?? [];
+    this.layerOpacity = layerOpacity ?? [];
 
     const colliderRows = new Map<number, Map<number, [Vector2, number]>>();
 
@@ -68,6 +80,21 @@ export class Terrain extends GameObject implements IRenderableBackground {
   }
 
   public renderBackground(context: CanvasRenderingContext2D): void {
+    if (this.layerImages !== null) {
+      for (let i = 0; i < this.layerImages.length; i++) {
+        if (!this.layerVisibility[i]) {
+          continue;
+        }
+
+        const previousAlpha = context.globalAlpha;
+        context.globalAlpha = this.layerOpacity[i] ?? 1;
+        context.drawImage(this.layerImages[i], 0, 0);
+        context.globalAlpha = previousAlpha;
+      }
+
+      return;
+    }
+
     context.drawImage(this.terrainImage, 0, 0);
   }
 

@@ -8,6 +8,8 @@ import { Vector2 } from './Vector2';
 type LegacyTerrainSpec = Required<Pick<ITerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
 type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> &
   Pick<ITerrainSpec, 'tileSet'>;
+type LayeredTerrainSpec = Required<Pick<ITerrainSpec, 'layers'>> &
+  Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight'>>;
 
 export class TerrainBuilder {
   private readonly context: CanvasRenderingContext2D;
@@ -31,6 +33,10 @@ export class TerrainBuilder {
 
   public async buildTerrain(gameEngine: GameEngine, terrainSpec: ITerrainSpec): Promise<Terrain> {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    if (this.isLayeredTerrainSpec(terrainSpec)) {
+      return await this.buildLayeredTerrain(gameEngine, terrainSpec);
+    }
 
     if (this.isLegacyTerrainSpec(terrainSpec)) {
       return await this.buildLegacyTerrain(gameEngine, terrainSpec);
@@ -129,13 +135,89 @@ export class TerrainBuilder {
     return await this.createTerrain(gameEngine, navGrid, colliderOffsets);
   }
 
+  private async buildLayeredTerrain(gameEngine: GameEngine, terrainSpec: LayeredTerrainSpec): Promise<Terrain> {
+    const layers = terrainSpec.layers;
+    const tileWidth = terrainSpec.tileWidth;
+    const tileHeight = terrainSpec.tileHeight;
+    const navGrid = new NavGrid(Math.max(tileWidth, tileHeight));
+    const colliderOffsets: Vector2[] = [];
+    const layerImages: HTMLImageElement[] = [];
+    const layerVisibility: boolean[] = [];
+    const layerOpacity: number[] = [];
+
+    for (let layerIndex = 0; layerIndex < layers.length; layerIndex++) {
+      const layer = layers[layerIndex];
+      layerVisibility.push(layer.visible);
+      layerOpacity.push(layer.opacity);
+
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      for (let row = 0; row < layer.grid.length; row++) {
+        for (let column = 0; column < layer.grid[row].length; column++) {
+          const tileValue = layer.grid[row][column];
+
+          if (tileValue === 0) {
+            continue;
+          }
+
+          const x = column * tileWidth;
+          const y = row * tileHeight;
+
+          const passable = layer.passability !== undefined
+            ? (layer.passability[row]?.[column] ?? true)
+            : true;
+
+          const weight = layer.weights !== undefined
+            ? (layer.weights[row]?.[column] ?? 1)
+            : 1;
+
+          navGrid.addCell({
+            passable,
+            weight,
+            position: new Vector2(x, y)
+          });
+
+          if (!passable) {
+            colliderOffsets.push(new Vector2(x, y));
+          }
+
+          const assetPath = layer.tileSet[tileValue];
+
+          if (assetPath !== undefined) {
+            await this.drawTile(assetPath, x, y, tileWidth, tileHeight);
+          }
+        }
+      }
+
+      const layerImage = await this.canvasToImage();
+      layerImages.push(layerImage);
+    }
+
+    return this.createLayeredTerrain(gameEngine, navGrid, colliderOffsets, layerImages, layerVisibility, layerOpacity);
+  }
+
   private async createTerrain(gameEngine: GameEngine, navGrid: NavGrid, colliderOffsets: Vector2[]): Promise<Terrain> {
-    return await new Promise(resolve => {
+    const image = await this.canvasToImage();
+    return new Terrain(gameEngine, image, navGrid, colliderOffsets);
+  }
+
+  private createLayeredTerrain(
+    gameEngine: GameEngine,
+    navGrid: NavGrid,
+    colliderOffsets: Vector2[],
+    layerImages: HTMLImageElement[],
+    layerVisibility: boolean[],
+    layerOpacity: number[]
+  ): Terrain {
+    return new Terrain(gameEngine, layerImages[0], navGrid, colliderOffsets, layerImages, layerVisibility, layerOpacity);
+  }
+
+  private async canvasToImage(): Promise<HTMLImageElement> {
+    return await new Promise((resolve, reject) => {
       const image = new Image();
       image.src = this.canvas.toDataURL();
-      image.onload = () => {
-        resolve(new Terrain(gameEngine, image, navGrid, colliderOffsets));
-      };
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error('Failed to create terrain layer image'));
     });
   }
 
@@ -222,6 +304,15 @@ export class TerrainBuilder {
       typeof terrainSpec.scale === 'number' &&
       typeof terrainSpec.cellSize === 'number' &&
       typeof terrainSpec.getSpec === 'function'
+    );
+  }
+
+  private isLayeredTerrainSpec(terrainSpec: ITerrainSpec): terrainSpec is LayeredTerrainSpec {
+    return (
+      Array.isArray(terrainSpec.layers) &&
+      terrainSpec.layers.length > 0 &&
+      typeof terrainSpec.tileWidth === 'number' &&
+      typeof terrainSpec.tileHeight === 'number'
     );
   }
 

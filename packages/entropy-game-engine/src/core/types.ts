@@ -116,6 +116,17 @@ export interface ISerializedTerrain {
   // 0 = empty, positive values = passable tiles, negative values = impassable tiles.
   grid: number[][];
   tileSet?: Record<number, string>;
+  layers?: ISerializedTerrainLayer[];
+}
+
+export interface ISerializedTerrainLayer {
+  name: string;
+  grid: number[][];
+  tileSet: Record<number, string>;
+  visible: boolean;
+  opacity: number;
+  passability?: boolean[][];
+  weights?: number[][];
 }
 
 export interface ICanvasMouseEvent extends MouseEvent {
@@ -142,6 +153,16 @@ export interface IRenderableGizmo {
   renderGizmo(context: CanvasRenderingContext2D): void;
 }
 
+export interface ITerrainLayer {
+  name: string;
+  grid: number[][];
+  tileSet: Record<number, string>;
+  visible: boolean;
+  opacity: number;
+  passability?: boolean[][];
+  weights?: number[][];
+}
+
 export interface ITerrainSpec {
   spriteSheetUrl?: string;
   scale?: number;
@@ -151,6 +172,7 @@ export interface ITerrainSpec {
   tileHeight?: number;
   grid?: number[][];
   tileSet?: Record<number, string>;
+  layers?: ITerrainLayer[];
 }
 
 export interface ITerrainCell {

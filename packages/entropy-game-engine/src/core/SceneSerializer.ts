@@ -3,9 +3,9 @@ import { Terrain } from '../game-objects/Terrain';
 import type { GameEngine } from './GameEngine';
 import { AssetPool } from './helpers/AssetPool';
 import type { IScene } from './types';
-import type { ISerializedScene, ISerializedTerrain } from './types';
+import type { ISerializedScene, ISerializedTerrain, ISerializedTerrainLayer } from './types';
 import type { ISpriteData } from './types';
-import type { ITerrainCell } from './types';
+import type { ITerrainCell, ITerrainLayer } from './types';
 import type { ITerrainSpec } from './types';
 
 type LegacyTerrainSpec = Required<Pick<ITerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
@@ -61,22 +61,48 @@ export class SceneSerializer {
   }
 
   private static createTerrainSpec(data: ISerializedTerrain): ITerrainSpec {
-    return {
+    const spec: ITerrainSpec = {
       tileWidth: data.tileWidth,
       tileHeight: data.tileHeight,
       grid: data.grid.map(row => [...row]),
       tileSet: data.tileSet === undefined ? undefined : { ...data.tileSet }
     };
+
+    if (data.layers !== undefined) {
+      spec.layers = data.layers.map(layer => this.deserializeLayer(layer));
+    }
+
+    return spec;
+  }
+
+  private static deserializeLayer(data: ISerializedTerrainLayer): ITerrainLayer {
+    return {
+      name: data.name,
+      grid: data.grid.map(row => [...row]),
+      tileSet: { ...data.tileSet },
+      visible: data.visible,
+      opacity: data.opacity,
+      passability: data.passability?.map(row => [...row]),
+      weights: data.weights?.map(row => [...row])
+    };
   }
 
   private static serializeTerrain(terrainSpec: ITerrainSpec): ISerializedTerrain | undefined {
+    const { layers } = terrainSpec;
+
     if (this.isJSONTerrainSpec(terrainSpec)) {
-      return {
+      const serialized: ISerializedTerrain = {
         tileWidth: terrainSpec.tileWidth,
         tileHeight: terrainSpec.tileHeight,
         grid: terrainSpec.grid.map(row => [...row]),
         tileSet: terrainSpec.tileSet === undefined ? undefined : { ...terrainSpec.tileSet }
       };
+
+      if (layers !== undefined) {
+        serialized.layers = layers.map(layer => this.serializeLayer(layer));
+      }
+
+      return serialized;
     }
 
     if (!this.isLegacyTerrainSpec(terrainSpec)) {
@@ -134,6 +160,18 @@ export class SceneSerializer {
 
   private static toSpriteSheetTilePath(spriteSheetUrl: string, spriteData: ISpriteData): string {
     return `${spriteSheetUrl}#${spriteData.sliceX},${spriteData.sliceY},${spriteData.sliceWidth},${spriteData.sliceHeight}`;
+  }
+
+  private static serializeLayer(layer: ITerrainLayer): ISerializedTerrainLayer {
+    return {
+      name: layer.name,
+      grid: layer.grid.map(row => [...row]),
+      tileSet: { ...layer.tileSet },
+      visible: layer.visible,
+      opacity: layer.opacity,
+      passability: layer.passability?.map(row => [...row]),
+      weights: layer.weights?.map(row => [...row])
+    };
   }
 
   private static isJSONTerrainSpec(terrainSpec: ITerrainSpec): terrainSpec is JSONTerrainSpec {

@@ -4,6 +4,7 @@ export * from './Camera';
 export * from './ClickedOnDetector';
 export * from './Component';
 export * from './FPSCounter';
+export * from './GridOverlayGizmo';
 export * from './GraphVisualizer';
 export * from './NavAgent';
 export * from './RectangleCollider';

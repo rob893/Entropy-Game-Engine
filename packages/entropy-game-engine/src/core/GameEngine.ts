@@ -18,6 +18,7 @@ import { RenderingEngine } from './RenderingEngine';
 import { SchedulerService } from './SchedulerService';
 import { Time } from './Time';
 import type { IScene } from './types';
+import type { ITerrainSpec } from './types';
 import type { IGameObjectConstructionParams } from './types';
 import type { IGameEngineConfiguration } from './types';
 
@@ -232,6 +233,24 @@ export class GameEngine {
     for (const go of this.registry.allGameObjects) {
       console.log(go);
     }
+  }
+
+  public renderFrame(): void {
+    this.renderingEngine.renderScene();
+  }
+
+  public async updateTerrain(newSpec: ITerrainSpec): Promise<void> {
+    if (this.#terrain !== null) {
+      this.registry.destroy(this.#terrain);
+      this.registry.processDestroyQueue();
+    }
+
+    const terrainBuilder = new TerrainBuilder(this.#gameCanvas.width, this.#gameCanvas.height);
+    const terrain = await terrainBuilder.buildTerrain(this, newSpec);
+
+    this.renderingEngine.terrain = terrain;
+    this.#terrain = terrain;
+    this.registry.registerGameObject(terrain);
   }
 
   public togglePause(): void {

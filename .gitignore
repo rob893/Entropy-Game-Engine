@@ -4,3 +4,4 @@ coverage/
 *.tsbuildinfo
 .npmrc
 debug.log
+dist-electron/
