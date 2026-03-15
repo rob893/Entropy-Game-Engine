@@ -46,13 +46,19 @@ const createTestGameObject = (
 };
 
 const registerGameObject = (gameEngine: GameEngine, gameObject: GameObject): void => {
-  const register = Reflect.get(gameEngine as object, 'registerGameObject') as ((gameObject: GameObject) => void) | undefined;
+  const registry = Reflect.get(gameEngine as object, 'registry') as { registerGameObject?: (go: GameObject) => void } | undefined;
 
-  if (register === undefined) {
+  if (registry === undefined || registry.registerGameObject === undefined) {
     throw new Error('Unable to register test GameObject.');
   }
 
-  register.call(gameEngine, gameObject);
+  const registerFn = Reflect.get(registry as object, 'registerGameObject') as ((go: GameObject) => void) | undefined;
+
+  if (registerFn === undefined) {
+    throw new Error('Unable to register test GameObject.');
+  }
+
+  registerFn.call(registry, gameObject);
 };
 
 describe('Transform', () => {

@@ -3,10 +3,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { Rigidbody } from '../../components/Rigidbody';
 import type { GameObject } from '../../game-objects/GameObject';
 import { GameEngine } from '../GameEngine';
+import { GameLoop } from '../GameLoop';
+import type { IGameLoopCallbacks } from '../GameLoop';
 import type { CollisionManifold } from '../helpers/CollisionManifold';
 import { Topic } from '../helpers/Topic';
 import { Vector2 } from '../helpers/Vector2';
 import { PhysicsEngine } from '../PhysicsEngine';
+import { Time } from '../Time';
 import type { ICollisionDetector } from '../types';
 import type { ICollisionResolver } from '../types';
 
@@ -48,7 +51,6 @@ type MutableGameEngine = GameEngine & {
   createEnginesAndAPIs: () => void;
   physicsEngine: PhysicsEngine;
   renderingEngine: { renderScene: () => void };
-  update: (timeStamp: number) => void;
 };
 
 describe('Rigidbody physics integration', () => {
@@ -84,28 +86,34 @@ describe('PhysicsEngine fixed-step integration', () => {
   });
 });
 
-describe('GameEngine fixed timestep', () => {
+describe('GameLoop fixed timestep', () => {
   it('should accumulate frame time and run physics at the configured fixed timestep', () => {
-    const gameCanvas = document.createElement('canvas');
-    const gameEngine = new GameEngine({ gameCanvas });
-    const mutableGameEngine = gameEngine as unknown as MutableGameEngine;
+    const time = new Time();
+    const physicsStep = vi.fn();
 
-    mutableGameEngine.createEnginesAndAPIs();
+    const callbacks: IGameLoopCallbacks = {
+      processDestroyQueue: vi.fn(),
+      updateTime: (timeStamp: number): number => {
+        time.updateTime(timeStamp);
+        return time.deltaTime;
+      },
+      physicsStep,
+      updateGameObjects: vi.fn(),
+      render: vi.fn(),
+      isPaused: () => false
+    };
 
-    const physicsUpdateSpy = vi.spyOn(mutableGameEngine.physicsEngine, 'updatePhysics');
-    vi.spyOn(mutableGameEngine.renderingEngine, 'renderScene').mockImplementation(() => {});
+    const loop = new GameLoop(callbacks, 60, 0.02);
 
-    gameEngine.fixedTimeStep = 0.02;
+    (loop as unknown as { update: (ts: number) => void }).update(0);
+    (loop as unknown as { update: (ts: number) => void }).update(10);
+    (loop as unknown as { update: (ts: number) => void }).update(25);
+    (loop as unknown as { update: (ts: number) => void }).update(35);
+    (loop as unknown as { update: (ts: number) => void }).update(45);
 
-    mutableGameEngine.update(0);
-    mutableGameEngine.update(10);
-    mutableGameEngine.update(25);
-    mutableGameEngine.update(35);
-    mutableGameEngine.update(45);
-
-    expect(gameEngine.fixedTimeStep).toBe(0.02);
-    expect(physicsUpdateSpy).toHaveBeenNthCalledWith(1, 0.02);
-    expect(physicsUpdateSpy).toHaveBeenNthCalledWith(2, 0.02);
-    expect(physicsUpdateSpy).toHaveBeenCalledTimes(2);
+    expect(loop.fixedTimeStep).toBe(0.02);
+    expect(physicsStep).toHaveBeenNthCalledWith(1, 0.02);
+    expect(physicsStep).toHaveBeenNthCalledWith(2, 0.02);
+    expect(physicsStep).toHaveBeenCalledTimes(2);
   });
 });
