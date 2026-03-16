@@ -1,39 +1,48 @@
+import { ToggleButton, ToggleButtonGroup, Tooltip } from '@heroui/react';
 import type { LucideIcon } from 'lucide-react';
 import type { ReactElement } from 'react';
-import { cn } from '../../lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/Tooltip';
 
 interface IToolButtonProps {
+  id?: string;
   icon: LucideIcon;
   label: string;
   shortcut?: string;
   active?: boolean;
-  onClick: () => void;
-  className?: string;
+  onClick?: () => void;
+  showSeparator?: boolean;
 }
 
-export function ToolButton({ icon: Icon, label, shortcut, active = false, onClick, className }: IToolButtonProps): ReactElement {
+export function ToolButton({
+  id,
+  icon: Icon,
+  label,
+  shortcut,
+  active,
+  onClick,
+  showSeparator = false
+}: IToolButtonProps): ReactElement {
   const tooltipText = shortcut !== undefined ? `${label} (${shortcut})` : label;
+  const handleChange = onClick === undefined
+    ? undefined
+    : (): void => {
+        onClick();
+      };
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <button
-          className={cn(
-            'inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors',
-            'text-muted-foreground hover:bg-white/8 hover:text-foreground',
-            'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',
-            active && 'bg-primary text-primary-foreground hover:bg-primary/80',
-            className
-          )}
-          onClick={onClick}
-          aria-pressed={active}
-          aria-label={label}
-        >
-          <Icon className="h-4 w-4" />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent>{tooltipText}</TooltipContent>
+    <Tooltip delay={300}>
+      <ToggleButton
+        id={id}
+        isIconOnly
+        aria-label={label}
+        variant="ghost"
+        size="sm"
+        isSelected={onClick === undefined ? undefined : active ?? false}
+        onChange={handleChange}
+      >
+        {showSeparator && <ToggleButtonGroup.Separator />}
+        <Icon className="h-4 w-4" />
+      </ToggleButton>
+      <Tooltip.Content>{tooltipText}</Tooltip.Content>
     </Tooltip>
   );
 }

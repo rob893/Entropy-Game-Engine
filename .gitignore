@@ -5,3 +5,5 @@ coverage/
 .npmrc
 debug.log
 dist-electron/
+# heroui-agents-md
+.heroui-docs/

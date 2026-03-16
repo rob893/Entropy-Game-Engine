@@ -1,10 +1,7 @@
+import { Button, Form, Label, Modal, NumberField } from '@heroui/react';
 import { useEffect, useRef, useState } from 'react';
 import type { ReactElement, SyntheticEvent } from 'react';
 import { cn } from '../../lib/utils';
-import { Button } from '../ui/Button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui/Dialog';
-import { Input } from '../ui/Input';
-import { Label } from '../ui/Label';
 
 interface IImportTilesetDialogProps {
   imageDataUrl: string;
@@ -60,7 +57,7 @@ export function ImportTilesetDialog({ imageDataUrl, fileName, onConfirm, onCance
       ctx.imageSmoothingEnabled = false;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      ctx.strokeStyle = 'rgba(124, 58, 237, 0.7)';
+      ctx.strokeStyle = 'rgba(34, 197, 94, 0.7)';
       ctx.lineWidth = 1;
       ctx.beginPath();
 
@@ -92,6 +89,12 @@ export function ImportTilesetDialog({ imageDataUrl, fileName, onConfirm, onCance
     { label: '64×64', width: 64, height: 64 }
   ];
 
+  const handleOpenChange = (isOpen: boolean): void => {
+    if (!isOpen) {
+      onCancel();
+    }
+  };
+
   const handleSubmit = (event: SyntheticEvent<HTMLFormElement>): void => {
     event.preventDefault();
 
@@ -101,87 +104,97 @@ export function ImportTilesetDialog({ imageDataUrl, fileName, onConfirm, onCance
   };
 
   return (
-    <Dialog open={true} onOpenChange={onCancel}>
-      <DialogContent className="max-w-[420px]">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <DialogHeader>
-            <DialogTitle>Import Tileset</DialogTitle>
-            <p className="text-xs text-muted-foreground">
-              {fileName} — {imageWidth}×{imageHeight}px
-            </p>
-          </DialogHeader>
+    <Modal isOpen={true} onOpenChange={handleOpenChange}>
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="max-w-[420px]">
+            <Form onSubmit={handleSubmit} className="space-y-4">
+              <Modal.Header>
+                <div>
+                  <Modal.Heading>Import Tileset</Modal.Heading>
+                  <p className="text-xs text-muted">
+                    {fileName} — {imageWidth}×{imageHeight}px
+                  </p>
+                </div>
+              </Modal.Header>
 
-          <div className="flex justify-center py-1">
-            <canvas
-              ref={previewRef}
-              className="rounded-md border border-border"
-              style={{ imageRendering: 'pixelated' }}
-            />
-          </div>
+              <Modal.Body className="space-y-4">
+                <div className="flex justify-center py-1">
+                  <canvas
+                    ref={previewRef}
+                    className="rounded-md border border-border"
+                    style={{ imageRendering: 'pixelated' }}
+                  />
+                </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="ts-tile-width">Tile Width (px)</Label>
-              <Input
-                id="ts-tile-width"
-                type="number"
-                min={1}
-                max={imageWidth}
-                value={tileWidth}
-                onChange={event => setTileWidth(Number(event.target.value))}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="ts-tile-height">Tile Height (px)</Label>
-              <Input
-                id="ts-tile-height"
-                type="number"
-                min={1}
-                max={imageHeight}
-                value={tileHeight}
-                onChange={event => setTileHeight(Number(event.target.value))}
-              />
-            </div>
-          </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <NumberField
+                    maxValue={imageWidth > 0 ? imageWidth : undefined}
+                    minValue={imageWidth > 0 ? 1 : 0}
+                    name="tileWidth"
+                    value={tileWidth}
+                    onChange={setTileWidth}
+                  >
+                    <Label>Tile Width (px)</Label>
+                    <NumberField.Group>
+                      <NumberField.Input />
+                    </NumberField.Group>
+                  </NumberField>
+                  <NumberField
+                    maxValue={imageHeight > 0 ? imageHeight : undefined}
+                    minValue={imageHeight > 0 ? 1 : 0}
+                    name="tileHeight"
+                    value={tileHeight}
+                    onChange={setTileHeight}
+                  >
+                    <Label>Tile Height (px)</Label>
+                    <NumberField.Group>
+                      <NumberField.Input />
+                    </NumberField.Group>
+                  </NumberField>
+                </div>
 
-          <div className={cn('text-xs text-muted-foreground', (cols === 0 || rows === 0) && 'text-destructive')}>
-            {cols}×{rows} tiles ({cols * rows} total)
-            {cols === 1 && rows === 1 ? ' — entire image as one tile' : ''}
-          </div>
+                <div className={cn('text-xs text-muted', (cols === 0 || rows === 0) && 'text-danger')}>
+                  {cols}×{rows} tiles ({cols * rows} total)
+                  {cols === 1 && rows === 1 ? ' — entire image as one tile' : ''}
+                </div>
 
-          <div className="flex flex-wrap gap-2">
-            {sizePresets.map((preset) => {
-              const isActive = tileWidth === preset.width && tileHeight === preset.height;
+                <div className="flex flex-wrap gap-2">
+                  {sizePresets.map((preset) => {
+                    const isActive = tileWidth === preset.width && tileHeight === preset.height;
 
-              return (
-                <Button
-                  key={preset.label}
-                  type="button"
-                  size="sm"
-                  variant={isActive ? 'primary' : 'default'}
-                  className={cn(isActive && 'shadow-sm')}
-                  onClick={() => {
-                    setTileWidth(preset.width);
-                    setTileHeight(preset.height);
-                  }}
-                  disabled={preset.width <= 0 || preset.height <= 0}
-                >
-                  {preset.label}
+                    return (
+                      <Button
+                        key={preset.label}
+                        type="button"
+                        size="sm"
+                        variant={isActive ? 'primary' : 'secondary'}
+                        className={cn(isActive && 'shadow-sm')}
+                        onPress={() => {
+                          setTileWidth(preset.width);
+                          setTileHeight(preset.height);
+                        }}
+                        isDisabled={preset.width <= 0 || preset.height <= 0}
+                      >
+                        {preset.label}
+                      </Button>
+                    );
+                  })}
+                </div>
+              </Modal.Body>
+
+              <Modal.Footer>
+                <Button type="button" variant="secondary" onPress={onCancel}>
+                  Cancel
                 </Button>
-              );
-            })}
-          </div>
-
-          <DialogFooter>
-            <Button type="button" variant="default" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary">
-              Import
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+                <Button type="submit" variant="primary">
+                  Import
+                </Button>
+              </Modal.Footer>
+            </Form>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }

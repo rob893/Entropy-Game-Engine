@@ -139,8 +139,9 @@ export function Canvas(): ReactElement {
       const anchorCol = pos.col - offset;
       const anchorRow = pos.row - offset;
 
-      ctx.fillStyle = 'rgba(124, 58, 237, 0.3)';
-      ctx.strokeStyle = 'rgba(124, 58, 237, 0.6)';
+      // Canvas colors — can't use CSS vars in canvas 2D API
+      ctx.fillStyle = 'rgba(34, 197, 94, 0.3)';
+      ctx.strokeStyle = 'rgba(34, 197, 94, 0.6)';
       ctx.lineWidth = 1;
 
       for (let dr = 0; dr < size; dr++) {
@@ -197,14 +198,14 @@ export function Canvas(): ReactElement {
       overlay.height = canvas.height;
     }
 
-    ctx.fillStyle = '#1a1a2a';
+    ctx.fillStyle = '#151a1e';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw checkerboard for empty cells
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
         if ((row + col) % 2 === 0) {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+          ctx.fillStyle = 'rgba(34, 197, 94, 0.04)';
           ctx.fillRect(col * mapFile.tileWidth, row * mapFile.tileHeight, mapFile.tileWidth, mapFile.tileHeight);
         }
       }
@@ -317,7 +318,7 @@ export function Canvas(): ReactElement {
         }
 
         ctx.save();
-        ctx.strokeStyle = '#7c3aed';
+        ctx.strokeStyle = '#22c55e';
         ctx.lineWidth = 2;
         ctx.setLineDash([4, 4]);
         ctx.strokeRect(obj.x - 1, obj.y - 1, sprite.width * obj.scaleX + 2, sprite.height * obj.scaleY + 2);

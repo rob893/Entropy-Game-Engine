@@ -1,5 +1,6 @@
-import type { ChangeEvent, ReactElement } from 'react';
-import { cn } from '../../lib/utils';
+import type { Key } from '@heroui/react';
+import { ListBox, Select } from '@heroui/react';
+import type { ReactElement } from 'react';
 import { useEditorStore } from '../../stores/editor-store';
 
 export function MapSelector(): ReactElement | null {
@@ -12,31 +13,37 @@ export function MapSelector(): ReactElement | null {
     return null;
   }
 
-  const handleChange = (event: ChangeEvent<HTMLSelectElement>): void => {
-    void loadMapFromProject(event.target.value);
+  const handleChange = (value: Key | null): void => {
+    if (typeof value !== 'string' || value === '') {
+      return;
+    }
+
+    void loadMapFromProject(value);
   };
 
   return (
     <div className="flex shrink-0 items-center gap-1.5 py-1">
-      <span className="text-xs text-muted-foreground">Map:</span>
-      <select
-        className={cn(
-          'h-8 rounded-md border border-border bg-white/6 px-2 text-sm text-foreground',
-          'focus:outline-2 focus:outline-offset-1 focus:outline-ring'
-        )}
-        value={filePath ?? ''}
-        onChange={handleChange}
-      >
-        {availableMaps.map(mapPath => {
-          const name = mapPath.split(/[/\\]/).pop()?.replace('.entropy-map', '') ?? mapPath;
+      <span className="text-xs text-muted">Map:</span>
+      <Select aria-label="Map" className="w-48" placeholder="Select map" value={filePath} onChange={handleChange}>
+        <Select.Trigger>
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {availableMaps.map(mapPath => {
+              const name = mapPath.split(/[/\\]/).pop()?.replace('.entropy-map', '') ?? mapPath;
 
-          return (
-            <option key={mapPath} value={mapPath}>
-              {name}
-            </option>
-          );
-        })}
-      </select>
+              return (
+                <ListBox.Item key={mapPath} id={mapPath} textValue={name}>
+                  {name}
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              );
+            })}
+          </ListBox>
+        </Select.Popover>
+      </Select>
     </div>
   );
 }

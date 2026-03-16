@@ -1,11 +1,11 @@
-import { ImagePlus } from 'lucide-react';
+import { Button } from '@heroui/react';
+import { ImagePlus, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { MouseEvent, ReactElement } from 'react';
 import type { IEditorTileset } from '../../../shared/types';
 import { cn } from '../../lib/utils';
 import { useEditorStore } from '../../stores/editor-store';
 import { Panel, PanelContent, PanelHeader } from '../editor/Panel';
-import { Button } from '../ui/Button';
 
 export function TilePalette(): ReactElement {
   const mapFile = useEditorStore(state => state.mapFile);
@@ -14,6 +14,7 @@ export function TilePalette(): ReactElement {
   const brushSize = useEditorStore(state => state.brushSize);
   const setActiveTile = useEditorStore(state => state.setActiveTile);
   const importTilesetToProject = useEditorStore(state => state.importTilesetToProject);
+  const removeTileset = useEditorStore(state => state.removeTileset);
 
   const tilesets = mapFile?.tilesets ?? [];
 
@@ -23,9 +24,8 @@ export function TilePalette(): ReactElement {
         actions={(
           <Button
             aria-label="Import tileset"
-            onClick={() => void importTilesetToProject()}
+            onPress={() => void importTilesetToProject()}
             size="sm"
-            title="Import tileset"
             type="button"
             variant="ghost"
           >
@@ -38,7 +38,7 @@ export function TilePalette(): ReactElement {
       </PanelHeader>
       <PanelContent className="space-y-3">
         {tilesets.length === 0 && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted">
             Import a tileset to get started.
           </p>
         )}
@@ -49,6 +49,7 @@ export function TilePalette(): ReactElement {
             activeTileId={activeTilesetId === tileset.id ? activeTileId : -1}
             brushSize={activeTilesetId === tileset.id ? brushSize : 1}
             onSelectTile={(tileId) => setActiveTile(tileId, tileset.id)}
+            onRemove={removeTileset}
           />
         ))}
       </PanelContent>
@@ -61,9 +62,10 @@ interface ITilesetGridProps {
   activeTileId: number;
   brushSize: number;
   onSelectTile: (id: number) => void;
+  onRemove: (tilesetId: string) => void;
 }
 
-function TilesetGrid({ tileset, activeTileId, brushSize, onSelectTile }: ITilesetGridProps): ReactElement {
+function TilesetGrid({ tileset, activeTileId, brushSize, onSelectTile, onRemove }: ITilesetGridProps): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
 
@@ -98,7 +100,7 @@ function TilesetGrid({ tileset, activeTileId, brushSize, onSelectTile }: ITilese
       const highlightCols = Math.min(brushSize, tileset.columns - startCol);
       const highlightRows = Math.min(brushSize, tileset.rows - startRow);
 
-      context.strokeStyle = '#7c3aed';
+      context.strokeStyle = '#22c55e';
       context.lineWidth = 2;
       context.strokeRect(
         startCol * tileset.tileWidth,
@@ -108,7 +110,7 @@ function TilesetGrid({ tileset, activeTileId, brushSize, onSelectTile }: ITilese
       );
 
       // Fill with semi-transparent overlay
-      context.fillStyle = 'rgba(124, 58, 237, 0.15)';
+      context.fillStyle = 'rgba(34, 197, 94, 0.15)';
       context.fillRect(
         startCol * tileset.tileWidth,
         startRow * tileset.tileHeight,
@@ -147,19 +149,32 @@ function TilesetGrid({ tileset, activeTileId, brushSize, onSelectTile }: ITilese
 
   return (
     <div className="space-y-1.5">
-      <div className={cn(
-        'text-[11px] text-muted-foreground',
-        activeTileId > 0 && 'text-primary'
-      )}>
-        {tileset.name} ({tileset.columns}×{tileset.rows})
+      <div className="flex items-center justify-between gap-2">
+        <div className={cn(
+          'text-[11px] text-muted',
+          activeTileId > 0 && 'text-accent'
+        )}>
+          {tileset.name} ({tileset.columns}×{tileset.rows})
+        </div>
+        <Button
+          aria-label={`Remove ${tileset.name}`}
+          className="text-muted hover:text-danger"
+          isIconOnly
+          onPress={() => onRemove(tileset.id)}
+          size="sm"
+          type="button"
+          variant="ghost"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </Button>
       </div>
       <canvas
         ref={canvasRef}
         aria-label={`Tileset: ${tileset.name}. Click to select a tile.`}
         className={cn(
-          'block w-full cursor-pointer rounded-md border border-border/70 bg-black/10',
-          'transition-colors hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',
-          activeTileId > 0 && 'border-primary/70 shadow-[0_0_0_1px_rgba(124,58,237,0.25)]'
+          'block w-full cursor-pointer rounded-md border border-border/70 bg-default/50',
+          'transition-colors hover:border-accent/50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus',
+          activeTileId > 0 && 'border-accent/70 shadow-[0_0_0_1px_var(--accent-soft)]'
         )}
         onClick={handleClick}
         role="grid"

@@ -24,6 +24,7 @@ export default defineConfig(
       'commitlint.config.js',
       'eslint.config.mjs',
       '**/postcss.config.mjs',
+      '**/.heroui-docs/**',
       '@types/**'
     ]
   },

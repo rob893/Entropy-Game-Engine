@@ -81,6 +81,7 @@ interface IEditorState {
   setLayerVisibility: (index: number, visible: boolean) => void;
   setLayerOpacity: (index: number, opacity: number) => void;
   addTileset: (tileset: IEditorTileset) => void;
+  removeTileset: (tilesetId: string) => void;
 
   // File operations
   saveFile: () => Promise<void>;
@@ -134,17 +135,36 @@ function createGrid(rows: number, cols: number): number[][] {
   return Array.from({ length: rows }, () => new Array<number>(cols).fill(0));
 }
 
-function createProjectTileset(asset: IDiscoveredAsset): IEditorTileset {
+function getProjectTilesetLayout(
+  asset: IDiscoveredAsset,
+  mapTileWidth: number,
+  mapTileHeight: number
+): Pick<IEditorTileset, 'tileWidth' | 'tileHeight' | 'columns' | 'rows' | 'tileCount'> {
+  const tileWidth = mapTileWidth > 0 ? mapTileWidth : asset.width;
+  const tileHeight = mapTileHeight > 0 ? mapTileHeight : asset.height;
+  const columns = Math.max(1, Math.floor(asset.width / tileWidth));
+  const rows = Math.max(1, Math.floor(asset.height / tileHeight));
+
+  return {
+    tileWidth,
+    tileHeight,
+    columns,
+    rows,
+    tileCount: columns * rows
+  };
+}
+
+function createProjectTileset(
+  asset: IDiscoveredAsset,
+  mapTileWidth: number,
+  mapTileHeight: number
+): IEditorTileset {
   return {
     id: crypto.randomUUID(),
     name: asset.name,
     imagePath: asset.relativePath,
     imageDataUrl: asset.imageDataUrl,
-    tileWidth: asset.width,
-    tileHeight: asset.height,
-    columns: 1,
-    rows: 1,
-    tileCount: 1
+    ...getProjectTilesetLayout(asset, mapTileWidth, mapTileHeight)
   };
 }
 
@@ -182,13 +202,17 @@ function mergeProjectAssetsIntoMap(
   discoveredObjects: IDiscoveredAsset[]
 ): IEditorMapFile {
   const hydratedTilesets = mapFile.tilesets.map(tileset => {
-    if (tileset.imageDataUrl !== '' && tileset.imageDataUrl !== undefined) {
-      return tileset;
-    }
-
     const discovered = discoveredTilesets.find(asset => asset.relativePath === tileset.imagePath);
 
-    return discovered === undefined ? tileset : { ...tileset, imageDataUrl: discovered.imageDataUrl };
+    return discovered === undefined
+      ? tileset
+      : {
+          ...tileset,
+          name: discovered.name,
+          imagePath: discovered.relativePath,
+          imageDataUrl: discovered.imageDataUrl,
+          ...getProjectTilesetLayout(discovered, mapFile.tileWidth, mapFile.tileHeight)
+        };
   });
 
   const hydratedObjectSprites = mapFile.objectSprites.map(sprite => {
@@ -218,7 +242,7 @@ function mergeProjectAssetsIntoMap(
       ...hydratedTilesets,
       ...discoveredTilesets
         .filter(asset => !tilePaths.has(asset.relativePath))
-        .map(asset => createProjectTileset(asset))
+        .map(asset => createProjectTileset(asset, mapFile.tileWidth, mapFile.tileHeight))
     ],
     objectSprites: [
       ...hydratedObjectSprites,
@@ -650,6 +674,35 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     }
 
     set({ mapFile: { ...mapFile, tilesets: [...mapFile.tilesets, tileset] }, isDirty: true });
+  },
+
+  removeTileset: tilesetId => {
+    const { mapFile } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const newTilesets = mapFile.tilesets.filter(ts => ts.id !== tilesetId);
+
+    const newLayers = mapFile.layers.map(layer => {
+      if (layer.type === 'tile' && layer.tileSetId === tilesetId) {
+        return { ...layer, tileSetId: '', grid: layer.grid.map(row => row.map(() => 0)) };
+      }
+
+      return layer;
+    });
+
+    const activeTilesetId = get().activeTilesetId === tilesetId
+      ? (newTilesets[0]?.id ?? null)
+      : get().activeTilesetId;
+
+    set({
+      mapFile: { ...mapFile, tilesets: newTilesets, layers: newLayers },
+      isDirty: true,
+      activeTilesetId,
+      activeTileId: 1
+    });
   },
 
   saveFile: async () => {

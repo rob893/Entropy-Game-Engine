@@ -9,13 +9,13 @@ import { ObjectLibrary } from './components/ObjectLibrary';
 import { PropertiesPanel } from './components/PropertiesPanel';
 import { TilePalette } from './components/TilePalette';
 import { Toolbar } from './components/Toolbar';
-import { TooltipProvider } from './components/ui/Tooltip';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { useEditorStore } from './stores/editor-store';
 import './styles/globals.css';
 
 export function App(): ReactElement {
   const projectPath = useEditorStore(state => state.projectPath);
+  const mapFile = useEditorStore(state => state.mapFile);
   const createMapInProject = useEditorStore(state => state.createMapInProject);
   const error = useEditorStore(state => state.error);
   const setError = useEditorStore(state => state.setError);
@@ -79,38 +79,45 @@ export function App(): ReactElement {
 
   if (projectPath === null) {
     return (
-      <TooltipProvider>
-        <div className="h-full">
-          <WelcomeScreen onOpenProject={() => void useEditorStore.getState().openProject()} />
-          {errorToast}
-        </div>
-      </TooltipProvider>
+      <div className="h-full">
+        <WelcomeScreen onOpenProject={() => void useEditorStore.getState().openProject()} />
+        {errorToast}
+      </div>
     );
   }
 
+  const projectContent = mapFile === null
+    ? (
+        <div className="flex min-h-0 flex-1 items-center justify-center bg-surface px-6 text-center">
+          <p className="text-sm text-muted">Select a map or create a new one.</p>
+        </div>
+      )
+    : (
+        <>
+          <div className="left-panel">
+            <TilePalette />
+            <ObjectLibrary />
+            <LayerPanel />
+          </div>
+
+          <Canvas />
+
+          <div className="right-panel">
+            <PropertiesPanel />
+          </div>
+        </>
+      );
+
   return (
-    <TooltipProvider>
-      <div className="editor-layout">
-        <Toolbar />
+    <div className={mapFile === null ? 'flex h-full min-h-0 flex-col bg-border p-1' : 'editor-layout'}>
+      <Toolbar />
+      {projectContent}
 
-        <div className="left-panel">
-          <TilePalette />
-          <ObjectLibrary />
-          <LayerPanel />
-        </div>
+      {showNewMapDialog && (
+        <NewMapDialog onConfirm={handleNewMap} onCancel={() => setShowNewMapDialog(false)} />
+      )}
 
-        <Canvas />
-
-        <div className="right-panel">
-          <PropertiesPanel />
-        </div>
-
-        {showNewMapDialog && (
-          <NewMapDialog onConfirm={handleNewMap} onCancel={() => setShowNewMapDialog(false)} />
-        )}
-
-        {errorToast}
-      </div>
-    </TooltipProvider>
+      {errorToast}
+    </div>
   );
 }

@@ -1,9 +1,6 @@
+import { Button, Form, Input, Label, Modal, NumberField, TextField } from '@heroui/react';
 import { useState } from 'react';
 import type { ReactElement, SyntheticEvent } from 'react';
-import { Button } from '../ui/Button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui/Dialog';
-import { Input } from '../ui/Input';
-import { Label } from '../ui/Label';
 
 interface INewMapDialogProps {
   onConfirm: (name: string, rows: number, cols: number, tileWidth: number, tileHeight: number) => void;
@@ -17,90 +14,76 @@ export function NewMapDialog({ onConfirm, onCancel }: INewMapDialogProps): React
   const [tileWidth, setTileWidth] = useState(32);
   const [tileHeight, setTileHeight] = useState(32);
 
+  const handleOpenChange = (isOpen: boolean): void => {
+    if (!isOpen) {
+      onCancel();
+    }
+  };
+
   const handleSubmit = (event: SyntheticEvent<HTMLFormElement>): void => {
     event.preventDefault();
     onConfirm(name, rows, cols, tileWidth, tileHeight);
   };
 
   return (
-    <Dialog open={true} onOpenChange={onCancel}>
-      <DialogContent className="max-w-[420px]">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <DialogHeader>
-            <DialogTitle>New Map</DialogTitle>
-          </DialogHeader>
+    <Modal isOpen={true} onOpenChange={handleOpenChange}>
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="max-w-[420px]">
+            <Form onSubmit={handleSubmit} className="space-y-4">
+              <Modal.Header>
+                <Modal.Heading>New Map</Modal.Heading>
+              </Modal.Header>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="map-name">Name</Label>
-            <Input
-              id="map-name"
-              type="text"
-              value={name}
-              onChange={event => setName(event.target.value)}
-              autoFocus
-            />
-          </div>
+              <Modal.Body className="space-y-4">
+                <TextField name="name" onChange={setName}>
+                  <Label>Name</Label>
+                  <Input autoFocus value={name} variant="secondary" />
+                </TextField>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="map-cols">Columns</Label>
-              <Input
-                id="map-cols"
-                type="number"
-                min={1}
-                max={500}
-                value={cols}
-                onChange={event => setCols(Number(event.target.value))}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="map-rows">Rows</Label>
-              <Input
-                id="map-rows"
-                type="number"
-                min={1}
-                max={500}
-                value={rows}
-                onChange={event => setRows(Number(event.target.value))}
-              />
-            </div>
-          </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <NumberField maxValue={500} minValue={1} name="cols" value={cols} onChange={setCols}>
+                    <Label>Columns</Label>
+                    <NumberField.Group>
+                      <NumberField.Input />
+                    </NumberField.Group>
+                  </NumberField>
+                  <NumberField maxValue={500} minValue={1} name="rows" value={rows} onChange={setRows}>
+                    <Label>Rows</Label>
+                    <NumberField.Group>
+                      <NumberField.Input />
+                    </NumberField.Group>
+                  </NumberField>
+                </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="tile-width">Tile Width (px)</Label>
-              <Input
-                id="tile-width"
-                type="number"
-                min={1}
-                max={256}
-                value={tileWidth}
-                onChange={event => setTileWidth(Number(event.target.value))}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="tile-height">Tile Height (px)</Label>
-              <Input
-                id="tile-height"
-                type="number"
-                min={1}
-                max={256}
-                value={tileHeight}
-                onChange={event => setTileHeight(Number(event.target.value))}
-              />
-            </div>
-          </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <NumberField maxValue={256} minValue={1} name="tileWidth" value={tileWidth} onChange={setTileWidth}>
+                    <Label>Tile Width (px)</Label>
+                    <NumberField.Group>
+                      <NumberField.Input />
+                    </NumberField.Group>
+                  </NumberField>
+                  <NumberField maxValue={256} minValue={1} name="tileHeight" value={tileHeight} onChange={setTileHeight}>
+                    <Label>Tile Height (px)</Label>
+                    <NumberField.Group>
+                      <NumberField.Input />
+                    </NumberField.Group>
+                  </NumberField>
+                </div>
+              </Modal.Body>
 
-          <DialogFooter>
-            <Button type="button" variant="default" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary">
-              Create
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+              <Modal.Footer>
+                <Button type="button" variant="secondary" onPress={onCancel}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary">
+                  Create
+                </Button>
+              </Modal.Footer>
+            </Form>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }

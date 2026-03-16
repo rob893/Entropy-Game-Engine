@@ -32,7 +32,7 @@ This is a Unity-style 2D game engine using a **GameObject + Component** pattern,
 ### Engine Structure (`packages/entropy-game-engine/src/`)
 
 - **`core/`** — Engine subsystems: `GameEngine`, `PhysicsEngine`, `RenderingEngine`, `Time`
-  - `helpers/` — `Vector2`, `Input`, `SceneManager`, `Topic` (pub/sub), A* pathfinding, etc.
+  - `helpers/` — `Vector2`, `Input`, `SceneManager`, `Topic` (pub/sub), A\* pathfinding, etc.
   - `physics/` — Collision detection (spatial hashing), impulse resolution
   - `enums/` — `Color`, `Layer`, `Key`, `EventType`, `MouseButton`
   - `interfaces/` — Contracts for scenes, renderables, collision, graphs
@@ -93,6 +93,7 @@ Games define `Scene` objects with factory functions for GameObjects, pass them t
 ### Imports
 
 All engine exports are consumed from the single entry point:
+
 ```typescript
 import { Component, GameObject, Vector2, GameEngine } from '@entropy-engine/entropy-game-engine';
 ```
@@ -105,44 +106,54 @@ Visual terrain map editor built with Electron + React. See `.docs/electron-app-a
 
 ### Design Stack
 
-- **Styling**: Tailwind CSS v4 (via PostCSS) — all styling via utility classes, no inline `style={{}}` except `imageRendering: 'pixelated'` on canvas elements
-- **Component Pattern**: shadcn/ui style (Radix primitives + cva + Tailwind, copy-paste components we own)
-- **Icons**: Lucide React — never use emoji or text labels for icons. Consistent sizing: 16px (`h-4 w-4`) in toolbars, 14px (`h-3.5 w-3.5`) in panels
-- **Utilities**: `cn()` from `src/renderer/lib/utils.ts` (clsx + tailwind-merge) for all className composition
+- **Component Library**: HeroUI v3 (`@heroui/react@rc` + `@heroui/styles@rc`). **Always check `.heroui-docs/react/components/` and `.heroui-docs/react/demos/` before creating any custom component.** If HeroUI has a component for it, use it.
+- **Styling**: HeroUI components handle their own styling via built-in variants. Only use Tailwind utility classes for layout (`flex`, `grid`, `gap`, etc.) and HeroUI semantic color tokens (`text-foreground`, `bg-surface`, `text-muted`, etc.). Never write custom CSS for things HeroUI components already handle (buttons, inputs, tooltips, modals, etc.).
+- **Icons**: Lucide React — never use emoji or text labels for icons.
+- **Utilities**: `cn()` from `src/renderer/lib/utils.ts` (clsx + tailwind-merge) for className composition when needed.
 
-### Color Palette (dark theme only)
+### Component Rules
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `background` | `#0f0f17` | App background |
-| `card` | `#1a1a2e` | Panels, sidebars |
-| `popover` | `#252540` | Dialogs, dropdowns |
-| `muted` | `#2a2a45` | Toolbar, inputs bg |
-| `primary` | `#7c3aed` | Purple — active tools, focus rings, CTAs |
-| `accent` | `#10b981` | Green — success, secondary actions |
-| `destructive` | `#ef4444` | Danger — delete, errors |
-| `foreground` | `#f0f0f5` | Primary text |
-| `muted-foreground` | `#8888a0` | Secondary text, labels |
+**ALWAYS use HeroUI components — NEVER raw HTML for interactive elements:**
+- `<Button>` not `<button>` — uses `onPress` (not `onClick`), `isDisabled` (not `disabled`), `isIconOnly` for icon-only buttons
+- `<ToggleButton>` for on/off toggles — `isSelected` + `onChange`, `isIconOnly`
+- `<ToggleButtonGroup>` for exclusive/multi selection groups — `selectionMode="single"|"multiple"`
+- `<Toolbar>` for toolbar containers — provides arrow key navigation
+- `<Tooltip>` for hover hints — `<Tooltip><Button>trigger</Button><Tooltip.Content>text</Tooltip.Content></Tooltip>`
+- `<Modal>` for dialogs — `<Modal.Backdrop isOpen={} onOpenChange={}><Modal.Container><Modal.Dialog>...</Modal.Dialog></Modal.Container></Modal.Backdrop>`
+- `<Form>` not `<form>` for form containers
+- `<TextField>` + `<Label>` + `<Input>` for text inputs (not raw `<label>` + `<input>`)
+- `<NumberField>` + `<NumberField.Group>` + `<NumberField.Input>` for number inputs
+- `<Select>` not `<select>` for dropdowns
+- `<Separator>` not `<div className="w-px bg-border">` for dividers
+- `<Surface>` for panel/card containers (not raw `<div>` with bg classes)
+- `<Disclosure>` for collapsible sections
+- `<CloseButton>` for dismiss buttons
 
-### Typography
+**HeroUI v3 docs reference**: `.heroui-docs/react/components/` for component docs, `.heroui-docs/react/demos/` for working code examples. Always read the relevant demo before using a component.
 
-- **Sans**: `'Inter', 'Segoe UI', system-ui, sans-serif`
-- **Mono**: `'JetBrains Mono', 'Cascadia Code', monospace`
-- **Scale**: 11px (labels) → 12px (body) → 13px (default) → 14px (dialogs) → 16px (headings)
+**Editor-specific components** (only when HeroUI has no equivalent):
+- `src/renderer/components/editor/Panel.tsx` — sidebar panel wrapper (uses Surface internally)
+- `src/renderer/components/editor/ToolButton.tsx` — toolbar icon button with tooltip (uses ToggleButton + Tooltip)
+- `src/renderer/components/editor/ErrorToast.tsx` — error notification (uses Surface + CloseButton)
 
-### Component Conventions
+### Color Tokens (HeroUI theme)
 
-- **UI primitives** live in `src/renderer/components/ui/` (Button, Dialog, Input, Label, Tooltip)
-- **Editor-specific** components live in `src/renderer/components/editor/` (Panel, ToolButton, ErrorToast)
-- **Feature components** live in `src/renderer/components/<Name>/index.tsx`
-- All new components must use Tailwind classes — never add inline styles
-- All interactive elements need `aria-*` attributes and keyboard support
-- Dialogs use Radix `@radix-ui/react-dialog` for focus management
-- Tooltips use Radix `@radix-ui/react-tooltip` — wrap in `TooltipProvider`
+Use HeroUI's semantic token names in Tailwind classes:
+- `text-foreground`, `bg-background` — primary text/bg
+- `text-muted` — secondary text
+- `bg-surface`, `bg-surface-secondary`, `bg-surface-tertiary` — panel backgrounds
+- `bg-accent`, `text-accent`, `text-accent-foreground` — accent/primary color
+- `bg-danger`, `text-danger` — error/destructive
+- `border-border`, `outline-focus` — borders and focus rings
+- `bg-overlay` — dialog overlays
+- `bg-default`, `bg-default-hover` — neutral/default elements
+
+Theme is defined in `src/renderer/styles/globals.css` using oklch color values.
 
 ### Styling Rules
 
-- Use CSS variables from `src/renderer/styles/globals.css` via Tailwind `text-foreground`, `bg-primary`, etc.
-- Button variants via `class-variance-authority` (cva): `default`, `primary`, `ghost`, `destructive`, `outline`
 - No `@/` import aliases — use relative paths only
+- No raw `<button>`, `<input>`, `<select>`, `<form>`, `<label>` — always use HeroUI equivalents
+- No custom CSS class names for button styling — use HeroUI's `variant`, `size`, `isIconOnly` props
 - Keep `imageRendering: 'pixelated'` as inline style on canvas elements (no Tailwind equivalent)
+- Canvas 2D API colors are hardcoded (can't use CSS vars) — acceptable

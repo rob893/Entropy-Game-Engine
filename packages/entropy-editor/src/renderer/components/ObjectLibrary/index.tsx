@@ -1,11 +1,10 @@
-import { ChevronDown, ChevronRight, FolderOpen } from 'lucide-react';
+import { Button, Disclosure } from '@heroui/react';
+import { FolderOpen } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
 import type { IObjectSprite } from '../../../shared/types';
-import { cn } from '../../lib/utils';
 import { useEditorStore } from '../../stores/editor-store';
 import { Panel, PanelContent, PanelHeader } from '../editor/Panel';
-import { Button } from '../ui/Button';
 
 const DEFAULT_CATEGORY = 'Imported';
 
@@ -29,25 +28,11 @@ export function ObjectLibrary(): ReactElement {
     await importObjectsToProject();
   };
 
-  const toggleCategory = (categoryName: string): void => {
-    setCollapsedCategories(state => ({
-      ...state,
-      [categoryName]: !(state[categoryName] ?? false)
-    }));
-  };
-
   return (
     <Panel className="min-h-0 flex-1">
       <PanelHeader
         actions={(
-          <Button
-            aria-label="Import objects"
-            onClick={() => void handleImportObjects()}
-            size="sm"
-            title="Import objects"
-            type="button"
-            variant="ghost"
-          >
+          <Button aria-label="Import objects" onPress={() => void handleImportObjects()} size="sm" variant="ghost">
             <FolderOpen className="size-3.5" />
             <span>Import</span>
           </Button>
@@ -58,59 +43,64 @@ export function ObjectLibrary(): ReactElement {
       <PanelContent className="space-y-3">
         {!hasSprites
           ? (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted">
                 Import object sprites to populate this library.
               </p>
             )
           : (
               categories.map(category => {
-                const isCollapsed = collapsedCategories[category.name] ?? false;
-                const ChevronIcon = isCollapsed ? ChevronRight : ChevronDown;
+                const isExpanded = !(collapsedCategories[category.name] ?? false);
 
                 return (
-                  <section key={category.name} className="space-y-1.5">
-                    <button
-                      type="button"
-                      className="mb-1 flex w-full items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-                      onClick={() => toggleCategory(category.name)}
-                      aria-expanded={!isCollapsed}
-                    >
-                      <ChevronIcon className="size-3 shrink-0" />
-                      <span className="truncate">{category.name}</span>
-                      <span className="text-[10px] text-muted-foreground/80">({category.sprites.length})</span>
-                    </button>
-                    {!isCollapsed && (
-                      <div className="grid grid-cols-3 gap-1.5">
-                        {category.sprites.map(sprite => {
-                          const isSelected = sprite.id === activeObjectSpriteId;
+                  <Disclosure
+                    key={category.name}
+                    isExpanded={isExpanded}
+                    onExpandedChange={expanded => {
+                      setCollapsedCategories(state => ({
+                        ...state,
+                        [category.name]: !expanded
+                      }));
+                    }}
+                  >
+                    <Disclosure.Heading>
+                      <Button className="w-full justify-between" size="sm" slot="trigger" variant="ghost">
+                        <span className="truncate">{category.name} ({category.sprites.length})</span>
+                        <Disclosure.Indicator />
+                      </Button>
+                    </Disclosure.Heading>
+                    <Disclosure.Content>
+                      <Disclosure.Body className="px-0 pb-0 pt-1">
+                        <div className="grid grid-cols-3 gap-1.5">
+                          {category.sprites.map(sprite => {
+                            const isSelected = sprite.id === activeObjectSpriteId;
 
-                          return (
-                            <button
-                              key={sprite.id}
-                              type="button"
-                              className={cn(
-                                'cursor-pointer rounded-md border border-border p-1 hover:border-primary/50',
-                                'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',
-                                isSelected && 'border-primary bg-primary/10'
-                              )}
-                              onClick={() => setActiveObjectSpriteId(sprite.id)}
-                              title={sprite.name}
-                              aria-pressed={isSelected}
-                            >
-                              <img
-                                src={sprite.imageDataUrl}
-                                alt={sprite.name}
-                                className="mx-auto max-h-12 max-w-12 rounded-sm object-contain"
-                              />
-                              <div className="mt-0.5 truncate text-center text-[10px] text-muted-foreground">
-                                {sprite.name}
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </section>
+                            return (
+                              <Button
+                                key={sprite.id}
+                                aria-label={sprite.name}
+                                aria-pressed={isSelected}
+                                fullWidth
+                                onPress={() => setActiveObjectSpriteId(sprite.id)}
+                                size="sm"
+                                variant={isSelected ? 'secondary' : 'ghost'}
+                              >
+                                <div className="flex w-full flex-col items-center gap-1">
+                                  <img
+                                    src={sprite.imageDataUrl}
+                                    alt={sprite.name}
+                                    className="mx-auto max-h-12 max-w-12 rounded-sm object-contain"
+                                  />
+                                  <div className="w-full truncate text-center text-[10px] text-muted">
+                                    {sprite.name}
+                                  </div>
+                                </div>
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      </Disclosure.Body>
+                    </Disclosure.Content>
+                  </Disclosure>
                 );
               })
             )}

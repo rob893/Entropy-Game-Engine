@@ -1,9 +1,9 @@
+import { Label } from '@heroui/react';
 import type { ReactElement } from 'react';
 import type { IEditorTileLayer } from '../../../shared/types';
 import { cn } from '../../lib/utils';
 import { useEditorStore } from '../../stores/editor-store';
 import { Panel, PanelContent, PanelHeader } from '../editor/Panel';
-import { Label } from '../ui/Label';
 
 interface IPropertyRow {
   label: string;
@@ -15,10 +15,10 @@ export function PropertiesPanel(): ReactElement {
 
   if (mapFile === null) {
     return (
-      <Panel className="h-full border-l border-border bg-card">
+      <Panel className="h-full border-l border-border bg-surface">
         <PanelHeader>Properties</PanelHeader>
         <PanelContent>
-          <p className="text-sm text-muted-foreground">No map loaded.</p>
+          <p className="text-sm text-muted">No map loaded.</p>
         </PanelContent>
       </Panel>
     );
@@ -36,7 +36,7 @@ export function PropertiesPanel(): ReactElement {
   ];
 
   return (
-    <Panel className="h-full border-l border-border bg-card">
+    <Panel className="h-full border-l border-border bg-surface">
       <PanelHeader>Properties</PanelHeader>
       <PanelContent>
         <div className="space-y-3">
@@ -48,7 +48,7 @@ export function PropertiesPanel(): ReactElement {
                 index < properties.length - 1 && 'border-b border-border/60 pb-3'
               )}
             >
-              <Label className="text-sm font-medium text-muted-foreground">{property.label}</Label>
+              <Label className="text-sm font-medium text-muted">{property.label}</Label>
               <div className="text-sm text-foreground">{property.value}</div>
             </div>
           ))}

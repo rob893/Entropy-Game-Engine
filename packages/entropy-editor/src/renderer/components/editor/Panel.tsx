@@ -1,3 +1,4 @@
+import { Surface } from '@heroui/react';
 import type { ReactElement, ReactNode } from 'react';
 import { cn } from '../../lib/utils';
 
@@ -8,9 +9,9 @@ interface IPanelProps {
 
 export function Panel({ children, className }: IPanelProps): ReactElement {
   return (
-    <div className={cn('flex flex-col overflow-hidden', className)}>
+    <Surface className={cn('flex flex-col overflow-hidden', className)} variant="default">
       {children}
-    </div>
+    </Surface>
   );
 }
 
@@ -22,15 +23,17 @@ interface IPanelHeaderProps {
 
 export function PanelHeader({ children, actions, className }: IPanelHeaderProps): ReactElement {
   return (
-    <div className={cn(
-      'flex items-center justify-between px-2 py-1.5',
-      'text-xs font-semibold uppercase tracking-wider text-muted-foreground',
-      'border-b border-border',
-      className
-    )}>
+    <header
+      className={cn(
+        'flex items-center justify-between px-2 py-1.5',
+        'text-xs font-semibold uppercase tracking-wider text-muted',
+        'border-b border-border',
+        className
+      )}
+    >
       <span>{children}</span>
       {actions !== undefined && <div className="flex items-center gap-1">{actions}</div>}
-    </div>
+    </header>
   );
 }
 
@@ -41,8 +44,8 @@ interface IPanelContentProps {
 
 export function PanelContent({ children, className }: IPanelContentProps): ReactElement {
   return (
-    <div className={cn('flex-1 overflow-y-auto p-2', className)}>
+    <section className={cn('flex-1 overflow-y-auto p-2', className)}>
       {children}
-    </div>
+    </section>
   );
 }
