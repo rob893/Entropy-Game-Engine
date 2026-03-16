@@ -76,7 +76,6 @@ export class Terrain extends GameObject implements IRenderableBackground {
         );
       }
     }
-
   }
 
   public renderBackground(context: CanvasRenderingContext2D): void {

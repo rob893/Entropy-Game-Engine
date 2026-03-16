@@ -28,19 +28,7 @@ export function registerTilesetHandlers(): void {
     const mimeType = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : `image/${ext}`;
     const imageDataUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
 
-    const { width, height } = await getImageDimensions(imageDataUrl);
-
-    return { filePath, imageDataUrl, width, height };
+    // Dimensions are measured in the renderer via Image element
+    return { filePath, imageDataUrl, width: 0, height: 0 };
   });
-}
-
-function getImageDimensions(dataUrl: string): Promise<{ width: number; height: number }> {
-  // Main process doesn't have Image — return 0,0 and let renderer measure
-  const sizeMatch = dataUrl.match(/^data:image\/png;base64,/);
-
-  if (sizeMatch !== null) {
-    return Promise.resolve({ width: 0, height: 0 });
-  }
-
-  return Promise.resolve({ width: 0, height: 0 });
 }

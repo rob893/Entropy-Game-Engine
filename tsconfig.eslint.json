@@ -9,6 +9,13 @@
       "@entropy-engine/entropy-game-engine/*": ["packages/entropy-game-engine/src/*"]
     }
   },
-  "include": ["packages/**/*.ts", "packages/**/*.tsx", "sample-games/**/*.ts", "@types/**/*.d.ts", "*.config.*", "vitest.config.ts"],
+  "include": [
+    "packages/**/*.ts",
+    "packages/**/*.tsx",
+    "sample-games/**/*.ts",
+    "@types/**/*.d.ts",
+    "*.config.*",
+    "vitest.config.ts"
+  ],
   "exclude": ["**/node_modules", "**/dist", "**/templates"]
 }

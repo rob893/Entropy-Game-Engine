@@ -6,13 +6,7 @@ import type { Terrain } from '../../game-objects/Terrain';
 import { Layer } from '../enums/Layer';
 import { GameEngine } from '../GameEngine';
 import { RenderingEngine } from '../RenderingEngine';
-import type {
-  IPrefabSettings,
-  IRenderable,
-  IRenderableBackground,
-  IRenderableGUI,
-  IRenderableGizmo
-} from '../types';
+import type { IPrefabSettings, IRenderable, IRenderableBackground, IRenderableGUI, IRenderableGizmo } from '../types';
 
 class EmptyGameObject extends GameObject {
   protected override buildInitialComponents(): Component[] {

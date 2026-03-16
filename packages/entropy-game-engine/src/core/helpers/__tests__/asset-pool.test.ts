@@ -23,7 +23,9 @@ test('AssetPool getAsset returns the correct asset by key', (): void => {
 });
 
 test('AssetPool getAsset throws when the asset key is missing', (): void => {
-  const pool = new AssetPool<ITestAssets>(new Map<TestAssetKey, TestAssetValue>([['playerSprite', { src: 'player.png' }]]));
+  const pool = new AssetPool<ITestAssets>(
+    new Map<TestAssetKey, TestAssetValue>([['playerSprite', { src: 'player.png' }]])
+  );
 
   expect(() => pool.getAsset('themeSong')).toThrowError('Asset of key themeSong not found in the asset pool!');
 });

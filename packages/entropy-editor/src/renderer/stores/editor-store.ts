@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 import type { IEditorLayer, IEditorMapFile, IEditorTileset } from '../../shared/types';
-import { getErrorMessage } from '../utils/errors';
+import { getErrorMessage } from '../../shared/utils/errors';
+import { exportToTiled } from '../editor/TiledExporter';
 
 export type EditorTool = 'brush' | 'eraser' | 'fill' | 'eyedropper' | 'select';
+export type BrushShape = 'square' | 'circle';
 
 interface IEditorState {
   // Map state
@@ -15,11 +17,14 @@ interface IEditorState {
   activeLayerIndex: number;
   activeTileId: number;
   activeTilesetId: string | null;
+  brushSize: number;
+  brushShape: BrushShape;
   showGrid: boolean;
 
   // UI state
   error: string | null;
   pendingTilesetImport: { imageDataUrl: string; filePath: string } | null;
+  canvasElement: HTMLCanvasElement | null;
 
   // Actions
   setMapFile: (mapFile: IEditorMapFile, filePath?: string) => void;
@@ -29,7 +34,10 @@ interface IEditorState {
   setActiveTileId: (id: number) => void;
   setActiveTile: (tileId: number, tilesetId: string) => void;
   toggleGrid: () => void;
+  setBrushSize: (size: number) => void;
+  setBrushShape: (shape: BrushShape) => void;
   setError: (error: string | null) => void;
+  setCanvasElement: (canvas: HTMLCanvasElement | null) => void;
 
   // Map operations
   createNewMap: (name: string, rows: number, cols: number, tileWidth: number, tileHeight: number) => void;
@@ -47,6 +55,10 @@ interface IEditorState {
   promptImportTileset: () => Promise<void>;
   finalizeTilesetImport: (tileWidth: number, tileHeight: number) => void;
   cancelTilesetImport: () => void;
+
+  // Export operations
+  exportPng: () => Promise<void>;
+  exportTiledMap: () => Promise<void>;
 }
 
 export const useEditorStore = create<IEditorState>((set, get) => ({
@@ -57,18 +69,33 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   activeLayerIndex: 0,
   activeTileId: 1,
   activeTilesetId: null,
+  brushSize: 1,
+  brushShape: 'square',
   showGrid: true,
   error: null,
   pendingTilesetImport: null,
+  canvasElement: null,
 
   setMapFile: (mapFile, filePath) => set({ mapFile, filePath, isDirty: false }),
-  setDirty: (dirty) => set({ isDirty: dirty }),
-  setActiveTool: (tool) => set({ activeTool: tool }),
-  setActiveLayer: (index) => set({ activeLayerIndex: index }),
-  setActiveTileId: (id) => set({ activeTileId: id }),
+  setDirty: dirty => set({ isDirty: dirty }),
+  setActiveTool: tool => set({ activeTool: tool }),
+  setActiveLayer: index => {
+    const { mapFile } = get();
+    const layer = mapFile?.layers[index];
+
+    if (layer !== undefined && layer.tileSetId !== '') {
+      set({ activeLayerIndex: index, activeTilesetId: layer.tileSetId, activeTileId: 1 });
+    } else {
+      set({ activeLayerIndex: index });
+    }
+  },
+  setActiveTileId: id => set({ activeTileId: id }),
   setActiveTile: (tileId, tilesetId) => set({ activeTileId: tileId, activeTilesetId: tilesetId }),
   toggleGrid: () => set(state => ({ showGrid: !state.showGrid })),
-  setError: (error) => set({ error }),
+  setBrushSize: size => set({ brushSize: Math.max(1, Math.min(16, size)) }),
+  setBrushShape: shape => set({ brushShape: shape }),
+  setError: error => set({ error }),
+  setCanvasElement: canvas => set({ canvasElement: canvas }),
 
   createNewMap: (name, rows, cols, tileWidth, tileHeight) => {
     const grid = Array.from({ length: rows }, () => new Array<number>(cols).fill(0));
@@ -105,7 +132,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     set({ mapFile: { ...mapFile, layers: newLayers }, isDirty: true });
   },
 
-  addLayer: (name) => {
+  addLayer: name => {
     const { mapFile } = get();
 
     if (mapFile === null || mapFile.layers.length === 0) {
@@ -132,7 +159,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     });
   },
 
-  removeLayer: (index) => {
+  removeLayer: index => {
     const { mapFile, activeLayerIndex } = get();
 
     if (mapFile === null || mapFile.layers.length <= 1) {
@@ -171,7 +198,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     set({ mapFile: { ...mapFile, layers: newLayers }, isDirty: true });
   },
 
-  addTileset: (tileset) => {
+  addTileset: tileset => {
     const { mapFile } = get();
 
     if (mapFile === null) {
@@ -282,5 +309,35 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
 
   cancelTilesetImport: () => {
     set({ pendingTilesetImport: null });
+  },
+
+  exportPng: async () => {
+    const { canvasElement } = get();
+
+    if (canvasElement === null) {
+      return;
+    }
+
+    try {
+      const dataUrl = canvasElement.toDataURL('image/png');
+      await window.electronAPI.exportPng(dataUrl);
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
+  },
+
+  exportTiledMap: async () => {
+    const { mapFile } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    try {
+      const jsonData = exportToTiled(mapFile);
+      await window.electronAPI.exportTiled(jsonData);
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
   }
 }));

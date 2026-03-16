@@ -1,4 +1,4 @@
-import type { IEditorLayer } from '../shared/types';
+import type { IEditorLayer } from '../../shared/types';
 import type { EditorEngine } from './EditorEngine';
 import type { EditorHistory } from './EditorHistory';
 import { PaintCellCommand } from './EditorHistory';
@@ -41,12 +41,7 @@ export class TileMapEditor {
     this.onMapChanged = callback;
   }
 
-  public handleMouseDown(
-    row: number,
-    col: number,
-    layer: IEditorLayer,
-    button: number
-  ): void {
+  public handleMouseDown(row: number, col: number, layer: IEditorLayer, button: number): void {
     if (button === 1) {
       return; // Middle button handled by EditorEngine pan
     }
@@ -163,9 +158,8 @@ export class TileMapEditor {
 
   private togglePassability(row: number, col: number, layer: IEditorLayer): void {
     if (layer.passability === undefined) {
-      layer.passability = Array.from(
-        { length: layer.grid.length },
-        () => new Array<boolean>(layer.grid[0].length).fill(true)
+      layer.passability = Array.from({ length: layer.grid.length }, () =>
+        new Array<boolean>(layer.grid[0].length).fill(true)
       );
     }
 

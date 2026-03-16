@@ -44,7 +44,12 @@ export class EditorEngine {
     return this.camera.screenToWorld(screenX, screenY);
   }
 
-  public screenToGrid(screenX: number, screenY: number, tileWidth: number, tileHeight: number): { row: number; col: number } | null {
+  public screenToGrid(
+    screenX: number,
+    screenY: number,
+    tileWidth: number,
+    tileHeight: number
+  ): { row: number; col: number } | null {
     const worldPos = this.screenToWorld(screenX, screenY);
 
     if (worldPos === null) {
@@ -74,10 +79,7 @@ export class EditorEngine {
     const zoom = this.camera.zoom;
     const currentPos = this.camera.gameObject.transform.position;
 
-    this.camera.gameObject.transform.setPosition(
-      currentPos.x - dx / zoom,
-      currentPos.y - dy / zoom
-    );
+    this.camera.gameObject.transform.setPosition(currentPos.x - dx / zoom, currentPos.y - dy / zoom);
 
     this.lastMouseX = mouseX;
     this.lastMouseY = mouseY;

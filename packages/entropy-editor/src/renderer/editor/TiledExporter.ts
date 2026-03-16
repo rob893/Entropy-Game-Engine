@@ -1,4 +1,4 @@
-import type { IEditorMapFile } from '../shared/types';
+import type { IEditorMapFile } from '../../shared/types';
 
 interface ITiledMap {
   tiledversion: string;

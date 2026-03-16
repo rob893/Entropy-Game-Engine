@@ -6,10 +6,7 @@ const dispatchKeyboardEvent = (type: 'keydown' | 'keyup', key: string): void => 
   document.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true }));
 };
 
-const dispatchMouseEvent = (
-  type: 'mousedown' | 'mouseup' | 'mousemove',
-  options: MouseEventInit = {}
-): void => {
+const dispatchMouseEvent = (type: 'mousedown' | 'mouseup' | 'mousemove', options: MouseEventInit = {}): void => {
   document.dispatchEvent(new MouseEvent(type, { bubbles: true, ...options }));
 };
 

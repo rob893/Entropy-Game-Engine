@@ -4,6 +4,8 @@ import eslint from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import { fileURLToPath } from 'node:url';
 import tseslint from 'typescript-eslint';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import importPlugin from 'eslint-plugin-import';
 import stylistic from '@stylistic/eslint-plugin';
 import prettierConfig from 'eslint-config-prettier';
@@ -21,6 +23,7 @@ export default defineConfig(
       '**/templates/**',
       'commitlint.config.js',
       'eslint.config.mjs',
+      '**/postcss.config.mjs',
       '@types/**'
     ]
   },
@@ -133,6 +136,29 @@ export default defineConfig(
       ],
       '@stylistic/lines-between-class-members': ['error', 'always'],
       'no-undef': 'off'
+    }
+  },
+  // React rules — scoped to editor package only
+  {
+    files: ['packages/entropy-editor/src/**/*.{ts,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: { jsx: true }
+      }
+    },
+    plugins: {
+      react: reactPlugin,
+      // @ts-expect-error -- react-hooks flat config types are incompatible with defineConfig's Plugin type
+      'react-hooks': reactHooksPlugin
+    },
+    rules: {
+      ...reactPlugin.configs.recommended?.rules,
+      ...reactHooksPlugin.configs.recommended?.rules,
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off'
+    },
+    settings: {
+      react: { version: 'detect' }
     }
   },
   // Allow PascalCase function names in React components (TSX files)

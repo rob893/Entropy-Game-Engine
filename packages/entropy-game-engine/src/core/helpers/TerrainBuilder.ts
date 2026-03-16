@@ -163,13 +163,9 @@ export class TerrainBuilder {
           const x = column * tileWidth;
           const y = row * tileHeight;
 
-          const passable = layer.passability !== undefined
-            ? (layer.passability[row]?.[column] ?? true)
-            : true;
+          const passable = layer.passability !== undefined ? (layer.passability[row]?.[column] ?? true) : true;
 
-          const weight = layer.weights !== undefined
-            ? (layer.weights[row]?.[column] ?? 1)
-            : 1;
+          const weight = layer.weights !== undefined ? (layer.weights[row]?.[column] ?? 1) : 1;
 
           navGrid.addCell({
             passable,
@@ -209,7 +205,15 @@ export class TerrainBuilder {
     layerVisibility: boolean[],
     layerOpacity: number[]
   ): Terrain {
-    return new Terrain(gameEngine, layerImages[0], navGrid, colliderOffsets, layerImages, layerVisibility, layerOpacity);
+    return new Terrain(
+      gameEngine,
+      layerImages[0],
+      navGrid,
+      colliderOffsets,
+      layerImages,
+      layerVisibility,
+      layerOpacity
+    );
   }
 
   private async canvasToImage(): Promise<HTMLImageElement> {

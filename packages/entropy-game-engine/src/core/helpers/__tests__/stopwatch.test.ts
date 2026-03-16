@@ -44,11 +44,7 @@ describe('Stopwatch', () => {
 
   it('returns the correct elapsed duration in milliseconds', () => {
     const nowSpy = vi.spyOn(performance, 'now');
-    nowSpy
-      .mockReturnValueOnce(0)
-      .mockReturnValueOnce(25)
-      .mockReturnValueOnce(100)
-      .mockReturnValueOnce(160);
+    nowSpy.mockReturnValueOnce(0).mockReturnValueOnce(25).mockReturnValueOnce(100).mockReturnValueOnce(160);
     const stopwatch = new Stopwatch();
 
     stopwatch.start();

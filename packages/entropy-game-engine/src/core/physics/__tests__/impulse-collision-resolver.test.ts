@@ -76,7 +76,12 @@ describe('ImpulseCollisionResolver', () => {
   it('only changes the non-kinematic body when hitting an immovable kinematic object', () => {
     const resolver = new ImpulseCollisionResolver();
     const movingCollider = createColliderSetup({ velocityX: 4, physicalMaterial: PhysicalMaterial.zero });
-    const wallCollider = createColliderSetup({ mass: 0, isKinematic: true, x: 8, physicalMaterial: PhysicalMaterial.zero });
+    const wallCollider = createColliderSetup({
+      mass: 0,
+      isKinematic: true,
+      x: 8,
+      physicalMaterial: PhysicalMaterial.zero
+    });
     const manifold = new CollisionManifold(movingCollider.collider, wallCollider.collider, 1, new Vector2(-1, 0));
 
     resolver.resolveCollisions(manifold);
@@ -99,7 +104,11 @@ describe('ImpulseCollisionResolver', () => {
 
   it('applies friction impulses to tangential velocity', () => {
     const resolver = new ImpulseCollisionResolver();
-    const colliderA = createColliderSetup({ velocityX: 3, velocityY: -2, physicalMaterial: PhysicalMaterial.maxFriction });
+    const colliderA = createColliderSetup({
+      velocityX: 3,
+      velocityY: -2,
+      physicalMaterial: PhysicalMaterial.maxFriction
+    });
     const colliderB = createColliderSetup({ y: 12, physicalMaterial: PhysicalMaterial.maxFriction });
     const manifold = new CollisionManifold(colliderA.collider, colliderB.collider, 1, new Vector2(0, 1));
 
@@ -128,7 +137,12 @@ describe('ImpulseCollisionResolver', () => {
   it('does not resolve trigger colliders physically', () => {
     const resolver = new ImpulseCollisionResolver();
     const colliderA = createColliderSetup({ velocityX: 5, physicalMaterial: PhysicalMaterial.bouncy });
-    const colliderB = createColliderSetup({ velocityX: -5, x: 8, isTrigger: true, physicalMaterial: PhysicalMaterial.bouncy });
+    const colliderB = createColliderSetup({
+      velocityX: -5,
+      x: 8,
+      isTrigger: true,
+      physicalMaterial: PhysicalMaterial.bouncy
+    });
     const manifold = new CollisionManifold(colliderA.collider, colliderB.collider, 1, new Vector2(-1, 0));
 
     resolver.resolveCollisions(manifold);

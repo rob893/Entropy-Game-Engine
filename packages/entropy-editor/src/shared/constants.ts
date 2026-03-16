@@ -11,5 +11,6 @@ export const IPC_CHANNELS = {
   FILE_SAVE_AS: 'file:save-as',
   TILESET_IMPORT: 'tileset:import',
   EXPORT_PNG: 'export:png',
-  EXPORT_TILED: 'export:tiled'
+  EXPORT_TILED: 'export:tiled',
+  MENU_ACTION: 'menu:action'
 } as const;

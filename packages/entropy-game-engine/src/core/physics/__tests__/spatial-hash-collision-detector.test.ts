@@ -51,7 +51,7 @@ describe('SpatialHashCollisionDetector', () => {
     expect(second.triggerCollisionSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("does not detect collisions for colliders in distant cells", () => {
+  it('does not detect collisions for colliders in distant cells', () => {
     const detector = new SpatialHashCollisionDetector(
       400,
       400,

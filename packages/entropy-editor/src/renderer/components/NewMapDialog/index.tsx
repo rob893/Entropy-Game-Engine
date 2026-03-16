@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import type { ReactElement } from 'react';
+import type { ReactElement, SyntheticEvent } from 'react';
+import { Button } from '../ui/Button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui/Dialog';
+import { Input } from '../ui/Input';
+import { Label } from '../ui/Label';
 
 interface INewMapDialogProps {
   onConfirm: (name: string, rows: number, cols: number, tileWidth: number, tileHeight: number) => void;
@@ -13,107 +17,90 @@ export function NewMapDialog({ onConfirm, onCancel }: INewMapDialogProps): React
   const [tileWidth, setTileWidth] = useState(32);
   const [tileHeight, setTileHeight] = useState(32);
 
-  const handleSubmit = (e: React.SyntheticEvent): void => {
-    e.preventDefault();
+  const handleSubmit = (event: SyntheticEvent<HTMLFormElement>): void => {
+    event.preventDefault();
     onConfirm(name, rows, cols, tileWidth, tileHeight);
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 2000
-      }}
-      role="dialog"
-      aria-modal="true"
-      aria-label="New Map"
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          backgroundColor: 'var(--bg-secondary)',
-          border: '1px solid var(--border-color)',
-          borderRadius: '8px',
-          padding: '24px',
-          minWidth: '340px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px'
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>New Map</h2>
+    <Dialog open={true} onOpenChange={onCancel}>
+      <DialogContent className="max-w-[420px]">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <DialogHeader>
+            <DialogTitle>New Map</DialogTitle>
+          </DialogHeader>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <label htmlFor="map-name">Name</label>
-          <input
-            id="map-name"
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            autoFocus
-          />
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label htmlFor="map-cols">Columns</label>
-            <input
-              id="map-cols"
-              type="number"
-              min={1}
-              max={500}
-              value={cols}
-              onChange={e => setCols(Number(e.target.value))}
+          <div className="space-y-1.5">
+            <Label htmlFor="map-name">Name</Label>
+            <Input
+              id="map-name"
+              type="text"
+              value={name}
+              onChange={event => setName(event.target.value)}
+              autoFocus
             />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label htmlFor="map-rows">Rows</label>
-            <input
-              id="map-rows"
-              type="number"
-              min={1}
-              max={500}
-              value={rows}
-              onChange={e => setRows(Number(e.target.value))}
-            />
-          </div>
-        </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label htmlFor="tile-width">Tile Width (px)</label>
-            <input
-              id="tile-width"
-              type="number"
-              min={1}
-              max={256}
-              value={tileWidth}
-              onChange={e => setTileWidth(Number(e.target.value))}
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="map-cols">Columns</Label>
+              <Input
+                id="map-cols"
+                type="number"
+                min={1}
+                max={500}
+                value={cols}
+                onChange={event => setCols(Number(event.target.value))}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="map-rows">Rows</Label>
+              <Input
+                id="map-rows"
+                type="number"
+                min={1}
+                max={500}
+                value={rows}
+                onChange={event => setRows(Number(event.target.value))}
+              />
+            </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label htmlFor="tile-height">Tile Height (px)</label>
-            <input
-              id="tile-height"
-              type="number"
-              min={1}
-              max={256}
-              value={tileHeight}
-              onChange={e => setTileHeight(Number(e.target.value))}
-            />
-          </div>
-        </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
-          <button type="button" onClick={onCancel}>Cancel</button>
-          <button type="submit" className="active">Create</button>
-        </div>
-      </form>
-    </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="tile-width">Tile Width (px)</Label>
+              <Input
+                id="tile-width"
+                type="number"
+                min={1}
+                max={256}
+                value={tileWidth}
+                onChange={event => setTileWidth(Number(event.target.value))}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="tile-height">Tile Height (px)</Label>
+              <Input
+                id="tile-height"
+                type="number"
+                min={1}
+                max={256}
+                value={tileHeight}
+                onChange={event => setTileHeight(Number(event.target.value))}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="default" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary">
+              Create
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

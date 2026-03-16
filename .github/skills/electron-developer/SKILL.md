@@ -39,11 +39,6 @@ packages/entropy-editor/src/
     types/electron.d.ts          # window.electronAPI declarations
     utils/                       # Renderer utilities (telemetry, errors)
   shared/                        # Contract layer (both processes import from here)
-    types/                       # IElectronAPI interface (source of truth), domain types
-    telemetry/                   # Logger, ConsoleTransport
-    utils/                       # getErrorMessage() and other pure helpers
-    constants.ts                 # IPC channel names, file extensions
-  editor/                        # Editor core logic (pure TypeScript, no React, no Node.js)
 ```
 
 ## IPC Contract — Three Files That Must Stay in Sync

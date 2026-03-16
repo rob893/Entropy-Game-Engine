@@ -36,19 +36,27 @@ describe('Geometry', () => {
 
   describe('doIntersect', () => {
     it('returns true for intersecting line segments', () => {
-      expect(Geometry.doIntersect(new Vector2(1, 1), new Vector2(4, 4), new Vector2(1, 4), new Vector2(4, 1))).toBe(true);
+      expect(Geometry.doIntersect(new Vector2(1, 1), new Vector2(4, 4), new Vector2(1, 4), new Vector2(4, 1))).toBe(
+        true
+      );
     });
 
     it('returns false for non-intersecting line segments', () => {
-      expect(Geometry.doIntersect(new Vector2(1, 1), new Vector2(2, 2), new Vector2(3, 3), new Vector2(4, 4))).toBe(false);
+      expect(Geometry.doIntersect(new Vector2(1, 1), new Vector2(2, 2), new Vector2(3, 3), new Vector2(4, 4))).toBe(
+        false
+      );
     });
 
     it('returns true for collinear overlapping segments', () => {
-      expect(Geometry.doIntersect(new Vector2(1, 1), new Vector2(5, 1), new Vector2(3, 1), new Vector2(7, 1))).toBe(true);
+      expect(Geometry.doIntersect(new Vector2(1, 1), new Vector2(5, 1), new Vector2(3, 1), new Vector2(7, 1))).toBe(
+        true
+      );
     });
 
     it('returns true when segments touch at an endpoint', () => {
-      expect(Geometry.doIntersect(new Vector2(1, 1), new Vector2(4, 4), new Vector2(4, 4), new Vector2(6, 2))).toBe(true);
+      expect(Geometry.doIntersect(new Vector2(1, 1), new Vector2(4, 4), new Vector2(4, 4), new Vector2(6, 2))).toBe(
+        true
+      );
     });
   });
 
@@ -86,14 +94,7 @@ describe('Geometry', () => {
 
     it('returns false when a line lies fully inside the rectangle without touching an edge', () => {
       expect(
-        Geometry.doIntersectRectangle(
-          new Vector2(2, 2),
-          new Vector2(8, 8),
-          topLeft,
-          topRight,
-          bottomLeft,
-          bottomRight
-        )
+        Geometry.doIntersectRectangle(new Vector2(2, 2), new Vector2(8, 8), topLeft, topRight, bottomLeft, bottomRight)
       ).toBe(false);
     });
 

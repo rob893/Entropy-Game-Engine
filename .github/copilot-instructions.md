@@ -98,3 +98,51 @@ import { Component, GameObject, Vector2, GameEngine } from '@entropy-engine/entr
 ```
 
 Sample games resolve to engine **source** (not dist) via Vite alias for fast dev iteration.
+
+## Editor Package (`packages/entropy-editor/`)
+
+Visual terrain map editor built with Electron + React. See `.docs/electron-app-architecture-guide.md` for full architecture details.
+
+### Design Stack
+
+- **Styling**: Tailwind CSS v4 (via PostCSS) — all styling via utility classes, no inline `style={{}}` except `imageRendering: 'pixelated'` on canvas elements
+- **Component Pattern**: shadcn/ui style (Radix primitives + cva + Tailwind, copy-paste components we own)
+- **Icons**: Lucide React — never use emoji or text labels for icons. Consistent sizing: 16px (`h-4 w-4`) in toolbars, 14px (`h-3.5 w-3.5`) in panels
+- **Utilities**: `cn()` from `src/renderer/lib/utils.ts` (clsx + tailwind-merge) for all className composition
+
+### Color Palette (dark theme only)
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `background` | `#0f0f17` | App background |
+| `card` | `#1a1a2e` | Panels, sidebars |
+| `popover` | `#252540` | Dialogs, dropdowns |
+| `muted` | `#2a2a45` | Toolbar, inputs bg |
+| `primary` | `#7c3aed` | Purple — active tools, focus rings, CTAs |
+| `accent` | `#10b981` | Green — success, secondary actions |
+| `destructive` | `#ef4444` | Danger — delete, errors |
+| `foreground` | `#f0f0f5` | Primary text |
+| `muted-foreground` | `#8888a0` | Secondary text, labels |
+
+### Typography
+
+- **Sans**: `'Inter', 'Segoe UI', system-ui, sans-serif`
+- **Mono**: `'JetBrains Mono', 'Cascadia Code', monospace`
+- **Scale**: 11px (labels) → 12px (body) → 13px (default) → 14px (dialogs) → 16px (headings)
+
+### Component Conventions
+
+- **UI primitives** live in `src/renderer/components/ui/` (Button, Dialog, Input, Label, Tooltip)
+- **Editor-specific** components live in `src/renderer/components/editor/` (Panel, ToolButton, ErrorToast)
+- **Feature components** live in `src/renderer/components/<Name>/index.tsx`
+- All new components must use Tailwind classes — never add inline styles
+- All interactive elements need `aria-*` attributes and keyboard support
+- Dialogs use Radix `@radix-ui/react-dialog` for focus management
+- Tooltips use Radix `@radix-ui/react-tooltip` — wrap in `TooltipProvider`
+
+### Styling Rules
+
+- Use CSS variables from `src/renderer/styles/globals.css` via Tailwind `text-foreground`, `bg-primary`, etc.
+- Button variants via `class-variance-authority` (cva): `default`, `primary`, `ghost`, `destructive`, `outline`
+- No `@/` import aliases — use relative paths only
+- Keep `imageRendering: 'pixelated'` as inline style on canvas elements (no Tailwind equivalent)

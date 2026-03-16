@@ -21,7 +21,12 @@ type SpriteSheetAsset = {
 };
 
 function isSpriteSheetAsset(value: unknown): value is SpriteSheetAsset {
-  return typeof value === 'object' && value !== null && 'getFrames' in value && typeof (value as Record<string, unknown>).getFrames === 'function';
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'getFrames' in value &&
+    typeof (value as Record<string, unknown>).getFrames === 'function'
+  );
 }
 
 export class Player extends GameObject {

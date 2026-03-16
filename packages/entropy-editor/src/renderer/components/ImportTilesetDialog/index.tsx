@@ -1,11 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
-import type { ReactElement } from 'react';
+import type { ReactElement, SyntheticEvent } from 'react';
+import { cn } from '../../lib/utils';
+import { Button } from '../ui/Button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui/Dialog';
+import { Input } from '../ui/Input';
+import { Label } from '../ui/Label';
 
 interface IImportTilesetDialogProps {
   imageDataUrl: string;
   fileName: string;
   onConfirm: (tileWidth: number, tileHeight: number) => void;
   onCancel: () => void;
+}
+
+interface ISizePreset {
+  label: string;
+  width: number;
+  height: number;
 }
 
 export function ImportTilesetDialog({ imageDataUrl, fileName, onConfirm, onCancel }: IImportTilesetDialogProps): ReactElement {
@@ -21,13 +32,11 @@ export function ImportTilesetDialog({ imageDataUrl, fileName, onConfirm, onCance
     img.onload = () => {
       setImageWidth(img.width);
       setImageHeight(img.height);
-      // Default: entire image is one tile
       setTileWidth(img.width);
       setTileHeight(img.height);
     };
   }, [imageDataUrl]);
 
-  // Draw preview with grid overlay
   useEffect(() => {
     const canvas = previewRef.current;
 
@@ -51,7 +60,6 @@ export function ImportTilesetDialog({ imageDataUrl, fileName, onConfirm, onCance
       ctx.imageSmoothingEnabled = false;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // Draw tile grid
       ctx.strokeStyle = 'rgba(124, 58, 237, 0.7)';
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -59,14 +67,14 @@ export function ImportTilesetDialog({ imageDataUrl, fileName, onConfirm, onCance
       const cols = Math.floor(img.width / tileWidth);
       const rows = Math.floor(img.height / tileHeight);
 
-      for (let c = 0; c <= cols; c++) {
-        const x = c * tileWidth * scale;
+      for (let col = 0; col <= cols; col++) {
+        const x = col * tileWidth * scale;
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
       }
 
-      for (let r = 0; r <= rows; r++) {
-        const y = r * tileHeight * scale;
+      for (let row = 0; row <= rows; row++) {
+        const y = row * tileHeight * scale;
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
       }
@@ -77,9 +85,15 @@ export function ImportTilesetDialog({ imageDataUrl, fileName, onConfirm, onCance
 
   const cols = tileWidth > 0 ? Math.floor(imageWidth / tileWidth) : 0;
   const rows = tileHeight > 0 ? Math.floor(imageHeight / tileHeight) : 0;
+  const sizePresets: ISizePreset[] = [
+    { label: 'Whole Image', width: imageWidth, height: imageHeight },
+    { label: '16×16', width: 16, height: 16 },
+    { label: '32×32', width: 32, height: 32 },
+    { label: '64×64', width: 64, height: 64 }
+  ];
 
-  const handleSubmit = (e: React.SyntheticEvent): void => {
-    e.preventDefault();
+  const handleSubmit = (event: SyntheticEvent<HTMLFormElement>): void => {
+    event.preventDefault();
 
     if (tileWidth > 0 && tileHeight > 0) {
       onConfirm(tileWidth, tileHeight);
@@ -87,112 +101,87 @@ export function ImportTilesetDialog({ imageDataUrl, fileName, onConfirm, onCance
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 2000
-      }}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Import Tileset"
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          backgroundColor: 'var(--bg-secondary)',
-          border: '1px solid var(--border-color)',
-          borderRadius: '8px',
-          padding: '24px',
-          minWidth: '320px',
-          maxWidth: '400px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px'
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>Import Tileset</h2>
-        <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>
-          {fileName} — {imageWidth}×{imageHeight}px
-        </p>
+    <Dialog open={true} onOpenChange={onCancel}>
+      <DialogContent className="max-w-[420px]">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <DialogHeader>
+            <DialogTitle>Import Tileset</DialogTitle>
+            <p className="text-xs text-muted-foreground">
+              {fileName} — {imageWidth}×{imageHeight}px
+            </p>
+          </DialogHeader>
 
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 0' }}>
-          <canvas
-            ref={previewRef}
-            style={{ imageRendering: 'pixelated', borderRadius: '4px', border: '1px solid var(--border-color)' }}
-          />
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label htmlFor="ts-tile-width">Tile Width (px)</label>
-            <input
-              id="ts-tile-width"
-              type="number"
-              min={1}
-              max={imageWidth}
-              value={tileWidth}
-              onChange={e => setTileWidth(Number(e.target.value))}
+          <div className="flex justify-center py-1">
+            <canvas
+              ref={previewRef}
+              className="rounded-md border border-border"
+              style={{ imageRendering: 'pixelated' }}
             />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <label htmlFor="ts-tile-height">Tile Height (px)</label>
-            <input
-              id="ts-tile-height"
-              type="number"
-              min={1}
-              max={imageHeight}
-              value={tileHeight}
-              onChange={e => setTileHeight(Number(e.target.value))}
-            />
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="ts-tile-width">Tile Width (px)</Label>
+              <Input
+                id="ts-tile-width"
+                type="number"
+                min={1}
+                max={imageWidth}
+                value={tileWidth}
+                onChange={event => setTileWidth(Number(event.target.value))}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="ts-tile-height">Tile Height (px)</Label>
+              <Input
+                id="ts-tile-height"
+                type="number"
+                min={1}
+                max={imageHeight}
+                value={tileHeight}
+                onChange={event => setTileHeight(Number(event.target.value))}
+              />
+            </div>
           </div>
-        </div>
 
-        <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-          {cols}×{rows} tiles ({cols * rows} total)
-          {cols === 1 && rows === 1 && ' — entire image as one tile'}
-        </div>
+          <div className={cn('text-xs text-muted-foreground', (cols === 0 || rows === 0) && 'text-destructive')}>
+            {cols}×{rows} tiles ({cols * rows} total)
+            {cols === 1 && rows === 1 ? ' — entire image as one tile' : ''}
+          </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button
-            type="button"
-            onClick={() => { setTileWidth(imageWidth); setTileHeight(imageHeight); }}
-            style={{ fontSize: '11px' }}
-          >
-            Whole Image
-          </button>
-          <button
-            type="button"
-            onClick={() => { setTileWidth(16); setTileHeight(16); }}
-            style={{ fontSize: '11px' }}
-          >
-            16×16
-          </button>
-          <button
-            type="button"
-            onClick={() => { setTileWidth(32); setTileHeight(32); }}
-            style={{ fontSize: '11px' }}
-          >
-            32×32
-          </button>
-          <button
-            type="button"
-            onClick={() => { setTileWidth(64); setTileHeight(64); }}
-            style={{ fontSize: '11px' }}
-          >
-            64×64
-          </button>
-        </div>
+          <div className="flex flex-wrap gap-2">
+            {sizePresets.map((preset) => {
+              const isActive = tileWidth === preset.width && tileHeight === preset.height;
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '4px' }}>
-          <button type="button" onClick={onCancel}>Cancel</button>
-          <button type="submit" className="active">Import</button>
-        </div>
-      </form>
-    </div>
+              return (
+                <Button
+                  key={preset.label}
+                  type="button"
+                  size="sm"
+                  variant={isActive ? 'primary' : 'default'}
+                  className={cn(isActive && 'shadow-sm')}
+                  onClick={() => {
+                    setTileWidth(preset.width);
+                    setTileHeight(preset.height);
+                  }}
+                  disabled={preset.width <= 0 || preset.height <= 0}
+                >
+                  {preset.label}
+                </Button>
+              );
+            })}
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="default" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary">
+              Import
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

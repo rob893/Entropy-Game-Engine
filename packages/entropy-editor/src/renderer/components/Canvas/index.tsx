@@ -1,22 +1,53 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import type { ReactElement } from 'react';
+import { cn } from '../../lib/utils';
+import type { BrushShape } from '../../stores/editor-store';
 import { useEditorStore } from '../../stores/editor-store';
+
+function isInBrushMask(dr: number, dc: number, brushSize: number, shape: BrushShape): boolean {
+  if (shape === 'square') {
+    return true;
+  }
+
+  // Circle: check if the cell center is within the radius
+  const radius = brushSize / 2;
+  const centerDr = dr + 0.5 - radius;
+  const centerDc = dc + 0.5 - radius;
+
+  return (centerDr * centerDr + centerDc * centerDc) <= (radius * radius);
+}
 
 export function Canvas(): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
   const isPaintingRef = useRef(false);
   const tileImagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
+  const zoomRef = useRef(1);
+  const panRef = useRef({ x: 0, y: 0 });
+  const isPanningRef = useRef(false);
+  const lastPanPosRef = useRef({ x: 0, y: 0 });
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [isPanning, setIsPanning] = useState(false);
 
   const mapFile = useEditorStore(state => state.mapFile);
   const activeLayerIndex = useEditorStore(state => state.activeLayerIndex);
   const activeTool = useEditorStore(state => state.activeTool);
   const activeTileId = useEditorStore(state => state.activeTileId);
   const activeTilesetId = useEditorStore(state => state.activeTilesetId);
+  const brushSize = useEditorStore(state => state.brushSize);
+  const brushShape = useEditorStore(state => state.brushShape);
   const showGrid = useEditorStore(state => state.showGrid);
   const updateLayer = useEditorStore(state => state.updateLayer);
   const setActiveTile = useEditorStore(state => state.setActiveTile);
   const setDirty = useEditorStore(state => state.setDirty);
+  const setCanvasElement = useEditorStore(state => state.setCanvasElement);
+
+  // Register canvas element for export operations
+  useEffect(() => {
+    setCanvasElement(canvasRef.current);
+
+    return () => setCanvasElement(null);
+  }, [setCanvasElement]);
 
   const getGridPosition = useCallback((e: React.MouseEvent<HTMLCanvasElement>): { row: number; col: number } | null => {
     if (mapFile === null) {
@@ -30,8 +61,10 @@ export function Canvas(): ReactElement {
     }
 
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
     const col = Math.floor(x / mapFile.tileWidth);
     const row = Math.floor(y / mapFile.tileHeight);
     const layer = mapFile.layers[activeLayerIndex];
@@ -43,98 +76,16 @@ export function Canvas(): ReactElement {
     return { row, col };
   }, [mapFile, activeLayerIndex]);
 
-  const applyTool = useCallback((row: number, col: number): void => {
-    if (mapFile === null) {
+  const applyTransform = useCallback((): void => {
+    const wrapper = wrapperRef.current;
+
+    if (wrapper === null) {
       return;
     }
 
-    const layer = mapFile.layers[activeLayerIndex];
-
-    if (layer === undefined) {
-      return;
-    }
-
-    let changed = false;
-    let layerUpdated = { ...layer, grid: layer.grid.map(r => [...r]) };
-
-    switch (activeTool) {
-      case 'brush':
-        if (layerUpdated.grid[row][col] !== activeTileId) {
-          layerUpdated.grid[row][col] = activeTileId;
-
-          // Bind the active tileset to this layer if not already set
-          if (activeTilesetId !== null && layerUpdated.tileSetId !== activeTilesetId) {
-            layerUpdated = { ...layerUpdated, tileSetId: activeTilesetId };
-          }
-
-          changed = true;
-        }
-        break;
-      case 'eraser':
-        if (layerUpdated.grid[row][col] !== 0) {
-          layerUpdated.grid[row][col] = 0;
-          changed = true;
-        }
-        break;
-      case 'eyedropper': {
-        const tileId = layer.grid[row][col];
-
-        if (tileId !== 0) {
-          setActiveTile(tileId, layer.tileSetId);
-        }
-
-        break;
-      }
-      case 'fill':
-        changed = floodFill(layerUpdated.grid, row, col, activeTileId);
-
-        if (changed && activeTilesetId !== null && layerUpdated.tileSetId !== activeTilesetId) {
-          layerUpdated = { ...layerUpdated, tileSetId: activeTilesetId };
-        }
-
-        break;
-    }
-
-    if (changed) {
-      updateLayer(activeLayerIndex, layerUpdated);
-      setDirty(true);
-    }
-  }, [mapFile, activeLayerIndex, activeTool, activeTileId, activeTilesetId, updateLayer, setActiveTile, setDirty]);
-
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
-    if (e.button !== 0) {
-      return;
-    }
-
-    isPaintingRef.current = true;
-    const pos = getGridPosition(e);
-
-    if (pos !== null) {
-      applyTool(pos.row, pos.col);
-    }
-  }, [getGridPosition, applyTool]);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
-    // Draw hover on overlay
-    drawOverlay(e);
-
-    if (!isPaintingRef.current) {
-      return;
-    }
-
-    if (activeTool !== 'brush' && activeTool !== 'eraser') {
-      return;
-    }
-
-    const pos = getGridPosition(e);
-
-    if (pos !== null) {
-      applyTool(pos.row, pos.col);
-    }
-  }, [getGridPosition, applyTool, activeTool]);
-
-  const handleMouseUp = useCallback((): void => {
-    isPaintingRef.current = false;
+    const z = zoomRef.current;
+    const p = panRef.current;
+    wrapper.style.transform = `scale(${z}) translate(${p.x}px, ${p.y}px)`;
   }, []);
 
   const drawOverlay = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
@@ -155,28 +106,41 @@ export function Canvas(): ReactElement {
     const pos = getGridPosition(e);
 
     if (pos !== null) {
+      const size = (activeTool === 'brush' || activeTool === 'eraser') ? brushSize : 1;
+      const shape = (activeTool === 'brush' || activeTool === 'eraser') ? brushShape : 'square' as const;
+      const offset = Math.floor(size / 2);
+      const anchorCol = pos.col - offset;
+      const anchorRow = pos.row - offset;
+
       ctx.fillStyle = 'rgba(124, 58, 237, 0.3)';
-      ctx.fillRect(pos.col * mapFile.tileWidth, pos.row * mapFile.tileHeight, mapFile.tileWidth, mapFile.tileHeight);
-    }
-  }, [mapFile, getGridPosition]);
+      ctx.strokeStyle = 'rgba(124, 58, 237, 0.6)';
+      ctx.lineWidth = 1;
 
-  // Load tileset images
-  useEffect(() => {
-    if (mapFile === null) {
-      return;
-    }
+      for (let dr = 0; dr < size; dr++) {
+        for (let dc = 0; dc < size; dc++) {
+          if (!isInBrushMask(dr, dc, size, shape)) {
+            continue;
+          }
 
-    for (const tileset of mapFile.tilesets) {
-      if (!tileImagesRef.current.has(tileset.id)) {
-        const img = new Image();
-        img.src = tileset.imageDataUrl;
-        img.onload = () => {
-          tileImagesRef.current.set(tileset.id, img);
-          renderCanvas();
-        };
+          const cellCol = anchorCol + dc;
+          const cellRow = anchorRow + dr;
+
+          ctx.fillRect(
+            cellCol * mapFile.tileWidth,
+            cellRow * mapFile.tileHeight,
+            mapFile.tileWidth,
+            mapFile.tileHeight
+          );
+          ctx.strokeRect(
+            cellCol * mapFile.tileWidth,
+            cellRow * mapFile.tileHeight,
+            mapFile.tileWidth,
+            mapFile.tileHeight
+          );
+        }
       }
     }
-  }, [mapFile?.tilesets]);
+  }, [mapFile, getGridPosition, activeTool, brushSize, brushShape]);
 
   const renderCanvas = useCallback((): void => {
     const canvas = canvasRef.current;
@@ -280,30 +244,264 @@ export function Canvas(): ReactElement {
     }
   }, [mapFile, showGrid]);
 
+  const applyTool = useCallback((row: number, col: number): void => {
+    if (mapFile === null) {
+      return;
+    }
+
+    const layer = mapFile.layers[activeLayerIndex];
+
+    if (layer === undefined) {
+      return;
+    }
+
+    let changed = false;
+    let layerUpdated = { ...layer, grid: layer.grid.map(r => [...r]) };
+    const gridRows = layerUpdated.grid.length;
+    const gridCols = layerUpdated.grid[0]?.length ?? 0;
+
+    // Find the active tileset to compute multi-tile offsets
+    const tileset = activeTilesetId !== null
+      ? mapFile.tilesets.find(ts => ts.id === activeTilesetId)
+      : mapFile.tilesets[0];
+
+    switch (activeTool) {
+      case 'brush': {
+        const baseTileCol = tileset !== undefined ? (activeTileId - 1) % tileset.columns : 0;
+        const baseTileRow = tileset !== undefined ? Math.floor((activeTileId - 1) / tileset.columns) : 0;
+        const tilesetCols = tileset?.columns ?? 1;
+        const tilesetRows = tileset?.rows ?? 1;
+        for (let dr = 0; dr < brushSize; dr++) {
+          for (let dc = 0; dc < brushSize; dc++) {
+            if (!isInBrushMask(dr, dc, brushSize, brushShape)) {
+              continue;
+            }
+
+            const targetRow = row + dr;
+            const targetCol = col + dc;
+
+            if (targetRow < 0 || targetRow >= gridRows || targetCol < 0 || targetCol >= gridCols) {
+              continue;
+            }
+
+            const srcTileCol = baseTileCol + dc;
+            const srcTileRow = baseTileRow + dr;
+
+            if (srcTileCol >= tilesetCols || srcTileRow >= tilesetRows) {
+              continue;
+            }
+
+            const tileIndex = srcTileRow * tilesetCols + srcTileCol;
+            const tileId = tileIndex + 1;
+
+            if (layerUpdated.grid[targetRow][targetCol] !== tileId) {
+              layerUpdated.grid[targetRow][targetCol] = tileId;
+              changed = true;
+            }
+          }
+        }
+
+        if (changed && activeTilesetId !== null && layerUpdated.tileSetId !== activeTilesetId) {
+          layerUpdated = { ...layerUpdated, tileSetId: activeTilesetId };
+        }
+
+        break;
+      }
+      case 'eraser':
+        for (let dr = 0; dr < brushSize; dr++) {
+          for (let dc = 0; dc < brushSize; dc++) {
+            if (!isInBrushMask(dr, dc, brushSize, brushShape)) {
+              continue;
+            }
+
+            const targetRow = row + dr;
+            const targetCol = col + dc;
+
+            if (targetRow < 0 || targetRow >= gridRows || targetCol < 0 || targetCol >= gridCols) {
+              continue;
+            }
+
+            if (layerUpdated.grid[targetRow][targetCol] !== 0) {
+              layerUpdated.grid[targetRow][targetCol] = 0;
+              changed = true;
+            }
+          }
+        }
+
+        break;
+      case 'eyedropper': {
+        const tileId = layer.grid[row][col];
+
+        if (tileId !== 0) {
+          setActiveTile(tileId, layer.tileSetId);
+        }
+
+        break;
+      }
+      case 'fill':
+        changed = floodFill(layerUpdated.grid, row, col, activeTileId);
+
+        if (changed && activeTilesetId !== null && layerUpdated.tileSetId !== activeTilesetId) {
+          layerUpdated = { ...layerUpdated, tileSetId: activeTilesetId };
+        }
+
+        break;
+    }
+
+    if (changed) {
+      updateLayer(activeLayerIndex, layerUpdated);
+      setDirty(true);
+    }
+  }, [mapFile, activeLayerIndex, activeTool, activeTileId, activeTilesetId, brushSize, brushShape, updateLayer, setActiveTile, setDirty]);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
+    if (e.button !== 0) {
+      return;
+    }
+
+    isPaintingRef.current = true;
+    const pos = getGridPosition(e);
+
+    if (pos !== null) {
+      const offset = Math.floor(brushSize / 2);
+      applyTool(pos.row - offset, pos.col - offset);
+    }
+  }, [getGridPosition, applyTool, brushSize]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
+    if (isPanningRef.current) {
+      return;
+    }
+
+    drawOverlay(e);
+
+    if (!isPaintingRef.current) {
+      return;
+    }
+
+    if (activeTool !== 'brush' && activeTool !== 'eraser') {
+      return;
+    }
+
+    const pos = getGridPosition(e);
+
+    if (pos !== null) {
+      const offset = Math.floor(brushSize / 2);
+      applyTool(pos.row - offset, pos.col - offset);
+    }
+  }, [getGridPosition, applyTool, activeTool, brushSize, drawOverlay]);
+
+  const handleMouseUp = useCallback((): void => {
+    isPaintingRef.current = false;
+  }, []);
+
+  const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    zoomRef.current = Math.max(0.25, Math.min(4, zoomRef.current + delta));
+    applyTransform();
+  }, [applyTransform]);
+
+  const handlePanStart = useCallback((e: React.MouseEvent<HTMLDivElement>): void => {
+    if (e.button !== 1) {
+      return;
+    }
+
+    e.preventDefault();
+    isPanningRef.current = true;
+    lastPanPosRef.current = { x: e.clientX, y: e.clientY };
+    setIsPanning(true);
+  }, []);
+
+  const handlePanMove = useCallback((e: React.MouseEvent<HTMLDivElement>): void => {
+    if (!isPanningRef.current) {
+      return;
+    }
+
+    e.preventDefault();
+    const dx = e.clientX - lastPanPosRef.current.x;
+    const dy = e.clientY - lastPanPosRef.current.y;
+    panRef.current = {
+      x: panRef.current.x + (dx / zoomRef.current),
+      y: panRef.current.y + (dy / zoomRef.current)
+    };
+    lastPanPosRef.current = { x: e.clientX, y: e.clientY };
+    applyTransform();
+  }, [applyTransform]);
+
+  const handlePanEnd = useCallback((): void => {
+    isPanningRef.current = false;
+    setIsPanning(false);
+  }, []);
+
+  // Load tileset images
+  useEffect(() => {
+    if (mapFile === null) {
+      return;
+    }
+
+    for (const tileset of mapFile.tilesets) {
+      if (!tileImagesRef.current.has(tileset.id)) {
+        const img = new Image();
+        img.src = tileset.imageDataUrl;
+        img.onload = () => {
+          tileImagesRef.current.set(tileset.id, img);
+          renderCanvas();
+        };
+      }
+    }
+  }, [mapFile, renderCanvas]);
+
   // Re-render when map data changes
   useEffect(() => {
     renderCanvas();
   }, [renderCanvas]);
+
+  useEffect((): void => {
+    applyTransform();
+  }, [applyTransform, mapFile]);
 
   if (mapFile === null) {
     return <div className="canvas-area" />;
   }
 
   return (
-    <div className="canvas-area" style={{ overflow: 'auto' }}>
-      <canvas
-        ref={canvasRef}
-        style={{ imageRendering: 'pixelated', cursor: 'crosshair' }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      />
-      <canvas
-        ref={overlayRef}
-        style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', imageRendering: 'pixelated' }}
-        aria-hidden="true"
-      />
+    <div
+      className={cn(
+        'canvas-area overflow-hidden flex items-center justify-center',
+        isPanning ? 'cursor-grabbing' : 'cursor-crosshair'
+      )}
+      onWheel={handleWheel}
+      onMouseDown={handlePanStart}
+      onMouseMove={handlePanMove}
+      onMouseUp={handlePanEnd}
+      onMouseLeave={handlePanEnd}
+      onAuxClick={(e): void => e.preventDefault()}
+    >
+      <div
+        ref={wrapperRef}
+        className="relative shrink-0 origin-center"
+        style={{
+          transformOrigin: 'center center',
+          willChange: 'transform'
+        }}
+      >
+        <canvas
+          ref={canvasRef}
+          className={cn(isPanning ? 'cursor-grabbing' : 'cursor-crosshair')}
+          style={{ imageRendering: 'pixelated' }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        />
+        <canvas
+          ref={overlayRef}
+          className="pointer-events-none absolute inset-0"
+          style={{ imageRendering: 'pixelated' }}
+          aria-hidden="true"
+        />
+      </div>
     </div>
   );
 }

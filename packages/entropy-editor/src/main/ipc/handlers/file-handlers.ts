@@ -1,8 +1,39 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { BrowserWindow, dialog } from 'electron';
 import { FILE_EXTENSION, FILE_FILTER_NAME, IPC_CHANNELS } from '../../../shared/constants';
 import type { IEditorMapFile, IFileOpenResult } from '../../../shared/types';
 import { handle } from '../utils';
+
+function isValidMapFile(data: unknown): data is IEditorMapFile {
+  if (data === null || typeof data !== 'object') {
+    return false;
+  }
+
+  const obj = data as Record<string, unknown>;
+
+  return (
+    typeof obj.name === 'string' &&
+    typeof obj.tileWidth === 'number' &&
+    obj.tileWidth > 0 &&
+    typeof obj.tileHeight === 'number' &&
+    obj.tileHeight > 0 &&
+    Array.isArray(obj.layers) &&
+    Array.isArray(obj.tilesets)
+  );
+}
+
+function validateSavePath(filePath: string): void {
+  const normalized = path.normalize(filePath);
+
+  if (!path.isAbsolute(normalized)) {
+    throw new Error('File path must be absolute');
+  }
+
+  if (!normalized.endsWith(FILE_EXTENSION)) {
+    throw new Error(`File must have ${FILE_EXTENSION} extension`);
+  }
+}
 
 export function registerFileHandlers(): void {
   handle(IPC_CHANNELS.FILE_NEW, async (): Promise<void> => {
@@ -27,12 +58,28 @@ export function registerFileHandlers(): void {
 
     const filePath = result.filePaths[0];
     const content = await fs.readFile(filePath, 'utf-8');
-    const data = JSON.parse(content) as IEditorMapFile;
+
+    let data: IEditorMapFile;
+
+    try {
+      const parsed: unknown = JSON.parse(content);
+
+      if (!isValidMapFile(parsed)) {
+        throw new Error('File does not contain a valid Entropy map');
+      }
+
+      data = parsed;
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      throw new Error(`Failed to read map file: ${detail}`);
+    }
 
     return { filePath, data };
   });
 
   handle(IPC_CHANNELS.FILE_SAVE, async (filePath: string, data: IEditorMapFile): Promise<void> => {
+    validateSavePath(filePath);
+
     const content = JSON.stringify(data, null, 2);
     await fs.writeFile(filePath, content, 'utf-8');
   });

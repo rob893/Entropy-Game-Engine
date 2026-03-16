@@ -46,7 +46,9 @@ const createTestGameObject = (
 };
 
 const registerGameObject = (gameEngine: GameEngine, gameObject: GameObject): void => {
-  const registry = Reflect.get(gameEngine as object, 'registry') as { registerGameObject?: (go: GameObject) => void } | undefined;
+  const registry = Reflect.get(gameEngine as object, 'registry') as
+    | { registerGameObject?: (go: GameObject) => void }
+    | undefined;
 
   if (registry === undefined || registry.registerGameObject === undefined) {
     throw new Error('Unable to register test GameObject.');

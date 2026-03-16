@@ -91,7 +91,6 @@ describe('Rigidbody', () => {
     expect(rigidbody.transform.position.y).toBe(3);
   });
 
-
   test('updates inverseMass when mass changes', () => {
     const rigidbody = new Rigidbody(createTestGameObject(), 2);
 

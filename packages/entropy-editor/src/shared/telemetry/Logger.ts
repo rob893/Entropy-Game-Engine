@@ -59,12 +59,16 @@ export class Logger {
       done: (success: boolean, properties?: Record<string, unknown>) => {
         const durationMs = performance.now() - start;
 
-        this.trackEvent(eventName, {
-          success,
-          ...properties
-        }, {
-          durationMs
-        });
+        this.trackEvent(
+          eventName,
+          {
+            success,
+            ...properties
+          },
+          {
+            durationMs
+          }
+        );
       }
     };
   }

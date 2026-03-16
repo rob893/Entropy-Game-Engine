@@ -5,9 +5,7 @@ import { createLayerCollisionMatrix, createMockCollider } from './collision-test
 
 describe('SimpleCollisionDetector', () => {
   it('detects a collision when two colliders overlap', () => {
-    const detector = new SimpleCollisionDetector(
-      createLayerCollisionMatrix([[Layer.Default, [Layer.Default]]])
-    );
+    const detector = new SimpleCollisionDetector(createLayerCollisionMatrix([[Layer.Default, [Layer.Default]]]));
     const first = createMockCollider({ x: 50, y: 50 });
     const second = createMockCollider({ x: 60, y: 50 });
     const collisions: CollisionManifold[] = [];
@@ -27,9 +25,7 @@ describe('SimpleCollisionDetector', () => {
   });
 
   it('does not detect a collision when colliders do not overlap', () => {
-    const detector = new SimpleCollisionDetector(
-      createLayerCollisionMatrix([[Layer.Default, [Layer.Default]]])
-    );
+    const detector = new SimpleCollisionDetector(createLayerCollisionMatrix([[Layer.Default, [Layer.Default]]]));
     const first = createMockCollider({ x: 50, y: 50 });
     const second = createMockCollider({ x: 140, y: 50 });
     const collisions: CollisionManifold[] = [];
@@ -69,9 +65,7 @@ describe('SimpleCollisionDetector', () => {
   });
 
   it('skips disabled colliders', () => {
-    const detector = new SimpleCollisionDetector(
-      createLayerCollisionMatrix([[Layer.Default, [Layer.Default]]])
-    );
+    const detector = new SimpleCollisionDetector(createLayerCollisionMatrix([[Layer.Default, [Layer.Default]]]));
     const first = createMockCollider({ x: 50, y: 50, enabled: false });
     const second = createMockCollider({ x: 60, y: 50 });
     const collisions: CollisionManifold[] = [];
@@ -87,5 +81,4 @@ describe('SimpleCollisionDetector', () => {
     expect(first.detectCollisionSpy).not.toHaveBeenCalled();
     expect(first.triggerCollisionSpy).not.toHaveBeenCalled();
   });
-
 });

@@ -1,12 +1,31 @@
 import { Menu } from 'electron';
 import type { BrowserWindow } from 'electron';
+import { IPC_CHANNELS } from '../../shared/constants';
 import type { MenuAction } from '../../shared/types';
 
 function sendMenuAction(mainWindow: BrowserWindow, action: MenuAction): void {
-  mainWindow.webContents.send('menu:action', action);
+  mainWindow.webContents.send(IPC_CHANNELS.MENU_ACTION, action);
 }
 
 export function createAppMenu(mainWindow: BrowserWindow): void {
+  const isDev = process.env.VITE_DEV_SERVER_URL !== undefined;
+
+  const viewSubmenu: Electron.MenuItemConstructorOptions[] = [
+    {
+      label: 'Toggle Grid',
+      accelerator: 'G',
+      click: (): void => sendMenuAction(mainWindow, 'toggle-grid')
+    },
+    { type: 'separator' },
+    { role: 'zoomIn' },
+    { role: 'zoomOut' },
+    { role: 'resetZoom' }
+  ];
+
+  if (isDev) {
+    viewSubmenu.push({ type: 'separator' }, { role: 'toggleDevTools' });
+  }
+
   const template: Electron.MenuItemConstructorOptions[] = [
     {
       label: 'File',
@@ -67,19 +86,7 @@ export function createAppMenu(mainWindow: BrowserWindow): void {
     },
     {
       label: 'View',
-      submenu: [
-        {
-          label: 'Toggle Grid',
-          accelerator: 'G',
-          click: (): void => sendMenuAction(mainWindow, 'toggle-grid')
-        },
-        { type: 'separator' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
-        { role: 'resetZoom' },
-        { type: 'separator' },
-        { role: 'toggleDevTools' }
-      ]
+      submenu: viewSubmenu
     }
   ];
 

@@ -1,5 +1,9 @@
-import type { ReactElement } from 'react';
+import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
+import type { KeyboardEvent, ReactElement } from 'react';
+import { cn } from '../../lib/utils';
 import { useEditorStore } from '../../stores/editor-store';
+import { Panel, PanelContent, PanelHeader } from '../editor/Panel';
+import { Button } from '../ui/Button';
 
 export function LayerPanel(): ReactElement {
   const mapFile = useEditorStore(state => state.mapFile);
@@ -11,70 +15,95 @@ export function LayerPanel(): ReactElement {
 
   const layers = mapFile?.layers ?? [];
 
+  const handleLayerKeyDown = (event: KeyboardEvent<HTMLDivElement>, index: number): void => {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    setActiveLayer(index);
+  };
+
   return (
-    <div>
-      <div className="panel-header">
-        Layers
-        <button
-          onClick={() => addLayer(`Layer ${layers.length + 1}`)}
-          style={{ float: 'right', padding: '0 4px', fontSize: '14px' }}
-          title="Add layer"
-          aria-label="Add layer"
-        >
-          +
-        </button>
-      </div>
-      <div className="panel-content">
-        {layers.map((layer, index) => (
-          <div
-            key={index}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              padding: '4px',
-              backgroundColor: index === activeLayerIndex ? 'rgba(124, 58, 237, 0.2)' : 'transparent',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-            role="button"
-            tabIndex={0}
-            onClick={() => setActiveLayer(index)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                setActiveLayer(index);
-              }
-            }}
-            aria-selected={index === activeLayerIndex}
+    <Panel className="min-h-40 shrink-0">
+      <PanelHeader
+        actions={(
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            className="h-7 w-7 p-0"
+            onClick={() => addLayer(`Layer ${layers.length + 1}`)}
+            title="Add layer"
+            aria-label="Add layer"
           >
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setLayerVisibility(index, !layer.visible);
-              }}
-              style={{ padding: '0 4px', opacity: layer.visible ? 1 : 0.4 }}
-              title={layer.visible ? 'Hide layer' : 'Show layer'}
-              aria-label={`${layer.visible ? 'Hide' : 'Show'} ${layer.name}`}
-            >
-              👁
-            </button>
-            <span style={{ flex: 1, fontSize: '12px' }}>{layer.name}</span>
-            {layers.length > 1 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeLayer(index);
-                }}
-                style={{ padding: '0 4px', fontSize: '10px' }}
-                title="Remove layer"
-                aria-label={`Remove ${layer.name}`}
+            <Plus className="h-4 w-4" />
+          </Button>
+        )}
+      >
+        Layers
+      </PanelHeader>
+      <PanelContent className="p-1.5">
+        <div className="space-y-1" role="listbox" aria-label="Layers">
+          {layers.map((layer, index) => {
+            const isActive = index === activeLayerIndex;
+            const VisibilityIcon = layer.visible ? Eye : EyeOff;
+
+            return (
+              <div
+                key={`${layer.name}-${index}`}
+                className={cn(
+                  'flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-1 text-sm text-foreground transition-colors',
+                  'hover:bg-white/8 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',
+                  isActive && 'bg-primary/20'
+                )}
+                role="option"
+                tabIndex={0}
+                aria-selected={isActive}
+                onClick={() => setActiveLayer(index)}
+                onKeyDown={(event) => handleLayerKeyDown(event, index)}
               >
-                ✕
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
+                <button
+                  type="button"
+                  className={cn(
+                    'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors',
+                    'text-muted-foreground hover:bg-white/8 hover:text-foreground',
+                    'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',
+                    !layer.visible && 'opacity-50'
+                  )}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setLayerVisibility(index, !layer.visible);
+                  }}
+                  title={layer.visible ? 'Hide layer' : 'Show layer'}
+                  aria-label={`${layer.visible ? 'Hide' : 'Show'} ${layer.name}`}
+                >
+                  <VisibilityIcon className="h-4 w-4" />
+                </button>
+                <span className="min-w-0 flex-1 truncate text-sm">{layer.name}</span>
+                {layers.length > 1 && (
+                  <button
+                    type="button"
+                    className={cn(
+                      'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors',
+                      'text-muted-foreground hover:bg-destructive/15 hover:text-destructive',
+                      'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring'
+                    )}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      removeLayer(index);
+                    }}
+                    title="Remove layer"
+                    aria-label={`Remove ${layer.name}`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </PanelContent>
+    </Panel>
   );
 }

@@ -2,15 +2,17 @@ import { useEffect, useState } from 'react';
 import type { ReactElement } from 'react';
 import type { MenuAction } from '../shared/types';
 import { Canvas } from './components/Canvas';
+import { ErrorToast } from './components/editor/ErrorToast';
 import { ImportTilesetDialog } from './components/ImportTilesetDialog';
 import { LayerPanel } from './components/LayerPanel';
 import { NewMapDialog } from './components/NewMapDialog';
 import { PropertiesPanel } from './components/PropertiesPanel';
 import { TilePalette } from './components/TilePalette';
 import { Toolbar } from './components/Toolbar';
+import { TooltipProvider } from './components/ui/Tooltip';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { useEditorStore } from './stores/editor-store';
-import './styles/editor.css';
+import './styles/globals.css';
 
 export function App(): ReactElement {
   const mapFile = useEditorStore(state => state.mapFile);
@@ -39,8 +41,18 @@ export function App(): ReactElement {
         case 'tileset-import':
           void store.promptImportTileset();
           break;
+        case 'export-png':
+          void store.exportPng();
+          break;
+        case 'export-tiled':
+          void store.exportTiledMap();
+          break;
         case 'toggle-grid':
           store.toggleGrid();
+          break;
+        case 'undo':
+        case 'redo':
+          // TODO: wire undo/redo when EditorHistory is integrated
           break;
       }
     });
@@ -53,81 +65,59 @@ export function App(): ReactElement {
     setShowNewMapDialog(false);
   };
 
-  if (mapFile === null && !showNewMapDialog) {
-    return (
-      <div style={{ height: '100%' }}>
-        <WelcomeScreen
-          onNewMap={() => setShowNewMapDialog(true)}
-          onOpenMap={() => void useEditorStore.getState().openFile()}
-        />
-        {pendingTilesetImport !== null && (
-          <ImportTilesetDialog
-            imageDataUrl={pendingTilesetImport.imageDataUrl}
-            fileName={pendingTilesetImport.filePath.split(/[/\\]/).pop() ?? 'Untitled'}
-            onConfirm={(tileWidth, tileHeight) => useEditorStore.getState().finalizeTilesetImport(tileWidth, tileHeight)}
-            onCancel={() => useEditorStore.getState().cancelTilesetImport()}
-          />
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div className="editor-layout">
-      <Toolbar />
-
-      <div className="left-panel">
-        <TilePalette />
-        <LayerPanel />
-      </div>
-
-      <Canvas />
-
-      <div className="right-panel">
-        <PropertiesPanel />
-      </div>
-
-      {showNewMapDialog && (
-        <NewMapDialog onConfirm={handleNewMap} onCancel={() => setShowNewMapDialog(false)} />
-      )}
-
-      {pendingTilesetImport !== null && (
+  const tilesetImportDialog = pendingTilesetImport !== null
+    ? (
         <ImportTilesetDialog
           imageDataUrl={pendingTilesetImport.imageDataUrl}
           fileName={pendingTilesetImport.filePath.split(/[/\\]/).pop() ?? 'Untitled'}
           onConfirm={(tileWidth, tileHeight) => useEditorStore.getState().finalizeTilesetImport(tileWidth, tileHeight)}
           onCancel={() => useEditorStore.getState().cancelTilesetImport()}
         />
-      )}
+      )
+    : null;
 
-      {error !== null && (
-        <div
-          role="alert"
-          style={{
-            position: 'fixed',
-            bottom: '16px',
-            right: '16px',
-            background: 'var(--danger)',
-            color: '#fff',
-            padding: '8px 16px',
-            borderRadius: '6px',
-            fontSize: '13px',
-            zIndex: 1000,
-            display: 'flex',
-            gap: '8px',
-            alignItems: 'center'
-          }}
-        >
-          {error}
-          <button
-            onClick={() => setError(null)}
-            style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }}
-            aria-label="Dismiss error"
-          >
-            ✕
-          </button>
+  const errorToast = error !== null
+    ? <ErrorToast message={error} onDismiss={() => setError(null)} />
+    : null;
+
+  if (mapFile === null && !showNewMapDialog) {
+    return (
+      <TooltipProvider>
+        <div className="h-full">
+          <WelcomeScreen
+            onNewMap={() => setShowNewMapDialog(true)}
+            onOpenMap={() => void useEditorStore.getState().openFile()}
+          />
+          {tilesetImportDialog}
+          {errorToast}
         </div>
-      )}
-    </div>
+      </TooltipProvider>
+    );
+  }
+
+  return (
+    <TooltipProvider>
+      <div className="editor-layout">
+        <Toolbar />
+
+        <div className="left-panel">
+          <TilePalette />
+          <LayerPanel />
+        </div>
+
+        <Canvas />
+
+        <div className="right-panel">
+          <PropertiesPanel />
+        </div>
+
+        {showNewMapDialog && (
+          <NewMapDialog onConfirm={handleNewMap} onCancel={() => setShowNewMapDialog(false)} />
+        )}
+
+        {tilesetImportDialog}
+        {errorToast}
+      </div>
+    </TooltipProvider>
   );
 }
