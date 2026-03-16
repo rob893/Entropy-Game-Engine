@@ -3,9 +3,9 @@ import type { ReactElement } from 'react';
 import type { MenuAction } from '../shared/types';
 import { Canvas } from './components/Canvas';
 import { ErrorToast } from './components/editor/ErrorToast';
-import { ImportTilesetDialog } from './components/ImportTilesetDialog';
 import { LayerPanel } from './components/LayerPanel';
 import { NewMapDialog } from './components/NewMapDialog';
+import { ObjectLibrary } from './components/ObjectLibrary';
 import { PropertiesPanel } from './components/PropertiesPanel';
 import { TilePalette } from './components/TilePalette';
 import { Toolbar } from './components/Toolbar';
@@ -15,8 +15,8 @@ import { useEditorStore } from './stores/editor-store';
 import './styles/globals.css';
 
 export function App(): ReactElement {
-  const mapFile = useEditorStore(state => state.mapFile);
-  const pendingTilesetImport = useEditorStore(state => state.pendingTilesetImport);
+  const projectPath = useEditorStore(state => state.projectPath);
+  const createMapInProject = useEditorStore(state => state.createMapInProject);
   const error = useEditorStore(state => state.error);
   const setError = useEditorStore(state => state.setError);
   const [showNewMapDialog, setShowNewMapDialog] = useState(false);
@@ -27,19 +27,23 @@ export function App(): ReactElement {
 
       switch (action) {
         case 'file-new':
+          if (store.projectPath === null) {
+            store.setError('Open or create an Entropy project before creating a map.');
+            break;
+          }
           setShowNewMapDialog(true);
-          break;
-        case 'file-open':
-          void store.openFile();
           break;
         case 'file-save':
           void store.saveFile();
           break;
-        case 'file-save-as':
-          void store.saveFileAs();
+        case 'open-project':
+          void store.openProject();
           break;
         case 'tileset-import':
-          void store.promptImportTileset();
+          void store.importTilesetToProject();
+          break;
+        case 'objects-import':
+          void store.importObjectsToProject();
           break;
         case 'export-png':
           void store.exportPng();
@@ -61,34 +65,23 @@ export function App(): ReactElement {
   }, []);
 
   const handleNewMap = (name: string, rows: number, cols: number, tileWidth: number, tileHeight: number): void => {
-    useEditorStore.getState().createNewMap(name, rows, cols, tileWidth, tileHeight);
+    if (projectPath === null) {
+      return;
+    }
+
+    void createMapInProject(name, rows, cols, tileWidth, tileHeight);
     setShowNewMapDialog(false);
   };
-
-  const tilesetImportDialog = pendingTilesetImport !== null
-    ? (
-        <ImportTilesetDialog
-          imageDataUrl={pendingTilesetImport.imageDataUrl}
-          fileName={pendingTilesetImport.filePath.split(/[/\\]/).pop() ?? 'Untitled'}
-          onConfirm={(tileWidth, tileHeight) => useEditorStore.getState().finalizeTilesetImport(tileWidth, tileHeight)}
-          onCancel={() => useEditorStore.getState().cancelTilesetImport()}
-        />
-      )
-    : null;
 
   const errorToast = error !== null
     ? <ErrorToast message={error} onDismiss={() => setError(null)} />
     : null;
 
-  if (mapFile === null && !showNewMapDialog) {
+  if (projectPath === null) {
     return (
       <TooltipProvider>
         <div className="h-full">
-          <WelcomeScreen
-            onNewMap={() => setShowNewMapDialog(true)}
-            onOpenMap={() => void useEditorStore.getState().openFile()}
-          />
-          {tilesetImportDialog}
+          <WelcomeScreen onOpenProject={() => void useEditorStore.getState().openProject()} />
           {errorToast}
         </div>
       </TooltipProvider>
@@ -102,6 +95,7 @@ export function App(): ReactElement {
 
         <div className="left-panel">
           <TilePalette />
+          <ObjectLibrary />
           <LayerPanel />
         </div>
 
@@ -115,7 +109,6 @@ export function App(): ReactElement {
           <NewMapDialog onConfirm={handleNewMap} onCancel={() => setShowNewMapDialog(false)} />
         )}
 
-        {tilesetImportDialog}
         {errorToast}
       </div>
     </TooltipProvider>

@@ -1,11 +1,11 @@
-import type { IEditorMapFile, IFileOpenResult, ITilesetImportResult } from './terrain';
+import type { IEditorMapFile, IFileOpenResult, IProjectScanResult } from './terrain';
 
 export type MenuAction =
   | 'file-new'
-  | 'file-open'
   | 'file-save'
-  | 'file-save-as'
+  | 'open-project'
   | 'tileset-import'
+  | 'objects-import'
   | 'export-png'
   | 'export-tiled'
   | 'undo'
@@ -13,14 +13,17 @@ export type MenuAction =
   | 'toggle-grid';
 
 export interface IElectronAPI {
-  // File operations
-  fileNew(): Promise<void>;
-  fileOpen(): Promise<IFileOpenResult | null>;
-  fileSave(filePath: string, data: IEditorMapFile): Promise<void>;
-  fileSaveAs(data: IEditorMapFile): Promise<string | null>;
+  // Project operations
+  projectOpen(): Promise<IProjectScanResult | null>;
+  projectScan(projectPath: string): Promise<IProjectScanResult>;
+  projectReadImage(absolutePath: string): Promise<string>;
+  projectReadMap(filePath: string): Promise<IEditorMapFile>;
+  projectSaveMap(filePath: string, data: IEditorMapFile): Promise<void>;
+  projectCreateMap(projectPath: string, name: string, tileWidth: number, tileHeight: number): Promise<IFileOpenResult>;
 
-  // Tileset operations
-  tilesetImport(): Promise<ITilesetImportResult | null>;
+  // Asset operations
+  projectImportTileset(projectPath: string): Promise<string | null>;
+  projectImportObjects(projectPath: string): Promise<string[] | null>;
 
   // Export operations
   exportPng(pngDataUrl: string): Promise<boolean>;

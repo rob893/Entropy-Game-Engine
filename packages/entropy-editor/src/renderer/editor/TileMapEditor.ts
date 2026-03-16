@@ -1,4 +1,4 @@
-import type { IEditorLayer } from '../../shared/types';
+import type { IEditorTileLayer } from '../../shared/types';
 import type { EditorEngine } from './EditorEngine';
 import type { EditorHistory } from './EditorHistory';
 import { PaintCellCommand } from './EditorHistory';
@@ -41,7 +41,7 @@ export class TileMapEditor {
     this.onMapChanged = callback;
   }
 
-  public handleMouseDown(row: number, col: number, layer: IEditorLayer, button: number): void {
+  public handleMouseDown(row: number, col: number, layer: IEditorTileLayer, button: number): void {
     if (button === 1) {
       return; // Middle button handled by EditorEngine pan
     }
@@ -55,7 +55,7 @@ export class TileMapEditor {
     this.applyTool(row, col, layer);
   }
 
-  public handleMouseMove(row: number, col: number, layer: IEditorLayer): void {
+  public handleMouseMove(row: number, col: number, layer: IEditorTileLayer): void {
     if (!this.isPainting) {
       return;
     }
@@ -69,7 +69,7 @@ export class TileMapEditor {
     this.isPainting = false;
   }
 
-  private applyTool(row: number, col: number, layer: IEditorLayer): void {
+  private applyTool(row: number, col: number, layer: IEditorTileLayer): void {
     if (row < 0 || row >= layer.grid.length || col < 0 || col >= layer.grid[0].length) {
       return;
     }
@@ -92,7 +92,7 @@ export class TileMapEditor {
     }
   }
 
-  private paint(row: number, col: number, layer: IEditorLayer, tileId: number): void {
+  private paint(row: number, col: number, layer: IEditorTileLayer, tileId: number): void {
     if (layer.grid[row][col] === tileId) {
       return;
     }
@@ -102,7 +102,7 @@ export class TileMapEditor {
     this.onMapChanged?.();
   }
 
-  private floodFill(startRow: number, startCol: number, layer: IEditorLayer, tileId: number): void {
+  private floodFill(startRow: number, startCol: number, layer: IEditorTileLayer, tileId: number): void {
     const targetId = layer.grid[startRow][startCol];
 
     if (targetId === tileId) {
@@ -147,7 +147,7 @@ export class TileMapEditor {
     this.onMapChanged?.();
   }
 
-  private eyedrop(row: number, col: number, layer: IEditorLayer): void {
+  private eyedrop(row: number, col: number, layer: IEditorTileLayer): void {
     const tileId = layer.grid[row][col];
 
     if (tileId !== 0) {
@@ -156,7 +156,7 @@ export class TileMapEditor {
     }
   }
 
-  private togglePassability(row: number, col: number, layer: IEditorLayer): void {
+  private togglePassability(row: number, col: number, layer: IEditorTileLayer): void {
     if (layer.passability === undefined) {
       layer.passability = Array.from({ length: layer.grid.length }, () =>
         new Array<boolean>(layer.grid[0].length).fill(true)

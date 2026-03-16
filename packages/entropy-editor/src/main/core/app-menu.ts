@@ -31,14 +31,14 @@ export function createAppMenu(mainWindow: BrowserWindow): void {
       label: 'File',
       submenu: [
         {
-          label: 'New',
+          label: 'New Map',
           accelerator: 'CmdOrCtrl+N',
           click: (): void => sendMenuAction(mainWindow, 'file-new')
         },
         {
-          label: 'Open...',
-          accelerator: 'CmdOrCtrl+O',
-          click: (): void => sendMenuAction(mainWindow, 'file-open')
+          label: 'Open Project',
+          accelerator: 'CmdOrCtrl+Shift+O',
+          click: (): void => sendMenuAction(mainWindow, 'open-project')
         },
         { type: 'separator' },
         {
@@ -46,15 +46,14 @@ export function createAppMenu(mainWindow: BrowserWindow): void {
           accelerator: 'CmdOrCtrl+S',
           click: (): void => sendMenuAction(mainWindow, 'file-save')
         },
-        {
-          label: 'Save As...',
-          accelerator: 'CmdOrCtrl+Shift+S',
-          click: (): void => sendMenuAction(mainWindow, 'file-save-as')
-        },
         { type: 'separator' },
         {
           label: 'Import Tileset...',
           click: (): void => sendMenuAction(mainWindow, 'tileset-import')
+        },
+        {
+          label: 'Import Objects...',
+          click: (): void => sendMenuAction(mainWindow, 'objects-import')
         },
         { type: 'separator' },
         {

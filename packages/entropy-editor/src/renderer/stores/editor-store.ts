@@ -1,5 +1,17 @@
 import { create } from 'zustand';
-import type { IEditorLayer, IEditorMapFile, IEditorTileset } from '../../shared/types';
+import { FILE_EXTENSION } from '../../shared/constants';
+import type {
+  EditorLayer,
+  IDiscoveredAsset,
+  IEditorMapFile,
+  IEditorObject,
+  IEditorObjectLayer,
+  IEditorTileLayer,
+  IEditorTileset,
+  IEntropyProject,
+  IObjectSprite,
+  IProjectScanResult
+} from '../../shared/types';
 import { getErrorMessage } from '../../shared/utils/errors';
 import { exportToTiled } from '../editor/TiledExporter';
 
@@ -10,6 +22,13 @@ interface IEditorState {
   // Map state
   mapFile: IEditorMapFile | null;
   filePath: string | null;
+
+  // Project state
+  projectPath: string | null;
+  projectConfig: IEntropyProject | null;
+  availableMaps: string[];
+  discoveredTilesets: IDiscoveredAsset[];
+  discoveredObjects: IDiscoveredAsset[];
   isDirty: boolean;
 
   // Tool state
@@ -17,13 +36,15 @@ interface IEditorState {
   activeLayerIndex: number;
   activeTileId: number;
   activeTilesetId: string | null;
+  activeObjectSpriteId: string | null;
+  selectedObjectId: string | null;
   brushSize: number;
   brushShape: BrushShape;
   showGrid: boolean;
+  objectSnapToGrid: boolean;
 
   // UI state
   error: string | null;
-  pendingTilesetImport: { imageDataUrl: string; filePath: string } | null;
   canvasElement: HTMLCanvasElement | null;
 
   // Actions
@@ -40,9 +61,22 @@ interface IEditorState {
   setCanvasElement: (canvas: HTMLCanvasElement | null) => void;
 
   // Map operations
-  createNewMap: (name: string, rows: number, cols: number, tileWidth: number, tileHeight: number) => void;
-  updateLayer: (layerIndex: number, layer: IEditorLayer) => void;
+  updateLayer: (layerIndex: number, layer: EditorLayer) => void;
   addLayer: (name: string) => void;
+
+  // Object layer operations
+  addObjectLayer: (name: string) => void;
+  placeObject: (spriteId: string, x: number, y: number) => void;
+  selectObject: (objectId: string | null) => void;
+  moveObject: (objectId: string, x: number, y: number) => void;
+  rotateObject: (objectId: string, rotation: number) => void;
+  scaleObject: (objectId: string, scaleX: number, scaleY: number) => void;
+  deleteObject: (objectId: string) => void;
+  reorderObject: (objectId: string, direction: 'forward' | 'backward') => void;
+  toggleObjectSnap: () => void;
+  importObjectSprites: (sprites: IObjectSprite[]) => void;
+  setActiveObjectSpriteId: (id: string | null) => void;
+
   removeLayer: (index: number) => void;
   setLayerVisibility: (index: number, visible: boolean) => void;
   setLayerOpacity: (index: number, opacity: number) => void;
@@ -50,43 +84,229 @@ interface IEditorState {
 
   // File operations
   saveFile: () => Promise<void>;
-  saveFileAs: () => Promise<void>;
-  openFile: () => Promise<void>;
-  promptImportTileset: () => Promise<void>;
-  finalizeTilesetImport: (tileWidth: number, tileHeight: number) => void;
-  cancelTilesetImport: () => void;
+
+  // Project operations
+  openProject: () => Promise<void>;
+  loadMapFromProject: (mapFilePath: string) => Promise<void>;
+  createMapInProject: (name: string, rows: number, cols: number, tileWidth: number, tileHeight: number) => Promise<void>;
+  importTilesetToProject: () => Promise<void>;
+  importObjectsToProject: () => Promise<void>;
 
   // Export operations
   exportPng: () => Promise<void>;
   exportTiledMap: () => Promise<void>;
 }
 
+function updateObjectInLayer(
+  mapFile: IEditorMapFile,
+  layerIndex: number,
+  objectId: string,
+  updater: (obj: IEditorObject) => IEditorObject
+): IEditorMapFile | null {
+  const layer = mapFile.layers[layerIndex];
+
+  if (layer === undefined || layer.type !== 'object') {
+    return null;
+  }
+
+  let hasUpdatedObject = false;
+  const updatedObjects = layer.objects.map(obj => {
+    if (obj.id !== objectId) {
+      return obj;
+    }
+
+    hasUpdatedObject = true;
+    return updater(obj);
+  });
+
+  if (!hasUpdatedObject) {
+    return null;
+  }
+
+  const updatedLayer: IEditorObjectLayer = { ...layer, objects: updatedObjects };
+  const newLayers = [...mapFile.layers];
+  newLayers[layerIndex] = updatedLayer;
+
+  return { ...mapFile, layers: newLayers };
+}
+
+function createGrid(rows: number, cols: number): number[][] {
+  return Array.from({ length: rows }, () => new Array<number>(cols).fill(0));
+}
+
+function createProjectTileset(asset: IDiscoveredAsset): IEditorTileset {
+  return {
+    id: crypto.randomUUID(),
+    name: asset.name,
+    imagePath: asset.relativePath,
+    imageDataUrl: asset.imageDataUrl,
+    tileWidth: asset.width,
+    tileHeight: asset.height,
+    columns: 1,
+    rows: 1,
+    tileCount: 1
+  };
+}
+
+function createProjectObjectSprite(asset: IDiscoveredAsset): IObjectSprite {
+  return {
+    id: crypto.randomUUID(),
+    name: asset.name,
+    category: asset.category,
+    imagePath: asset.relativePath,
+    imageDataUrl: asset.imageDataUrl,
+    width: asset.width,
+    height: asset.height
+  };
+}
+
+function getInitialProjectMapPath(projectScan: IProjectScanResult): string | null {
+  const defaultMapPath = projectScan.maps.find(mapPath =>
+    mapPath.endsWith(`${projectScan.config.defaultScene}${FILE_EXTENSION}`)
+  );
+
+  return defaultMapPath ?? projectScan.maps[0] ?? null;
+}
+
+function stripProjectMapImageData(mapFile: IEditorMapFile): IEditorMapFile {
+  return {
+    ...mapFile,
+    tilesets: mapFile.tilesets.map(tileset => ({ ...tileset, imageDataUrl: '' })),
+    objectSprites: mapFile.objectSprites.map(sprite => ({ ...sprite, imageDataUrl: '' }))
+  };
+}
+
+function mergeProjectAssetsIntoMap(
+  mapFile: IEditorMapFile,
+  discoveredTilesets: IDiscoveredAsset[],
+  discoveredObjects: IDiscoveredAsset[]
+): IEditorMapFile {
+  const hydratedTilesets = mapFile.tilesets.map(tileset => {
+    if (tileset.imageDataUrl !== '' && tileset.imageDataUrl !== undefined) {
+      return tileset;
+    }
+
+    const discovered = discoveredTilesets.find(asset => asset.relativePath === tileset.imagePath);
+
+    return discovered === undefined ? tileset : { ...tileset, imageDataUrl: discovered.imageDataUrl };
+  });
+
+  const hydratedObjectSprites = mapFile.objectSprites.map(sprite => {
+    if (sprite.imageDataUrl !== '' && sprite.imageDataUrl !== undefined) {
+      return sprite;
+    }
+
+    const discovered = discoveredObjects.find(asset => asset.relativePath === sprite.imagePath);
+
+    return discovered === undefined
+      ? sprite
+      : {
+          ...sprite,
+          category: sprite.category !== '' ? sprite.category : discovered.category,
+          imageDataUrl: discovered.imageDataUrl,
+          width: sprite.width > 0 ? sprite.width : discovered.width,
+          height: sprite.height > 0 ? sprite.height : discovered.height
+        };
+  });
+
+  const tilePaths = new Set(hydratedTilesets.map(tileset => tileset.imagePath));
+  const objectPaths = new Set(hydratedObjectSprites.map(sprite => sprite.imagePath));
+
+  return {
+    ...mapFile,
+    tilesets: [
+      ...hydratedTilesets,
+      ...discoveredTilesets
+        .filter(asset => !tilePaths.has(asset.relativePath))
+        .map(asset => createProjectTileset(asset))
+    ],
+    objectSprites: [
+      ...hydratedObjectSprites,
+      ...discoveredObjects
+        .filter(asset => !objectPaths.has(asset.relativePath))
+        .map(asset => createProjectObjectSprite(asset))
+    ]
+  };
+}
+
+interface IImportedProjectAssets {
+  objectPaths?: string[];
+  tilesetPath?: string;
+}
+
+function createProjectScanState(
+  state: Pick<IEditorState, 'activeObjectSpriteId' | 'activeTileId' | 'activeTilesetId' | 'mapFile'>,
+  scanResult: IProjectScanResult,
+  importedAssets: IImportedProjectAssets = {}
+): Partial<IEditorState> {
+  const nextState: Partial<IEditorState> = {
+    projectConfig: scanResult.config,
+    availableMaps: scanResult.maps,
+    discoveredTilesets: scanResult.tilesets,
+    discoveredObjects: scanResult.objectSprites
+  };
+
+  if (state.mapFile === null) {
+    return nextState;
+  }
+
+  const mapFile = mergeProjectAssetsIntoMap(state.mapFile, scanResult.tilesets, scanResult.objectSprites);
+  const importedTileset = importedAssets.tilesetPath === undefined
+    ? undefined
+    : mapFile.tilesets.find(tileset => tileset.imagePath === importedAssets.tilesetPath);
+  const importedObjectSprite = (importedAssets.objectPaths ?? [])
+    .map(imagePath => mapFile.objectSprites.find(sprite => sprite.imagePath === imagePath))
+    .find((sprite): sprite is IObjectSprite => sprite !== undefined);
+
+  return {
+    ...nextState,
+    mapFile,
+    activeTileId: importedTileset === undefined ? state.activeTileId : 1,
+    activeTilesetId: importedTileset?.id ?? state.activeTilesetId,
+    activeObjectSpriteId: importedObjectSprite?.id ?? state.activeObjectSpriteId
+  };
+}
+
 export const useEditorStore = create<IEditorState>((set, get) => ({
   mapFile: null,
   filePath: null,
+  projectPath: null,
+  projectConfig: null,
+  availableMaps: [],
+  discoveredTilesets: [],
+  discoveredObjects: [],
   isDirty: false,
   activeTool: 'brush',
   activeLayerIndex: 0,
   activeTileId: 1,
   activeTilesetId: null,
+  activeObjectSpriteId: null,
+  selectedObjectId: null,
   brushSize: 1,
   brushShape: 'square',
   showGrid: true,
+  objectSnapToGrid: true,
   error: null,
-  pendingTilesetImport: null,
   canvasElement: null,
 
-  setMapFile: (mapFile, filePath) => set({ mapFile, filePath, isDirty: false }),
+  setMapFile: (mapFile, filePath) =>
+    set({
+      mapFile,
+      filePath,
+      isDirty: false,
+      selectedObjectId: null,
+      activeObjectSpriteId: mapFile.objectSprites[0]?.id ?? null
+    }),
   setDirty: dirty => set({ isDirty: dirty }),
   setActiveTool: tool => set({ activeTool: tool }),
   setActiveLayer: index => {
     const { mapFile } = get();
     const layer = mapFile?.layers[index];
 
-    if (layer !== undefined && layer.tileSetId !== '') {
-      set({ activeLayerIndex: index, activeTilesetId: layer.tileSetId, activeTileId: 1 });
+    if (layer !== undefined && layer.type === 'tile' && layer.tileSetId !== '') {
+      set({ activeLayerIndex: index, activeTilesetId: layer.tileSetId, activeTileId: 1, selectedObjectId: null });
     } else {
-      set({ activeLayerIndex: index });
+      set({ activeLayerIndex: index, selectedObjectId: null });
     }
   },
   setActiveTileId: id => set({ activeTileId: id }),
@@ -96,28 +316,6 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   setBrushShape: shape => set({ brushShape: shape }),
   setError: error => set({ error }),
   setCanvasElement: canvas => set({ canvasElement: canvas }),
-
-  createNewMap: (name, rows, cols, tileWidth, tileHeight) => {
-    const grid = Array.from({ length: rows }, () => new Array<number>(cols).fill(0));
-
-    const mapFile: IEditorMapFile = {
-      name,
-      tileWidth,
-      tileHeight,
-      layers: [
-        {
-          name: 'Layer 1',
-          grid,
-          tileSetId: '',
-          visible: true,
-          opacity: 1
-        }
-      ],
-      tilesets: []
-    };
-
-    set({ mapFile, filePath: null, isDirty: false, activeLayerIndex: 0 });
-  },
 
   updateLayer: (layerIndex, layer) => {
     const { mapFile } = get();
@@ -139,12 +337,18 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       return;
     }
 
-    const referenceLayer = mapFile.layers[0];
+    const referenceLayer = mapFile.layers.find((layer): layer is IEditorTileLayer => layer.type === 'tile');
+
+    if (referenceLayer === undefined) {
+      return;
+    }
+
     const rows = referenceLayer.grid.length;
     const cols = referenceLayer.grid[0]?.length ?? 0;
     const grid = Array.from({ length: rows }, () => new Array<number>(cols).fill(0));
 
-    const newLayer: IEditorLayer = {
+    const newLayer: IEditorTileLayer = {
+      type: 'tile',
       name,
       grid,
       tileSetId: '',
@@ -155,9 +359,244 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     set({
       mapFile: { ...mapFile, layers: [...mapFile.layers, newLayer] },
       isDirty: true,
-      activeLayerIndex: mapFile.layers.length
+      activeLayerIndex: mapFile.layers.length,
+      selectedObjectId: null
     });
   },
+
+  addObjectLayer: name => {
+    const { mapFile } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const newLayer: IEditorObjectLayer = {
+      type: 'object',
+      name,
+      objects: [],
+      visible: true,
+      opacity: 1
+    };
+
+    set({
+      mapFile: { ...mapFile, layers: [...mapFile.layers, newLayer] },
+      isDirty: true,
+      activeLayerIndex: mapFile.layers.length,
+      selectedObjectId: null
+    });
+  },
+
+  placeObject: (spriteId, x, y) => {
+    const { mapFile, activeLayerIndex, objectSnapToGrid } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const layer = mapFile.layers[activeLayerIndex];
+
+    if (layer === undefined || layer.type !== 'object') {
+      return;
+    }
+
+    let finalX = x;
+    let finalY = y;
+
+    if (objectSnapToGrid) {
+      finalX = Math.round(x / mapFile.tileWidth) * mapFile.tileWidth;
+      finalY = Math.round(y / mapFile.tileHeight) * mapFile.tileHeight;
+    }
+
+    const maxZ = layer.objects.reduce((max, obj) => Math.max(max, obj.zIndex), 0);
+
+    const newObject: IEditorObject = {
+      id: crypto.randomUUID(),
+      spriteId,
+      x: finalX,
+      y: finalY,
+      rotation: 0,
+      scaleX: 1,
+      scaleY: 1,
+      zIndex: maxZ + 1,
+      snapToGrid: objectSnapToGrid
+    };
+
+    const updatedLayer: IEditorObjectLayer = {
+      ...layer,
+      objects: [...layer.objects, newObject]
+    };
+
+    const newLayers = [...mapFile.layers];
+    newLayers[activeLayerIndex] = updatedLayer;
+
+    set({
+      mapFile: { ...mapFile, layers: newLayers },
+      isDirty: true,
+      selectedObjectId: newObject.id
+    });
+  },
+
+  selectObject: objectId => set({ selectedObjectId: objectId }),
+
+  moveObject: (objectId, x, y) => {
+    const { mapFile, activeLayerIndex, objectSnapToGrid } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    let finalX = x;
+    let finalY = y;
+
+    if (objectSnapToGrid) {
+      finalX = Math.round(x / mapFile.tileWidth) * mapFile.tileWidth;
+      finalY = Math.round(y / mapFile.tileHeight) * mapFile.tileHeight;
+    }
+
+    const updatedMapFile = updateObjectInLayer(mapFile, activeLayerIndex, objectId, obj => ({
+      ...obj,
+      x: finalX,
+      y: finalY
+    }));
+
+    if (updatedMapFile === null) {
+      return;
+    }
+
+    set({ mapFile: updatedMapFile, isDirty: true });
+  },
+
+  rotateObject: (objectId, rotation) => {
+    const { mapFile, activeLayerIndex } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const updatedMapFile = updateObjectInLayer(mapFile, activeLayerIndex, objectId, obj => ({ ...obj, rotation }));
+
+    if (updatedMapFile === null) {
+      return;
+    }
+
+    set({ mapFile: updatedMapFile, isDirty: true });
+  },
+
+  scaleObject: (objectId, scaleX, scaleY) => {
+    const { mapFile, activeLayerIndex } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const updatedMapFile = updateObjectInLayer(mapFile, activeLayerIndex, objectId, obj => ({
+      ...obj,
+      scaleX,
+      scaleY
+    }));
+
+    if (updatedMapFile === null) {
+      return;
+    }
+
+    set({ mapFile: updatedMapFile, isDirty: true });
+  },
+
+  deleteObject: objectId => {
+    const { mapFile, activeLayerIndex, selectedObjectId } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const layer = mapFile.layers[activeLayerIndex];
+
+    if (layer === undefined || layer.type !== 'object') {
+      return;
+    }
+
+    const updatedObjects = layer.objects.filter(obj => obj.id !== objectId);
+
+    if (updatedObjects.length === layer.objects.length) {
+      return;
+    }
+
+    const updatedLayer: IEditorObjectLayer = { ...layer, objects: updatedObjects };
+    const newLayers = [...mapFile.layers];
+    newLayers[activeLayerIndex] = updatedLayer;
+
+    set({
+      mapFile: { ...mapFile, layers: newLayers },
+      isDirty: true,
+      selectedObjectId: selectedObjectId === objectId ? null : selectedObjectId
+    });
+  },
+
+  reorderObject: (objectId, direction) => {
+    const { mapFile, activeLayerIndex } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const layer = mapFile.layers[activeLayerIndex];
+
+    if (layer === undefined || layer.type !== 'object') {
+      return;
+    }
+
+    const sortedObjects = [...layer.objects].sort((left, right) => left.zIndex - right.zIndex);
+    const currentIndex = sortedObjects.findIndex(obj => obj.id === objectId);
+
+    if (currentIndex === -1) {
+      return;
+    }
+
+    const targetIndex = direction === 'forward' ? currentIndex + 1 : currentIndex - 1;
+
+    if (targetIndex < 0 || targetIndex >= sortedObjects.length) {
+      return;
+    }
+
+    const currentObject = sortedObjects[currentIndex];
+    const targetObject = sortedObjects[targetIndex];
+    const updatedObjects = layer.objects.map(obj => {
+      if (obj.id === currentObject.id) {
+        return { ...obj, zIndex: targetObject.zIndex };
+      }
+
+      if (obj.id === targetObject.id) {
+        return { ...obj, zIndex: currentObject.zIndex };
+      }
+
+      return obj;
+    });
+
+    const updatedLayer: IEditorObjectLayer = { ...layer, objects: updatedObjects };
+    const newLayers = [...mapFile.layers];
+    newLayers[activeLayerIndex] = updatedLayer;
+
+    set({ mapFile: { ...mapFile, layers: newLayers }, isDirty: true });
+  },
+
+  toggleObjectSnap: () => set(state => ({ objectSnapToGrid: !state.objectSnapToGrid })),
+
+  importObjectSprites: sprites => {
+    const { mapFile, activeObjectSpriteId } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    set({
+      mapFile: { ...mapFile, objectSprites: [...mapFile.objectSprites, ...sprites] },
+      isDirty: true,
+      activeObjectSpriteId: activeObjectSpriteId ?? sprites[0]?.id ?? null
+    });
+  },
+
+  setActiveObjectSpriteId: id => set({ activeObjectSpriteId: id }),
 
   removeLayer: index => {
     const { mapFile, activeLayerIndex } = get();
@@ -169,7 +608,12 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     const newLayers = mapFile.layers.filter((_, i) => i !== index);
     const newActiveIndex = activeLayerIndex >= newLayers.length ? newLayers.length - 1 : activeLayerIndex;
 
-    set({ mapFile: { ...mapFile, layers: newLayers }, isDirty: true, activeLayerIndex: newActiveIndex });
+    set({
+      mapFile: { ...mapFile, layers: newLayers },
+      isDirty: true,
+      activeLayerIndex: newActiveIndex,
+      selectedObjectId: null
+    });
   },
 
   setLayerVisibility: (index, visible) => {
@@ -209,106 +653,163 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   },
 
   saveFile: async () => {
-    const { mapFile, filePath } = get();
+    const { mapFile, filePath, projectPath } = get();
 
-    if (mapFile === null) {
+    if (mapFile === null || filePath === null || projectPath === null) {
       return;
     }
 
     try {
-      if (filePath !== null) {
-        await window.electronAPI.fileSave(filePath, mapFile);
-        set({ isDirty: false });
-      } else {
-        await get().saveFileAs();
-      }
+      const strippedMap = stripProjectMapImageData(mapFile);
+      await window.electronAPI.projectSaveMap(filePath, strippedMap);
+      set({ isDirty: false });
     } catch (err) {
       set({ error: getErrorMessage(err) });
     }
   },
 
-  saveFileAs: async () => {
-    const { mapFile } = get();
-
-    if (mapFile === null) {
-      return;
-    }
-
+  openProject: async () => {
     try {
-      const newPath = await window.electronAPI.fileSaveAs(mapFile);
-
-      if (newPath !== null) {
-        set({ filePath: newPath, isDirty: false });
-      }
-    } catch (err) {
-      set({ error: getErrorMessage(err) });
-    }
-  },
-
-  openFile: async () => {
-    try {
-      const result = await window.electronAPI.fileOpen();
-
-      if (result !== null) {
-        set({ mapFile: result.data, filePath: result.filePath, isDirty: false, activeLayerIndex: 0 });
-      }
-    } catch (err) {
-      set({ error: getErrorMessage(err) });
-    }
-  },
-
-  promptImportTileset: async () => {
-    try {
-      const result = await window.electronAPI.tilesetImport();
+      const result: IProjectScanResult | null = await window.electronAPI.projectOpen();
 
       if (result === null) {
         return;
       }
 
-      set({ pendingTilesetImport: { imageDataUrl: result.imageDataUrl, filePath: result.filePath } });
+      set({
+        projectPath: result.projectPath,
+        projectConfig: result.config,
+        availableMaps: result.maps,
+        discoveredTilesets: result.tilesets,
+        discoveredObjects: result.objectSprites,
+        mapFile: null,
+        filePath: null,
+        isDirty: false,
+        activeLayerIndex: 0,
+        activeTilesetId: null,
+        activeObjectSpriteId: null,
+        selectedObjectId: null
+      });
+
+      const initialMapPath = getInitialProjectMapPath(result);
+
+      if (initialMapPath !== null) {
+        await get().loadMapFromProject(initialMapPath);
+      }
     } catch (err) {
       set({ error: getErrorMessage(err) });
     }
   },
 
-  finalizeTilesetImport: (tileWidth, tileHeight) => {
-    const { pendingTilesetImport } = get();
+  loadMapFromProject: async mapFilePath => {
+    const { projectPath, projectConfig, discoveredTilesets, discoveredObjects } = get();
+    if (projectPath === null || projectConfig === null) return;
 
-    if (pendingTilesetImport === null) {
+    try {
+      const data = await window.electronAPI.projectReadMap(mapFilePath);
+      const mapFile = mergeProjectAssetsIntoMap(data, discoveredTilesets, discoveredObjects);
+
+      set({
+        mapFile,
+        filePath: mapFilePath,
+        isDirty: false,
+        activeLayerIndex: 0,
+        activeTilesetId: mapFile.tilesets[0]?.id ?? null,
+        activeObjectSpriteId: mapFile.objectSprites[0]?.id ?? null,
+        selectedObjectId: null
+      });
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
+  },
+
+  createMapInProject: async (name, rows, cols, tileWidth, tileHeight) => {
+    const { projectPath, projectConfig } = get();
+
+    if (projectPath === null || projectConfig === null) {
       return;
     }
 
-    const img = new Image();
-    img.src = pendingTilesetImport.imageDataUrl;
-
-    img.onload = () => {
-      const columns = Math.floor(img.width / tileWidth);
-      const rows = Math.floor(img.height / tileHeight);
-      const id = crypto.randomUUID();
-
-      const tileset: IEditorTileset = {
-        id,
-        name: pendingTilesetImport.filePath.split(/[/\\]/).pop() ?? 'Untitled',
-        imagePath: pendingTilesetImport.filePath,
-        imageDataUrl: pendingTilesetImport.imageDataUrl,
+    try {
+      const result = await window.electronAPI.projectCreateMap(
+        projectPath,
+        name,
         tileWidth,
-        tileHeight,
-        columns,
-        rows,
-        tileCount: columns * rows
-      };
+        tileHeight
+      );
 
-      if (get().mapFile === null) {
-        get().createNewMap('Untitled', 20, 30, get().mapFile?.tileWidth ?? 32, get().mapFile?.tileHeight ?? 32);
+      let data = result.data;
+      if (rows > 0 && cols > 0) {
+        data = {
+          ...data,
+          layers: data.layers.map(layer => (layer.type === 'tile' ? { ...layer, grid: createGrid(rows, cols) } : layer))
+        };
+        await window.electronAPI.projectSaveMap(result.filePath, stripProjectMapImageData(data));
       }
 
-      get().addTileset(tileset);
-      set({ pendingTilesetImport: null });
-    };
+      const scanResult: IProjectScanResult = await window.electronAPI.projectScan(projectPath);
+      const mapFile = mergeProjectAssetsIntoMap(data, scanResult.tilesets, scanResult.objectSprites);
+
+      set({
+        projectConfig: scanResult.config,
+        availableMaps: scanResult.maps,
+        discoveredTilesets: scanResult.tilesets,
+        discoveredObjects: scanResult.objectSprites,
+        mapFile,
+        filePath: result.filePath,
+        isDirty: false,
+        activeLayerIndex: 0,
+        activeTilesetId: mapFile.tilesets[0]?.id ?? null,
+        activeObjectSpriteId: mapFile.objectSprites[0]?.id ?? null,
+        selectedObjectId: null
+      });
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
   },
 
-  cancelTilesetImport: () => {
-    set({ pendingTilesetImport: null });
+  importTilesetToProject: async () => {
+    const { projectPath } = get();
+
+    if (projectPath === null) {
+      set({ error: 'Open or create an Entropy project before importing a tileset.' });
+      return;
+    }
+
+    try {
+      const relativePath = await window.electronAPI.projectImportTileset(projectPath);
+
+      if (relativePath === null) {
+        return;
+      }
+
+      const scanResult = await window.electronAPI.projectScan(projectPath);
+      set(createProjectScanState(get(), scanResult, { tilesetPath: relativePath }));
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
+  },
+
+  importObjectsToProject: async () => {
+    const { projectPath } = get();
+
+    if (projectPath === null) {
+      set({ error: 'Open or create an Entropy project before importing objects.' });
+      return;
+    }
+
+    try {
+      const relativePaths = await window.electronAPI.projectImportObjects(projectPath);
+
+      if (relativePaths === null) {
+        return;
+      }
+
+      const scanResult = await window.electronAPI.projectScan(projectPath);
+      set(createProjectScanState(get(), scanResult, { objectPaths: relativePaths }));
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
   },
 
   exportPng: async () => {

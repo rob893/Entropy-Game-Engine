@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import type { IEditorTileLayer } from '../../../shared/types';
 import { cn } from '../../lib/utils';
 import { useEditorStore } from '../../stores/editor-store';
 import { Panel, PanelContent, PanelHeader } from '../editor/Panel';
@@ -23,8 +24,9 @@ export function PropertiesPanel(): ReactElement {
     );
   }
 
-  const rows = mapFile.layers[0]?.grid.length ?? 0;
-  const cols = mapFile.layers[0]?.grid[0]?.length ?? 0;
+  const firstTileLayer = mapFile.layers.find((layer): layer is IEditorTileLayer => layer.type === 'tile');
+  const rows = firstTileLayer?.grid.length ?? 0;
+  const cols = firstTileLayer?.grid[0]?.length ?? 0;
   const properties: IPropertyRow[] = [
     { label: 'Map Name', value: mapFile.name },
     { label: 'Dimensions', value: `${cols} × ${rows} tiles` },

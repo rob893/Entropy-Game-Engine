@@ -1,5 +1,6 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactElement } from 'react';
+import type { IEditorObject, IEditorObjectLayer, IEditorTileLayer, IObjectSprite } from '../../../shared/types';
 import { cn } from '../../lib/utils';
 import type { BrushShape } from '../../stores/editor-store';
 import { useEditorStore } from '../../stores/editor-store';
@@ -21,7 +22,11 @@ export function Canvas(): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
   const isPaintingRef = useRef(false);
+  const isDraggingObjectRef = useRef(false);
   const tileImagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
+  const objectImagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
+  const dragStartRef = useRef({ x: 0, y: 0 });
+  const dragObjectStartRef = useRef({ x: 0, y: 0 });
   const zoomRef = useRef(1);
   const panRef = useRef({ x: 0, y: 0 });
   const isPanningRef = useRef(false);
@@ -34,6 +39,8 @@ export function Canvas(): ReactElement {
   const activeTool = useEditorStore(state => state.activeTool);
   const activeTileId = useEditorStore(state => state.activeTileId);
   const activeTilesetId = useEditorStore(state => state.activeTilesetId);
+  const activeObjectSpriteId = useEditorStore(state => state.activeObjectSpriteId);
+  const selectedObjectId = useEditorStore(state => state.selectedObjectId);
   const brushSize = useEditorStore(state => state.brushSize);
   const brushShape = useEditorStore(state => state.brushShape);
   const showGrid = useEditorStore(state => state.showGrid);
@@ -41,6 +48,10 @@ export function Canvas(): ReactElement {
   const setActiveTile = useEditorStore(state => state.setActiveTile);
   const setDirty = useEditorStore(state => state.setDirty);
   const setCanvasElement = useEditorStore(state => state.setCanvasElement);
+  const selectObject = useEditorStore(state => state.selectObject);
+  const placeObject = useEditorStore(state => state.placeObject);
+  const moveObject = useEditorStore(state => state.moveObject);
+  const objectSprites = useMemo<IObjectSprite[]>(() => mapFile?.objectSprites ?? [], [mapFile?.objectSprites]);
 
   // Register canvas element for export operations
   useEffect(() => {
@@ -49,11 +60,7 @@ export function Canvas(): ReactElement {
     return () => setCanvasElement(null);
   }, [setCanvasElement]);
 
-  const getGridPosition = useCallback((e: React.MouseEvent<HTMLCanvasElement>): { row: number; col: number } | null => {
-    if (mapFile === null) {
-      return null;
-    }
-
+  const getCanvasPosition = useCallback((e: React.MouseEvent<HTMLCanvasElement>): { x: number; y: number } | null => {
     const canvas = canvasRef.current;
 
     if (canvas === null) {
@@ -63,18 +70,38 @@ export function Canvas(): ReactElement {
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-    const x = (e.clientX - rect.left) * scaleX;
-    const y = (e.clientY - rect.top) * scaleY;
-    const col = Math.floor(x / mapFile.tileWidth);
-    const row = Math.floor(y / mapFile.tileHeight);
+
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY
+    };
+  }, []);
+
+  const getGridPosition = useCallback((e: React.MouseEvent<HTMLCanvasElement>): { row: number; col: number } | null => {
+    if (mapFile === null) {
+      return null;
+    }
+
+    const position = getCanvasPosition(e);
+
+    if (position === null) {
+      return null;
+    }
+
+    const col = Math.floor(position.x / mapFile.tileWidth);
+    const row = Math.floor(position.y / mapFile.tileHeight);
     const layer = mapFile.layers[activeLayerIndex];
 
-    if (layer === undefined || row < 0 || row >= layer.grid.length || col < 0 || col >= layer.grid[0].length) {
+    if (layer === undefined || layer.type !== 'tile') {
+      return null;
+    }
+
+    if (row < 0 || row >= layer.grid.length || col < 0 || col >= layer.grid[0].length) {
       return null;
     }
 
     return { row, col };
-  }, [mapFile, activeLayerIndex]);
+  }, [mapFile, activeLayerIndex, getCanvasPosition]);
 
   const applyTransform = useCallback((): void => {
     const wrapper = wrapperRef.current;
@@ -155,8 +182,9 @@ export function Canvas(): ReactElement {
       return;
     }
 
-    const rows = mapFile.layers[0]?.grid.length ?? 0;
-    const cols = mapFile.layers[0]?.grid[0]?.length ?? 0;
+    const firstTileLayer = mapFile.layers.find((layer): layer is IEditorTileLayer => layer.type === 'tile');
+    const rows = firstTileLayer?.grid.length ?? 0;
+    const cols = firstTileLayer?.grid[0]?.length ?? 0;
 
     canvas.width = cols * mapFile.tileWidth;
     canvas.height = rows * mapFile.tileHeight;
@@ -190,32 +218,59 @@ export function Canvas(): ReactElement {
 
       ctx.globalAlpha = layer.opacity;
 
-      // Find the tileset for this layer
-      const tileset = mapFile.tilesets.find(ts => ts.id === layer.tileSetId) ?? mapFile.tilesets[0];
-      const tilesetImage = tileset !== undefined ? tileImagesRef.current.get(tileset.id) : undefined;
+      if (layer.type === 'tile') {
+        const tileset = mapFile.tilesets.find(ts => ts.id === layer.tileSetId) ?? mapFile.tilesets[0];
+        const tilesetImage = tileset !== undefined ? tileImagesRef.current.get(tileset.id) : undefined;
 
-      for (let row = 0; row < layer.grid.length; row++) {
-        for (let col = 0; col < layer.grid[row].length; col++) {
-          const tileId = layer.grid[row][col];
+        for (let row = 0; row < layer.grid.length; row++) {
+          for (let col = 0; col < layer.grid[row].length; col++) {
+            const tileId = layer.grid[row][col];
 
-          if (tileId === 0 || tileset === undefined || tilesetImage === undefined) {
+            if (tileId === 0 || tileset === undefined || tilesetImage === undefined) {
+              continue;
+            }
+
+            const srcCol = (tileId - 1) % tileset.columns;
+            const srcRow = Math.floor((tileId - 1) / tileset.columns);
+
+            ctx.drawImage(
+              tilesetImage,
+              srcCol * tileset.tileWidth,
+              srcRow * tileset.tileHeight,
+              tileset.tileWidth,
+              tileset.tileHeight,
+              col * mapFile.tileWidth,
+              row * mapFile.tileHeight,
+              mapFile.tileWidth,
+              mapFile.tileHeight
+            );
+          }
+        }
+      }
+
+      if (layer.type === 'object') {
+        const sortedObjects = [...layer.objects].sort((a, b) => a.zIndex - b.zIndex);
+
+        for (const obj of sortedObjects) {
+          const sprite = mapFile.objectSprites.find(s => s.id === obj.spriteId);
+
+          if (sprite === undefined) {
             continue;
           }
 
-          const srcCol = (tileId - 1) % tileset.columns;
-          const srcRow = Math.floor((tileId - 1) / tileset.columns);
+          const spriteImage = objectImagesRef.current.get(sprite.id);
 
-          ctx.drawImage(
-            tilesetImage,
-            srcCol * tileset.tileWidth,
-            srcRow * tileset.tileHeight,
-            tileset.tileWidth,
-            tileset.tileHeight,
-            col * mapFile.tileWidth,
-            row * mapFile.tileHeight,
-            mapFile.tileWidth,
-            mapFile.tileHeight
-          );
+          if (spriteImage === undefined) {
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = layer.opacity;
+          ctx.translate(obj.x + (sprite.width * obj.scaleX) / 2, obj.y + (sprite.height * obj.scaleY) / 2);
+          ctx.rotate((obj.rotation * Math.PI) / 180);
+          ctx.scale(obj.scaleX, obj.scaleY);
+          ctx.drawImage(spriteImage, -sprite.width / 2, -sprite.height / 2);
+          ctx.restore();
         }
       }
 
@@ -242,7 +297,35 @@ export function Canvas(): ReactElement {
 
       ctx.stroke();
     }
-  }, [mapFile, showGrid]);
+
+    if (selectedObjectId !== null) {
+      for (const layer of mapFile.layers) {
+        if (layer.type !== 'object') {
+          continue;
+        }
+
+        const obj = layer.objects.find(object => object.id === selectedObjectId);
+
+        if (obj === undefined) {
+          continue;
+        }
+
+        const sprite = mapFile.objectSprites.find(objectSprite => objectSprite.id === obj.spriteId);
+
+        if (sprite === undefined) {
+          continue;
+        }
+
+        ctx.save();
+        ctx.strokeStyle = '#7c3aed';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.strokeRect(obj.x - 1, obj.y - 1, sprite.width * obj.scaleX + 2, sprite.height * obj.scaleY + 2);
+        ctx.restore();
+        break;
+      }
+    }
+  }, [mapFile, selectedObjectId, showGrid]);
 
   const applyTool = useCallback((row: number, col: number): void => {
     if (mapFile === null) {
@@ -251,12 +334,12 @@ export function Canvas(): ReactElement {
 
     const layer = mapFile.layers[activeLayerIndex];
 
-    if (layer === undefined) {
+    if (layer === undefined || layer.type !== 'tile') {
       return;
     }
 
     let changed = false;
-    let layerUpdated = { ...layer, grid: layer.grid.map(r => [...r]) };
+    let layerUpdated: IEditorTileLayer = { ...layer, grid: layer.grid.map((rowData: number[]) => [...rowData]) };
     const gridRows = layerUpdated.grid.length;
     const gridCols = layerUpdated.grid[0]?.length ?? 0;
 
@@ -359,6 +442,40 @@ export function Canvas(): ReactElement {
       return;
     }
 
+    const layer = mapFile?.layers[activeLayerIndex];
+
+    if (layer !== undefined && layer.type === 'object') {
+      const position = getCanvasPosition(e);
+
+      if (position === null || mapFile === null) {
+        return;
+      }
+
+      const clickX = position.x;
+      const clickY = position.y;
+
+      if (activeTool === 'brush' && activeObjectSpriteId !== null) {
+        placeObject(activeObjectSpriteId, clickX, clickY);
+        return;
+      }
+
+      if (activeTool === 'select') {
+        const hitObject = findObjectAtPoint(layer, clickX, clickY, mapFile.objectSprites);
+
+        selectObject(hitObject?.id ?? null);
+
+        if (hitObject !== null) {
+          isDraggingObjectRef.current = true;
+          dragStartRef.current = { x: clickX, y: clickY };
+          dragObjectStartRef.current = { x: hitObject.x, y: hitObject.y };
+        }
+
+        return;
+      }
+
+      return;
+    }
+
     isPaintingRef.current = true;
     const pos = getGridPosition(e);
 
@@ -366,10 +483,23 @@ export function Canvas(): ReactElement {
       const offset = Math.floor(brushSize / 2);
       applyTool(pos.row - offset, pos.col - offset);
     }
-  }, [getGridPosition, applyTool, brushSize]);
+  }, [activeLayerIndex, activeObjectSpriteId, activeTool, applyTool, brushSize, getCanvasPosition, getGridPosition, mapFile, placeObject, selectObject]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
     if (isPanningRef.current) {
+      return;
+    }
+
+    if (isDraggingObjectRef.current && selectedObjectId !== null) {
+      const position = getCanvasPosition(e);
+
+      if (position === null) {
+        return;
+      }
+
+      const newX = dragObjectStartRef.current.x + (position.x - dragStartRef.current.x);
+      const newY = dragObjectStartRef.current.y + (position.y - dragStartRef.current.y);
+      moveObject(selectedObjectId, newX, newY);
       return;
     }
 
@@ -389,10 +519,11 @@ export function Canvas(): ReactElement {
       const offset = Math.floor(brushSize / 2);
       applyTool(pos.row - offset, pos.col - offset);
     }
-  }, [getGridPosition, applyTool, activeTool, brushSize, drawOverlay]);
+  }, [activeTool, applyTool, brushSize, drawOverlay, getCanvasPosition, getGridPosition, moveObject, selectedObjectId]);
 
   const handleMouseUp = useCallback((): void => {
     isPaintingRef.current = false;
+    isDraggingObjectRef.current = false;
   }, []);
 
   const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>): void => {
@@ -452,6 +583,19 @@ export function Canvas(): ReactElement {
     }
   }, [mapFile, renderCanvas]);
 
+  useEffect(() => {
+    for (const sprite of objectSprites) {
+      if (!objectImagesRef.current.has(sprite.id)) {
+        const img = new Image();
+        img.src = sprite.imageDataUrl;
+        img.onload = () => {
+          objectImagesRef.current.set(sprite.id, img);
+          renderCanvas();
+        };
+      }
+    }
+  }, [objectSprites, renderCanvas]);
+
   // Re-render when map data changes
   useEffect(() => {
     renderCanvas();
@@ -504,6 +648,32 @@ export function Canvas(): ReactElement {
       </div>
     </div>
   );
+}
+
+function findObjectAtPoint(
+  layer: IEditorObjectLayer,
+  x: number,
+  y: number,
+  sprites: IObjectSprite[]
+): IEditorObject | null {
+  const sortedObjects = [...layer.objects].sort((a, b) => b.zIndex - a.zIndex);
+
+  for (const obj of sortedObjects) {
+    const sprite = sprites.find(objectSprite => objectSprite.id === obj.spriteId);
+
+    if (sprite === undefined) {
+      continue;
+    }
+
+    const width = sprite.width * obj.scaleX;
+    const height = sprite.height * obj.scaleY;
+
+    if (x >= obj.x && x <= obj.x + width && y >= obj.y && y <= obj.y + height) {
+      return obj;
+    }
+  }
+
+  return null;
 }
 
 function floodFill(grid: number[][], startRow: number, startCol: number, fillId: number): boolean {

@@ -3,12 +3,15 @@ import { IPC_CHANNELS } from '../../shared/constants';
 import type { IElectronAPI, MenuAction } from '../../shared/types';
 
 const electronAPI: IElectronAPI = {
-  fileNew: () => ipcRenderer.invoke(IPC_CHANNELS.FILE_NEW),
-  fileOpen: () => ipcRenderer.invoke(IPC_CHANNELS.FILE_OPEN),
-  fileSave: (filePath, data) => ipcRenderer.invoke(IPC_CHANNELS.FILE_SAVE, filePath, data),
-  fileSaveAs: data => ipcRenderer.invoke(IPC_CHANNELS.FILE_SAVE_AS, data),
-
-  tilesetImport: () => ipcRenderer.invoke(IPC_CHANNELS.TILESET_IMPORT),
+  projectOpen: () => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_OPEN),
+  projectScan: projectPath => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_SCAN, projectPath),
+  projectReadImage: absolutePath => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_READ_IMAGE, absolutePath),
+  projectReadMap: filePath => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_READ_MAP, filePath),
+  projectSaveMap: (filePath, data) => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_SAVE_MAP, filePath, data),
+  projectCreateMap: (projectPath, name, tileWidth, tileHeight) =>
+    ipcRenderer.invoke(IPC_CHANNELS.PROJECT_CREATE_MAP, projectPath, name, tileWidth, tileHeight),
+  projectImportTileset: projectPath => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_IMPORT_TILESET, projectPath),
+  projectImportObjects: projectPath => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_IMPORT_OBJECTS, projectPath),
 
   exportPng: pngDataUrl => ipcRenderer.invoke(IPC_CHANNELS.EXPORT_PNG, pngDataUrl),
   exportTiled: jsonData => ipcRenderer.invoke(IPC_CHANNELS.EXPORT_TILED, jsonData),

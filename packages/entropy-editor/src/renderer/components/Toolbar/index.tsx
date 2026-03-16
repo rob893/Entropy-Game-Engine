@@ -15,6 +15,7 @@ import type { ReactElement } from 'react';
 import { cn } from '../../lib/utils';
 import { useEditorStore } from '../../stores/editor-store';
 import { ToolButton } from '../editor/ToolButton';
+import { MapSelector } from '../MapSelector';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/Tooltip';
 
 const tools = [
@@ -35,6 +36,7 @@ export function Toolbar(): ReactElement {
   const setActiveTool = useEditorStore(state => state.setActiveTool);
   const showGrid = useEditorStore(state => state.showGrid);
   const toggleGrid = useEditorStore(state => state.toggleGrid);
+  const projectConfig = useEditorStore(state => state.projectConfig);
   const isDirty = useEditorStore(state => state.isDirty);
   const saveFile = useEditorStore(state => state.saveFile);
   const brushSize = useEditorStore(state => state.brushSize);
@@ -65,6 +67,12 @@ export function Toolbar(): ReactElement {
             />
           ))}
         </div>
+
+        {projectConfig !== null && (
+          <span className="max-w-40 shrink-0 truncate text-xs font-medium text-muted-foreground">
+            {projectConfig.name}
+          </span>
+        )}
 
         {showBrushControls && (
           <>
@@ -119,6 +127,8 @@ export function Toolbar(): ReactElement {
             </div>
           </>
         )}
+
+        <MapSelector />
 
         <div className="mx-1 h-5 w-px bg-border shrink-0" />
         <div className="ml-auto flex shrink-0 items-center gap-1 py-1">

@@ -1,4 +1,4 @@
-import type { IEditorMapFile } from '../../shared/types';
+import type { IEditorMapFile, IEditorTileLayer } from '../../shared/types';
 
 interface ITiledMap {
   tiledversion: string;
@@ -41,8 +41,9 @@ interface ITiledTileset {
 }
 
 export function exportToTiled(mapFile: IEditorMapFile): string {
-  const rows = mapFile.layers[0]?.grid.length ?? 0;
-  const cols = mapFile.layers[0]?.grid[0]?.length ?? 0;
+  const tileLayers = mapFile.layers.filter((layer): layer is IEditorTileLayer => layer.type === 'tile');
+  const rows = tileLayers[0]?.grid.length ?? 0;
+  const cols = tileLayers[0]?.grid[0]?.length ?? 0;
 
   const tiledMap: ITiledMap = {
     tiledversion: '1.11.0',
@@ -55,7 +56,7 @@ export function exportToTiled(mapFile: IEditorMapFile): string {
     tilewidth: mapFile.tileWidth,
     tileheight: mapFile.tileHeight,
     infinite: false,
-    layers: mapFile.layers.map((layer, index) => ({
+    layers: tileLayers.map((layer, index) => ({
       id: index + 1,
       name: layer.name,
       type: 'tilelayer' as const,

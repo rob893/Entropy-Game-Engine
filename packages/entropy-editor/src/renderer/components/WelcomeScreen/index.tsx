@@ -1,13 +1,12 @@
-import { FilePlus, FolderOpen } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { Button } from '../ui/Button';
 
 interface IWelcomeScreenProps {
-  onNewMap: () => void;
-  onOpenMap: () => void;
+  onOpenProject: () => void;
 }
 
-export function WelcomeScreen({ onNewMap, onOpenMap }: IWelcomeScreenProps): ReactElement {
+export function WelcomeScreen({ onOpenProject }: IWelcomeScreenProps): ReactElement {
   return (
     <div className="flex h-full items-center justify-center bg-background px-6">
       <div className="flex max-w-xl flex-col items-center gap-8 text-center">
@@ -17,22 +16,16 @@ export function WelcomeScreen({ onNewMap, onOpenMap }: IWelcomeScreenProps): Rea
 
         <div className="space-y-3">
           <p className="text-xs font-medium uppercase tracking-[0.32em] text-primary/80">Entropy Editor</p>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">Entropy Terrain Editor</h1>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">Open an Entropy Project</h1>
           <p className="max-w-md text-sm leading-6 text-muted-foreground">
-            Create a new terrain map or open an existing one to start building your world.
+            Open or create an Entropy project to begin building maps, importing assets, and editing your world.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <Button type="button" variant="primary" size="lg" onClick={onNewMap}>
-            <FilePlus className="h-4 w-4" />
-            New Map
-          </Button>
-          <Button type="button" variant="default" size="lg" onClick={onOpenMap}>
-            <FolderOpen className="h-4 w-4" />
-            Open Map
-          </Button>
-        </div>
+        <Button type="button" variant="primary" size="lg" onClick={onOpenProject}>
+          <FolderOpen className="h-4 w-4" />
+          Open Project
+        </Button>
       </div>
     </div>
   );

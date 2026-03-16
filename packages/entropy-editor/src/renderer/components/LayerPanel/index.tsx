@@ -1,9 +1,10 @@
-import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
+import { BoxSelect, Eye, EyeOff, Grid3x3, Trash2 } from 'lucide-react';
 import type { KeyboardEvent, ReactElement } from 'react';
 import { cn } from '../../lib/utils';
 import { useEditorStore } from '../../stores/editor-store';
 import { Panel, PanelContent, PanelHeader } from '../editor/Panel';
 import { Button } from '../ui/Button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/Tooltip';
 
 export function LayerPanel(): ReactElement {
   const mapFile = useEditorStore(state => state.mapFile);
@@ -11,9 +12,12 @@ export function LayerPanel(): ReactElement {
   const setActiveLayer = useEditorStore(state => state.setActiveLayer);
   const setLayerVisibility = useEditorStore(state => state.setLayerVisibility);
   const addLayer = useEditorStore(state => state.addLayer);
+  const addObjectLayer = useEditorStore(state => state.addObjectLayer);
   const removeLayer = useEditorStore(state => state.removeLayer);
 
   const layers = mapFile?.layers ?? [];
+  const tileLayerCount = layers.filter(layer => layer.type === 'tile').length;
+  const objectLayerCount = layers.filter(layer => layer.type === 'object').length;
 
   const handleLayerKeyDown = (event: KeyboardEvent<HTMLDivElement>, index: number): void => {
     if (event.key !== 'Enter' && event.key !== ' ') {
@@ -28,17 +32,38 @@ export function LayerPanel(): ReactElement {
     <Panel className="min-h-40 shrink-0">
       <PanelHeader
         actions={(
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            className="h-7 w-7 p-0"
-            onClick={() => addLayer(`Layer ${layers.length + 1}`)}
-            title="Add layer"
-            aria-label="Add layer"
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-0.5">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 w-7 p-0"
+                  onClick={() => addLayer(`Tile Layer ${tileLayerCount + 1}`)}
+                  aria-label="Add tile layer"
+                >
+                  <Grid3x3 className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Add tile layer</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 w-7 p-0"
+                  onClick={() => addObjectLayer(`Object Layer ${objectLayerCount + 1}`)}
+                  aria-label="Add object layer"
+                >
+                  <BoxSelect className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Add object layer</TooltipContent>
+            </Tooltip>
+          </div>
         )}
       >
         Layers
@@ -80,6 +105,9 @@ export function LayerPanel(): ReactElement {
                 >
                   <VisibilityIcon className="h-4 w-4" />
                 </button>
+                {layer.type === 'tile'
+                  ? <Grid3x3 className="h-3 w-3 shrink-0 text-muted-foreground" />
+                  : <BoxSelect className="h-3 w-3 shrink-0 text-muted-foreground" />}
                 <span className="min-w-0 flex-1 truncate text-sm">{layer.name}</span>
                 {layers.length > 1 && (
                   <button

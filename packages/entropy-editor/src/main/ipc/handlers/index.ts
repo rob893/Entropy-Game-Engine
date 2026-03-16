@@ -1,9 +1,7 @@
 import { registerExportHandlers } from './export-handlers';
-import { registerFileHandlers } from './file-handlers';
-import { registerTilesetHandlers } from './tileset-handlers';
+import { registerProjectHandlers } from './project-handlers';
 
 export function registerAllHandlers(): void {
-  registerFileHandlers();
-  registerTilesetHandlers();
+  registerProjectHandlers();
   registerExportHandlers();
 }

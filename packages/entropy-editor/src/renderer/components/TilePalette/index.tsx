@@ -13,7 +13,7 @@ export function TilePalette(): ReactElement {
   const activeTilesetId = useEditorStore(state => state.activeTilesetId);
   const brushSize = useEditorStore(state => state.brushSize);
   const setActiveTile = useEditorStore(state => state.setActiveTile);
-  const promptImportTileset = useEditorStore(state => state.promptImportTileset);
+  const importTilesetToProject = useEditorStore(state => state.importTilesetToProject);
 
   const tilesets = mapFile?.tilesets ?? [];
 
@@ -23,7 +23,7 @@ export function TilePalette(): ReactElement {
         actions={(
           <Button
             aria-label="Import tileset"
-            onClick={() => void promptImportTileset()}
+            onClick={() => void importTilesetToProject()}
             size="sm"
             title="Import tileset"
             type="button"
