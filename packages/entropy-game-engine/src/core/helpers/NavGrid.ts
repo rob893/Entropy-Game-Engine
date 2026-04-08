@@ -62,13 +62,28 @@ export class NavGrid<T extends IWeightedGraphCell = IWeightedGraphCell> implemen
     const key = this.getMapKey(cell.position);
 
     if (this.cells.has(key)) {
-      console.error(`WARNING! ${key} alread in cells set!`);
+      console.error(`WARNING! ${key} already in cells set!`);
     }
 
     this.cells.set(key, cell);
 
     if (!cell.passable) {
       this.unpassableCells.add(key);
+    }
+  }
+
+  public hasCell(x: number, y: number): boolean {
+    return this.cells.has(this.getMapKey(x, y));
+  }
+
+  public updateCell(cell: T): void {
+    const key = this.getMapKey(cell.position);
+    this.cells.set(key, cell);
+
+    if (!cell.passable) {
+      this.unpassableCells.add(key);
+    } else {
+      this.unpassableCells.delete(key);
     }
   }
 

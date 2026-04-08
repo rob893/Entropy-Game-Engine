@@ -167,14 +167,31 @@ export class TerrainBuilder {
 
           const weight = layer.weights !== undefined ? (layer.weights[row]?.[column] ?? 1) : 1;
 
-          navGrid.addCell({
-            passable,
-            weight,
-            position: new Vector2(x, y)
-          });
+          const cellPosition = new Vector2(x, y);
 
-          if (!passable) {
-            colliderOffsets.push(new Vector2(x, y));
+          if (navGrid.hasCell(x, y)) {
+            const existing = navGrid.getCell(x, y);
+            const mergedPassable = existing.passable && passable;
+
+            if (!mergedPassable && existing.passable) {
+              colliderOffsets.push(cellPosition);
+            }
+
+            navGrid.updateCell({
+              passable: mergedPassable,
+              weight: Math.max(existing.weight, weight),
+              position: cellPosition
+            });
+          } else {
+            navGrid.addCell({
+              passable,
+              weight,
+              position: cellPosition
+            });
+
+            if (!passable) {
+              colliderOffsets.push(cellPosition);
+            }
           }
 
           const assetPath = layer.tileSet[tileValue];
