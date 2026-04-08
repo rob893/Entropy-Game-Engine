@@ -30,7 +30,7 @@
     "@entropy-engine/entropy-game-engine": "*"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "vite": "^8.0.0"
+    "typescript": "^6.0.2",
+    "vite": "^8.0.7"
   }
 }

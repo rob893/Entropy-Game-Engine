@@ -3,10 +3,10 @@ import { defineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- Vite plugin types not fully resolved by ESLint
+ 
 export default defineConfig({
   plugins: [
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call -- Plugin types not fully resolved by ESLint
+     
     react(),
     electron([
       {

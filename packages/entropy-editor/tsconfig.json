@@ -16,7 +16,11 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "strictNullChecks": true,
-    "strictPropertyInitialization": true
+    "strictPropertyInitialization": true,
+    "paths": {
+      "@entropy-engine/entropy-game-engine": ["../entropy-game-engine/src"],
+      "@entropy-engine/entropy-game-engine/*": ["../entropy-game-engine/src/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "dist", "dist-electron"]
