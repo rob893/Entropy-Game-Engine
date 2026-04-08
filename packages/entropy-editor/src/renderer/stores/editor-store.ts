@@ -71,6 +71,9 @@ interface IEditorState {
 
   // Map operations
   updateLayer: (layerIndex: number, layer: EditorLayer) => void;
+  setMapName: (name: string) => void;
+  setMapTileSize: (tileWidth: number, tileHeight: number) => void;
+  resizeMap: (rows: number, cols: number) => void;
   addLayer: (name: string) => void;
 
   // Object layer operations
@@ -383,6 +386,68 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     newLayers[layerIndex] = layer;
 
     set({ mapFile: { ...mapFile, layers: newLayers }, isDirty: true });
+  },
+
+  setMapName: name => {
+    const { mapFile } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    set({ mapFile: { ...mapFile, name }, isDirty: true });
+  },
+
+  setMapTileSize: (tileWidth, tileHeight) => {
+    const { mapFile } = get();
+
+    if (mapFile === null || tileWidth < 1 || tileHeight < 1) {
+      return;
+    }
+
+    set({ mapFile: { ...mapFile, tileWidth, tileHeight }, isDirty: true });
+  },
+
+  resizeMap: (newRows, newCols) => {
+    const { mapFile } = get();
+
+    if (mapFile === null || newRows < 1 || newCols < 1) {
+      return;
+    }
+
+    const resizedLayers = mapFile.layers.map(layer => {
+      if (layer.type !== 'tile') {
+        return layer;
+      }
+
+      const oldRows = layer.grid.length;
+      const oldCols = layer.grid[0]?.length ?? 0;
+      const grid = Array.from({ length: newRows }, (_, r) =>
+        Array.from({ length: newCols }, (_, c) =>
+          r < oldRows && c < oldCols ? layer.grid[r][c] : 0
+        )
+      );
+
+      const passability = layer.passability !== undefined
+        ? Array.from({ length: newRows }, (_, r) =>
+            Array.from({ length: newCols }, (_, c) =>
+              r < oldRows && c < oldCols ? (layer.passability![r]?.[c] ?? true) : true
+            )
+          )
+        : undefined;
+
+      const weights = layer.weights !== undefined
+        ? Array.from({ length: newRows }, (_, r) =>
+            Array.from({ length: newCols }, (_, c) =>
+              r < oldRows && c < oldCols ? (layer.weights![r]?.[c] ?? 1) : 1
+            )
+          )
+        : undefined;
+
+      return { ...layer, grid, passability, weights };
+    });
+
+    set({ mapFile: { ...mapFile, layers: resizedLayers }, isDirty: true });
   },
 
   addLayer: name => {
