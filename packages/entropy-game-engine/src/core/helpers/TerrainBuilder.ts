@@ -12,27 +12,15 @@ type LayeredTerrainSpec = Required<Pick<ITerrainSpec, 'layers'>> &
   Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight'>>;
 
 export class TerrainBuilder {
-  private readonly context: CanvasRenderingContext2D;
+  private canvas: HTMLCanvasElement = document.createElement('canvas');
 
-  private readonly canvas: HTMLCanvasElement;
+  private context: CanvasRenderingContext2D = this.canvas.getContext('2d') as CanvasRenderingContext2D;
 
   private readonly imageCache: Map<string, Promise<HTMLImageElement>> = new Map<string, Promise<HTMLImageElement>>();
 
-  public constructor(width: number = 1024, height: number = 576) {
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = width;
-    this.canvas.height = height;
-    const context = this.canvas.getContext('2d');
-
-    if (context === null) {
-      throw new Error('Bad context');
-    }
-
-    this.context = context;
-  }
-
   public async buildTerrain(gameEngine: GameEngine, terrainSpec: ITerrainSpec): Promise<Terrain> {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    const { width, height } = this.computeCanvasSize(terrainSpec);
+    this.resizeCanvas(width, height);
 
     if (this.isLayeredTerrainSpec(terrainSpec)) {
       return await this.buildLayeredTerrain(gameEngine, terrainSpec);
@@ -47,6 +35,57 @@ export class TerrainBuilder {
     }
 
     throw new Error('Invalid terrain spec.');
+  }
+
+  private resizeCanvas(width: number, height: number): void {
+    this.canvas.width = width;
+    this.canvas.height = height;
+  }
+
+  private computeCanvasSize(terrainSpec: ITerrainSpec): { width: number; height: number } {
+    if (this.isLayeredTerrainSpec(terrainSpec)) {
+      const layers = terrainSpec.layers;
+      let maxRows = 0;
+      let maxCols = 0;
+
+      for (const layer of layers) {
+        maxRows = Math.max(maxRows, layer.grid.length);
+
+        for (const row of layer.grid) {
+          maxCols = Math.max(maxCols, row.length);
+        }
+      }
+
+      return {
+        width: maxCols * terrainSpec.tileWidth,
+        height: maxRows * terrainSpec.tileHeight
+      };
+    }
+
+    if (this.isLegacyTerrainSpec(terrainSpec)) {
+      const grid = terrainSpec.getSpec();
+      const rows = grid.length;
+      const cols = grid.length > 0 ? grid[0].length : 0;
+      const scaledSize = terrainSpec.cellSize * terrainSpec.scale;
+
+      return { width: cols * scaledSize, height: rows * scaledSize };
+    }
+
+    if (this.isJSONTerrainSpec(terrainSpec)) {
+      const rows = terrainSpec.grid.length;
+      let maxCols = 0;
+
+      for (const row of terrainSpec.grid) {
+        maxCols = Math.max(maxCols, row.length);
+      }
+
+      return {
+        width: maxCols * terrainSpec.tileWidth,
+        height: rows * terrainSpec.tileHeight
+      };
+    }
+
+    return { width: 1024, height: 576 };
   }
 
   private async buildLegacyTerrain(gameEngine: GameEngine, terrainSpec: LegacyTerrainSpec): Promise<Terrain> {

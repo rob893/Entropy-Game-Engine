@@ -245,7 +245,7 @@ export class GameEngine {
       this.registry.processDestroyQueue();
     }
 
-    const terrainBuilder = new TerrainBuilder(this.#gameCanvas.width, this.#gameCanvas.height);
+    const terrainBuilder = new TerrainBuilder();
     const terrain = await terrainBuilder.buildTerrain(this, newSpec);
 
     this.renderingEngine.terrain = terrain;
@@ -367,7 +367,7 @@ export class GameEngine {
     let gameObjects: GameObject[] = [];
 
     if (terrainSpec !== null) {
-      const terrianBuilder = new TerrainBuilder(this.#gameCanvas.width, this.#gameCanvas.height);
+      const terrianBuilder = new TerrainBuilder();
       const terrain = await terrianBuilder.buildTerrain(this, terrainSpec);
 
       gameObjects.push(terrain);
