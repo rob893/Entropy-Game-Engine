@@ -75,7 +75,7 @@ export function Toolbar(): ReactElement {
   return (
     <HeroToolbar
       aria-label="Editor tools"
-      className="toolbar-area flex items-center gap-1.5 overflow-x-auto border-b border-border bg-surface-secondary px-3"
+      className="toolbar-area flex items-center gap-1.5 overflow-hidden border-b border-border bg-surface-secondary px-3"
     >
       <div className="flex shrink-0 items-center py-1">
         <ToggleButtonGroup

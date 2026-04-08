@@ -381,8 +381,8 @@ export function Canvas(): ReactElement {
 
     // Draw grid
     if (showGrid) {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-      ctx.lineWidth = 0.5;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.lineWidth = 1;
       ctx.beginPath();
 
       for (let col = 0; col <= cols; col++) {
