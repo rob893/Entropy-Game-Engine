@@ -24,6 +24,7 @@
     "start:game2": "npm run start -w @entropy-engine/sample-game-2",
     "start:game3": "npm run start -w @entropy-engine/sample-game-3",
     "check:editor": "tsc --noEmit -p ./packages/entropy-editor/tsconfig.json",
+    "check:all": "tsc --noEmit -p ./packages/entropy-game-engine/tsconfig.json && tsc --noEmit -p ./packages/entropy-cli/tsconfig.json && tsc --noEmit -p ./packages/entropy-editor/tsconfig.json && tsc --noEmit -p ./sample-games/sample-game-1/tsconfig.json && tsc --noEmit -p ./sample-games/sample-game-2/tsconfig.json && tsc --noEmit -p ./sample-games/sample-game-3/tsconfig.json",
     "dev:editor": "npm run dev -w @entropy-engine/entropy-editor",
     "build:editor": "npm run build -w @entropy-engine/entropy-editor",
     "outdated:all": "npm outdated --workspaces --include-workspace-root",
