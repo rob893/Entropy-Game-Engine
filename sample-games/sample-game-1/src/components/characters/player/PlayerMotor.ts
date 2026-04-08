@@ -1,4 +1,5 @@
 import {
+  Camera,
   CollisionManifold,
   Component,
   EventType,
@@ -61,6 +62,18 @@ export class PlayerMotor extends Component {
       this.input.addKeyListener(EventType.KeyDown, Key.Backspace, () => spawner.toggleSpawn());
       this.input.addKeyListener(EventType.KeyDown, '0', () => spawner.stopSpawning());
       this.myStats.onDeath.subscribe(() => spawner.stopSpawning());
+    }
+
+    const mainCamera = this.findGameObjectWithTag('mainCamera');
+
+    if (mainCamera !== null) {
+      const cameraComp = mainCamera.getComponent(Camera);
+
+      if (cameraComp !== null) {
+        cameraComp.followTarget = this.transform;
+      }
+    } else {
+      throw new Error('Main camera not found in scene.');
     }
   }
 

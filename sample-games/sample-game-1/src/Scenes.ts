@@ -25,6 +25,7 @@ import TrumpIdle from './assets/images/trump_idle.png';
 import TrumpRun from './assets/images/trump_run.png';
 import { Box } from './game-objects/Box';
 import { GameManagerObject } from './game-objects/GameManagerObject';
+import { MainCamera } from './game-objects/MainCamera';
 import { Minotaur } from './game-objects/Minotaur';
 import { Player } from './game-objects/Player';
 import { PlayerRB } from './game-objects/PlayerRB';
@@ -46,7 +47,8 @@ export const scene1: IScene = {
       new GameManagerObject({ gameEngine, name: 'gameManager' }),
       new Minotaur({ gameEngine, name: 'minotaur' }),
       new Player({ gameEngine, name: 'player', x: 400, y: 250 }),
-      new UICanvas({ gameEngine, name: 'ui-canvas' })
+      new UICanvas({ gameEngine, name: 'ui-canvas' }),
+      new MainCamera({ gameEngine, name: 'mainCamera' })
     ];
   },
 
