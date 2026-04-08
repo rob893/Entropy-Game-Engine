@@ -30,7 +30,7 @@ export class Background extends GameObject implements IRenderableBackground {
   }
 
   protected buildInitialComponents(): Component[] {
-    const backgroundImage = this.assetPool.getAsset<HTMLImageElement>('backgroundImage');
+    const backgroundImage = this.assetPool.getAsset('backgroundImage') as HTMLImageElement;
 
     const scrollingBackground = new ScrollingBackground(this, backgroundImage);
 

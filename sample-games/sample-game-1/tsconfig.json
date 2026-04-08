@@ -9,6 +9,6 @@
       "@entropy-engine/entropy-game-engine/*": ["../../packages/entropy-game-engine/src/*"]
     }
   },
-  "include": ["src/**/*", "vite.config.ts"],
+  "include": ["src/**/*"],
   "exclude": ["**/__tests__", "**/__mocks__"]
 }

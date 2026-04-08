@@ -12,7 +12,7 @@ export class Border extends GameObject {
   protected buildInitialComponents(): Component[] {
     const collider = new RectangleCollider(this, null, 20, 200);
 
-    const brickImage = this.assetPool.getAsset<HTMLImageElement>('brickImage');
+    const brickImage = this.assetPool.getAsset('brickImage') as HTMLImageElement;
     const imageRenderer = new ImageRenderer(this, 20, 200, brickImage);
 
     const scroller = new Scroller(this, -300);

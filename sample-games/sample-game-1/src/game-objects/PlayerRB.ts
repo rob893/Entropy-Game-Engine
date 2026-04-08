@@ -61,7 +61,7 @@ export class PlayerRB extends GameObject {
     const characterAnimator = new CharacterAnimator(this, animator, animations);
     components.push(characterAnimator);
 
-    const audioSource = new AudioSource(this, this.assetPool.getAsset<AudioClip>('hurtSound'));
+    const audioSource = new AudioSource(this, this.assetPool.getAsset('hurtSound') as AudioClip);
     components.push(audioSource);
 
     components.push(new PlayerHealth(this, audioSource));

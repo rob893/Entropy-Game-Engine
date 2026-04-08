@@ -21,7 +21,7 @@ export class Missile extends GameObject {
   protected buildInitialComponents(): Component[] {
     const collider = new RectangleCollider(this, null, 60, 15);
 
-    const missileSpriteSheet = this.assetPool.getAsset<unknown>('missileSpriteSheet');
+    const missileSpriteSheet = this.assetPool.getAsset('missileSpriteSheet');
 
     if (!isSpriteSheetAsset(missileSpriteSheet)) {
       throw new Error('Missile sprite sheet unavailable.');

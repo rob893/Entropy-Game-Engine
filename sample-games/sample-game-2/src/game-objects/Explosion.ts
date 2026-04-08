@@ -20,7 +20,7 @@ function isSpriteSheetAsset(value: unknown): value is SpriteSheetAsset {
 
 export class Explosion extends GameObject {
   protected buildInitialComponents(): Component[] {
-    const explosionSpriteSheet = this.assetPool.getAsset<unknown>('explosionSpriteSheet');
+    const explosionSpriteSheet = this.assetPool.getAsset('explosionSpriteSheet');
 
     if (!isSpriteSheetAsset(explosionSpriteSheet)) {
       throw new Error('Explosion sprite sheet unavailable.');
@@ -29,7 +29,7 @@ export class Explosion extends GameObject {
     const explosionAnimation = new Animation(explosionSpriteSheet.getFrames(), 0.04);
     explosionAnimation.loop = false;
 
-    const audioSource = new AudioSource(this, this.assetPool.getAsset<AudioClip>('explosionSound'));
+    const audioSource = new AudioSource(this, this.assetPool.getAsset('explosionSound') as AudioClip);
 
     return [audioSource, new Animator(this, 75, 75, explosionAnimation), new Exploder(this, audioSource)];
   }

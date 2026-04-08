@@ -21,7 +21,7 @@ export class Player extends GameObject {
   protected buildInitialComponents(): Component[] {
     const collider = new RectangleCollider(this, null, 60, 30);
 
-    const helicopterSpriteSheet = this.assetPool.getAsset<unknown>('helicopterSpriteSheet');
+    const helicopterSpriteSheet = this.assetPool.getAsset('helicopterSpriteSheet');
 
     if (!isSpriteSheetAsset(helicopterSpriteSheet)) {
       throw new Error('Helicopter sprite sheet unavailable.');

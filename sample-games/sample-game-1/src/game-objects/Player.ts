@@ -37,7 +37,7 @@ export class Player extends GameObject {
     collider.physicalMaterial = PhysicalMaterial.bouncy;
     components.push(collider);
 
-    const knightIdleSpriteSheet = this.assetPool.getAsset<unknown>('knightIdleSpriteSheet');
+    const knightIdleSpriteSheet = this.assetPool.getAsset('knightIdleSpriteSheet');
 
     if (!isSpriteSheetAsset(knightIdleSpriteSheet)) {
       throw new Error('Knight idle sprite sheet unavailable.');
@@ -49,19 +49,19 @@ export class Player extends GameObject {
     const animator = new Animator(this, 75, 75, initialAnimation);
     components.push(animator);
 
-    const knightSheet = this.assetPool.getAsset<unknown>('knightSpriteSheet');
+    const knightSheet = this.assetPool.getAsset('knightSpriteSheet');
     if (!isSpriteSheetAsset(knightSheet)) {
       throw new Error('Knight sprite sheet unavailable.');
     }
 
-    const knightRunSheet = this.assetPool.getAsset<unknown>('knightRunSpriteSheet');
+    const knightRunSheet = this.assetPool.getAsset('knightRunSpriteSheet');
     if (!isSpriteSheetAsset(knightRunSheet)) {
       throw new Error('Knight run sprite sheet unavailable.');
     }
 
     const knightIdleSheet = knightIdleSpriteSheet;
 
-    const knightAttack1Sheet = this.assetPool.getAsset<unknown>('knightAttack1SpriteSheet');
+    const knightAttack1Sheet = this.assetPool.getAsset('knightAttack1SpriteSheet');
     if (!isSpriteSheetAsset(knightAttack1Sheet)) {
       throw new Error('Knight attack 1 sprite sheet unavailable.');
     }
