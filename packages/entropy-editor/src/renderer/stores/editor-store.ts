@@ -714,7 +714,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
 
     try {
       const strippedMap = stripProjectMapImageData(mapFile);
-      await window.electronAPI.projectSaveMap(filePath, strippedMap);
+      await window.electronAPI.projectSaveMap(projectPath, filePath, strippedMap);
       set({ isDirty: false });
     } catch (err) {
       set({ error: getErrorMessage(err) });
@@ -797,7 +797,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
           ...data,
           layers: data.layers.map(layer => (layer.type === 'tile' ? { ...layer, grid: createGrid(rows, cols) } : layer))
         };
-        await window.electronAPI.projectSaveMap(result.filePath, stripProjectMapImageData(data));
+        await window.electronAPI.projectSaveMap(projectPath, result.filePath, stripProjectMapImageData(data));
       }
 
       const scanResult: IProjectScanResult = await window.electronAPI.projectScan(projectPath);

@@ -18,7 +18,7 @@ export interface IElectronAPI {
   projectScan(projectPath: string): Promise<IProjectScanResult>;
   projectReadImage(absolutePath: string): Promise<string>;
   projectReadMap(filePath: string): Promise<IEditorMapFile>;
-  projectSaveMap(filePath: string, data: IEditorMapFile): Promise<void>;
+  projectSaveMap(projectPath: string, filePath: string, data: IEditorMapFile): Promise<void>;
   projectCreateMap(projectPath: string, name: string, tileWidth: number, tileHeight: number): Promise<IFileOpenResult>;
 
   // Asset operations

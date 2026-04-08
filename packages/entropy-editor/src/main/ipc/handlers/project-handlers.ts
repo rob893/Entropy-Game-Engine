@@ -68,9 +68,11 @@ export function registerProjectHandlers(): void {
     return data;
   });
 
-  handle(IPC_CHANNELS.PROJECT_SAVE_MAP, async (filePath: string, data: IEditorMapFile): Promise<void> => {
+  handle(IPC_CHANNELS.PROJECT_SAVE_MAP, async (projectPath: string, filePath: string, data: IEditorMapFile): Promise<void> => {
     const content = JSON.stringify(data, null, 2);
     await fs.writeFile(filePath, content, 'utf-8');
+
+    await syncAssetsToPublic(projectPath, data);
   });
 
   handle(
@@ -228,5 +230,38 @@ async function discoverImages(dir: string, projectPath: string, parentCategory: 
     return results;
   } catch {
     return [];
+  }
+}
+
+async function syncAssetsToPublic(projectPath: string, mapData: IEditorMapFile): Promise<void> {
+  const assetPaths: string[] = [];
+
+  for (const tileset of mapData.tilesets) {
+    if (tileset.imagePath !== '') {
+      assetPaths.push(tileset.imagePath);
+    }
+  }
+
+  for (const sprite of mapData.objectSprites) {
+    if (sprite.imagePath !== '') {
+      assetPaths.push(sprite.imagePath);
+    }
+  }
+
+  for (const relativePath of assetPaths) {
+    if (relativePath.includes('..') || path.isAbsolute(relativePath)) {
+      continue;
+    }
+
+    const sourcePath = path.join(projectPath, relativePath);
+    const destinationPath = path.join(projectPath, 'public', relativePath);
+
+    try {
+      await fs.access(sourcePath);
+      await fs.mkdir(path.dirname(destinationPath), { recursive: true });
+      await fs.copyFile(sourcePath, destinationPath);
+    } catch {
+      // Best-effort: don't fail the save if an asset can't be synced
+    }
   }
 }

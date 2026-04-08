@@ -7,7 +7,7 @@ const electronAPI: IElectronAPI = {
   projectScan: projectPath => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_SCAN, projectPath),
   projectReadImage: absolutePath => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_READ_IMAGE, absolutePath),
   projectReadMap: filePath => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_READ_MAP, filePath),
-  projectSaveMap: (filePath, data) => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_SAVE_MAP, filePath, data),
+  projectSaveMap: (projectPath, filePath, data) => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_SAVE_MAP, projectPath, filePath, data),
   projectCreateMap: (projectPath, name, tileWidth, tileHeight) =>
     ipcRenderer.invoke(IPC_CHANNELS.PROJECT_CREATE_MAP, projectPath, name, tileWidth, tileHeight),
   projectImportTileset: projectPath => ipcRenderer.invoke(IPC_CHANNELS.PROJECT_IMPORT_TILESET, projectPath),
