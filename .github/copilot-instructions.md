@@ -68,6 +68,7 @@ Games define `Scene` objects with factory functions for GameObjects, pass them t
 ### General
 
 - `any` is not allowed.
+- Always commit after completing a logical unit of work (e.g. a new feature, bug fix, refactor). Use descriptive commit messages.
 
 ### File Naming
 
@@ -114,6 +115,7 @@ Visual terrain map editor built with Electron + React. See `.docs/electron-app-a
 ### Component Rules
 
 **ALWAYS use HeroUI components — NEVER raw HTML for interactive elements:**
+
 - `<Button>` not `<button>` — uses `onPress` (not `onClick`), `isDisabled` (not `disabled`), `isIconOnly` for icon-only buttons
 - `<ToggleButton>` for on/off toggles — `isSelected` + `onChange`, `isIconOnly`
 - `<ToggleButtonGroup>` for exclusive/multi selection groups — `selectionMode="single"|"multiple"`
@@ -132,6 +134,7 @@ Visual terrain map editor built with Electron + React. See `.docs/electron-app-a
 **HeroUI v3 docs reference**: `.heroui-docs/react/components/` for component docs, `.heroui-docs/react/demos/` for working code examples. Always read the relevant demo before using a component.
 
 **Editor-specific components** (only when HeroUI has no equivalent):
+
 - `src/renderer/components/editor/Panel.tsx` — sidebar panel wrapper (uses Surface internally)
 - `src/renderer/components/editor/ToolButton.tsx` — toolbar icon button with tooltip (uses ToggleButton + Tooltip)
 - `src/renderer/components/editor/ErrorToast.tsx` — error notification (uses Surface + CloseButton)
@@ -139,6 +142,7 @@ Visual terrain map editor built with Electron + React. See `.docs/electron-app-a
 ### Color Tokens (HeroUI theme)
 
 Use HeroUI's semantic token names in Tailwind classes:
+
 - `text-foreground`, `bg-background` — primary text/bg
 - `text-muted` — secondary text
 - `bg-surface`, `bg-surface-secondary`, `bg-surface-tertiary` — panel backgrounds

@@ -103,9 +103,7 @@ export function Toolbar(): ReactElement {
       </div>
 
       {projectConfig !== null && (
-        <span className="max-w-40 shrink-0 truncate text-xs font-medium text-muted">
-          {projectConfig.name}
-        </span>
+        <span className="max-w-40 shrink-0 truncate text-xs font-medium text-muted">{projectConfig.name}</span>
       )}
 
       {showBrushControls && (
@@ -260,6 +258,8 @@ export function Toolbar(): ReactElement {
           <Tooltip.Content>Weights overlay</Tooltip.Content>
         </Tooltip>
         <Separator />
+        <ToolButton icon={Grid3x3} label="Toggle grid" shortcut="G" active={showGrid} onClick={toggleGrid} />
+        <Separator />
         <Tooltip delay={300}>
           <Button
             isIconOnly
@@ -273,14 +273,6 @@ export function Toolbar(): ReactElement {
           </Button>
           <Tooltip.Content>Save (Ctrl+S)</Tooltip.Content>
         </Tooltip>
-        <Separator />
-        <ToolButton
-          icon={Grid3x3}
-          label="Toggle grid"
-          shortcut="G"
-          active={showGrid}
-          onClick={toggleGrid}
-        />
       </div>
     </HeroToolbar>
   );
