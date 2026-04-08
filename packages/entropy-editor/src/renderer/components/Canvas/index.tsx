@@ -152,6 +152,7 @@ export function Canvas(): ReactElement {
   const showPassability = useEditorStore(state => state.showPassability);
   const showWeights = useEditorStore(state => state.showWeights);
   const setActiveWeight = useEditorStore(state => state.setActiveWeight);
+  const pushUndoSnapshot = useEditorStore(state => state.pushUndoSnapshot);
 
   // Register canvas element for export operations
   useEffect(() => {
@@ -787,6 +788,7 @@ export function Canvas(): ReactElement {
         selectObject(hitObject?.id ?? null);
 
         if (hitObject !== null) {
+          pushUndoSnapshot();
           isDraggingObjectRef.current = true;
           dragStartRef.current = { x: clickX, y: clickY };
           dragObjectStartRef.current = { x: hitObject.x, y: hitObject.y };
@@ -798,6 +800,7 @@ export function Canvas(): ReactElement {
       return;
     }
 
+    pushUndoSnapshot();
     isPaintingRef.current = true;
     const pos = getGridPosition(e);
 
@@ -805,7 +808,7 @@ export function Canvas(): ReactElement {
       const offset = Math.floor(brushSize / 2);
       applyTool(pos.row - offset, pos.col - offset);
     }
-  }, [activeLayerIndex, activeObjectSpriteId, activeTool, applyTool, brushSize, getCanvasPosition, getGridPosition, mapFile, placeObject, selectObject]);
+  }, [activeLayerIndex, activeObjectSpriteId, activeTool, applyTool, brushSize, getCanvasPosition, getGridPosition, mapFile, placeObject, pushUndoSnapshot, selectObject]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
     if (isPanningRef.current) {

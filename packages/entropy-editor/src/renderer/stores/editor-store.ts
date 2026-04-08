@@ -19,6 +19,34 @@ export type EditorTool = 'brush' | 'eraser' | 'fill' | 'eyedropper' | 'select';
 export type BrushShape = 'square' | 'circle';
 export type EditorMode = 'paint' | 'passability' | 'weight';
 
+const MAX_UNDO_HISTORY = 50;
+let savedMapRef: IEditorMapFile | null = null;
+
+function normalizeSelections(
+  mapFile: IEditorMapFile,
+  state: Pick<IEditorState, 'activeLayerIndex' | 'activeTilesetId' | 'activeObjectSpriteId'>
+): Partial<IEditorState> {
+  const maxLayerIndex = Math.max(0, mapFile.layers.length - 1);
+  const activeLayerIndex = Math.min(state.activeLayerIndex, maxLayerIndex);
+
+  const tilesetIds = new Set(mapFile.tilesets.map(t => t.id));
+  const activeTilesetId = state.activeTilesetId !== null && tilesetIds.has(state.activeTilesetId)
+    ? state.activeTilesetId
+    : mapFile.tilesets[0]?.id ?? null;
+
+  const spriteIds = new Set(mapFile.objectSprites.map(s => s.id));
+  const activeObjectSpriteId = state.activeObjectSpriteId !== null && spriteIds.has(state.activeObjectSpriteId)
+    ? state.activeObjectSpriteId
+    : mapFile.objectSprites[0]?.id ?? null;
+
+  return {
+    activeLayerIndex,
+    activeTilesetId,
+    activeObjectSpriteId,
+    selectedObjectId: null
+  };
+}
+
 interface IEditorState {
   // Map state
   mapFile: IEditorMapFile | null;
@@ -68,6 +96,13 @@ interface IEditorState {
   toggleWeightsOverlay: () => void;
   setError: (error: string | null) => void;
   setCanvasElement: (canvas: HTMLCanvasElement | null) => void;
+
+  // History
+  undoStack: readonly IEditorMapFile[];
+  redoStack: readonly IEditorMapFile[];
+  pushUndoSnapshot: () => void;
+  undo: () => void;
+  redo: () => void;
 
   // Map operations
   updateLayer: (layerIndex: number, layer: EditorLayer) => void;
@@ -328,15 +363,21 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   showWeights: false,
   error: null,
   canvasElement: null,
+  undoStack: [],
+  redoStack: [],
 
-  setMapFile: (mapFile, filePath) =>
+  setMapFile: (mapFile, filePath) => {
+    savedMapRef = mapFile;
     set({
       mapFile,
       filePath,
       isDirty: false,
       selectedObjectId: null,
-      activeObjectSpriteId: mapFile.objectSprites[0]?.id ?? null
-    }),
+      activeObjectSpriteId: mapFile.objectSprites[0]?.id ?? null,
+      undoStack: [],
+      redoStack: []
+    });
+  },
   setDirty: dirty => set({ isDirty: dirty }),
   setActiveTool: tool => set({ activeTool: tool }),
   setActiveLayer: index => {
@@ -375,6 +416,62 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   setError: error => set({ error }),
   setCanvasElement: canvas => set({ canvasElement: canvas }),
 
+  pushUndoSnapshot: () => {
+    const { mapFile, undoStack } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const newStack = [...undoStack, mapFile];
+
+    if (newStack.length > MAX_UNDO_HISTORY) {
+      newStack.shift();
+    }
+
+    set({ undoStack: newStack, redoStack: [] });
+  },
+
+  undo: () => {
+    const { mapFile, undoStack, redoStack } = get();
+
+    if (mapFile === null || undoStack.length === 0) {
+      return;
+    }
+
+    const newUndo = [...undoStack];
+    const snapshot = newUndo.pop()!;
+    const newRedo = [...redoStack, mapFile];
+
+    set({
+      mapFile: snapshot,
+      undoStack: newUndo,
+      redoStack: newRedo,
+      isDirty: snapshot !== savedMapRef,
+      ...normalizeSelections(snapshot, get())
+    });
+  },
+
+  redo: () => {
+    const { mapFile, undoStack, redoStack } = get();
+
+    if (mapFile === null || redoStack.length === 0) {
+      return;
+    }
+
+    const newRedo = [...redoStack];
+    const snapshot = newRedo.pop()!;
+    const newUndo = [...undoStack, mapFile];
+
+    set({
+      mapFile: snapshot,
+      undoStack: newUndo,
+      redoStack: newRedo,
+      isDirty: snapshot !== savedMapRef,
+      ...normalizeSelections(snapshot, get())
+    });
+  },
+
   updateLayer: (layerIndex, layer) => {
     const { mapFile } = get();
 
@@ -395,6 +492,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       return;
     }
 
+    get().pushUndoSnapshot();
     set({ mapFile: { ...mapFile, name }, isDirty: true });
   },
 
@@ -405,6 +503,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       return;
     }
 
+    get().pushUndoSnapshot();
     set({ mapFile: { ...mapFile, tileWidth, tileHeight }, isDirty: true });
   },
 
@@ -414,6 +513,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     if (mapFile === null || newRows < 1 || newCols < 1) {
       return;
     }
+
+    get().pushUndoSnapshot();
 
     const resizedLayers = mapFile.layers.map(layer => {
       if (layer.type !== 'tile') {
@@ -463,6 +564,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       return;
     }
 
+    get().pushUndoSnapshot();
+
     const rows = referenceLayer.grid.length;
     const cols = referenceLayer.grid[0]?.length ?? 0;
     const grid = Array.from({ length: rows }, () => new Array<number>(cols).fill(0));
@@ -490,6 +593,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     if (mapFile === null) {
       return;
     }
+
+    get().pushUndoSnapshot();
 
     const newLayer: IEditorObjectLayer = {
       type: 'object',
@@ -519,6 +624,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     if (layer === undefined || layer.type !== 'object') {
       return;
     }
+
+    get().pushUndoSnapshot();
 
     let finalX = x;
     let finalY = y;
@@ -600,6 +707,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       return;
     }
 
+    get().pushUndoSnapshot();
     set({ mapFile: updatedMapFile, isDirty: true });
   },
 
@@ -620,6 +728,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       return;
     }
 
+    get().pushUndoSnapshot();
     set({ mapFile: updatedMapFile, isDirty: true });
   },
 
@@ -641,6 +750,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     if (updatedObjects.length === layer.objects.length) {
       return;
     }
+
+    get().pushUndoSnapshot();
 
     const updatedLayer: IEditorObjectLayer = { ...layer, objects: updatedObjects };
     const newLayers = [...mapFile.layers];
@@ -679,6 +790,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       return;
     }
 
+    get().pushUndoSnapshot();
+
     const currentObject = sortedObjects[currentIndex];
     const targetObject = sortedObjects[targetIndex];
     const updatedObjects = layer.objects.map(obj => {
@@ -709,6 +822,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       return;
     }
 
+    get().pushUndoSnapshot();
     set({
       mapFile: { ...mapFile, objectSprites: [...mapFile.objectSprites, ...sprites] },
       isDirty: true,
@@ -724,6 +838,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     if (mapFile === null || mapFile.layers.length <= 1) {
       return;
     }
+
+    get().pushUndoSnapshot();
 
     const newLayers = mapFile.layers.filter((_, i) => i !== index);
     const newActiveIndex = activeLayerIndex >= newLayers.length ? newLayers.length - 1 : activeLayerIndex;
@@ -743,6 +859,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       return;
     }
 
+    get().pushUndoSnapshot();
+
     const newLayers = [...mapFile.layers];
     newLayers[index] = { ...newLayers[index], visible };
 
@@ -755,6 +873,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     if (mapFile === null) {
       return;
     }
+
+    get().pushUndoSnapshot();
 
     const newLayers = [...mapFile.layers];
     newLayers[index] = { ...newLayers[index], opacity };
@@ -769,6 +889,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       return;
     }
 
+    get().pushUndoSnapshot();
     set({ mapFile: { ...mapFile, tilesets: [...mapFile.tilesets, tileset] }, isDirty: true });
   },
 
@@ -778,6 +899,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     if (mapFile === null) {
       return;
     }
+
+    get().pushUndoSnapshot();
 
     const newTilesets = mapFile.tilesets.filter(ts => ts.id !== tilesetId);
 
@@ -811,6 +934,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     try {
       const strippedMap = stripProjectMapImageData(mapFile);
       await window.electronAPI.projectSaveMap(projectPath, filePath, strippedMap);
+      savedMapRef = mapFile;
       set({ isDirty: false });
     } catch (err) {
       set({ error: getErrorMessage(err) });
@@ -857,6 +981,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     try {
       const data = await window.electronAPI.projectReadMap(mapFilePath);
       const mapFile = mergeProjectAssetsIntoMap(data, discoveredTilesets, discoveredObjects);
+      savedMapRef = mapFile;
 
       set({
         mapFile,
@@ -865,7 +990,9 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         activeLayerIndex: 0,
         activeTilesetId: mapFile.tilesets[0]?.id ?? null,
         activeObjectSpriteId: mapFile.objectSprites[0]?.id ?? null,
-        selectedObjectId: null
+        selectedObjectId: null,
+        undoStack: [],
+        redoStack: []
       });
     } catch (err) {
       set({ error: getErrorMessage(err) });
@@ -898,6 +1025,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
 
       const scanResult: IProjectScanResult = await window.electronAPI.projectScan(projectPath);
       const mapFile = mergeProjectAssetsIntoMap(data, scanResult.tilesets, scanResult.objectSprites);
+      savedMapRef = mapFile;
 
       set({
         projectConfig: scanResult.config,
@@ -910,7 +1038,9 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         activeLayerIndex: 0,
         activeTilesetId: mapFile.tilesets[0]?.id ?? null,
         activeObjectSpriteId: mapFile.objectSprites[0]?.id ?? null,
-        selectedObjectId: null
+        selectedObjectId: null,
+        undoStack: [],
+        redoStack: []
       });
     } catch (err) {
       set({ error: getErrorMessage(err) });

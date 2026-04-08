@@ -11,9 +11,11 @@ import {
   PaintBucket,
   Pipette,
   Plus,
+  Redo2,
   Save,
   ShieldBan,
   Square,
+  Undo2,
   Weight
 } from 'lucide-react';
 import type { ReactElement } from 'react';
@@ -64,6 +66,10 @@ export function Toolbar(): ReactElement {
   const toggleWeightsOverlay = useEditorStore(state => state.toggleWeightsOverlay);
   const mapFile = useEditorStore(state => state.mapFile);
   const activeLayerIndex = useEditorStore(state => state.activeLayerIndex);
+  const undo = useEditorStore(state => state.undo);
+  const redo = useEditorStore(state => state.redo);
+  const canUndo = useEditorStore(state => state.undoStack.length > 0);
+  const canRedo = useEditorStore(state => state.redoStack.length > 0);
 
   const activeLayer = mapFile?.layers[activeLayerIndex];
   const isObjectLayer = activeLayer !== undefined && activeLayer.type === 'object';
@@ -259,6 +265,33 @@ export function Toolbar(): ReactElement {
         </Tooltip>
         <Separator />
         <ToolButton icon={Grid3x3} label="Toggle grid" shortcut="G" active={showGrid} onClick={toggleGrid} />
+        <Separator />
+        <Tooltip delay={300}>
+          <Button
+            isIconOnly
+            variant="ghost"
+            size="sm"
+            onPress={undo}
+            isDisabled={!canUndo}
+            aria-label="Undo (Ctrl+Z)"
+          >
+            <Undo2 className="h-4 w-4" />
+          </Button>
+          <Tooltip.Content>Undo (Ctrl+Z)</Tooltip.Content>
+        </Tooltip>
+        <Tooltip delay={300}>
+          <Button
+            isIconOnly
+            variant="ghost"
+            size="sm"
+            onPress={redo}
+            isDisabled={!canRedo}
+            aria-label="Redo (Ctrl+Y)"
+          >
+            <Redo2 className="h-4 w-4" />
+          </Button>
+          <Tooltip.Content>Redo (Ctrl+Y)</Tooltip.Content>
+        </Tooltip>
         <Separator />
         <Tooltip delay={300}>
           <Button

@@ -55,8 +55,10 @@ export function App(): ReactElement {
           store.toggleGrid();
           break;
         case 'undo':
+          store.undo();
+          break;
         case 'redo':
-          // TODO: wire undo/redo when EditorHistory is integrated
+          store.redo();
           break;
       }
     });

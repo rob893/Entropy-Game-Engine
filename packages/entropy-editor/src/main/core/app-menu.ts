@@ -78,8 +78,14 @@ export function createAppMenu(mainWindow: BrowserWindow): void {
         },
         {
           label: 'Redo',
-          accelerator: 'CmdOrCtrl+Y',
+          accelerator: 'CmdOrCtrl+Shift+Z',
           click: (): void => sendMenuAction(mainWindow, 'redo')
+        },
+        {
+          label: 'Redo',
+          accelerator: 'CmdOrCtrl+Y',
+          click: (): void => sendMenuAction(mainWindow, 'redo'),
+          visible: false
         }
       ]
     },
