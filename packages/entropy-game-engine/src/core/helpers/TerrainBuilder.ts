@@ -5,7 +5,6 @@ import type { ITerrainSpec } from '../types';
 import { NavGrid } from './NavGrid';
 import { Vector2 } from './Vector2';
 
-type LegacyTerrainSpec = Required<Pick<ITerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
 type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> &
   Pick<ITerrainSpec, 'tileSet'>;
 type LayeredTerrainSpec = Required<Pick<ITerrainSpec, 'layers'>> &
@@ -24,10 +23,6 @@ export class TerrainBuilder {
 
     if (this.isLayeredTerrainSpec(terrainSpec)) {
       return await this.buildLayeredTerrain(gameEngine, terrainSpec);
-    }
-
-    if (this.isLegacyTerrainSpec(terrainSpec)) {
-      return await this.buildLegacyTerrain(gameEngine, terrainSpec);
     }
 
     if (this.isJSONTerrainSpec(terrainSpec)) {
@@ -62,15 +57,6 @@ export class TerrainBuilder {
       };
     }
 
-    if (this.isLegacyTerrainSpec(terrainSpec)) {
-      const grid = terrainSpec.getSpec();
-      const rows = grid.length;
-      const cols = grid.length > 0 ? grid[0].length : 0;
-      const scaledSize = terrainSpec.cellSize * terrainSpec.scale;
-
-      return { width: cols * scaledSize, height: rows * scaledSize };
-    }
-
     if (this.isJSONTerrainSpec(terrainSpec)) {
       const rows = terrainSpec.grid.length;
       let maxCols = 0;
@@ -86,55 +72,6 @@ export class TerrainBuilder {
     }
 
     return { width: 1024, height: 576 };
-  }
-
-  private async buildLegacyTerrain(gameEngine: GameEngine, terrainSpec: LegacyTerrainSpec): Promise<Terrain> {
-    const spriteSheet = await this.loadImage(terrainSpec.spriteSheetUrl);
-    const terrainGrid = terrainSpec.getSpec();
-    const navGrid = new NavGrid(terrainSpec.cellSize * terrainSpec.scale);
-    const colliderOffsets: Vector2[] = [];
-
-    let x = 0;
-    let y = 0;
-    for (let i = 0; i < terrainGrid.length; i++) {
-      for (let j = 0; j < terrainGrid[i].length; j++) {
-        const gridCell = terrainGrid[i][j];
-
-        if (gridCell === null) {
-          x = j === terrainGrid[i].length - 1 ? 0 : x + terrainSpec.cellSize * terrainSpec.scale;
-          y = j === terrainGrid[i].length - 1 ? y + terrainSpec.cellSize * terrainSpec.scale : y;
-          continue;
-        }
-
-        navGrid.addCell({
-          passable: gridCell.passable,
-          weight: gridCell.weight,
-          position: new Vector2(x, y)
-        });
-
-        if (!gridCell.passable) {
-          colliderOffsets.push(new Vector2(x, y));
-        }
-
-        const spriteData = gridCell.spriteData;
-        this.context.drawImage(
-          spriteSheet,
-          spriteData.sliceX,
-          spriteData.sliceY,
-          spriteData.sliceWidth,
-          spriteData.sliceHeight,
-          x,
-          y,
-          spriteData.sliceWidth * terrainSpec.scale,
-          spriteData.sliceHeight * terrainSpec.scale
-        );
-
-        x = j === terrainGrid[i].length - 1 ? 0 : x + spriteData.sliceWidth * terrainSpec.scale;
-        y = j === terrainGrid[i].length - 1 ? y + spriteData.sliceHeight * terrainSpec.scale : y;
-      }
-    }
-
-    return await this.createTerrain(gameEngine, navGrid, colliderOffsets);
   }
 
   private async buildJSONTerrain(gameEngine: GameEngine, terrainSpec: JSONTerrainSpec): Promise<Terrain> {
@@ -356,15 +293,6 @@ export class TerrainBuilder {
 
     this.imageCache.set(src, imagePromise);
     return await imagePromise;
-  }
-
-  private isLegacyTerrainSpec(terrainSpec: ITerrainSpec): terrainSpec is LegacyTerrainSpec {
-    return (
-      typeof terrainSpec.spriteSheetUrl === 'string' &&
-      typeof terrainSpec.scale === 'number' &&
-      typeof terrainSpec.cellSize === 'number' &&
-      typeof terrainSpec.getSpec === 'function'
-    );
   }
 
   private isLayeredTerrainSpec(terrainSpec: ITerrainSpec): terrainSpec is LayeredTerrainSpec {

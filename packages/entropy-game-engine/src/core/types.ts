@@ -164,21 +164,11 @@ export interface ITerrainLayer {
 }
 
 export interface ITerrainSpec {
-  spriteSheetUrl?: string;
-  scale?: number;
-  cellSize?: number;
-  getSpec?(): (ITerrainCell | null)[][];
   tileWidth?: number;
   tileHeight?: number;
   grid?: number[][];
   tileSet?: Record<number, string>;
   layers?: ITerrainLayer[];
-}
-
-export interface ITerrainCell {
-  passable: boolean;
-  weight: number;
-  spriteData: ISpriteData;
 }
 
 export interface ISpriteData {

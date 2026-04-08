@@ -4,11 +4,8 @@ import type { GameEngine } from './GameEngine';
 import { AssetPool } from './helpers/AssetPool';
 import type { IScene } from './types';
 import type { ISerializedScene, ISerializedTerrain, ISerializedTerrainLayer } from './types';
-import type { ISpriteData } from './types';
-import type { ITerrainCell, ITerrainLayer } from './types';
+import type { ITerrainLayer } from './types';
 import type { ITerrainSpec } from './types';
-
-type LegacyTerrainSpec = Required<Pick<ITerrainSpec, 'spriteSheetUrl' | 'scale' | 'cellSize' | 'getSpec'>>;
 
 type JSONTerrainSpec = Required<Pick<ITerrainSpec, 'tileWidth' | 'tileHeight' | 'grid'>> &
   Pick<ITerrainSpec, 'tileSet'>;
@@ -90,76 +87,22 @@ export class SceneSerializer {
   private static serializeTerrain(terrainSpec: ITerrainSpec): ISerializedTerrain | undefined {
     const { layers } = terrainSpec;
 
-    if (this.isJSONTerrainSpec(terrainSpec)) {
-      const serialized: ISerializedTerrain = {
-        tileWidth: terrainSpec.tileWidth,
-        tileHeight: terrainSpec.tileHeight,
-        grid: terrainSpec.grid.map(row => [...row]),
-        tileSet: terrainSpec.tileSet === undefined ? undefined : { ...terrainSpec.tileSet }
-      };
-
-      if (layers !== undefined) {
-        serialized.layers = layers.map(layer => this.serializeLayer(layer));
-      }
-
-      return serialized;
-    }
-
-    if (!this.isLegacyTerrainSpec(terrainSpec)) {
+    if (!this.isJSONTerrainSpec(terrainSpec)) {
       return undefined;
     }
 
-    const tileSet: Record<number, string> = {};
-    const tileIds = new Map<string, number>();
-    let nextTileId = 1;
-
-    const grid = terrainSpec.getSpec().map(row =>
-      row.map(cell => {
-        if (cell === null) {
-          return 0;
-        }
-
-        const tileId = this.getLegacyTerrainTileId(
-          cell,
-          terrainSpec.spriteSheetUrl,
-          tileIds,
-          tileSet,
-          () => nextTileId++
-        );
-        return cell.passable ? tileId : -tileId;
-      })
-    );
-
-    return {
-      tileWidth: terrainSpec.cellSize * terrainSpec.scale,
-      tileHeight: terrainSpec.cellSize * terrainSpec.scale,
-      grid,
-      tileSet: Object.keys(tileSet).length === 0 ? undefined : tileSet
+    const serialized: ISerializedTerrain = {
+      tileWidth: terrainSpec.tileWidth,
+      tileHeight: terrainSpec.tileHeight,
+      grid: terrainSpec.grid.map(row => [...row]),
+      tileSet: terrainSpec.tileSet === undefined ? undefined : { ...terrainSpec.tileSet }
     };
-  }
 
-  private static getLegacyTerrainTileId(
-    cell: ITerrainCell,
-    spriteSheetUrl: string,
-    tileIds: Map<string, number>,
-    tileSet: Record<number, string>,
-    getNextTileId: () => number
-  ): number {
-    const key = JSON.stringify(cell.spriteData);
-    const existingTileId = tileIds.get(key);
-
-    if (existingTileId !== undefined) {
-      return existingTileId;
+    if (layers !== undefined) {
+      serialized.layers = layers.map(layer => this.serializeLayer(layer));
     }
 
-    const tileId = getNextTileId();
-    tileIds.set(key, tileId);
-    tileSet[tileId] = this.toSpriteSheetTilePath(spriteSheetUrl, cell.spriteData);
-    return tileId;
-  }
-
-  private static toSpriteSheetTilePath(spriteSheetUrl: string, spriteData: ISpriteData): string {
-    return `${spriteSheetUrl}#${spriteData.sliceX},${spriteData.sliceY},${spriteData.sliceWidth},${spriteData.sliceHeight}`;
+    return serialized;
   }
 
   private static serializeLayer(layer: ITerrainLayer): ISerializedTerrainLayer {
@@ -179,15 +122,6 @@ export class SceneSerializer {
       typeof terrainSpec.tileWidth === 'number' &&
       typeof terrainSpec.tileHeight === 'number' &&
       Array.isArray(terrainSpec.grid)
-    );
-  }
-
-  private static isLegacyTerrainSpec(terrainSpec: ITerrainSpec): terrainSpec is LegacyTerrainSpec {
-    return (
-      typeof terrainSpec.spriteSheetUrl === 'string' &&
-      typeof terrainSpec.scale === 'number' &&
-      typeof terrainSpec.cellSize === 'number' &&
-      typeof terrainSpec.getSpec === 'function'
     );
   }
 }
