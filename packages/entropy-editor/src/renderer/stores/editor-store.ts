@@ -17,6 +17,7 @@ import { exportToTiled } from '../editor/TiledExporter';
 
 export type EditorTool = 'brush' | 'eraser' | 'fill' | 'eyedropper' | 'select';
 export type BrushShape = 'square' | 'circle';
+export type EditorMode = 'paint' | 'passability' | 'weight';
 
 interface IEditorState {
   // Map state
@@ -42,6 +43,10 @@ interface IEditorState {
   brushShape: BrushShape;
   showGrid: boolean;
   objectSnapToGrid: boolean;
+  editorMode: EditorMode;
+  activeWeight: number;
+  showPassability: boolean;
+  showWeights: boolean;
 
   // UI state
   error: string | null;
@@ -57,6 +62,10 @@ interface IEditorState {
   toggleGrid: () => void;
   setBrushSize: (size: number) => void;
   setBrushShape: (shape: BrushShape) => void;
+  setEditorMode: (mode: EditorMode) => void;
+  setActiveWeight: (weight: number) => void;
+  togglePassabilityOverlay: () => void;
+  toggleWeightsOverlay: () => void;
   setError: (error: string | null) => void;
   setCanvasElement: (canvas: HTMLCanvasElement | null) => void;
 
@@ -310,6 +319,10 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   brushShape: 'square',
   showGrid: true,
   objectSnapToGrid: true,
+  editorMode: 'paint',
+  activeWeight: 1,
+  showPassability: false,
+  showWeights: false,
   error: null,
   canvasElement: null,
 
@@ -326,11 +339,16 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   setActiveLayer: index => {
     const { mapFile } = get();
     const layer = mapFile?.layers[index];
+    const isObjectLayer = layer !== undefined && layer.type === 'object';
 
     if (layer !== undefined && layer.type === 'tile' && layer.tileSetId !== '') {
       set({ activeLayerIndex: index, activeTilesetId: layer.tileSetId, activeTileId: 1, selectedObjectId: null });
     } else {
-      set({ activeLayerIndex: index, selectedObjectId: null });
+      set({
+        activeLayerIndex: index,
+        selectedObjectId: null,
+        ...(isObjectLayer ? { editorMode: 'paint' as const } : {})
+      });
     }
   },
   setActiveTileId: id => set({ activeTileId: id }),
@@ -338,6 +356,19 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   toggleGrid: () => set(state => ({ showGrid: !state.showGrid })),
   setBrushSize: size => set({ brushSize: Math.max(1, Math.min(16, size)) }),
   setBrushShape: shape => set({ brushShape: shape }),
+  setEditorMode: mode => {
+    const { mapFile, activeLayerIndex } = get();
+    const layer = mapFile?.layers[activeLayerIndex];
+
+    if (mode !== 'paint' && layer !== undefined && layer.type === 'object') {
+      return;
+    }
+
+    set({ editorMode: mode });
+  },
+  setActiveWeight: weight => set({ activeWeight: Math.max(1, Math.min(10, weight)) }),
+  togglePassabilityOverlay: () => set(state => ({ showPassability: !state.showPassability })),
+  toggleWeightsOverlay: () => set(state => ({ showWeights: !state.showWeights })),
   setError: error => set({ error }),
   setCanvasElement: canvas => set({ canvasElement: canvas }),
 

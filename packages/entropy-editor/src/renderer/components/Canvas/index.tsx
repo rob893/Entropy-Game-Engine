@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactElement } from 'react';
 import type { IEditorObject, IEditorObjectLayer, IEditorTileLayer, IObjectSprite } from '../../../shared/types';
 import { cn } from '../../lib/utils';
-import type { BrushShape } from '../../stores/editor-store';
+import type { BrushShape, EditorMode } from '../../stores/editor-store';
 import { useEditorStore } from '../../stores/editor-store';
 
 function isInBrushMask(dr: number, dc: number, brushSize: number, shape: BrushShape): boolean {
@@ -16,6 +16,101 @@ function isInBrushMask(dr: number, dc: number, brushSize: number, shape: BrushSh
   const centerDc = dc + 0.5 - radius;
 
   return (centerDr * centerDr + centerDc * centerDc) <= (radius * radius);
+}
+
+function ensurePassabilityArray(layer: IEditorTileLayer): boolean[][] {
+  if (layer.passability !== undefined) {
+    return layer.passability;
+  }
+
+  const rows = layer.grid.length;
+  const cols = layer.grid[0]?.length ?? 0;
+
+  return Array.from({ length: rows }, () => new Array<boolean>(cols).fill(true));
+}
+
+function ensureWeightsArray(layer: IEditorTileLayer): number[][] {
+  if (layer.weights !== undefined) {
+    return layer.weights;
+  }
+
+  const rows = layer.grid.length;
+  const cols = layer.grid[0]?.length ?? 0;
+
+  return Array.from({ length: rows }, () => new Array<number>(cols).fill(1));
+}
+
+function floodFillPassability(passability: boolean[][], row: number, col: number, targetValue: boolean): boolean {
+  const rows = passability.length;
+  const cols = passability[0]?.length ?? 0;
+  const currentValue = passability[row]?.[col] ?? true;
+
+  if (currentValue === targetValue) {
+    return false;
+  }
+
+  const stack: Array<[number, number]> = [[row, col]];
+  let changed = false;
+
+  while (stack.length > 0) {
+    const [r, c] = stack.pop()!;
+
+    if (r < 0 || r >= rows || c < 0 || c >= cols) {
+      continue;
+    }
+
+    if ((passability[r]?.[c] ?? true) !== currentValue) {
+      continue;
+    }
+
+    passability[r][c] = targetValue;
+    changed = true;
+    stack.push([r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]);
+  }
+
+  return changed;
+}
+
+function floodFillWeight(weights: number[][], row: number, col: number, targetValue: number): boolean {
+  const rows = weights.length;
+  const cols = weights[0]?.length ?? 0;
+  const currentValue = weights[row]?.[col] ?? 1;
+
+  if (currentValue === targetValue) {
+    return false;
+  }
+
+  const stack: Array<[number, number]> = [[row, col]];
+  let changed = false;
+
+  while (stack.length > 0) {
+    const [r, c] = stack.pop()!;
+
+    if (r < 0 || r >= rows || c < 0 || c >= cols) {
+      continue;
+    }
+
+    if ((weights[r]?.[c] ?? 1) !== currentValue) {
+      continue;
+    }
+
+    weights[r][c] = targetValue;
+    changed = true;
+    stack.push([r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]);
+  }
+
+  return changed;
+}
+
+function getBrushOverlayColors(mode: EditorMode): { fill: string; stroke: string } {
+  switch (mode) {
+    case 'passability':
+      return { fill: 'rgba(239, 68, 68, 0.3)', stroke: 'rgba(239, 68, 68, 0.6)' };
+    case 'weight':
+      return { fill: 'rgba(59, 130, 246, 0.3)', stroke: 'rgba(59, 130, 246, 0.6)' };
+    default:
+      return { fill: 'rgba(34, 197, 94, 0.3)', stroke: 'rgba(34, 197, 94, 0.6)' };
+  }
 }
 
 export function Canvas(): ReactElement {
@@ -52,6 +147,11 @@ export function Canvas(): ReactElement {
   const placeObject = useEditorStore(state => state.placeObject);
   const moveObject = useEditorStore(state => state.moveObject);
   const objectSprites = useMemo<IObjectSprite[]>(() => mapFile?.objectSprites ?? [], [mapFile?.objectSprites]);
+  const editorMode = useEditorStore(state => state.editorMode);
+  const activeWeight = useEditorStore(state => state.activeWeight);
+  const showPassability = useEditorStore(state => state.showPassability);
+  const showWeights = useEditorStore(state => state.showWeights);
+  const setActiveWeight = useEditorStore(state => state.setActiveWeight);
 
   // Register canvas element for export operations
   useEffect(() => {
@@ -140,8 +240,9 @@ export function Canvas(): ReactElement {
       const anchorRow = pos.row - offset;
 
       // Canvas colors — can't use CSS vars in canvas 2D API
-      ctx.fillStyle = 'rgba(34, 197, 94, 0.3)';
-      ctx.strokeStyle = 'rgba(34, 197, 94, 0.6)';
+      const overlayColors = getBrushOverlayColors(editorMode);
+      ctx.fillStyle = overlayColors.fill;
+      ctx.strokeStyle = overlayColors.stroke;
       ctx.lineWidth = 1;
 
       for (let dr = 0; dr < size; dr++) {
@@ -168,7 +269,7 @@ export function Canvas(): ReactElement {
         }
       }
     }
-  }, [mapFile, getGridPosition, activeTool, brushSize, brushShape]);
+  }, [mapFile, getGridPosition, activeTool, brushSize, brushShape, editorMode]);
 
   const renderCanvas = useCallback((): void => {
     const canvas = canvasRef.current;
@@ -299,6 +400,84 @@ export function Canvas(): ReactElement {
       ctx.stroke();
     }
 
+    // Draw passability overlay
+    if (showPassability) {
+      ctx.save();
+
+      for (const layer of mapFile.layers) {
+        if (layer.type !== 'tile' || !layer.visible || layer.passability === undefined) {
+          continue;
+        }
+
+        for (let row = 0; row < layer.passability.length; row++) {
+          for (let col = 0; col < (layer.passability[row]?.length ?? 0); col++) {
+            if (layer.passability[row][col] === false) {
+              ctx.fillStyle = 'rgba(239, 68, 68, 0.35)';
+              ctx.fillRect(
+                col * mapFile.tileWidth,
+                row * mapFile.tileHeight,
+                mapFile.tileWidth,
+                mapFile.tileHeight
+              );
+
+              // Draw X pattern
+              ctx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
+              ctx.lineWidth = 1;
+              const x = col * mapFile.tileWidth;
+              const y = row * mapFile.tileHeight;
+              ctx.beginPath();
+              ctx.moveTo(x + 2, y + 2);
+              ctx.lineTo(x + mapFile.tileWidth - 2, y + mapFile.tileHeight - 2);
+              ctx.moveTo(x + mapFile.tileWidth - 2, y + 2);
+              ctx.lineTo(x + 2, y + mapFile.tileHeight - 2);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      ctx.restore();
+    }
+
+    // Draw weights overlay
+    if (showWeights) {
+      ctx.save();
+
+      for (const layer of mapFile.layers) {
+        if (layer.type !== 'tile' || !layer.visible || layer.weights === undefined) {
+          continue;
+        }
+
+        ctx.font = `bold ${Math.min(mapFile.tileWidth, mapFile.tileHeight) * 0.4}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        for (let row = 0; row < layer.weights.length; row++) {
+          for (let col = 0; col < (layer.weights[row]?.length ?? 0); col++) {
+            const weight = layer.weights[row][col];
+
+            if (weight > 1) {
+              const x = col * mapFile.tileWidth + mapFile.tileWidth / 2;
+              const y = row * mapFile.tileHeight + mapFile.tileHeight / 2;
+
+              ctx.fillStyle = 'rgba(59, 130, 246, 0.35)';
+              ctx.fillRect(
+                col * mapFile.tileWidth,
+                row * mapFile.tileHeight,
+                mapFile.tileWidth,
+                mapFile.tileHeight
+              );
+
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+              ctx.fillText(String(weight), x, y);
+            }
+          }
+        }
+      }
+
+      ctx.restore();
+    }
+
     if (selectedObjectId !== null) {
       for (const layer of mapFile.layers) {
         if (layer.type !== 'object') {
@@ -326,7 +505,7 @@ export function Canvas(): ReactElement {
         break;
       }
     }
-  }, [mapFile, selectedObjectId, showGrid]);
+  }, [mapFile, selectedObjectId, showGrid, showPassability, showWeights]);
 
   const applyTool = useCallback((row: number, col: number): void => {
     if (mapFile === null) {
@@ -339,10 +518,152 @@ export function Canvas(): ReactElement {
       return;
     }
 
+    const gridRows = layer.grid.length;
+    const gridCols = layer.grid[0]?.length ?? 0;
+
+    // Passability mode
+    if (editorMode === 'passability') {
+      const passability = ensurePassabilityArray(layer).map(r => [...r]);
+      let changed = false;
+
+      switch (activeTool) {
+        case 'brush':
+          for (let dr = 0; dr < brushSize; dr++) {
+            for (let dc = 0; dc < brushSize; dc++) {
+              if (!isInBrushMask(dr, dc, brushSize, brushShape)) {
+                continue;
+              }
+
+              const targetRow = row + dr;
+              const targetCol = col + dc;
+
+              if (targetRow < 0 || targetRow >= gridRows || targetCol < 0 || targetCol >= gridCols) {
+                continue;
+              }
+
+              if (passability[targetRow][targetCol] !== false) {
+                passability[targetRow][targetCol] = false;
+                changed = true;
+              }
+            }
+          }
+
+          break;
+        case 'eraser':
+          for (let dr = 0; dr < brushSize; dr++) {
+            for (let dc = 0; dc < brushSize; dc++) {
+              if (!isInBrushMask(dr, dc, brushSize, brushShape)) {
+                continue;
+              }
+
+              const targetRow = row + dr;
+              const targetCol = col + dc;
+
+              if (targetRow < 0 || targetRow >= gridRows || targetCol < 0 || targetCol >= gridCols) {
+                continue;
+              }
+
+              if (passability[targetRow][targetCol] !== true) {
+                passability[targetRow][targetCol] = true;
+                changed = true;
+              }
+            }
+          }
+
+          break;
+        case 'fill':
+          changed = floodFillPassability(passability, row, col, false);
+          break;
+        case 'eyedropper': {
+          const isPassable = layer.passability?.[row]?.[col] ?? true;
+
+          if (!isPassable) {
+            // Switch to eraser to indicate "impassable picked"
+          }
+
+          break;
+        }
+      }
+
+      if (changed) {
+        updateLayer(activeLayerIndex, { ...layer, passability });
+        setDirty(true);
+      }
+
+      return;
+    }
+
+    // Weight mode
+    if (editorMode === 'weight') {
+      const weights = ensureWeightsArray(layer).map(r => [...r]);
+      let changed = false;
+
+      switch (activeTool) {
+        case 'brush':
+          for (let dr = 0; dr < brushSize; dr++) {
+            for (let dc = 0; dc < brushSize; dc++) {
+              if (!isInBrushMask(dr, dc, brushSize, brushShape)) {
+                continue;
+              }
+
+              const targetRow = row + dr;
+              const targetCol = col + dc;
+
+              if (targetRow < 0 || targetRow >= gridRows || targetCol < 0 || targetCol >= gridCols) {
+                continue;
+              }
+
+              if (weights[targetRow][targetCol] !== activeWeight) {
+                weights[targetRow][targetCol] = activeWeight;
+                changed = true;
+              }
+            }
+          }
+
+          break;
+        case 'eraser':
+          for (let dr = 0; dr < brushSize; dr++) {
+            for (let dc = 0; dc < brushSize; dc++) {
+              if (!isInBrushMask(dr, dc, brushSize, brushShape)) {
+                continue;
+              }
+
+              const targetRow = row + dr;
+              const targetCol = col + dc;
+
+              if (targetRow < 0 || targetRow >= gridRows || targetCol < 0 || targetCol >= gridCols) {
+                continue;
+              }
+
+              if (weights[targetRow][targetCol] !== 1) {
+                weights[targetRow][targetCol] = 1;
+                changed = true;
+              }
+            }
+          }
+
+          break;
+        case 'fill':
+          changed = floodFillWeight(weights, row, col, activeWeight);
+          break;
+        case 'eyedropper': {
+          const cellWeight = layer.weights?.[row]?.[col] ?? 1;
+          setActiveWeight(cellWeight);
+          break;
+        }
+      }
+
+      if (changed) {
+        updateLayer(activeLayerIndex, { ...layer, weights });
+        setDirty(true);
+      }
+
+      return;
+    }
+
+    // Paint mode (default)
     let changed = false;
     let layerUpdated: IEditorTileLayer = { ...layer, grid: layer.grid.map((rowData: number[]) => [...rowData]) };
-    const gridRows = layerUpdated.grid.length;
-    const gridCols = layerUpdated.grid[0]?.length ?? 0;
 
     // Find the active tileset to compute multi-tile offsets
     const tileset = activeTilesetId !== null
@@ -436,7 +757,7 @@ export function Canvas(): ReactElement {
       updateLayer(activeLayerIndex, layerUpdated);
       setDirty(true);
     }
-  }, [mapFile, activeLayerIndex, activeTool, activeTileId, activeTilesetId, brushSize, brushShape, updateLayer, setActiveTile, setDirty]);
+  }, [mapFile, activeLayerIndex, activeTool, activeTileId, activeTilesetId, brushSize, brushShape, editorMode, activeWeight, updateLayer, setActiveTile, setDirty, setActiveWeight]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
     if (e.button !== 0) {
