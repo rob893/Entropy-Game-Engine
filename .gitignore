@@ -7,3 +7,4 @@ debug.log
 dist-electron/
 # heroui-agents-md
 .heroui-docs/
+editor-settings.json
