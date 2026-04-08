@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 
 export default {
+  base: '/entropy/sample-game-1/',
   resolve: {
     alias: {
       '@entropy-engine/entropy-game-engine': resolve(__dirname, '../../packages/entropy-game-engine/src')
