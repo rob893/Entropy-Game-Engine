@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { FILE_EXTENSION } from '../../shared/constants';
 import type {
+  BrushShape,
   EditorLayer,
+  EditorMode,
   IDiscoveredAsset,
   IEditorMapFile,
   IEditorObject,
@@ -10,14 +12,14 @@ import type {
   IEditorTileset,
   IEntropyProject,
   IObjectSprite,
-  IProjectScanResult
+  IProjectScanResult,
+  IProjectSettings
 } from '../../shared/types';
 import { getErrorMessage } from '../../shared/utils/errors';
 import { exportToTiled } from '../editor/TiledExporter';
 
+export type { BrushShape, EditorMode } from '../../shared/types';
 export type EditorTool = 'brush' | 'eraser' | 'fill' | 'eyedropper' | 'select';
-export type BrushShape = 'square' | 'circle';
-export type EditorMode = 'paint' | 'passability' | 'weight';
 
 const MAX_UNDO_HISTORY = 50;
 let savedMapRef: IEditorMapFile | null = null;
@@ -77,6 +79,7 @@ interface IEditorState {
   showWeights: boolean;
 
   // UI state
+  isInitializing: boolean;
   error: string | null;
   canvasElement: HTMLCanvasElement | null;
 
@@ -143,6 +146,10 @@ interface IEditorState {
   // Export operations
   exportPng: () => Promise<void>;
   exportTiledMap: () => Promise<void>;
+
+  // Settings operations
+  initializeSettings: () => Promise<void>;
+  openProjectByPath: (projectPath: string) => Promise<void>;
 }
 
 function updateObjectInLayer(
@@ -338,6 +345,24 @@ function createProjectScanState(
   };
 }
 
+let projectSettingsTimer: ReturnType<typeof setTimeout> | null = null;
+const PROJECT_SETTINGS_DEBOUNCE_MS = 500;
+
+function saveProjectSettingsDebounced(projectPath: string, settings: Partial<IProjectSettings>): void {
+  if (projectSettingsTimer !== null) {
+    clearTimeout(projectSettingsTimer);
+  }
+
+  projectSettingsTimer = setTimeout(() => {
+    projectSettingsTimer = null;
+    void window.electronAPI.settingsSaveProject(projectPath, settings);
+  }, PROJECT_SETTINGS_DEBOUNCE_MS);
+}
+
+function saveGlobalSettings(settings: { lastProjectPath?: string }): void {
+  void window.electronAPI.settingsSaveGlobal(settings);
+}
+
 export const useEditorStore = create<IEditorState>((set, get) => ({
   mapFile: null,
   filePath: null,
@@ -361,6 +386,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   activeWeight: 1,
   showPassability: false,
   showWeights: false,
+  isInitializing: false,
   error: null,
   canvasElement: null,
   undoStack: [],
@@ -397,9 +423,29 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   },
   setActiveTileId: id => set({ activeTileId: id }),
   setActiveTile: (tileId, tilesetId) => set({ activeTileId: tileId, activeTilesetId: tilesetId }),
-  toggleGrid: () => set(state => ({ showGrid: !state.showGrid })),
-  setBrushSize: size => set({ brushSize: Math.max(1, Math.min(16, size)) }),
-  setBrushShape: shape => set({ brushShape: shape }),
+  toggleGrid: () => {
+    const newShowGrid = !get().showGrid;
+    set({ showGrid: newShowGrid });
+    const { projectPath } = get();
+    if (projectPath !== null) {
+      saveProjectSettingsDebounced(projectPath, { showGrid: newShowGrid });
+    }
+  },
+  setBrushSize: size => {
+    const clamped = Math.max(1, Math.min(16, size));
+    set({ brushSize: clamped });
+    const { projectPath } = get();
+    if (projectPath !== null) {
+      saveProjectSettingsDebounced(projectPath, { brushSize: clamped });
+    }
+  },
+  setBrushShape: shape => {
+    set({ brushShape: shape });
+    const { projectPath } = get();
+    if (projectPath !== null) {
+      saveProjectSettingsDebounced(projectPath, { brushShape: shape });
+    }
+  },
   setEditorMode: mode => {
     const { mapFile, activeLayerIndex } = get();
     const layer = mapFile?.layers[activeLayerIndex];
@@ -409,10 +455,35 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     }
 
     set({ editorMode: mode });
+    const { projectPath } = get();
+    if (projectPath !== null) {
+      saveProjectSettingsDebounced(projectPath, { editorMode: mode });
+    }
   },
-  setActiveWeight: weight => set({ activeWeight: Math.max(1, Math.min(10, weight)) }),
-  togglePassabilityOverlay: () => set(state => ({ showPassability: !state.showPassability })),
-  toggleWeightsOverlay: () => set(state => ({ showWeights: !state.showWeights })),
+  setActiveWeight: weight => {
+    const clamped = Math.max(1, Math.min(10, weight));
+    set({ activeWeight: clamped });
+    const { projectPath } = get();
+    if (projectPath !== null) {
+      saveProjectSettingsDebounced(projectPath, { activeWeight: clamped });
+    }
+  },
+  togglePassabilityOverlay: () => {
+    const newShowPassability = !get().showPassability;
+    set({ showPassability: newShowPassability });
+    const { projectPath } = get();
+    if (projectPath !== null) {
+      saveProjectSettingsDebounced(projectPath, { showPassability: newShowPassability });
+    }
+  },
+  toggleWeightsOverlay: () => {
+    const newShowWeights = !get().showWeights;
+    set({ showWeights: newShowWeights });
+    const { projectPath } = get();
+    if (projectPath !== null) {
+      saveProjectSettingsDebounced(projectPath, { showWeights: newShowWeights });
+    }
+  },
   setError: error => set({ error }),
   setCanvasElement: canvas => set({ canvasElement: canvas }),
 
@@ -813,7 +884,14 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     set({ mapFile: { ...mapFile, layers: newLayers }, isDirty: true });
   },
 
-  toggleObjectSnap: () => set(state => ({ objectSnapToGrid: !state.objectSnapToGrid })),
+  toggleObjectSnap: () => {
+    const newSnap = !get().objectSnapToGrid;
+    set({ objectSnapToGrid: newSnap });
+    const { projectPath } = get();
+    if (projectPath !== null) {
+      saveProjectSettingsDebounced(projectPath, { objectSnapToGrid: newSnap });
+    }
+  },
 
   importObjectSprites: sprites => {
     const { mapFile, activeObjectSpriteId } = get();
@@ -949,6 +1027,10 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         return;
       }
 
+      saveGlobalSettings({ lastProjectPath: result.projectPath });
+
+      const projectSettings = await window.electronAPI.settingsLoadProject(result.projectPath);
+
       set({
         projectPath: result.projectPath,
         projectConfig: result.config,
@@ -961,12 +1043,23 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         activeLayerIndex: 0,
         activeTilesetId: null,
         activeObjectSpriteId: null,
-        selectedObjectId: null
+        selectedObjectId: null,
+        showGrid: projectSettings.showGrid,
+        showPassability: projectSettings.showPassability,
+        showWeights: projectSettings.showWeights,
+        brushSize: projectSettings.brushSize,
+        brushShape: projectSettings.brushShape,
+        editorMode: projectSettings.editorMode,
+        activeWeight: projectSettings.activeWeight,
+        objectSnapToGrid: projectSettings.objectSnapToGrid
       });
 
-      const initialMapPath = getInitialProjectMapPath(result);
+      const mapPath = projectSettings.lastMapPath !== undefined
+        ? result.maps.find(m => m === projectSettings.lastMapPath)
+        : undefined;
+      const initialMapPath = mapPath ?? getInitialProjectMapPath(result);
 
-      if (initialMapPath !== null) {
+      if (initialMapPath !== null && initialMapPath !== undefined) {
         await get().loadMapFromProject(initialMapPath);
       }
     } catch (err) {
@@ -994,6 +1087,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         undoStack: [],
         redoStack: []
       });
+
+      saveProjectSettingsDebounced(projectPath, { lastMapPath: mapFilePath });
     } catch (err) {
       set({ error: getErrorMessage(err) });
     }
@@ -1116,6 +1211,64 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     try {
       const jsonData = exportToTiled(mapFile);
       await window.electronAPI.exportTiled(jsonData);
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
+  },
+
+  initializeSettings: async () => {
+    set({ isInitializing: true });
+
+    try {
+      const globalSettings = await window.electronAPI.settingsLoadGlobal();
+
+      if (globalSettings.lastProjectPath !== undefined) {
+        await get().openProjectByPath(globalSettings.lastProjectPath);
+      }
+    } catch {
+      // Settings load failed — proceed with defaults
+    } finally {
+      set({ isInitializing: false });
+    }
+  },
+
+  openProjectByPath: async (projectPath: string) => {
+    try {
+      const result = await window.electronAPI.projectScan(projectPath);
+
+      const projectSettings = await window.electronAPI.settingsLoadProject(projectPath);
+
+      set({
+        projectPath: result.projectPath,
+        projectConfig: result.config,
+        availableMaps: result.maps,
+        discoveredTilesets: result.tilesets,
+        discoveredObjects: result.objectSprites,
+        mapFile: null,
+        filePath: null,
+        isDirty: false,
+        activeLayerIndex: 0,
+        activeTilesetId: null,
+        activeObjectSpriteId: null,
+        selectedObjectId: null,
+        showGrid: projectSettings.showGrid,
+        showPassability: projectSettings.showPassability,
+        showWeights: projectSettings.showWeights,
+        brushSize: projectSettings.brushSize,
+        brushShape: projectSettings.brushShape,
+        editorMode: projectSettings.editorMode,
+        activeWeight: projectSettings.activeWeight,
+        objectSnapToGrid: projectSettings.objectSnapToGrid
+      });
+
+      const mapPath = projectSettings.lastMapPath !== undefined
+        ? result.maps.find(m => m === projectSettings.lastMapPath)
+        : undefined;
+      const initialMapPath = mapPath ?? getInitialProjectMapPath(result);
+
+      if (initialMapPath !== null && initialMapPath !== undefined) {
+        await get().loadMapFromProject(initialMapPath);
+      }
     } catch (err) {
       set({ error: getErrorMessage(err) });
     }

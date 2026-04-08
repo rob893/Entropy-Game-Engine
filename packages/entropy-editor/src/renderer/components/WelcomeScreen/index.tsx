@@ -1,12 +1,24 @@
-import { Button } from '@heroui/react';
+import { Button, Spinner } from '@heroui/react';
 import { FolderOpen } from 'lucide-react';
 import type { ReactElement } from 'react';
 
 interface IWelcomeScreenProps {
   onOpenProject: () => void;
+  isInitializing: boolean;
 }
 
-export function WelcomeScreen({ onOpenProject }: IWelcomeScreenProps): ReactElement {
+export function WelcomeScreen({ onOpenProject, isInitializing }: IWelcomeScreenProps): ReactElement {
+  if (isInitializing) {
+    return (
+      <div className="flex h-full items-center justify-center bg-background px-6">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <Spinner size="lg" />
+          <p className="text-sm text-muted">Reopening last project…</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full items-center justify-center bg-background px-6">
       <div className="flex max-w-xl flex-col items-center gap-8 text-center">

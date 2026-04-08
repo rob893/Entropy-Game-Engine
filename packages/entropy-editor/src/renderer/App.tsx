@@ -19,7 +19,12 @@ export function App(): ReactElement {
   const createMapInProject = useEditorStore(state => state.createMapInProject);
   const error = useEditorStore(state => state.error);
   const setError = useEditorStore(state => state.setError);
+  const isInitializing = useEditorStore(state => state.isInitializing);
   const [showNewMapDialog, setShowNewMapDialog] = useState(false);
+
+  useEffect(() => {
+    void useEditorStore.getState().initializeSettings();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = window.electronAPI.onMenuAction((action: MenuAction) => {
@@ -82,7 +87,7 @@ export function App(): ReactElement {
   if (projectPath === null) {
     return (
       <div className="h-full">
-        <WelcomeScreen onOpenProject={() => void useEditorStore.getState().openProject()} />
+        <WelcomeScreen onOpenProject={() => void useEditorStore.getState().openProject()} isInitializing={isInitializing} />
         {errorToast}
       </div>
     );

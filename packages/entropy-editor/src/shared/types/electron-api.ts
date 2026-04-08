@@ -1,3 +1,4 @@
+import type { IGlobalSettings, IProjectSettings } from './editor-settings';
 import type { IEditorMapFile, IFileOpenResult, IProjectScanResult } from './terrain';
 
 export type MenuAction =
@@ -28,6 +29,12 @@ export interface IElectronAPI {
   // Export operations
   exportPng(pngDataUrl: string): Promise<boolean>;
   exportTiled(jsonData: string): Promise<boolean>;
+
+  // Settings operations
+  settingsLoadGlobal(): Promise<IGlobalSettings>;
+  settingsSaveGlobal(settings: Partial<IGlobalSettings>): Promise<void>;
+  settingsLoadProject(projectPath: string): Promise<IProjectSettings>;
+  settingsSaveProject(projectPath: string, settings: Partial<IProjectSettings>): Promise<void>;
 
   // Menu events (main → renderer push)
   onMenuAction(callback: (action: MenuAction) => void): () => void;

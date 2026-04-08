@@ -22,5 +22,9 @@ export const IPC_CHANNELS = {
   PROJECT_IMPORT_OBJECTS: 'project:import-objects',
   EXPORT_PNG: 'export:png',
   EXPORT_TILED: 'export:tiled',
-  MENU_ACTION: 'menu:action'
+  MENU_ACTION: 'menu:action',
+  SETTINGS_LOAD_GLOBAL: 'settings:load-global',
+  SETTINGS_SAVE_GLOBAL: 'settings:save-global',
+  SETTINGS_LOAD_PROJECT: 'settings:load-project',
+  SETTINGS_SAVE_PROJECT: 'settings:save-project'
 } as const;
