@@ -4,10 +4,13 @@ import {
   Color,
   GameEngine,
   GameObject,
+  MapLoader,
   RectangleBackground,
   IScene,
+  IMapFile,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
+import Scene1MapRaw from '../maps/Scene1.entropy-map?raw';
 import ExplosionSound from './assets/audio/explosion.mp3';
 import HurtSound from './assets/audio/fat_1_male_hit_1.wav';
 import KnightAttack1 from './assets/images/characters/male-knight/Male_Knight_Attack One Handed Overhead.png';
@@ -26,14 +29,13 @@ import { Minotaur } from './game-objects/Minotaur';
 import { Player } from './game-objects/Player';
 import { PlayerRB } from './game-objects/PlayerRB';
 import { UICanvas } from './game-objects/UICanvas';
-import { Scene1TerrainSpec } from './terrains/Scene1TerrainSpec';
 
 type SceneAsset = AudioClip | SpriteSheet;
 
 export const scene1: IScene = {
   name: 'Scene1',
   loadOrder: 1,
-  terrainSpec: new Scene1TerrainSpec(3),
+  terrainSpec: MapLoader.toTerrainSpec(JSON.parse(Scene1MapRaw) as IMapFile),
 
   getSkybox({ gameCanvas }): RectangleBackground {
     return new RectangleBackground(gameCanvas, Color.Black);

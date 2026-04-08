@@ -213,3 +213,50 @@ export interface IWeightedGraphCell extends IGraphCell {
 export interface IComparable {
   valueOf(): number | string | boolean;
 }
+
+// ── Map File Types ──
+// Minimal types matching the .entropy-map JSON structure produced by the editor.
+// Structurally compatible with the editor's IEditorMapFile — extra fields are ignored.
+
+export interface IMapFile {
+  name: string;
+  tileWidth: number;
+  tileHeight: number;
+  layers: IMapLayer[];
+  tilesets: IMapTileset[];
+}
+
+export interface IMapTileLayer {
+  type: 'tile';
+  name: string;
+  grid: number[][];
+  tileSetId: string;
+  visible: boolean;
+  opacity: number;
+  passability?: boolean[][];
+  weights?: number[][];
+}
+
+export interface IMapObjectLayer {
+  type: 'object';
+  [key: string]: unknown;
+}
+
+export type IMapLayer = IMapTileLayer | IMapObjectLayer;
+
+export interface IMapTileset {
+  id: string;
+  imagePath: string;
+  tileWidth: number;
+  tileHeight: number;
+  columns: number;
+  rows: number;
+  tileCount: number;
+}
+
+export interface IMapLoaderOptions {
+  /** Base path to prepend to relative asset paths (e.g., '/assets' or 'https://cdn.example.com'). */
+  basePath?: string;
+  /** Custom function to resolve asset paths. Overrides basePath if provided. */
+  resolveAssetPath?: (relativePath: string) => string;
+}

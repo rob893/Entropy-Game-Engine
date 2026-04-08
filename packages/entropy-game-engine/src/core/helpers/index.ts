@@ -17,6 +17,7 @@ export * from './SceneManager';
 export * from './SpriteSheet';
 export * from './Stopwatch';
 export * from './TerrainBuilder';
+export * from './MapLoader';
 export * from './Vector2';
 export * from './ImageUtilities';
 export * from './Utilities';
