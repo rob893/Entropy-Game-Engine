@@ -5,9 +5,9 @@ export const TILED_FILTER_NAME = 'Tiled JSON Map';
 export const PNG_FILTER_NAME = 'PNG Image';
 
 export const PROJECT_DIRS = {
-  ASSETS: 'assets',
-  TILESETS: 'assets/tilesets',
-  OBJECTS: 'assets/objects',
+  ASSETS: 'public/assets',
+  TILESETS: 'public/assets/tilesets',
+  OBJECTS: 'public/assets/objects',
   MAPS: 'maps'
 } as const;
 
