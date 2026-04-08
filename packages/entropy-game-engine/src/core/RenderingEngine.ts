@@ -145,6 +145,13 @@ export class RenderingEngine {
           }
         }
       }
+
+      // GUI elements parented to world objects render in world space
+      for (const guiElement of this.renderableGUIElements) {
+        if (guiElement.enabled && this.isWorldSpaceGUI(guiElement)) {
+          guiElement.renderGUI(this.#canvasContext);
+        }
+      }
     } catch (error) {
       console.error('Rendering error:', error);
     } finally {
@@ -153,10 +160,15 @@ export class RenderingEngine {
       }
     }
 
+    // Screen-space GUI elements render without camera transform
     for (const guiElement of this.renderableGUIElements) {
-      if (guiElement.enabled) {
+      if (guiElement.enabled && !this.isWorldSpaceGUI(guiElement)) {
         guiElement.renderGUI(this.#canvasContext);
       }
     }
+  }
+
+  private isWorldSpaceGUI(guiElement: IRenderableGUI): boolean {
+    return guiElement instanceof Component && guiElement.transform.parent !== null;
   }
 }
