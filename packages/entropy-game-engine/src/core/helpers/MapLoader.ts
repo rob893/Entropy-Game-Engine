@@ -2,7 +2,7 @@ import type { IMapFile, IMapLoaderOptions, IMapTileLayer, ITerrainLayer, ITerrai
 
 export class MapLoader {
   /**
-   * Converts parsed .entropy-map JSON into an ITerrainSpec.
+   * Converts parsed .entropy-map.json data into an ITerrainSpec.
    * The returned spec uses the layered terrain format that TerrainBuilder already supports.
    */
   public static toTerrainSpec(mapData: IMapFile, options?: IMapLoaderOptions): ITerrainSpec {
@@ -28,7 +28,7 @@ export class MapLoader {
   }
 
   /**
-   * Fetches a .entropy-map file from a URL, parses it, and converts to ITerrainSpec.
+   * Fetches a .entropy-map.json file from a URL, parses it, and converts to ITerrainSpec.
    */
   public static async fromUrl(url: string, options?: IMapLoaderOptions): Promise<ITerrainSpec> {
     const response = await fetch(url);

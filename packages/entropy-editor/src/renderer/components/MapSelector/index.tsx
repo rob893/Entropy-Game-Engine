@@ -32,7 +32,7 @@ export function MapSelector(): ReactElement | null {
         <Select.Popover>
           <ListBox>
             {availableMaps.map(mapPath => {
-              const name = mapPath.split(/[/\\]/).pop()?.replace('.entropy-map', '') ?? mapPath;
+              const name = mapPath.split(/[/\\]/).pop()?.replace('.entropy-map.json', '') ?? mapPath;
 
               return (
                 <ListBox.Item key={mapPath} id={mapPath} textValue={name}>

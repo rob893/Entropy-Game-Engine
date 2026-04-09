@@ -1,4 +1,4 @@
-export const FILE_EXTENSION = '.entropy-map';
+export const FILE_EXTENSION = '.entropy-map.json';
 export const PROJECT_FILE = 'entropy.project.json';
 export const TILED_EXTENSION = '.tmj';
 export const TILED_FILTER_NAME = 'Tiled JSON Map';

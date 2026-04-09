@@ -1,4 +1,4 @@
-declare module '*.entropy-map?raw' {
+declare module '*.entropy-map.json?raw' {
   const value: string;
   export default value;
 }

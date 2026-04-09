@@ -10,7 +10,7 @@ import {
   IMapFile,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
-import Scene1MapRaw from '../maps/Scene1.entropy-map?raw';
+import Scene1MapRaw from '../maps/Scene1.entropy-map.json?raw';
 import ExplosionSound from './assets/audio/explosion.mp3';
 import HurtSound from './assets/audio/fat_1_male_hit_1.wav';
 import KnightAttack1 from './assets/images/characters/male-knight/Male_Knight_Attack One Handed Overhead.png';

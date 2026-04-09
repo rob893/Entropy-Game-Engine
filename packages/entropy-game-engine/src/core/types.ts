@@ -207,7 +207,7 @@ export interface IComparable {
 }
 
 // ── Map File Types ──
-// Minimal types matching the .entropy-map JSON structure produced by the editor.
+// Minimal types matching the .entropy-map.json structure produced by the editor.
 // Structurally compatible with the editor's IEditorMapFile — extra fields are ignored.
 
 export interface IMapFile {

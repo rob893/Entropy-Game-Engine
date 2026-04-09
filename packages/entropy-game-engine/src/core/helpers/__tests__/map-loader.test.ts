@@ -369,9 +369,9 @@ describe('MapLoader.fromUrl', () => {
     globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
 
     try {
-      const spec = await MapLoader.fromUrl('/maps/test.entropy-map');
+      const spec = await MapLoader.fromUrl('/maps/test.entropy-map.json');
 
-      expect(globalThis.fetch).toHaveBeenCalledWith('/maps/test.entropy-map');
+      expect(globalThis.fetch).toHaveBeenCalledWith('/maps/test.entropy-map.json');
       expect(spec.tileWidth).toBe(32);
       expect(spec.layers).toHaveLength(1);
     } finally {
@@ -390,7 +390,7 @@ describe('MapLoader.fromUrl', () => {
     globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
 
     try {
-      await expect(MapLoader.fromUrl('/maps/missing.entropy-map')).rejects.toThrow('404 Not Found');
+      await expect(MapLoader.fromUrl('/maps/missing.entropy-map.json')).rejects.toThrow('404 Not Found');
     } finally {
       globalThis.fetch = originalFetch;
     }
@@ -408,7 +408,7 @@ describe('MapLoader.fromUrl', () => {
     globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
 
     try {
-      const spec = await MapLoader.fromUrl('/maps/test.entropy-map', { basePath: '/game' });
+      const spec = await MapLoader.fromUrl('/maps/test.entropy-map.json', { basePath: '/game' });
       expect(spec.layers![0].tileSet[1]).toBe('/game/assets/tilesets/test.png#0,0,16,16');
     } finally {
       globalThis.fetch = originalFetch;
