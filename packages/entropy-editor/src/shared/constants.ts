@@ -8,8 +8,11 @@ export const PROJECT_DIRS = {
   ASSETS: 'public/assets',
   TILESETS: 'public/assets/tilesets',
   OBJECTS: 'public/assets/objects',
+  PREFABS: 'prefabs',
   MAPS: 'maps'
 } as const;
+
+export const PREFAB_EXTENSION = '.entropy-prefab.json';
 
 export const IPC_CHANNELS = {
   PROJECT_OPEN: 'project:open',
@@ -19,7 +22,10 @@ export const IPC_CHANNELS = {
   PROJECT_SAVE_MAP: 'project:save-map',
   PROJECT_CREATE_MAP: 'project:create-map',
   PROJECT_IMPORT_TILESET: 'project:import-tileset',
-  PROJECT_IMPORT_OBJECTS: 'project:import-objects',
+  PREFAB_DISCOVER: 'prefab:discover',
+  PREFAB_READ: 'prefab:read',
+  PREFAB_WRITE: 'prefab:write',
+  PREFAB_DELETE: 'prefab:delete',
   EXPORT_PNG: 'export:png',
   EXPORT_TILED: 'export:tiled',
   MENU_ACTION: 'menu:action',

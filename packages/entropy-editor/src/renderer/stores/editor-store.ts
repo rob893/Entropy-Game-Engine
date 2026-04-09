@@ -6,12 +6,12 @@ import type {
   EditorMode,
   IDiscoveredAsset,
   IEditorMapFile,
-  IEditorObject,
   IEditorObjectLayer,
+  IEditorPrefab,
+  IEditorPrefabInstance,
   IEditorTileLayer,
   IEditorTileset,
   IEntropyProject,
-  IObjectSprite,
   IProjectScanResult,
   IProjectSettings
 } from '../../shared/types';
@@ -26,7 +26,8 @@ let savedMapRef: IEditorMapFile | null = null;
 
 function normalizeSelections(
   mapFile: IEditorMapFile,
-  state: Pick<IEditorState, 'activeLayerIndex' | 'activeTilesetId' | 'activeObjectSpriteId'>
+  state: Pick<IEditorState, 'activeLayerIndex' | 'activeTilesetId' | 'selectedPrefabId'>,
+  prefabs: IEditorPrefab[]
 ): Partial<IEditorState> {
   const maxLayerIndex = Math.max(0, mapFile.layers.length - 1);
   const activeLayerIndex = Math.min(state.activeLayerIndex, maxLayerIndex);
@@ -36,16 +37,16 @@ function normalizeSelections(
     ? state.activeTilesetId
     : mapFile.tilesets[0]?.id ?? null;
 
-  const spriteIds = new Set(mapFile.objectSprites.map(s => s.id));
-  const activeObjectSpriteId = state.activeObjectSpriteId !== null && spriteIds.has(state.activeObjectSpriteId)
-    ? state.activeObjectSpriteId
-    : mapFile.objectSprites[0]?.id ?? null;
+  const prefabIds = new Set(prefabs.map(p => p.id));
+  const selectedPrefabId = state.selectedPrefabId !== null && prefabIds.has(state.selectedPrefabId)
+    ? state.selectedPrefabId
+    : null;
 
   return {
     activeLayerIndex,
     activeTilesetId,
-    activeObjectSpriteId,
-    selectedObjectId: null
+    selectedPrefabId,
+    selectedInstanceId: null
   };
 }
 
@@ -59,16 +60,18 @@ interface IEditorState {
   projectConfig: IEntropyProject | null;
   availableMaps: string[];
   discoveredTilesets: IDiscoveredAsset[];
-  discoveredObjects: IDiscoveredAsset[];
   isDirty: boolean;
+
+  // Prefab state
+  prefabs: IEditorPrefab[];
+  selectedInstanceId: string | null;
+  selectedPrefabId: string | null;
 
   // Tool state
   activeTool: EditorTool;
   activeLayerIndex: number;
   activeTileId: number;
   activeTilesetId: string | null;
-  activeObjectSpriteId: string | null;
-  selectedObjectId: string | null;
   brushSize: number;
   brushShape: BrushShape;
   showGrid: boolean;
@@ -116,16 +119,22 @@ interface IEditorState {
 
   // Object layer operations
   addObjectLayer: (name: string) => void;
-  placeObject: (spriteId: string, x: number, y: number) => void;
-  selectObject: (objectId: string | null) => void;
-  moveObject: (objectId: string, x: number, y: number) => void;
-  rotateObject: (objectId: string, rotation: number) => void;
-  scaleObject: (objectId: string, scaleX: number, scaleY: number) => void;
-  deleteObject: (objectId: string) => void;
-  reorderObject: (objectId: string, direction: 'forward' | 'backward') => void;
   toggleObjectSnap: () => void;
-  importObjectSprites: (sprites: IObjectSprite[]) => void;
-  setActiveObjectSpriteId: (id: string | null) => void;
+
+  // Prefab operations
+  loadPrefabs: (prefabs: IEditorPrefab[]) => void;
+  createPrefab: (prefab: IEditorPrefab) => Promise<void>;
+  updatePrefab: (prefab: IEditorPrefab) => Promise<void>;
+  deletePrefab: (prefabId: string) => Promise<void>;
+
+  // Instance operations
+  placeInstance: (prefabId: string, x: number, y: number) => void;
+  selectInstance: (instanceId: string | null) => void;
+  moveInstance: (instanceId: string, x: number, y: number) => void;
+  rotateInstance: (instanceId: string, rotation: number) => void;
+  scaleInstance: (instanceId: string, scaleX: number, scaleY: number) => void;
+  deleteInstance: (instanceId: string) => void;
+  setSelectedPrefabId: (id: string | null) => void;
 
   removeLayer: (index: number) => void;
   setLayerVisibility: (index: number, visible: boolean) => void;
@@ -141,7 +150,6 @@ interface IEditorState {
   loadMapFromProject: (mapFilePath: string) => Promise<void>;
   createMapInProject: (name: string, rows: number, cols: number, tileWidth: number, tileHeight: number) => Promise<void>;
   importTilesetToProject: () => Promise<void>;
-  importObjectsToProject: () => Promise<void>;
 
   // Export operations
   exportPng: () => Promise<void>;
@@ -150,39 +158,6 @@ interface IEditorState {
   // Settings operations
   initializeSettings: () => Promise<void>;
   openProjectByPath: (projectPath: string) => Promise<void>;
-}
-
-function updateObjectInLayer(
-  mapFile: IEditorMapFile,
-  layerIndex: number,
-  objectId: string,
-  updater: (obj: IEditorObject) => IEditorObject
-): IEditorMapFile | null {
-  const layer = mapFile.layers[layerIndex];
-
-  if (layer === undefined || layer.type !== 'object') {
-    return null;
-  }
-
-  let hasUpdatedObject = false;
-  const updatedObjects = layer.objects.map(obj => {
-    if (obj.id !== objectId) {
-      return obj;
-    }
-
-    hasUpdatedObject = true;
-    return updater(obj);
-  });
-
-  if (!hasUpdatedObject) {
-    return null;
-  }
-
-  const updatedLayer: IEditorObjectLayer = { ...layer, objects: updatedObjects };
-  const newLayers = [...mapFile.layers];
-  newLayers[layerIndex] = updatedLayer;
-
-  return { ...mapFile, layers: newLayers };
 }
 
 function createGrid(rows: number, cols: number): number[][] {
@@ -222,18 +197,6 @@ function createProjectTileset(
   };
 }
 
-function createProjectObjectSprite(asset: IDiscoveredAsset): IObjectSprite {
-  return {
-    id: crypto.randomUUID(),
-    name: asset.name,
-    category: asset.category,
-    imagePath: asset.relativePath,
-    imageDataUrl: asset.imageDataUrl,
-    width: asset.width,
-    height: asset.height
-  };
-}
-
 function getInitialProjectMapPath(projectScan: IProjectScanResult): string | null {
   const defaultMapPath = projectScan.maps.find(mapPath =>
     mapPath.endsWith(`${projectScan.config.defaultScene}${FILE_EXTENSION}`)
@@ -245,15 +208,13 @@ function getInitialProjectMapPath(projectScan: IProjectScanResult): string | nul
 function stripProjectMapImageData(mapFile: IEditorMapFile): IEditorMapFile {
   return {
     ...mapFile,
-    tilesets: mapFile.tilesets.map(tileset => ({ ...tileset, imageDataUrl: '' })),
-    objectSprites: mapFile.objectSprites.map(sprite => ({ ...sprite, imageDataUrl: '' }))
+    tilesets: mapFile.tilesets.map(tileset => ({ ...tileset, imageDataUrl: '' }))
   };
 }
 
 function mergeProjectAssetsIntoMap(
   mapFile: IEditorMapFile,
-  discoveredTilesets: IDiscoveredAsset[],
-  discoveredObjects: IDiscoveredAsset[]
+  discoveredTilesets: IDiscoveredAsset[]
 ): IEditorMapFile {
   const hydratedTilesets = mapFile.tilesets.map(tileset => {
     const discovered = discoveredTilesets.find(asset => asset.relativePath === tileset.imagePath);
@@ -269,26 +230,7 @@ function mergeProjectAssetsIntoMap(
         };
   });
 
-  const hydratedObjectSprites = mapFile.objectSprites.map(sprite => {
-    if (sprite.imageDataUrl !== '' && sprite.imageDataUrl !== undefined) {
-      return sprite;
-    }
-
-    const discovered = discoveredObjects.find(asset => asset.relativePath === sprite.imagePath);
-
-    return discovered === undefined
-      ? sprite
-      : {
-          ...sprite,
-          category: sprite.category !== '' ? sprite.category : discovered.category,
-          imageDataUrl: discovered.imageDataUrl,
-          width: sprite.width > 0 ? sprite.width : discovered.width,
-          height: sprite.height > 0 ? sprite.height : discovered.height
-        };
-  });
-
   const tilePaths = new Set(hydratedTilesets.map(tileset => tileset.imagePath));
-  const objectPaths = new Set(hydratedObjectSprites.map(sprite => sprite.imagePath));
 
   return {
     ...mapFile,
@@ -297,52 +239,67 @@ function mergeProjectAssetsIntoMap(
       ...discoveredTilesets
         .filter(asset => !tilePaths.has(asset.relativePath))
         .map(asset => createProjectTileset(asset, mapFile.tileWidth, mapFile.tileHeight))
-    ],
-    objectSprites: [
-      ...hydratedObjectSprites,
-      ...discoveredObjects
-        .filter(asset => !objectPaths.has(asset.relativePath))
-        .map(asset => createProjectObjectSprite(asset))
     ]
   };
 }
 
 interface IImportedProjectAssets {
-  objectPaths?: string[];
   tilesetPath?: string;
 }
 
 function createProjectScanState(
-  state: Pick<IEditorState, 'activeObjectSpriteId' | 'activeTileId' | 'activeTilesetId' | 'mapFile'>,
+  state: Pick<IEditorState, 'activeTileId' | 'activeTilesetId' | 'mapFile'>,
   scanResult: IProjectScanResult,
   importedAssets: IImportedProjectAssets = {}
 ): Partial<IEditorState> {
   const nextState: Partial<IEditorState> = {
     projectConfig: scanResult.config,
     availableMaps: scanResult.maps,
-    discoveredTilesets: scanResult.tilesets,
-    discoveredObjects: scanResult.objectSprites
+    discoveredTilesets: scanResult.tilesets
   };
 
   if (state.mapFile === null) {
     return nextState;
   }
 
-  const mapFile = mergeProjectAssetsIntoMap(state.mapFile, scanResult.tilesets, scanResult.objectSprites);
+  const mapFile = mergeProjectAssetsIntoMap(state.mapFile, scanResult.tilesets);
   const importedTileset = importedAssets.tilesetPath === undefined
     ? undefined
     : mapFile.tilesets.find(tileset => tileset.imagePath === importedAssets.tilesetPath);
-  const importedObjectSprite = (importedAssets.objectPaths ?? [])
-    .map(imagePath => mapFile.objectSprites.find(sprite => sprite.imagePath === imagePath))
-    .find((sprite): sprite is IObjectSprite => sprite !== undefined);
 
   return {
     ...nextState,
     mapFile,
     activeTileId: importedTileset === undefined ? state.activeTileId : 1,
-    activeTilesetId: importedTileset?.id ?? state.activeTilesetId,
-    activeObjectSpriteId: importedObjectSprite?.id ?? state.activeObjectSpriteId
+    activeTilesetId: importedTileset?.id ?? state.activeTilesetId
   };
+}
+
+interface IInstanceLocation {
+  readonly layerIndex: number;
+  readonly instanceIndex: number;
+  readonly instance: IEditorPrefabInstance;
+}
+
+function findInstanceInLayers(
+  mapFile: IEditorMapFile,
+  instanceId: string
+): IInstanceLocation | null {
+  for (let i = 0; i < mapFile.layers.length; i++) {
+    const layer = mapFile.layers[i];
+
+    if (layer.type !== 'object') {
+      continue;
+    }
+
+    const idx = layer.instances.findIndex(inst => inst.id === instanceId);
+
+    if (idx !== -1) {
+      return { layerIndex: i, instanceIndex: idx, instance: layer.instances[idx] };
+    }
+  }
+
+  return null;
 }
 
 let projectSettingsTimer: ReturnType<typeof setTimeout> | null = null;
@@ -370,14 +327,14 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   projectConfig: null,
   availableMaps: [],
   discoveredTilesets: [],
-  discoveredObjects: [],
   isDirty: false,
+  prefabs: [],
+  selectedInstanceId: null,
+  selectedPrefabId: null,
   activeTool: 'brush',
   activeLayerIndex: 0,
   activeTileId: 1,
   activeTilesetId: null,
-  activeObjectSpriteId: null,
-  selectedObjectId: null,
   brushSize: 1,
   brushShape: 'square',
   showGrid: true,
@@ -398,8 +355,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       mapFile,
       filePath,
       isDirty: false,
-      selectedObjectId: null,
-      activeObjectSpriteId: mapFile.objectSprites[0]?.id ?? null,
+      selectedInstanceId: null,
       undoStack: [],
       redoStack: []
     });
@@ -412,11 +368,11 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     const isObjectLayer = layer !== undefined && layer.type === 'object';
 
     if (layer !== undefined && layer.type === 'tile' && layer.tileSetId !== '') {
-      set({ activeLayerIndex: index, activeTilesetId: layer.tileSetId, activeTileId: 1, selectedObjectId: null });
+      set({ activeLayerIndex: index, activeTilesetId: layer.tileSetId, activeTileId: 1, selectedInstanceId: null });
     } else {
       set({
         activeLayerIndex: index,
-        selectedObjectId: null,
+        selectedInstanceId: null,
         ...(isObjectLayer ? { editorMode: 'paint' as const } : {})
       });
     }
@@ -504,7 +460,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   },
 
   undo: () => {
-    const { mapFile, undoStack, redoStack } = get();
+    const { mapFile, undoStack, redoStack, prefabs } = get();
 
     if (mapFile === null || undoStack.length === 0) {
       return;
@@ -519,12 +475,12 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       undoStack: newUndo,
       redoStack: newRedo,
       isDirty: snapshot !== savedMapRef,
-      ...normalizeSelections(snapshot, get())
+      ...normalizeSelections(snapshot, get(), prefabs)
     });
   },
 
   redo: () => {
-    const { mapFile, undoStack, redoStack } = get();
+    const { mapFile, undoStack, redoStack, prefabs } = get();
 
     if (mapFile === null || redoStack.length === 0) {
       return;
@@ -539,7 +495,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       undoStack: newUndo,
       redoStack: newRedo,
       isDirty: snapshot !== savedMapRef,
-      ...normalizeSelections(snapshot, get())
+      ...normalizeSelections(snapshot, get(), prefabs)
     });
   },
 
@@ -654,7 +610,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       mapFile: { ...mapFile, layers: [...mapFile.layers, newLayer] },
       isDirty: true,
       activeLayerIndex: mapFile.layers.length,
-      selectedObjectId: null
+      selectedInstanceId: null
     });
   },
 
@@ -670,7 +626,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     const newLayer: IEditorObjectLayer = {
       type: 'object',
       name,
-      objects: [],
+      instances: [],
       visible: true,
       opacity: 1
     };
@@ -679,209 +635,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       mapFile: { ...mapFile, layers: [...mapFile.layers, newLayer] },
       isDirty: true,
       activeLayerIndex: mapFile.layers.length,
-      selectedObjectId: null
+      selectedInstanceId: null
     });
-  },
-
-  placeObject: (spriteId, x, y) => {
-    const { mapFile, activeLayerIndex, objectSnapToGrid } = get();
-
-    if (mapFile === null) {
-      return;
-    }
-
-    const layer = mapFile.layers[activeLayerIndex];
-
-    if (layer === undefined || layer.type !== 'object') {
-      return;
-    }
-
-    get().pushUndoSnapshot();
-
-    let finalX = x;
-    let finalY = y;
-
-    if (objectSnapToGrid) {
-      finalX = Math.round(x / mapFile.tileWidth) * mapFile.tileWidth;
-      finalY = Math.round(y / mapFile.tileHeight) * mapFile.tileHeight;
-    }
-
-    const maxZ = layer.objects.reduce((max, obj) => Math.max(max, obj.zIndex), 0);
-
-    const newObject: IEditorObject = {
-      id: crypto.randomUUID(),
-      spriteId,
-      x: finalX,
-      y: finalY,
-      rotation: 0,
-      scaleX: 1,
-      scaleY: 1,
-      zIndex: maxZ + 1,
-      snapToGrid: objectSnapToGrid
-    };
-
-    const updatedLayer: IEditorObjectLayer = {
-      ...layer,
-      objects: [...layer.objects, newObject]
-    };
-
-    const newLayers = [...mapFile.layers];
-    newLayers[activeLayerIndex] = updatedLayer;
-
-    set({
-      mapFile: { ...mapFile, layers: newLayers },
-      isDirty: true,
-      selectedObjectId: newObject.id
-    });
-  },
-
-  selectObject: objectId => set({ selectedObjectId: objectId }),
-
-  moveObject: (objectId, x, y) => {
-    const { mapFile, activeLayerIndex, objectSnapToGrid } = get();
-
-    if (mapFile === null) {
-      return;
-    }
-
-    let finalX = x;
-    let finalY = y;
-
-    if (objectSnapToGrid) {
-      finalX = Math.round(x / mapFile.tileWidth) * mapFile.tileWidth;
-      finalY = Math.round(y / mapFile.tileHeight) * mapFile.tileHeight;
-    }
-
-    const updatedMapFile = updateObjectInLayer(mapFile, activeLayerIndex, objectId, obj => ({
-      ...obj,
-      x: finalX,
-      y: finalY
-    }));
-
-    if (updatedMapFile === null) {
-      return;
-    }
-
-    set({ mapFile: updatedMapFile, isDirty: true });
-  },
-
-  rotateObject: (objectId, rotation) => {
-    const { mapFile, activeLayerIndex } = get();
-
-    if (mapFile === null) {
-      return;
-    }
-
-    const updatedMapFile = updateObjectInLayer(mapFile, activeLayerIndex, objectId, obj => ({ ...obj, rotation }));
-
-    if (updatedMapFile === null) {
-      return;
-    }
-
-    get().pushUndoSnapshot();
-    set({ mapFile: updatedMapFile, isDirty: true });
-  },
-
-  scaleObject: (objectId, scaleX, scaleY) => {
-    const { mapFile, activeLayerIndex } = get();
-
-    if (mapFile === null) {
-      return;
-    }
-
-    const updatedMapFile = updateObjectInLayer(mapFile, activeLayerIndex, objectId, obj => ({
-      ...obj,
-      scaleX,
-      scaleY
-    }));
-
-    if (updatedMapFile === null) {
-      return;
-    }
-
-    get().pushUndoSnapshot();
-    set({ mapFile: updatedMapFile, isDirty: true });
-  },
-
-  deleteObject: objectId => {
-    const { mapFile, activeLayerIndex, selectedObjectId } = get();
-
-    if (mapFile === null) {
-      return;
-    }
-
-    const layer = mapFile.layers[activeLayerIndex];
-
-    if (layer === undefined || layer.type !== 'object') {
-      return;
-    }
-
-    const updatedObjects = layer.objects.filter(obj => obj.id !== objectId);
-
-    if (updatedObjects.length === layer.objects.length) {
-      return;
-    }
-
-    get().pushUndoSnapshot();
-
-    const updatedLayer: IEditorObjectLayer = { ...layer, objects: updatedObjects };
-    const newLayers = [...mapFile.layers];
-    newLayers[activeLayerIndex] = updatedLayer;
-
-    set({
-      mapFile: { ...mapFile, layers: newLayers },
-      isDirty: true,
-      selectedObjectId: selectedObjectId === objectId ? null : selectedObjectId
-    });
-  },
-
-  reorderObject: (objectId, direction) => {
-    const { mapFile, activeLayerIndex } = get();
-
-    if (mapFile === null) {
-      return;
-    }
-
-    const layer = mapFile.layers[activeLayerIndex];
-
-    if (layer === undefined || layer.type !== 'object') {
-      return;
-    }
-
-    const sortedObjects = [...layer.objects].sort((left, right) => left.zIndex - right.zIndex);
-    const currentIndex = sortedObjects.findIndex(obj => obj.id === objectId);
-
-    if (currentIndex === -1) {
-      return;
-    }
-
-    const targetIndex = direction === 'forward' ? currentIndex + 1 : currentIndex - 1;
-
-    if (targetIndex < 0 || targetIndex >= sortedObjects.length) {
-      return;
-    }
-
-    get().pushUndoSnapshot();
-
-    const currentObject = sortedObjects[currentIndex];
-    const targetObject = sortedObjects[targetIndex];
-    const updatedObjects = layer.objects.map(obj => {
-      if (obj.id === currentObject.id) {
-        return { ...obj, zIndex: targetObject.zIndex };
-      }
-
-      if (obj.id === targetObject.id) {
-        return { ...obj, zIndex: currentObject.zIndex };
-      }
-
-      return obj;
-    });
-
-    const updatedLayer: IEditorObjectLayer = { ...layer, objects: updatedObjects };
-    const newLayers = [...mapFile.layers];
-    newLayers[activeLayerIndex] = updatedLayer;
-
-    set({ mapFile: { ...mapFile, layers: newLayers }, isDirty: true });
   },
 
   toggleObjectSnap: () => {
@@ -893,22 +648,266 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     }
   },
 
-  importObjectSprites: sprites => {
-    const { mapFile, activeObjectSpriteId } = get();
+  loadPrefabs: prefabs => set({ prefabs }),
+
+  createPrefab: async (prefab) => {
+    const { projectPath } = get();
+
+    if (projectPath === null) {
+      return;
+    }
+
+    try {
+      const filePath = `${projectPath}/prefabs/${prefab.name}.entropy-prefab.json`;
+      await window.electronAPI.writePrefab(filePath, prefab);
+      set({ prefabs: [...get().prefabs, prefab] });
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
+  },
+
+  updatePrefab: async (prefab) => {
+    const { projectPath, prefabs } = get();
+
+    if (projectPath === null) {
+      return;
+    }
+
+    try {
+      const filePath = `${projectPath}/prefabs/${prefab.name}.entropy-prefab.json`;
+      await window.electronAPI.writePrefab(filePath, prefab);
+      set({ prefabs: prefabs.map(p => p.id === prefab.id ? prefab : p) });
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
+  },
+
+  deletePrefab: async (prefabId) => {
+    const { projectPath, prefabs, mapFile } = get();
+
+    if (projectPath === null) {
+      return;
+    }
+
+    const prefab = prefabs.find(p => p.id === prefabId);
+
+    if (prefab === undefined) {
+      return;
+    }
+
+    try {
+      const filePath = `${projectPath}/prefabs/${prefab.name}.entropy-prefab.json`;
+      await window.electronAPI.deletePrefab(filePath);
+
+      const updatedPrefabs = prefabs.filter(p => p.id !== prefabId);
+
+      // Remove instances referencing this prefab from all object layers
+      let updatedMapFile = mapFile;
+
+      if (updatedMapFile !== null) {
+        const updatedLayers = updatedMapFile.layers.map(layer => {
+          if (layer.type !== 'object') {
+            return layer;
+          }
+
+          return { ...layer, instances: layer.instances.filter(inst => inst.prefabId !== prefabId) };
+        });
+
+        const updatedPrefabIds = updatedMapFile.prefabIds.filter(id => id !== prefabId);
+        updatedMapFile = { ...updatedMapFile, layers: updatedLayers, prefabIds: updatedPrefabIds };
+      }
+
+      set({
+        prefabs: updatedPrefabs,
+        mapFile: updatedMapFile,
+        selectedPrefabId: get().selectedPrefabId === prefabId ? null : get().selectedPrefabId,
+        isDirty: updatedMapFile !== mapFile
+      });
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
+  },
+
+  placeInstance: (prefabId, x, y) => {
+    const { mapFile, activeLayerIndex, objectSnapToGrid, prefabs } = get();
 
     if (mapFile === null) {
       return;
     }
 
+    const layer = mapFile.layers[activeLayerIndex];
+
+    if (layer === undefined || layer.type !== 'object') {
+      return;
+    }
+
+    const prefab = prefabs.find(p => p.id === prefabId);
+
+    if (prefab === undefined) {
+      return;
+    }
+
     get().pushUndoSnapshot();
+
+    let finalX = x;
+    let finalY = y;
+
+    if (objectSnapToGrid) {
+      finalX = Math.round(x / mapFile.tileWidth) * mapFile.tileWidth;
+      finalY = Math.round(y / mapFile.tileHeight) * mapFile.tileHeight;
+    }
+
+    // Auto-increment instance name
+    const existingCount = layer.instances.filter(inst => inst.prefabId === prefabId).length;
+    const instanceName = existingCount === 0 ? prefab.name : `${prefab.name} (${existingCount})`;
+
+    const maxZ = layer.instances.reduce((max, inst) => Math.max(max, inst.zIndex), 0);
+
+    const newInstance: IEditorPrefabInstance = {
+      id: crypto.randomUUID(),
+      prefabId,
+      name: instanceName,
+      x: finalX,
+      y: finalY,
+      rotation: 0,
+      scaleX: 1,
+      scaleY: 1,
+      componentOverrides: [],
+      parentInstanceId: null,
+      zIndex: maxZ + 1,
+      enabled: true
+    };
+
+    const updatedLayer: IEditorObjectLayer = {
+      ...layer,
+      instances: [...layer.instances, newInstance]
+    };
+
+    const newLayers = [...mapFile.layers];
+    newLayers[activeLayerIndex] = updatedLayer;
+
+    // Ensure prefabId is in the map's prefabIds list
+    const prefabIds = mapFile.prefabIds.includes(prefabId)
+      ? mapFile.prefabIds
+      : [...mapFile.prefabIds, prefabId];
+
     set({
-      mapFile: { ...mapFile, objectSprites: [...mapFile.objectSprites, ...sprites] },
+      mapFile: { ...mapFile, layers: newLayers, prefabIds },
       isDirty: true,
-      activeObjectSpriteId: activeObjectSpriteId ?? sprites[0]?.id ?? null
+      selectedInstanceId: newInstance.id
     });
   },
 
-  setActiveObjectSpriteId: id => set({ activeObjectSpriteId: id }),
+  selectInstance: instanceId => set({ selectedInstanceId: instanceId }),
+
+  moveInstance: (instanceId, x, y) => {
+    const { mapFile } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const found = findInstanceInLayers(mapFile, instanceId);
+
+    if (found === null) {
+      return;
+    }
+
+    const layer = mapFile.layers[found.layerIndex] as IEditorObjectLayer;
+    const updatedInstances = layer.instances.map(inst =>
+      inst.id === instanceId ? { ...inst, x, y } : inst
+    );
+
+    const updatedLayer: IEditorObjectLayer = { ...layer, instances: updatedInstances };
+    const newLayers = [...mapFile.layers];
+    newLayers[found.layerIndex] = updatedLayer;
+
+    set({ mapFile: { ...mapFile, layers: newLayers }, isDirty: true });
+  },
+
+  rotateInstance: (instanceId, rotation) => {
+    const { mapFile } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const found = findInstanceInLayers(mapFile, instanceId);
+
+    if (found === null) {
+      return;
+    }
+
+    get().pushUndoSnapshot();
+
+    const layer = mapFile.layers[found.layerIndex] as IEditorObjectLayer;
+    const updatedInstances = layer.instances.map(inst =>
+      inst.id === instanceId ? { ...inst, rotation } : inst
+    );
+
+    const updatedLayer: IEditorObjectLayer = { ...layer, instances: updatedInstances };
+    const newLayers = [...mapFile.layers];
+    newLayers[found.layerIndex] = updatedLayer;
+
+    set({ mapFile: { ...mapFile, layers: newLayers }, isDirty: true });
+  },
+
+  scaleInstance: (instanceId, scaleX, scaleY) => {
+    const { mapFile } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const found = findInstanceInLayers(mapFile, instanceId);
+
+    if (found === null) {
+      return;
+    }
+
+    get().pushUndoSnapshot();
+
+    const layer = mapFile.layers[found.layerIndex] as IEditorObjectLayer;
+    const updatedInstances = layer.instances.map(inst =>
+      inst.id === instanceId ? { ...inst, scaleX, scaleY } : inst
+    );
+
+    const updatedLayer: IEditorObjectLayer = { ...layer, instances: updatedInstances };
+    const newLayers = [...mapFile.layers];
+    newLayers[found.layerIndex] = updatedLayer;
+
+    set({ mapFile: { ...mapFile, layers: newLayers }, isDirty: true });
+  },
+
+  deleteInstance: instanceId => {
+    const { mapFile, selectedInstanceId } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    const found = findInstanceInLayers(mapFile, instanceId);
+
+    if (found === null) {
+      return;
+    }
+
+    get().pushUndoSnapshot();
+
+    const layer = mapFile.layers[found.layerIndex] as IEditorObjectLayer;
+    const updatedInstances = layer.instances.filter(inst => inst.id !== instanceId);
+    const updatedLayer: IEditorObjectLayer = { ...layer, instances: updatedInstances };
+    const newLayers = [...mapFile.layers];
+    newLayers[found.layerIndex] = updatedLayer;
+
+    set({
+      mapFile: { ...mapFile, layers: newLayers },
+      isDirty: true,
+      selectedInstanceId: selectedInstanceId === instanceId ? null : selectedInstanceId
+    });
+  },
+
+  setSelectedPrefabId: id => set({ selectedPrefabId: id }),
 
   removeLayer: index => {
     const { mapFile, activeLayerIndex } = get();
@@ -926,7 +925,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       mapFile: { ...mapFile, layers: newLayers },
       isDirty: true,
       activeLayerIndex: newActiveIndex,
-      selectedObjectId: null
+      selectedInstanceId: null
     });
   },
 
@@ -1031,19 +1030,22 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
 
       const projectSettings = await window.electronAPI.settingsLoadProject(result.projectPath);
 
+      const discovered = await window.electronAPI.discoverPrefabs(result.projectPath);
+      const prefabs = discovered.map(d => d.prefab);
+
       set({
         projectPath: result.projectPath,
         projectConfig: result.config,
         availableMaps: result.maps,
         discoveredTilesets: result.tilesets,
-        discoveredObjects: result.objectSprites,
+        prefabs,
         mapFile: null,
         filePath: null,
         isDirty: false,
         activeLayerIndex: 0,
         activeTilesetId: null,
-        activeObjectSpriteId: null,
-        selectedObjectId: null,
+        selectedInstanceId: null,
+        selectedPrefabId: null,
         showGrid: projectSettings.showGrid,
         showPassability: projectSettings.showPassability,
         showWeights: projectSettings.showWeights,
@@ -1068,12 +1070,12 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   },
 
   loadMapFromProject: async mapFilePath => {
-    const { projectPath, projectConfig, discoveredTilesets, discoveredObjects } = get();
+    const { projectPath, projectConfig, discoveredTilesets } = get();
     if (projectPath === null || projectConfig === null) return;
 
     try {
       const data = await window.electronAPI.projectReadMap(mapFilePath);
-      const mapFile = mergeProjectAssetsIntoMap(data, discoveredTilesets, discoveredObjects);
+      const mapFile = mergeProjectAssetsIntoMap(data, discoveredTilesets);
       savedMapRef = mapFile;
 
       set({
@@ -1082,8 +1084,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         isDirty: false,
         activeLayerIndex: 0,
         activeTilesetId: mapFile.tilesets[0]?.id ?? null,
-        activeObjectSpriteId: mapFile.objectSprites[0]?.id ?? null,
-        selectedObjectId: null,
+        selectedInstanceId: null,
+        selectedPrefabId: null,
         undoStack: [],
         redoStack: []
       });
@@ -1119,21 +1121,20 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       }
 
       const scanResult: IProjectScanResult = await window.electronAPI.projectScan(projectPath);
-      const mapFile = mergeProjectAssetsIntoMap(data, scanResult.tilesets, scanResult.objectSprites);
+      const mapFile = mergeProjectAssetsIntoMap(data, scanResult.tilesets);
       savedMapRef = mapFile;
 
       set({
         projectConfig: scanResult.config,
         availableMaps: scanResult.maps,
         discoveredTilesets: scanResult.tilesets,
-        discoveredObjects: scanResult.objectSprites,
         mapFile,
         filePath: result.filePath,
         isDirty: false,
         activeLayerIndex: 0,
         activeTilesetId: mapFile.tilesets[0]?.id ?? null,
-        activeObjectSpriteId: mapFile.objectSprites[0]?.id ?? null,
-        selectedObjectId: null,
+        selectedInstanceId: null,
+        selectedPrefabId: null,
         undoStack: [],
         redoStack: []
       });
@@ -1159,28 +1160,6 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
 
       const scanResult = await window.electronAPI.projectScan(projectPath);
       set(createProjectScanState(get(), scanResult, { tilesetPath: relativePath }));
-    } catch (err) {
-      set({ error: getErrorMessage(err) });
-    }
-  },
-
-  importObjectsToProject: async () => {
-    const { projectPath } = get();
-
-    if (projectPath === null) {
-      set({ error: 'Open or create an Entropy project before importing objects.' });
-      return;
-    }
-
-    try {
-      const relativePaths = await window.electronAPI.projectImportObjects(projectPath);
-
-      if (relativePaths === null) {
-        return;
-      }
-
-      const scanResult = await window.electronAPI.projectScan(projectPath);
-      set(createProjectScanState(get(), scanResult, { objectPaths: relativePaths }));
     } catch (err) {
       set({ error: getErrorMessage(err) });
     }
@@ -1238,19 +1217,22 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
 
       const projectSettings = await window.electronAPI.settingsLoadProject(projectPath);
 
+      const discovered = await window.electronAPI.discoverPrefabs(projectPath);
+      const prefabs = discovered.map(d => d.prefab);
+
       set({
         projectPath: result.projectPath,
         projectConfig: result.config,
         availableMaps: result.maps,
         discoveredTilesets: result.tilesets,
-        discoveredObjects: result.objectSprites,
+        prefabs,
         mapFile: null,
         filePath: null,
         isDirty: false,
         activeLayerIndex: 0,
         activeTilesetId: null,
-        activeObjectSpriteId: null,
-        selectedObjectId: null,
+        selectedInstanceId: null,
+        selectedPrefabId: null,
         showGrid: projectSettings.showGrid,
         showPassability: projectSettings.showPassability,
         showWeights: projectSettings.showWeights,

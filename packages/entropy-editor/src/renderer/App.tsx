@@ -47,9 +47,6 @@ export function App(): ReactElement {
         case 'tileset-import':
           void store.importTilesetToProject();
           break;
-        case 'objects-import':
-          void store.importObjectsToProject();
-          break;
         case 'export-png':
           void store.exportPng();
           break;

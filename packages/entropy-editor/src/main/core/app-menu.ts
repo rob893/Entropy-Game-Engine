@@ -51,10 +51,6 @@ export function createAppMenu(mainWindow: BrowserWindow): void {
           label: 'Import Tileset...',
           click: (): void => sendMenuAction(mainWindow, 'tileset-import')
         },
-        {
-          label: 'Import Objects...',
-          click: (): void => sendMenuAction(mainWindow, 'objects-import')
-        },
         { type: 'separator' },
         {
           label: 'Export as PNG...',

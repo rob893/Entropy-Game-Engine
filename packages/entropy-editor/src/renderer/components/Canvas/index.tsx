@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactElement } from 'react';
-import type { IEditorObject, IEditorObjectLayer, IEditorTileLayer, IObjectSprite } from '../../../shared/types';
+import type { IEditorObjectLayer, IEditorPrefabInstance, IEditorTileLayer } from '../../../shared/types';
 import { cn } from '../../lib/utils';
 import type { BrushShape, EditorMode } from '../../stores/editor-store';
 import { useEditorStore } from '../../stores/editor-store';
@@ -119,7 +119,6 @@ export function Canvas(): ReactElement {
   const isPaintingRef = useRef(false);
   const isDraggingObjectRef = useRef(false);
   const tileImagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
-  const objectImagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
   const dragStartRef = useRef({ x: 0, y: 0 });
   const dragObjectStartRef = useRef({ x: 0, y: 0 });
   const zoomRef = useRef(1);
@@ -134,8 +133,8 @@ export function Canvas(): ReactElement {
   const activeTool = useEditorStore(state => state.activeTool);
   const activeTileId = useEditorStore(state => state.activeTileId);
   const activeTilesetId = useEditorStore(state => state.activeTilesetId);
-  const activeObjectSpriteId = useEditorStore(state => state.activeObjectSpriteId);
-  const selectedObjectId = useEditorStore(state => state.selectedObjectId);
+  const selectedInstanceId = useEditorStore(state => state.selectedInstanceId);
+  const selectedPrefabId = useEditorStore(state => state.selectedPrefabId);
   const brushSize = useEditorStore(state => state.brushSize);
   const brushShape = useEditorStore(state => state.brushShape);
   const showGrid = useEditorStore(state => state.showGrid);
@@ -143,10 +142,9 @@ export function Canvas(): ReactElement {
   const setActiveTile = useEditorStore(state => state.setActiveTile);
   const setDirty = useEditorStore(state => state.setDirty);
   const setCanvasElement = useEditorStore(state => state.setCanvasElement);
-  const selectObject = useEditorStore(state => state.selectObject);
-  const placeObject = useEditorStore(state => state.placeObject);
-  const moveObject = useEditorStore(state => state.moveObject);
-  const objectSprites = useMemo<IObjectSprite[]>(() => mapFile?.objectSprites ?? [], [mapFile?.objectSprites]);
+  const selectInstance = useEditorStore(state => state.selectInstance);
+  const placeInstance = useEditorStore(state => state.placeInstance);
+  const moveInstance = useEditorStore(state => state.moveInstance);
   const editorMode = useEditorStore(state => state.editorMode);
   const activeWeight = useEditorStore(state => state.activeWeight);
   const showPassability = useEditorStore(state => state.showPassability);
@@ -352,27 +350,29 @@ export function Canvas(): ReactElement {
       }
 
       if (layer.type === 'object') {
-        const sortedObjects = [...layer.objects].sort((a, b) => a.zIndex - b.zIndex);
+        const sortedInstances = [...layer.instances].sort((a, b) => a.zIndex - b.zIndex);
 
-        for (const obj of sortedObjects) {
-          const sprite = mapFile.objectSprites.find(s => s.id === obj.spriteId);
-
-          if (sprite === undefined) {
-            continue;
-          }
-
-          const spriteImage = objectImagesRef.current.get(sprite.id);
-
-          if (spriteImage === undefined) {
-            continue;
-          }
+        for (const inst of sortedInstances) {
+          // Placeholder rendering: draw a labeled rectangle for each instance
+          const instWidth = mapFile.tileWidth * inst.scaleX;
+          const instHeight = mapFile.tileHeight * inst.scaleY;
 
           ctx.save();
           ctx.globalAlpha = layer.opacity;
-          ctx.translate(obj.x + (sprite.width * obj.scaleX) / 2, obj.y + (sprite.height * obj.scaleY) / 2);
-          ctx.rotate((obj.rotation * Math.PI) / 180);
-          ctx.scale(obj.scaleX, obj.scaleY);
-          ctx.drawImage(spriteImage, -sprite.width / 2, -sprite.height / 2);
+          ctx.translate(inst.x + instWidth / 2, inst.y + instHeight / 2);
+          ctx.rotate((inst.rotation * Math.PI) / 180);
+          ctx.fillStyle = 'rgba(100, 149, 237, 0.3)';
+          ctx.fillRect(-instWidth / 2, -instHeight / 2, instWidth, instHeight);
+          ctx.strokeStyle = 'rgba(100, 149, 237, 0.8)';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(-instWidth / 2, -instHeight / 2, instWidth, instHeight);
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.font = '10px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          const label = inst.name.length > 12 ? `${inst.name.slice(0, 10)}…` : inst.name;
+          ctx.fillText(label, 0, 0);
           ctx.restore();
         }
       }
@@ -479,34 +479,31 @@ export function Canvas(): ReactElement {
       ctx.restore();
     }
 
-    if (selectedObjectId !== null) {
+    if (selectedInstanceId !== null) {
       for (const layer of mapFile.layers) {
         if (layer.type !== 'object') {
           continue;
         }
 
-        const obj = layer.objects.find(object => object.id === selectedObjectId);
+        const inst = layer.instances.find(instance => instance.id === selectedInstanceId);
 
-        if (obj === undefined) {
+        if (inst === undefined) {
           continue;
         }
 
-        const sprite = mapFile.objectSprites.find(objectSprite => objectSprite.id === obj.spriteId);
-
-        if (sprite === undefined) {
-          continue;
-        }
+        const instWidth = mapFile.tileWidth * inst.scaleX;
+        const instHeight = mapFile.tileHeight * inst.scaleY;
 
         ctx.save();
         ctx.strokeStyle = '#22c55e';
         ctx.lineWidth = 2;
         ctx.setLineDash([4, 4]);
-        ctx.strokeRect(obj.x - 1, obj.y - 1, sprite.width * obj.scaleX + 2, sprite.height * obj.scaleY + 2);
+        ctx.strokeRect(inst.x - 1, inst.y - 1, instWidth + 2, instHeight + 2);
         ctx.restore();
         break;
       }
     }
-  }, [mapFile, selectedObjectId, showGrid, showPassability, showWeights]);
+  }, [mapFile, selectedInstanceId, showGrid, showPassability, showWeights]);
 
   const applyTool = useCallback((row: number, col: number): void => {
     if (mapFile === null) {
@@ -777,21 +774,21 @@ export function Canvas(): ReactElement {
       const clickX = position.x;
       const clickY = position.y;
 
-      if (activeTool === 'brush' && activeObjectSpriteId !== null) {
-        placeObject(activeObjectSpriteId, clickX, clickY);
+      if (activeTool === 'brush' && selectedPrefabId !== null) {
+        placeInstance(selectedPrefabId, clickX, clickY);
         return;
       }
 
       if (activeTool === 'select') {
-        const hitObject = findObjectAtPoint(layer, clickX, clickY, mapFile.objectSprites);
+        const hitInstance = findInstanceAtPoint(layer, clickX, clickY, mapFile.tileWidth, mapFile.tileHeight);
 
-        selectObject(hitObject?.id ?? null);
+        selectInstance(hitInstance?.id ?? null);
 
-        if (hitObject !== null) {
+        if (hitInstance !== null) {
           pushUndoSnapshot();
           isDraggingObjectRef.current = true;
           dragStartRef.current = { x: clickX, y: clickY };
-          dragObjectStartRef.current = { x: hitObject.x, y: hitObject.y };
+          dragObjectStartRef.current = { x: hitInstance.x, y: hitInstance.y };
         }
 
         return;
@@ -808,14 +805,14 @@ export function Canvas(): ReactElement {
       const offset = Math.floor(brushSize / 2);
       applyTool(pos.row - offset, pos.col - offset);
     }
-  }, [activeLayerIndex, activeObjectSpriteId, activeTool, applyTool, brushSize, getCanvasPosition, getGridPosition, mapFile, placeObject, pushUndoSnapshot, selectObject]);
+  }, [activeLayerIndex, selectedPrefabId, activeTool, applyTool, brushSize, getCanvasPosition, getGridPosition, mapFile, placeInstance, pushUndoSnapshot, selectInstance]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
     if (isPanningRef.current) {
       return;
     }
 
-    if (isDraggingObjectRef.current && selectedObjectId !== null) {
+    if (isDraggingObjectRef.current && selectedInstanceId !== null) {
       const position = getCanvasPosition(e);
 
       if (position === null) {
@@ -824,7 +821,7 @@ export function Canvas(): ReactElement {
 
       const newX = dragObjectStartRef.current.x + (position.x - dragStartRef.current.x);
       const newY = dragObjectStartRef.current.y + (position.y - dragStartRef.current.y);
-      moveObject(selectedObjectId, newX, newY);
+      moveInstance(selectedInstanceId, newX, newY);
       return;
     }
 
@@ -844,7 +841,7 @@ export function Canvas(): ReactElement {
       const offset = Math.floor(brushSize / 2);
       applyTool(pos.row - offset, pos.col - offset);
     }
-  }, [activeTool, applyTool, brushSize, drawOverlay, getCanvasPosition, getGridPosition, moveObject, selectedObjectId]);
+  }, [activeTool, applyTool, brushSize, drawOverlay, getCanvasPosition, getGridPosition, moveInstance, selectedInstanceId]);
 
   const handleMouseUp = useCallback((): void => {
     isPaintingRef.current = false;
@@ -908,19 +905,6 @@ export function Canvas(): ReactElement {
     }
   }, [mapFile, renderCanvas]);
 
-  useEffect(() => {
-    for (const sprite of objectSprites) {
-      if (!objectImagesRef.current.has(sprite.id)) {
-        const img = new Image();
-        img.src = sprite.imageDataUrl;
-        img.onload = () => {
-          objectImagesRef.current.set(sprite.id, img);
-          renderCanvas();
-        };
-      }
-    }
-  }, [objectSprites, renderCanvas]);
-
   // Re-render when map data changes
   useEffect(() => {
     renderCanvas();
@@ -975,26 +959,21 @@ export function Canvas(): ReactElement {
   );
 }
 
-function findObjectAtPoint(
+function findInstanceAtPoint(
   layer: IEditorObjectLayer,
   x: number,
   y: number,
-  sprites: IObjectSprite[]
-): IEditorObject | null {
-  const sortedObjects = [...layer.objects].sort((a, b) => b.zIndex - a.zIndex);
+  tileWidth: number,
+  tileHeight: number
+): IEditorPrefabInstance | null {
+  const sortedInstances = [...layer.instances].sort((a, b) => b.zIndex - a.zIndex);
 
-  for (const obj of sortedObjects) {
-    const sprite = sprites.find(objectSprite => objectSprite.id === obj.spriteId);
+  for (const inst of sortedInstances) {
+    const width = tileWidth * inst.scaleX;
+    const height = tileHeight * inst.scaleY;
 
-    if (sprite === undefined) {
-      continue;
-    }
-
-    const width = sprite.width * obj.scaleX;
-    const height = sprite.height * obj.scaleY;
-
-    if (x >= obj.x && x <= obj.x + width && y >= obj.y && y <= obj.y + height) {
-      return obj;
+    if (x >= inst.x && x <= inst.x + width && y >= inst.y && y <= inst.y + height) {
+      return inst;
     }
   }
 

@@ -1,3 +1,5 @@
+import type { IEditorPrefabInstance } from './prefab';
+
 // ── Tile Layer Types ──
 
 export interface IEditorTileLayer {
@@ -13,32 +15,10 @@ export interface IEditorTileLayer {
 
 // ── Object Layer Types ──
 
-export interface IEditorObject {
-  id: string;
-  spriteId: string;
-  x: number;
-  y: number;
-  rotation: number;
-  scaleX: number;
-  scaleY: number;
-  zIndex: number;
-  snapToGrid: boolean;
-}
-
-export interface IObjectSprite {
-  id: string;
-  name: string;
-  category: string;
-  imagePath: string;
-  imageDataUrl: string;
-  width: number;
-  height: number;
-}
-
 export interface IEditorObjectLayer {
   type: 'object';
   name: string;
-  objects: IEditorObject[];
+  instances: IEditorPrefabInstance[];
   visible: boolean;
   opacity: number;
 }
@@ -53,7 +33,7 @@ export interface IEditorMapFile {
   tileHeight: number;
   layers: EditorLayer[];
   tilesets: IEditorTileset[];
-  objectSprites: IObjectSprite[];
+  prefabIds: string[];
 }
 
 // ── Tileset ──
@@ -90,7 +70,6 @@ export interface IProjectScanResult {
   config: IEntropyProject;
   maps: string[];
   tilesets: IDiscoveredAsset[];
-  objectSprites: IDiscoveredAsset[];
 }
 
 export interface IDiscoveredAsset {
