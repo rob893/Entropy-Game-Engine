@@ -12,11 +12,14 @@ export interface IEditorPrefabInstance {
   readonly id: string;
   readonly gameObjectClass: string;
   readonly name: string;
+  readonly tag: string;
+  readonly layer: number;
   readonly x: number;
   readonly y: number;
   readonly rotation: number;
   readonly scaleX: number;
   readonly scaleY: number;
+  readonly properties: Record<string, unknown>;
   readonly parentInstanceId: string | null;
   readonly zIndex: number;
   readonly enabled: boolean;
