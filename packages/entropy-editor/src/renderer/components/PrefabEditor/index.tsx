@@ -15,6 +15,7 @@ import { useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
 import { COMPONENT_SCHEMAS } from '../../../shared/schemas/component-schemas';
 import type { IComponentFieldDescriptor, IComponentSchema, IEditorPrefab } from '../../../shared/types/prefab';
+import { useEditorStore } from '../../stores/editor-store';
 import { ComponentFieldEditor } from './ComponentFieldEditor';
 
 export interface IPrefabEditorProps {
@@ -32,8 +33,8 @@ function getDefaultComponentData(schema: IComponentSchema): Record<string, unkno
   return data;
 }
 
-function getDisplayName(typeName: string): string {
-  return COMPONENT_SCHEMAS.get(typeName)?.displayName ?? typeName;
+function getDisplayName(typeName: string, schemaMap: ReadonlyMap<string, IComponentSchema>): string {
+  return schemaMap.get(typeName)?.displayName ?? typeName;
 }
 
 export function PrefabEditor({ prefab, isOpen, onClose, onSave }: IPrefabEditorProps): ReactElement | null {
@@ -51,6 +52,7 @@ function createDefaultComponents(): ISerializedComponent[] {
 }
 
 function PrefabEditorContent({ prefab, onClose, onSave }: Omit<IPrefabEditorProps, 'isOpen'>): ReactElement {
+  const userComponentSchemas = useEditorStore(state => state.userComponentSchemas);
   const [name, setName] = useState(prefab?.name ?? 'New Prefab');
   const [tag, setTag] = useState(prefab?.template.tag ?? 'Untagged');
   const [layer, setLayer] = useState(prefab?.template.layer ?? 0);
@@ -60,6 +62,16 @@ function PrefabEditorContent({ prefab, onClose, onSave }: Omit<IPrefabEditorProp
   );
   const [selectedComponentIndex, setSelectedComponentIndex] = useState(0);
 
+  const allSchemaMap = useMemo((): ReadonlyMap<string, IComponentSchema> => {
+    const map = new Map<string, IComponentSchema>(COMPONENT_SCHEMAS);
+    for (const schema of userComponentSchemas) {
+      if (!map.has(schema.typeName)) {
+        map.set(schema.typeName, schema);
+      }
+    }
+    return map;
+  }, [userComponentSchemas]);
+
   const handleOpenChange = (open: boolean): void => {
     if (!open) {
       onClose();
@@ -67,7 +79,7 @@ function PrefabEditorContent({ prefab, onClose, onSave }: Omit<IPrefabEditorProp
   };
 
   const handleAddComponent = (typeName: string): void => {
-    const schema = COMPONENT_SCHEMAS.get(typeName);
+    const schema = allSchemaMap.get(typeName);
     if (schema === undefined) return;
 
     const newComponent: ISerializedComponent = {
@@ -122,9 +134,9 @@ function PrefabEditorContent({ prefab, onClose, onSave }: Omit<IPrefabEditorProp
   // Available components for the "Add" dropdown (exclude Transform and already-attached)
   const availableComponents = useMemo(() => {
     const attached = new Set(components.map(c => c.typeName));
-    return Array.from(COMPONENT_SCHEMAS.values())
+    return Array.from(allSchemaMap.values())
       .filter(s => s.typeName !== 'Transform' && !attached.has(s.typeName));
-  }, [components]);
+  }, [components, allSchemaMap]);
 
   // Group available components by category
   const groupedAvailable = useMemo(() => {
@@ -140,7 +152,7 @@ function PrefabEditorContent({ prefab, onClose, onSave }: Omit<IPrefabEditorProp
   // Selected component and its schema
   const selectedComponent = components[selectedComponentIndex] ?? null;
   const selectedSchema = selectedComponent !== null
-    ? COMPONENT_SCHEMAS.get(selectedComponent.typeName) ?? null
+    ? allSchemaMap.get(selectedComponent.typeName) ?? null
     : null;
 
   // Group fields by their group property
@@ -226,7 +238,7 @@ function PrefabEditorContent({ prefab, onClose, onSave }: Omit<IPrefabEditorProp
                           className="w-full justify-start"
                           onPress={() => setSelectedComponentIndex(index)}
                         >
-                          {getDisplayName(comp.typeName)}
+                          {getDisplayName(comp.typeName, allSchemaMap)}
                         </Button>
                       ))}
                     </div>

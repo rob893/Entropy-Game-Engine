@@ -1,10 +1,12 @@
 import type { ISerializedScene } from '@entropy-engine/entropy-game-engine';
 import { create } from 'zustand';
 import { FILE_EXTENSION } from '../../shared/constants';
+import { COMPONENT_SCHEMAS } from '../../shared/schemas/component-schemas';
 import type {
   BrushShape,
   EditorLayer,
   EditorMode,
+  IComponentSchema,
   IDiscoveredAsset,
   IEditorMapFile,
   IEditorObjectLayer,
@@ -67,6 +69,7 @@ interface IEditorState {
 
   // Prefab state
   prefabs: IEditorPrefab[];
+  userComponentSchemas: readonly IComponentSchema[];
   selectedInstanceId: string | null;
   selectedPrefabId: string | null;
 
@@ -253,6 +256,17 @@ interface IImportedProjectAssets {
   tilesetPath?: string;
 }
 
+function buildUserComponentSchemas(scanResult: IProjectScanResult): IComponentSchema[] {
+  return scanResult.userComponents
+    .filter(c => !COMPONENT_SCHEMAS.has(c.typeName))
+    .map(c => ({
+      typeName: c.typeName,
+      displayName: c.displayName,
+      category: 'User',
+      fields: []
+    }));
+}
+
 function createProjectScanState(
   state: Pick<IEditorState, 'activeTileId' | 'activeTilesetId' | 'mapFile'>,
   scanResult: IProjectScanResult,
@@ -261,7 +275,8 @@ function createProjectScanState(
   const nextState: Partial<IEditorState> = {
     projectConfig: scanResult.config,
     availableMaps: scanResult.maps,
-    discoveredTilesets: scanResult.tilesets
+    discoveredTilesets: scanResult.tilesets,
+    userComponentSchemas: buildUserComponentSchemas(scanResult)
   };
 
   if (state.mapFile === null) {
@@ -335,6 +350,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   discoveredTilesets: [],
   isDirty: false,
   prefabs: [],
+  userComponentSchemas: [],
   selectedInstanceId: null,
   selectedPrefabId: null,
   activeTool: 'brush',
@@ -1067,6 +1083,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         projectConfig: result.config,
         availableMaps: result.maps,
         discoveredTilesets: result.tilesets,
+        userComponentSchemas: buildUserComponentSchemas(result),
         prefabs,
         mapFile: null,
         filePath: null,
@@ -1157,6 +1174,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         projectConfig: scanResult.config,
         availableMaps: scanResult.maps,
         discoveredTilesets: scanResult.tilesets,
+        userComponentSchemas: buildUserComponentSchemas(scanResult),
         mapFile,
         filePath: result.filePath,
         isDirty: false,
@@ -1303,6 +1321,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         projectConfig: result.config,
         availableMaps: result.maps,
         discoveredTilesets: result.tilesets,
+        userComponentSchemas: buildUserComponentSchemas(result),
         prefabs,
         mapFile: null,
         filePath: null,

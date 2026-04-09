@@ -1,3 +1,4 @@
+import type { IDiscoveredUserComponent } from './prefab';
 import type { IEditorPrefabInstance } from './prefab';
 
 // ── Tile Layer Types ──
@@ -70,6 +71,7 @@ export interface IProjectScanResult {
   config: IEntropyProject;
   maps: string[];
   tilesets: IDiscoveredAsset[];
+  userComponents: IDiscoveredUserComponent[];
 }
 
 export interface IDiscoveredAsset {

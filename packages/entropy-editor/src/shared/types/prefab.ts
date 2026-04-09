@@ -56,3 +56,11 @@ export interface IComponentSchema {
   readonly fields: IComponentFieldDescriptor[];
   readonly category: string;
 }
+
+// ── User Component Discovery ──
+
+export interface IDiscoveredUserComponent {
+  readonly typeName: string;
+  readonly displayName: string;
+  readonly filePath: string;
+}

@@ -5,6 +5,7 @@ import { FILE_EXTENSION, IPC_CHANNELS, PREFAB_EXTENSION, PROJECT_DIRS, PROJECT_F
 import type {
   IDiscoveredAsset,
   IDiscoveredPrefab,
+  IDiscoveredUserComponent,
   IEditorMapFile,
   IEditorPrefab,
   IEntropyProject,
@@ -182,7 +183,9 @@ async function scanProject(projectPath: string): Promise<IProjectScanResult> {
   const tilesetsDir = path.join(projectPath, PROJECT_DIRS.TILESETS);
   const tilesets = await discoverImages(tilesetsDir, projectPath, '');
 
-  return { projectPath, config, maps, tilesets };
+  const userComponents = await discoverUserComponents(projectPath);
+
+  return { projectPath, config, maps, tilesets, userComponents };
 }
 
 async function discoverFiles(dir: string, extension: string): Promise<string[]> {
@@ -255,4 +258,59 @@ async function discoverPrefabFiles(dir: string): Promise<IDiscoveredPrefab[]> {
   } catch {
     return [];
   }
+}
+
+const COMPONENT_CLASS_PATTERN = /class\s+(\w+)\s+extends\s+Component\b/g;
+
+async function discoverUserComponents(projectPath: string): Promise<IDiscoveredUserComponent[]> {
+  const srcDir = path.join(projectPath, 'src');
+
+  try {
+    await fs.access(srcDir);
+  } catch {
+    return [];
+  }
+
+  const tsFiles = await findTsFiles(srcDir);
+  const components: IDiscoveredUserComponent[] = [];
+
+  for (const filePath of tsFiles) {
+    const content = await fs.readFile(filePath, 'utf-8');
+    const classMatches = content.matchAll(COMPONENT_CLASS_PATTERN);
+
+    for (const match of classMatches) {
+      const className = match[1];
+
+      components.push({
+        typeName: className,
+        displayName: className,
+        filePath: path.relative(projectPath, filePath).replace(/\\/g, '/')
+      });
+    }
+  }
+
+  return components;
+}
+
+async function findTsFiles(dir: string): Promise<string[]> {
+  const results: string[] = [];
+
+  try {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+
+      if (entry.isDirectory()) {
+        const subResults = await findTsFiles(fullPath);
+        results.push(...subResults);
+      } else if (entry.isFile() && entry.name.endsWith('.ts') && !entry.name.endsWith('.d.ts')) {
+        results.push(fullPath);
+      }
+    }
+  } catch {
+    // Directory not readable — skip
+  }
+
+  return results;
 }

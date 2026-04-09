@@ -1,9 +1,11 @@
 import { Button, Input, Label, NumberField, Separator, TextField } from '@heroui/react';
 import { Trash2 } from 'lucide-react';
+import { useMemo } from 'react';
 import type { ReactElement } from 'react';
 import { COMPONENT_SCHEMAS } from '../../../shared/schemas/component-schemas';
 import type {
   IComponentOverride,
+  IComponentSchema,
   IEditorMapFile,
   IEditorPrefab,
   IEditorPrefabInstance,
@@ -187,6 +189,17 @@ function InstanceProperties({ instance, prefab }: IInstancePropertiesProps): Rea
   const scaleInstance = useEditorStore(state => state.scaleInstance);
   const deleteInstance = useEditorStore(state => state.deleteInstance);
   const pushUndoSnapshot = useEditorStore(state => state.pushUndoSnapshot);
+  const userComponentSchemas = useEditorStore(state => state.userComponentSchemas);
+
+  const allSchemaMap = useMemo((): ReadonlyMap<string, IComponentSchema> => {
+    const map = new Map<string, IComponentSchema>(COMPONENT_SCHEMAS);
+    for (const schema of userComponentSchemas) {
+      if (!map.has(schema.typeName)) {
+        map.set(schema.typeName, schema);
+      }
+    }
+    return map;
+  }, [userComponentSchemas]);
 
   const templateComponents = prefab?.template.components ?? [];
   // Exclude Transform from read-only list — instance fields cover it
@@ -282,7 +295,7 @@ function InstanceProperties({ instance, prefab }: IInstancePropertiesProps): Rea
             <span className="text-xs font-semibold uppercase tracking-wider text-muted">Components</span>
 
             {displayComponents.map(component => {
-              const schema = COMPONENT_SCHEMAS.get(component.typeName);
+              const schema = allSchemaMap.get(component.typeName);
               const resolved = resolveComponentValue(
                 component.data,
                 instance.componentOverrides,
@@ -294,7 +307,7 @@ function InstanceProperties({ instance, prefab }: IInstancePropertiesProps): Rea
                 <div key={component.typeName} className="space-y-1">
                   <span className="text-xs font-medium text-foreground">{displayName}</span>
 
-                  {schema !== undefined ? (
+                  {schema !== undefined && schema.fields.length > 0 ? (
                     schema.fields.map(field => (
                       <div key={field.name} className="grid grid-cols-[88px,1fr] gap-x-2 text-xs">
                         <span className="text-muted truncate">{field.displayName}</span>
@@ -334,8 +347,20 @@ function InstanceProperties({ instance, prefab }: IInstancePropertiesProps): Rea
 }
 
 function PrefabSummary({ prefab }: { prefab: IEditorPrefab }): ReactElement {
+  const userComponentSchemas = useEditorStore(state => state.userComponentSchemas);
+
+  const allSchemaMap = useMemo((): ReadonlyMap<string, IComponentSchema> => {
+    const map = new Map<string, IComponentSchema>(COMPONENT_SCHEMAS);
+    for (const schema of userComponentSchemas) {
+      if (!map.has(schema.typeName)) {
+        map.set(schema.typeName, schema);
+      }
+    }
+    return map;
+  }, [userComponentSchemas]);
+
   const componentNames = prefab.template.components.map(c => {
-    const schema = COMPONENT_SCHEMAS.get(c.typeName);
+    const schema = allSchemaMap.get(c.typeName);
 
     return schema?.displayName ?? c.typeName;
   });

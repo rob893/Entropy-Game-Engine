@@ -18,6 +18,7 @@ export type {
   IComponentFieldDescriptor,
   IComponentOverride,
   IComponentSchema,
+  IDiscoveredUserComponent,
   IEditorPrefab,
   IEditorPrefabInstance
 } from './prefab';
