@@ -61,8 +61,10 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     this.setComponents(initialComponents);
 
     // Strip parent-specific fields so children generate their own IDs
-    const { id: _parentId, name: _parentName, ...childConfig } = config;
-    const childGameObjects = this.buildAndReturnChildGameObjects(childConfig as TConfig);
+    const { ...childConfig } = config;
+    delete childConfig.id;
+    delete childConfig.name;
+    const childGameObjects = this.buildAndReturnChildGameObjects(childConfig);
 
     for (const child of childGameObjects) {
       child.transform.parent = this.transform;
