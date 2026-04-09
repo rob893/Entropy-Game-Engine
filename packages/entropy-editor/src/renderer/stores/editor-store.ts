@@ -1,16 +1,13 @@
-import type { ISerializedScene } from '@entropy-engine/entropy-game-engine';
 import { create } from 'zustand';
 import { FILE_EXTENSION } from '../../shared/constants';
-import { COMPONENT_SCHEMAS } from '../../shared/schemas/component-schemas';
 import type {
   BrushShape,
   EditorLayer,
   EditorMode,
-  IComponentSchema,
   IDiscoveredAsset,
+  IDiscoveredGameObject,
   IEditorMapFile,
   IEditorObjectLayer,
-  IEditorPrefab,
   IEditorPrefabInstance,
   IEditorTileLayer,
   IEditorTileset,
@@ -19,8 +16,6 @@ import type {
   IProjectSettings
 } from '../../shared/types';
 import { getErrorMessage } from '../../shared/utils/errors';
-import { bakeAllInstances } from '../editor/PrefabBaker';
-import { generatePrefabManifest, generatePrefabTypeDeclaration } from '../editor/PrefabManifestExporter';
 import { exportToTiled } from '../editor/TiledExporter';
 
 export type { BrushShape, EditorMode } from '../../shared/types';
@@ -31,8 +26,7 @@ let savedMapRef: IEditorMapFile | null = null;
 
 function normalizeSelections(
   mapFile: IEditorMapFile,
-  state: Pick<IEditorState, 'activeLayerIndex' | 'activeTilesetId' | 'selectedPrefabId'>,
-  prefabs: IEditorPrefab[]
+  state: Pick<IEditorState, 'activeLayerIndex' | 'activeTilesetId'>
 ): Partial<IEditorState> {
   const maxLayerIndex = Math.max(0, mapFile.layers.length - 1);
   const activeLayerIndex = Math.min(state.activeLayerIndex, maxLayerIndex);
@@ -42,15 +36,10 @@ function normalizeSelections(
     ? state.activeTilesetId
     : mapFile.tilesets[0]?.id ?? null;
 
-  const prefabIds = new Set(prefabs.map(p => p.id));
-  const selectedPrefabId = state.selectedPrefabId !== null && prefabIds.has(state.selectedPrefabId)
-    ? state.selectedPrefabId
-    : null;
-
   return {
     activeLayerIndex,
     activeTilesetId,
-    selectedPrefabId,
+    selectedGameObjectClass: null,
     selectedInstanceId: null
   };
 }
@@ -67,11 +56,10 @@ interface IEditorState {
   discoveredTilesets: IDiscoveredAsset[];
   isDirty: boolean;
 
-  // Prefab state
-  prefabs: IEditorPrefab[];
-  userComponentSchemas: readonly IComponentSchema[];
+  // Game object state
+  discoveredGameObjects: IDiscoveredGameObject[];
   selectedInstanceId: string | null;
-  selectedPrefabId: string | null;
+  selectedGameObjectClass: string | null;
 
   // Tool state
   activeTool: EditorTool;
@@ -127,20 +115,14 @@ interface IEditorState {
   addObjectLayer: (name: string) => void;
   toggleObjectSnap: () => void;
 
-  // Prefab operations
-  loadPrefabs: (prefabs: IEditorPrefab[]) => void;
-  createPrefab: (prefab: IEditorPrefab) => Promise<void>;
-  updatePrefab: (prefab: IEditorPrefab) => Promise<void>;
-  deletePrefab: (prefabId: string) => Promise<void>;
-
   // Instance operations
-  placeInstance: (prefabId: string, x: number, y: number) => void;
+  placeInstance: (gameObjectClass: string, x: number, y: number) => void;
   selectInstance: (instanceId: string | null) => void;
   moveInstance: (instanceId: string, x: number, y: number) => void;
   rotateInstance: (instanceId: string, rotation: number) => void;
   scaleInstance: (instanceId: string, scaleX: number, scaleY: number) => void;
   deleteInstance: (instanceId: string) => void;
-  setSelectedPrefabId: (id: string | null) => void;
+  setSelectedGameObjectClass: (className: string | null) => void;
 
   removeLayer: (index: number) => void;
   setLayerVisibility: (index: number, visible: boolean) => void;
@@ -160,9 +142,6 @@ interface IEditorState {
   // Export operations
   exportPng: () => Promise<void>;
   exportTiledMap: () => Promise<void>;
-  exportScene: () => Promise<void>;
-  exportPrefabManifest: () => Promise<void>;
-  exportPrefabTypes: () => Promise<void>;
 
   // Settings operations
   initializeSettings: () => Promise<void>;
@@ -256,17 +235,6 @@ interface IImportedProjectAssets {
   tilesetPath?: string;
 }
 
-function buildUserComponentSchemas(scanResult: IProjectScanResult): IComponentSchema[] {
-  return scanResult.userComponents
-    .filter(c => !COMPONENT_SCHEMAS.has(c.typeName))
-    .map(c => ({
-      typeName: c.typeName,
-      displayName: c.displayName,
-      category: 'User',
-      fields: []
-    }));
-}
-
 function createProjectScanState(
   state: Pick<IEditorState, 'activeTileId' | 'activeTilesetId' | 'mapFile'>,
   scanResult: IProjectScanResult,
@@ -276,7 +244,7 @@ function createProjectScanState(
     projectConfig: scanResult.config,
     availableMaps: scanResult.maps,
     discoveredTilesets: scanResult.tilesets,
-    userComponentSchemas: buildUserComponentSchemas(scanResult)
+    discoveredGameObjects: scanResult.gameObjects
   };
 
   if (state.mapFile === null) {
@@ -349,10 +317,9 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   availableMaps: [],
   discoveredTilesets: [],
   isDirty: false,
-  prefabs: [],
-  userComponentSchemas: [],
+  discoveredGameObjects: [],
   selectedInstanceId: null,
-  selectedPrefabId: null,
+  selectedGameObjectClass: null,
   activeTool: 'brush',
   activeLayerIndex: 0,
   activeTileId: 1,
@@ -482,7 +449,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   },
 
   undo: () => {
-    const { mapFile, undoStack, redoStack, prefabs } = get();
+    const { mapFile, undoStack, redoStack } = get();
 
     if (mapFile === null || undoStack.length === 0) {
       return;
@@ -497,12 +464,12 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       undoStack: newUndo,
       redoStack: newRedo,
       isDirty: snapshot !== savedMapRef,
-      ...normalizeSelections(snapshot, get(), prefabs)
+      ...normalizeSelections(snapshot, get())
     });
   },
 
   redo: () => {
-    const { mapFile, undoStack, redoStack, prefabs } = get();
+    const { mapFile, undoStack, redoStack } = get();
 
     if (mapFile === null || redoStack.length === 0) {
       return;
@@ -517,7 +484,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       undoStack: newUndo,
       redoStack: newRedo,
       isDirty: snapshot !== savedMapRef,
-      ...normalizeSelections(snapshot, get(), prefabs)
+      ...normalizeSelections(snapshot, get())
     });
   },
 
@@ -670,89 +637,9 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     }
   },
 
-  loadPrefabs: prefabs => set({ prefabs }),
-
-  createPrefab: async (prefab) => {
-    const { projectPath } = get();
-
-    if (projectPath === null) {
-      return;
-    }
-
-    try {
-      const filePath = `${projectPath}/prefabs/${prefab.name}.entropy-prefab.json`;
-      await window.electronAPI.writePrefab(filePath, prefab);
-      set({ prefabs: [...get().prefabs, prefab] });
-    } catch (err) {
-      set({ error: getErrorMessage(err) });
-    }
-  },
-
-  updatePrefab: async (prefab) => {
-    const { projectPath, prefabs } = get();
-
-    if (projectPath === null) {
-      return;
-    }
-
-    try {
-      const filePath = `${projectPath}/prefabs/${prefab.name}.entropy-prefab.json`;
-      await window.electronAPI.writePrefab(filePath, prefab);
-      set({ prefabs: prefabs.map(p => p.id === prefab.id ? prefab : p) });
-    } catch (err) {
-      set({ error: getErrorMessage(err) });
-    }
-  },
-
-  deletePrefab: async (prefabId) => {
-    const { projectPath, prefabs, mapFile } = get();
-
-    if (projectPath === null) {
-      return;
-    }
-
-    const prefab = prefabs.find(p => p.id === prefabId);
-
-    if (prefab === undefined) {
-      return;
-    }
-
-    try {
-      const filePath = `${projectPath}/prefabs/${prefab.name}.entropy-prefab.json`;
-      await window.electronAPI.deletePrefab(filePath);
-
-      const updatedPrefabs = prefabs.filter(p => p.id !== prefabId);
-
-      // Remove instances referencing this prefab from all object layers
-      let updatedMapFile = mapFile;
-
-      if (updatedMapFile !== null) {
-        const updatedLayers = updatedMapFile.layers.map(layer => {
-          if (layer.type !== 'object') {
-            return layer;
-          }
-
-          return { ...layer, instances: layer.instances.filter(inst => inst.prefabId !== prefabId) };
-        });
-
-        const updatedPrefabIds = (updatedMapFile.prefabIds ?? []).filter(id => id !== prefabId);
-        updatedMapFile = { ...updatedMapFile, layers: updatedLayers, prefabIds: updatedPrefabIds };
-      }
-
-      set({
-        prefabs: updatedPrefabs,
-        mapFile: updatedMapFile,
-        selectedPrefabId: get().selectedPrefabId === prefabId ? null : get().selectedPrefabId,
-        isDirty: updatedMapFile !== mapFile
-      });
-    } catch (err) {
-      set({ error: getErrorMessage(err) });
-    }
-  },
-
-  placeInstance: (prefabId, x, y) => {
+  placeInstance: (gameObjectClass, x, y) => {
     let { mapFile, activeLayerIndex } = get();
-    const { objectSnapToGrid, prefabs } = get();
+    const { objectSnapToGrid } = get();
 
     if (mapFile === null) {
       return;
@@ -785,11 +672,6 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     }
 
     const objectLayer = layer as IEditorObjectLayer;
-    const prefab = prefabs.find(p => p.id === prefabId);
-
-    if (prefab === undefined) {
-      return;
-    }
 
     get().pushUndoSnapshot();
 
@@ -801,22 +683,23 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
       finalY = Math.round(y / mapFile.tileHeight) * mapFile.tileHeight;
     }
 
-    // Auto-increment instance name
-    const existingCount = objectLayer.instances.filter(inst => inst.prefabId === prefabId).length;
-    const instanceName = existingCount === 0 ? prefab.name : `${prefab.name} (${existingCount})`;
+    const existingCount = objectLayer.instances.filter(inst => inst.gameObjectClass === gameObjectClass).length;
+    const instanceName = existingCount === 0 ? gameObjectClass : `${gameObjectClass} (${existingCount})`;
 
     const maxZ = objectLayer.instances.reduce((max, inst) => Math.max(max, inst.zIndex), 0);
 
     const newInstance: IEditorPrefabInstance = {
       id: crypto.randomUUID(),
-      prefabId,
+      gameObjectClass,
       name: instanceName,
+      tag: 'default',
+      layer: 0,
       x: finalX,
       y: finalY,
       rotation: 0,
       scaleX: 1,
       scaleY: 1,
-      componentOverrides: [],
+      properties: {},
       parentInstanceId: null,
       zIndex: maxZ + 1,
       enabled: true
@@ -830,14 +713,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     const newLayers = [...mapFile.layers];
     newLayers[activeLayerIndex] = updatedLayer;
 
-    // Ensure prefabId is in the map's prefabIds list
-    const existingPrefabIds = mapFile.prefabIds ?? [];
-    const prefabIds = existingPrefabIds.includes(prefabId)
-      ? existingPrefabIds
-      : [...existingPrefabIds, prefabId];
-
     set({
-      mapFile: { ...mapFile, layers: newLayers, prefabIds },
+      mapFile: { ...mapFile, layers: newLayers },
       isDirty: true,
       selectedInstanceId: newInstance.id
     });
@@ -952,7 +829,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     });
   },
 
-  setSelectedPrefabId: id => set({ selectedPrefabId: id }),
+  setSelectedGameObjectClass: className => set({ selectedGameObjectClass: className }),
 
   removeLayer: index => {
     const { mapFile, activeLayerIndex } = get();
@@ -1075,23 +952,19 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
 
       const projectSettings = await window.electronAPI.settingsLoadProject(result.projectPath);
 
-      const discovered = await window.electronAPI.discoverPrefabs(result.projectPath);
-      const prefabs = discovered.map(d => d.prefab);
-
       set({
         projectPath: result.projectPath,
         projectConfig: result.config,
         availableMaps: result.maps,
         discoveredTilesets: result.tilesets,
-        userComponentSchemas: buildUserComponentSchemas(result),
-        prefabs,
+        discoveredGameObjects: result.gameObjects,
         mapFile: null,
         filePath: null,
         isDirty: false,
         activeLayerIndex: 0,
         activeTilesetId: null,
         selectedInstanceId: null,
-        selectedPrefabId: null,
+        selectedGameObjectClass: null,
         showGrid: projectSettings.showGrid,
         showPassability: projectSettings.showPassability,
         showWeights: projectSettings.showWeights,
@@ -1131,7 +1004,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         activeLayerIndex: 0,
         activeTilesetId: mapFile.tilesets[0]?.id ?? null,
         selectedInstanceId: null,
-        selectedPrefabId: null,
+        selectedGameObjectClass: null,
         undoStack: [],
         redoStack: []
       });
@@ -1174,14 +1047,14 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
         projectConfig: scanResult.config,
         availableMaps: scanResult.maps,
         discoveredTilesets: scanResult.tilesets,
-        userComponentSchemas: buildUserComponentSchemas(scanResult),
+        discoveredGameObjects: scanResult.gameObjects,
         mapFile,
         filePath: result.filePath,
         isDirty: false,
         activeLayerIndex: 0,
         activeTilesetId: mapFile.tilesets[0]?.id ?? null,
         selectedInstanceId: null,
-        selectedPrefabId: null,
+        selectedGameObjectClass: null,
         undoStack: [],
         redoStack: []
       });
@@ -1242,55 +1115,6 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     }
   },
 
-  exportScene: async () => {
-    const { mapFile, prefabs, projectConfig } = get();
-
-    if (mapFile === null) {
-      return;
-    }
-
-    try {
-      const gameObjects = bakeAllInstances(mapFile, prefabs);
-      const scene: ISerializedScene = {
-        name: mapFile.name,
-        sceneId: 0,
-        gameObjects
-      };
-
-      if (projectConfig?.defaultScene !== undefined) {
-        scene.name = projectConfig.defaultScene;
-      }
-
-      const jsonData = JSON.stringify(scene, null, 2);
-      await window.electronAPI.exportScene(jsonData);
-    } catch (err) {
-      set({ error: getErrorMessage(err) });
-    }
-  },
-
-  exportPrefabManifest: async () => {
-    const { prefabs } = get();
-
-    try {
-      const manifest = generatePrefabManifest(prefabs);
-      const jsonData = JSON.stringify(manifest, null, 2);
-      await window.electronAPI.exportPrefabManifest(jsonData);
-    } catch (err) {
-      set({ error: getErrorMessage(err) });
-    }
-  },
-
-  exportPrefabTypes: async () => {
-    const { prefabs } = get();
-
-    try {
-      const dtsContent = generatePrefabTypeDeclaration(prefabs);
-      await window.electronAPI.exportPrefabTypes(dtsContent);
-    } catch (err) {
-      set({ error: getErrorMessage(err) });
-    }
-  },
-
   initializeSettings: async () => {
     set({ isInitializing: true });
 
@@ -1313,23 +1137,19 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
 
       const projectSettings = await window.electronAPI.settingsLoadProject(projectPath);
 
-      const discovered = await window.electronAPI.discoverPrefabs(projectPath);
-      const prefabs = discovered.map(d => d.prefab);
-
       set({
         projectPath: result.projectPath,
         projectConfig: result.config,
         availableMaps: result.maps,
         discoveredTilesets: result.tilesets,
-        userComponentSchemas: buildUserComponentSchemas(result),
-        prefabs,
+        discoveredGameObjects: result.gameObjects,
         mapFile: null,
         filePath: null,
         isDirty: false,
         activeLayerIndex: 0,
         activeTilesetId: null,
         selectedInstanceId: null,
-        selectedPrefabId: null,
+        selectedGameObjectClass: null,
         showGrid: projectSettings.showGrid,
         showPassability: projectSettings.showPassability,
         showWeights: projectSettings.showWeights,
