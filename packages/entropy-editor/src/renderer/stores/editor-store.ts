@@ -735,18 +735,40 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
   },
 
   placeInstance: (prefabId, x, y) => {
-    const { mapFile, activeLayerIndex, objectSnapToGrid, prefabs } = get();
+    let { mapFile, activeLayerIndex } = get();
+    const { objectSnapToGrid, prefabs } = get();
 
     if (mapFile === null) {
       return;
     }
 
-    const layer = mapFile.layers[activeLayerIndex];
+    let layer = mapFile.layers[activeLayerIndex];
 
+    // If the active layer isn't an object layer, find one or create one
     if (layer === undefined || layer.type !== 'object') {
-      return;
+      const existingObjectLayerIndex = mapFile.layers.findIndex(l => l.type === 'object');
+
+      if (existingObjectLayerIndex !== -1) {
+        activeLayerIndex = existingObjectLayerIndex;
+        layer = mapFile.layers[activeLayerIndex];
+      } else {
+        const objectLayerCount = mapFile.layers.filter(l => l.type === 'object').length;
+        const newLayer: IEditorObjectLayer = {
+          type: 'object',
+          name: `Object Layer ${objectLayerCount + 1}`,
+          instances: [],
+          visible: true,
+          opacity: 1
+        };
+        mapFile = { ...mapFile, layers: [...mapFile.layers, newLayer] };
+        activeLayerIndex = mapFile.layers.length - 1;
+        layer = mapFile.layers[activeLayerIndex];
+      }
+
+      set({ activeLayerIndex });
     }
 
+    const objectLayer = layer as IEditorObjectLayer;
     const prefab = prefabs.find(p => p.id === prefabId);
 
     if (prefab === undefined) {
@@ -764,10 +786,10 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     }
 
     // Auto-increment instance name
-    const existingCount = layer.instances.filter(inst => inst.prefabId === prefabId).length;
+    const existingCount = objectLayer.instances.filter(inst => inst.prefabId === prefabId).length;
     const instanceName = existingCount === 0 ? prefab.name : `${prefab.name} (${existingCount})`;
 
-    const maxZ = layer.instances.reduce((max, inst) => Math.max(max, inst.zIndex), 0);
+    const maxZ = objectLayer.instances.reduce((max, inst) => Math.max(max, inst.zIndex), 0);
 
     const newInstance: IEditorPrefabInstance = {
       id: crypto.randomUUID(),
@@ -785,8 +807,8 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     };
 
     const updatedLayer: IEditorObjectLayer = {
-      ...layer,
-      instances: [...layer.instances, newInstance]
+      ...objectLayer,
+      instances: [...objectLayer.instances, newInstance]
     };
 
     const newLayers = [...mapFile.layers];

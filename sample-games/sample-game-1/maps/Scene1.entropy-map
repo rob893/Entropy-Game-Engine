@@ -9948,7 +9948,22 @@
     {
       "type": "object",
       "name": "Object Layer 1",
-      "instances": [],
+      "instances": [
+        {
+          "id": "1dcba49e-4fec-485d-b2b2-02b0b9cdac82",
+          "prefabId": "982f11e6-f3f9-461a-849d-06379fcae174",
+          "name": "New Prefab",
+          "x": 192,
+          "y": 736,
+          "rotation": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "componentOverrides": [],
+          "parentInstanceId": null,
+          "zIndex": 1,
+          "enabled": true
+        }
+      ],
       "visible": true,
       "opacity": 1
     }
@@ -9977,5 +9992,8 @@
       "tileCount": 64
     }
   ],
-  "objectSprites": []
+  "objectSprites": [],
+  "prefabIds": [
+    "982f11e6-f3f9-461a-849d-06379fcae174"
+  ]
 }
