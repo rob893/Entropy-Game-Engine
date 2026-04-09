@@ -1,5 +1,4 @@
 import type { IGlobalSettings, IProjectSettings } from './editor-settings';
-import type { IEditorPrefab } from './prefab';
 import type { IEditorMapFile, IFileOpenResult, IProjectScanResult } from './terrain';
 
 export type MenuAction =
@@ -13,11 +12,6 @@ export type MenuAction =
   | 'redo'
   | 'toggle-grid';
 
-export interface IDiscoveredPrefab {
-  readonly filePath: string;
-  readonly prefab: IEditorPrefab;
-}
-
 export interface IElectronAPI {
   // Project operations
   projectOpen(): Promise<IProjectScanResult | null>;
@@ -30,18 +24,9 @@ export interface IElectronAPI {
   // Asset operations
   projectImportTileset(projectPath: string): Promise<string | null>;
 
-  // Prefab operations
-  discoverPrefabs(projectPath: string): Promise<IDiscoveredPrefab[]>;
-  readPrefab(filePath: string): Promise<IEditorPrefab>;
-  writePrefab(filePath: string, prefab: IEditorPrefab): Promise<void>;
-  deletePrefab(filePath: string): Promise<void>;
-
   // Export operations
   exportPng(pngDataUrl: string): Promise<boolean>;
   exportTiled(jsonData: string): Promise<boolean>;
-  exportScene(jsonData: string): Promise<boolean>;
-  exportPrefabManifest(jsonData: string): Promise<boolean>;
-  exportPrefabTypes(dtsContent: string): Promise<boolean>;
 
   // Settings operations
   settingsLoadGlobal(): Promise<IGlobalSettings>;

@@ -1,13 +1,12 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { BrowserWindow, dialog, nativeImage } from 'electron';
-import { FILE_EXTENSION, IPC_CHANNELS, PREFAB_EXTENSION, PROJECT_DIRS, PROJECT_FILE } from '../../../shared/constants';
+import { FILE_EXTENSION, IPC_CHANNELS, PROJECT_DIRS, PROJECT_FILE } from '../../../shared/constants';
 import type {
   IDiscoveredAsset,
-  IDiscoveredPrefab,
+  IDiscoveredGameObject,
   IDiscoveredUserComponent,
   IEditorMapFile,
-  IEditorPrefab,
   IEntropyProject,
   IFileOpenResult,
   IProjectScanResult
@@ -45,7 +44,6 @@ export function registerProjectHandlers(): void {
 
       await fs.writeFile(configPath, JSON.stringify(defaultConfig, null, 2), 'utf-8');
       await fs.mkdir(path.join(projectPath, PROJECT_DIRS.TILESETS), { recursive: true });
-      await fs.mkdir(path.join(projectPath, PROJECT_DIRS.PREFABS), { recursive: true });
       await fs.mkdir(path.join(projectPath, PROJECT_DIRS.MAPS), { recursive: true });
     }
 
@@ -97,8 +95,7 @@ export function registerProjectHandlers(): void {
             opacity: 1
           }
         ],
-        tilesets: [],
-        prefabIds: []
+        tilesets: []
       };
 
       await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
@@ -126,27 +123,6 @@ export function registerProjectHandlers(): void {
     const [relativePath] = await copyFilesToProject(projectPath, PROJECT_DIRS.TILESETS, [result.filePaths[0]]);
 
     return relativePath ?? null;
-  });
-
-  handle(IPC_CHANNELS.PREFAB_DISCOVER, async (projectPath: string): Promise<IDiscoveredPrefab[]> => {
-    const prefabsDir = path.join(projectPath, PROJECT_DIRS.PREFABS);
-
-    return discoverPrefabFiles(prefabsDir);
-  });
-
-  handle(IPC_CHANNELS.PREFAB_READ, async (filePath: string): Promise<IEditorPrefab> => {
-    const content = await fs.readFile(filePath, 'utf-8');
-
-    return JSON.parse(content) as IEditorPrefab;
-  });
-
-  handle(IPC_CHANNELS.PREFAB_WRITE, async (filePath: string, prefab: IEditorPrefab): Promise<void> => {
-    await fs.mkdir(path.dirname(filePath), { recursive: true });
-    await fs.writeFile(filePath, JSON.stringify(prefab, null, 2), 'utf-8');
-  });
-
-  handle(IPC_CHANNELS.PREFAB_DELETE, async (filePath: string): Promise<void> => {
-    await fs.unlink(filePath);
   });
 }
 
@@ -184,8 +160,9 @@ async function scanProject(projectPath: string): Promise<IProjectScanResult> {
   const tilesets = await discoverImages(tilesetsDir, projectPath, '');
 
   const userComponents = await discoverUserComponents(projectPath);
+  const gameObjects = await discoverGameObjects(projectPath);
 
-  return { projectPath, config, maps, tilesets, userComponents };
+  return { projectPath, config, maps, tilesets, userComponents, gameObjects };
 }
 
 async function discoverFiles(dir: string, extension: string): Promise<string[]> {
@@ -236,31 +213,8 @@ async function discoverImages(dir: string, projectPath: string, parentCategory: 
   }
 }
 
-async function discoverPrefabFiles(dir: string): Promise<IDiscoveredPrefab[]> {
-  try {
-    const entries = await fs.readdir(dir, { withFileTypes: true });
-    const results: IDiscoveredPrefab[] = [];
-
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name);
-
-      if (entry.isDirectory()) {
-        const subResults = await discoverPrefabFiles(fullPath);
-        results.push(...subResults);
-      } else if (entry.isFile() && entry.name.endsWith(PREFAB_EXTENSION)) {
-        const content = await fs.readFile(fullPath, 'utf-8');
-        const prefab = JSON.parse(content) as IEditorPrefab;
-        results.push({ filePath: fullPath, prefab });
-      }
-    }
-
-    return results;
-  } catch {
-    return [];
-  }
-}
-
 const COMPONENT_CLASS_PATTERN = /class\s+(\w+)\s+extends\s+Component\b/g;
+const GAME_OBJECT_CLASS_PATTERN = /class\s+(\w+)\s+extends\s+GameObject\b/g;
 
 async function discoverUserComponents(projectPath: string): Promise<IDiscoveredUserComponent[]> {
   const srcDir = path.join(projectPath, 'src');
@@ -290,6 +244,38 @@ async function discoverUserComponents(projectPath: string): Promise<IDiscoveredU
   }
 
   return components;
+}
+
+async function discoverGameObjects(projectPath: string): Promise<IDiscoveredGameObject[]> {
+  const srcDir = path.join(projectPath, 'src');
+
+  try {
+    await fs.access(srcDir);
+  } catch {
+    return [];
+  }
+
+  const tsFiles = await findTsFiles(srcDir);
+  const gameObjects: IDiscoveredGameObject[] = [];
+
+  for (const filePath of tsFiles) {
+    const content = await fs.readFile(filePath, 'utf-8');
+    const classMatches = content.matchAll(GAME_OBJECT_CLASS_PATTERN);
+
+    for (const match of classMatches) {
+      const className = match[1];
+      const relativePath = path.relative(projectPath, filePath).replace(/\\/g, '/');
+      const dirName = path.basename(path.dirname(filePath));
+
+      gameObjects.push({
+        className,
+        filePath: relativePath,
+        category: dirName === 'src' ? 'General' : dirName
+      });
+    }
+  }
+
+  return gameObjects;
 }
 
 async function findTsFiles(dir: string): Promise<string[]> {

@@ -1,4 +1,4 @@
-import type { IDiscoveredUserComponent } from './prefab';
+import type { IDiscoveredGameObject, IDiscoveredUserComponent } from './prefab';
 import type { IEditorPrefabInstance } from './prefab';
 
 // ── Tile Layer Types ──
@@ -34,7 +34,6 @@ export interface IEditorMapFile {
   tileHeight: number;
   layers: EditorLayer[];
   tilesets: IEditorTileset[];
-  prefabIds: string[];
 }
 
 // ── Tileset ──
@@ -72,6 +71,7 @@ export interface IProjectScanResult {
   maps: string[];
   tilesets: IDiscoveredAsset[];
   userComponents: IDiscoveredUserComponent[];
+  gameObjects: IDiscoveredGameObject[];
 }
 
 export interface IDiscoveredAsset {

@@ -1,4 +1,4 @@
-export type { IElectronAPI, IDiscoveredPrefab } from './electron-api';
+export type { IElectronAPI } from './electron-api';
 export type { MenuAction } from './electron-api';
 export type { BrushShape, EditorMode, IGlobalSettings, IProjectSettings } from './editor-settings';
 export { getDefaultGlobalSettings, getDefaultProjectSettings } from './editor-settings';
@@ -14,12 +14,8 @@ export type {
   IProjectScanResult
 } from './terrain';
 export type {
-  ComponentFieldType,
-  IComponentFieldDescriptor,
-  IComponentOverride,
-  IComponentSchema,
+  IDiscoveredGameObject,
   IDiscoveredUserComponent,
-  IEditorPrefab,
   IEditorPrefabInstance
 } from './prefab';
 export type { LogLevel, ILogEntry, ITelemetryEvent, ITelemetryTransport } from './telemetry';
