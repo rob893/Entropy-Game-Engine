@@ -218,10 +218,10 @@ export class GameEngine {
     const transformData = instanceData.components.find(c => c.typeName === 'Transform');
     if (transformData !== undefined) {
       if (position !== undefined) {
-        (transformData.data as Record<string, unknown>).position = { x: position.x, y: position.y };
+        (transformData.data).position = { x: position.x, y: position.y };
       }
       if (rotation !== undefined) {
-        (transformData.data as Record<string, unknown>).rotation = rotation;
+        (transformData.data).rotation = rotation;
       }
     }
 

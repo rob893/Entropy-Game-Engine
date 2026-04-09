@@ -1,0 +1,38 @@
+{
+  "id": "982f11e6-f3f9-461a-849d-06379fcae174",
+  "name": "New Prefab",
+  "category": "Uncategorized",
+  "template": {
+    "id": "db32fdd7-7484-44ca-b847-437551fe1f45",
+    "name": "New Prefab",
+    "tag": "Untagged",
+    "layer": 0,
+    "enabled": true,
+    "components": [
+      {
+        "typeName": "Transform",
+        "data": {
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "rotation": 0,
+          "scale": {
+            "x": 1,
+            "y": 1
+          }
+        }
+      },
+      {
+        "typeName": "RectangleRenderer",
+        "data": {
+          "renderWidth": 32,
+          "renderHeight": 32,
+          "color": "Green",
+          "borderColor": null
+        }
+      }
+    ],
+    "children": []
+  }
+}

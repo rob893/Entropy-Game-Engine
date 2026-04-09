@@ -719,7 +719,7 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
           return { ...layer, instances: layer.instances.filter(inst => inst.prefabId !== prefabId) };
         });
 
-        const updatedPrefabIds = updatedMapFile.prefabIds.filter(id => id !== prefabId);
+        const updatedPrefabIds = (updatedMapFile.prefabIds ?? []).filter(id => id !== prefabId);
         updatedMapFile = { ...updatedMapFile, layers: updatedLayers, prefabIds: updatedPrefabIds };
       }
 
@@ -793,9 +793,10 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     newLayers[activeLayerIndex] = updatedLayer;
 
     // Ensure prefabId is in the map's prefabIds list
-    const prefabIds = mapFile.prefabIds.includes(prefabId)
-      ? mapFile.prefabIds
-      : [...mapFile.prefabIds, prefabId];
+    const existingPrefabIds = mapFile.prefabIds ?? [];
+    const prefabIds = existingPrefabIds.includes(prefabId)
+      ? existingPrefabIds
+      : [...existingPrefabIds, prefabId];
 
     set({
       mapFile: { ...mapFile, layers: newLayers, prefabIds },

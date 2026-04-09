@@ -9944,6 +9944,13 @@
       "tileSetId": "412dd37c-e259-4e45-a43f-e9dfebdd4df6",
       "visible": true,
       "opacity": 1
+    },
+    {
+      "type": "object",
+      "name": "Object Layer 1",
+      "instances": [],
+      "visible": true,
+      "opacity": 1
     }
   ],
   "tilesets": [
