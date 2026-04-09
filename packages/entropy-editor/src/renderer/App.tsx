@@ -5,6 +5,7 @@ import { Canvas } from './components/Canvas';
 import { ErrorToast } from './components/editor/ErrorToast';
 import { LayerPanel } from './components/LayerPanel';
 import { NewMapDialog } from './components/NewMapDialog';
+import { ObjectHierarchy } from './components/ObjectHierarchy';
 import { ObjectLibrary } from './components/ObjectLibrary';
 import { PropertiesPanel } from './components/PropertiesPanel';
 import { TilePalette } from './components/TilePalette';
@@ -101,6 +102,7 @@ export function App(): ReactElement {
           <div className="left-panel">
             <TilePalette />
             <ObjectLibrary />
+            <ObjectHierarchy />
             <LayerPanel />
           </div>
 
