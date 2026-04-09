@@ -39,6 +39,9 @@ export interface IElectronAPI {
   // Export operations
   exportPng(pngDataUrl: string): Promise<boolean>;
   exportTiled(jsonData: string): Promise<boolean>;
+  exportScene(jsonData: string): Promise<boolean>;
+  exportPrefabManifest(jsonData: string): Promise<boolean>;
+  exportPrefabTypes(dtsContent: string): Promise<boolean>;
 
   // Settings operations
   settingsLoadGlobal(): Promise<IGlobalSettings>;

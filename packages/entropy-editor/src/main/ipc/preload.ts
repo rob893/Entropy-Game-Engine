@@ -19,6 +19,9 @@ const electronAPI: IElectronAPI = {
 
   exportPng: pngDataUrl => ipcRenderer.invoke(IPC_CHANNELS.EXPORT_PNG, pngDataUrl),
   exportTiled: jsonData => ipcRenderer.invoke(IPC_CHANNELS.EXPORT_TILED, jsonData),
+  exportScene: jsonData => ipcRenderer.invoke(IPC_CHANNELS.EXPORT_SCENE, jsonData),
+  exportPrefabManifest: jsonData => ipcRenderer.invoke(IPC_CHANNELS.EXPORT_PREFAB_MANIFEST, jsonData),
+  exportPrefabTypes: dtsContent => ipcRenderer.invoke(IPC_CHANNELS.EXPORT_PREFAB_TYPES, dtsContent),
 
   settingsLoadGlobal: () => ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_LOAD_GLOBAL),
   settingsSaveGlobal: settings => ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_SAVE_GLOBAL, settings),

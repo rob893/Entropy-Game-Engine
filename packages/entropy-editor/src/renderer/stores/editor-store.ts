@@ -1,3 +1,4 @@
+import type { ISerializedScene } from '@entropy-engine/entropy-game-engine';
 import { create } from 'zustand';
 import { FILE_EXTENSION } from '../../shared/constants';
 import type {
@@ -16,6 +17,8 @@ import type {
   IProjectSettings
 } from '../../shared/types';
 import { getErrorMessage } from '../../shared/utils/errors';
+import { bakeAllInstances } from '../editor/PrefabBaker';
+import { generatePrefabManifest, generatePrefabTypeDeclaration } from '../editor/PrefabManifestExporter';
 import { exportToTiled } from '../editor/TiledExporter';
 
 export type { BrushShape, EditorMode } from '../../shared/types';
@@ -154,6 +157,9 @@ interface IEditorState {
   // Export operations
   exportPng: () => Promise<void>;
   exportTiledMap: () => Promise<void>;
+  exportScene: () => Promise<void>;
+  exportPrefabManifest: () => Promise<void>;
+  exportPrefabTypes: () => Promise<void>;
 
   // Settings operations
   initializeSettings: () => Promise<void>;
@@ -1190,6 +1196,55 @@ export const useEditorStore = create<IEditorState>((set, get) => ({
     try {
       const jsonData = exportToTiled(mapFile);
       await window.electronAPI.exportTiled(jsonData);
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
+  },
+
+  exportScene: async () => {
+    const { mapFile, prefabs, projectConfig } = get();
+
+    if (mapFile === null) {
+      return;
+    }
+
+    try {
+      const gameObjects = bakeAllInstances(mapFile, prefabs);
+      const scene: ISerializedScene = {
+        name: mapFile.name,
+        sceneId: 0,
+        gameObjects
+      };
+
+      if (projectConfig?.defaultScene !== undefined) {
+        scene.name = projectConfig.defaultScene;
+      }
+
+      const jsonData = JSON.stringify(scene, null, 2);
+      await window.electronAPI.exportScene(jsonData);
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
+  },
+
+  exportPrefabManifest: async () => {
+    const { prefabs } = get();
+
+    try {
+      const manifest = generatePrefabManifest(prefabs);
+      const jsonData = JSON.stringify(manifest, null, 2);
+      await window.electronAPI.exportPrefabManifest(jsonData);
+    } catch (err) {
+      set({ error: getErrorMessage(err) });
+    }
+  },
+
+  exportPrefabTypes: async () => {
+    const { prefabs } = get();
+
+    try {
+      const dtsContent = generatePrefabTypeDeclaration(prefabs);
+      await window.electronAPI.exportPrefabTypes(dtsContent);
     } catch (err) {
       set({ error: getErrorMessage(err) });
     }
