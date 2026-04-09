@@ -9,13 +9,11 @@ import { ComponentAnalyzer } from './helpers/ComponentAnalyzer';
 import { Input } from './helpers/Input';
 import { SceneManager } from './helpers/SceneManager';
 import { TerrainBuilder } from './helpers/TerrainBuilder';
-import { generateUUID } from './helpers/UUID';
 import type { Vector2 } from './helpers/Vector2';
 import { ImpulseCollisionResolver } from './physics/ImpulseCollisionResolver';
 import { Physics } from './physics/Physics';
 import { SpatialHashCollisionDetector } from './physics/SpatialHashCollisionDetector';
 import { PhysicsEngine } from './PhysicsEngine';
-import { PrefabRegistry } from './PrefabRegistry';
 import { RenderingEngine } from './RenderingEngine';
 import { SchedulerService } from './SchedulerService';
 import { Time } from './Time';
@@ -23,7 +21,6 @@ import type { IScene } from './types';
 import type { ITerrainSpec } from './types';
 import type { IGameObjectConstructionParams } from './types';
 import type { IGameEngineConfiguration } from './types';
-import type { ISerializedGameObject, PrefabName } from './types';
 
 const DEFAULT_FPS_CAP = 60;
 const DEFAULT_FIXED_TIME_STEP = 1 / 60;
@@ -32,8 +29,6 @@ export class GameEngine {
   public developmentMode: boolean = true;
 
   public readonly layerCollisionMatrix: Map<Layer, Set<Layer>>;
-
-  public readonly prefabRegistry: PrefabRegistry = new PrefabRegistry();
 
   private loadedScene: IScene | null = null;
 
@@ -199,41 +194,6 @@ export class GameEngine {
     parent?: Transform
   ): GameObject {
     return this.registry.instantiate(type, this, position, rotation, parent);
-  }
-
-  public instantiatePrefab(
-    prefabName: PrefabName,
-    position?: Vector2,
-    rotation?: number,
-    parent?: Transform
-  ): GameObject {
-    const template = this.prefabRegistry.get(prefabName);
-    if (template === undefined) {
-      throw new Error(`Prefab "${prefabName}" is not registered.`);
-    }
-
-    const instanceData: ISerializedGameObject = structuredClone(template);
-    instanceData.id = generateUUID();
-
-    const transformData = instanceData.components.find(c => c.typeName === 'Transform');
-    if (transformData !== undefined) {
-      if (position !== undefined) {
-        (transformData.data).position = { x: position.x, y: position.y };
-      }
-      if (rotation !== undefined) {
-        (transformData.data).rotation = rotation;
-      }
-    }
-
-    const gameObject = GameObject.deserialize(instanceData, this);
-
-    if (parent !== undefined) {
-      gameObject.transform.parent = parent;
-    }
-
-    this.registry.registerGameObject(gameObject);
-
-    return gameObject;
   }
 
   public destroy(object: GameObject, time: number = 0): void {

@@ -200,8 +200,6 @@ export interface IWeightedGraphCell extends IGraphCell {
   weight: number;
 }
 
-export type PrefabName = string & {};
-
 export interface IComparable {
   valueOf(): number | string | boolean;
 }

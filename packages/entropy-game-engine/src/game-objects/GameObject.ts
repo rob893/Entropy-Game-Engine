@@ -11,7 +11,7 @@ import { generateUUID } from '../core/helpers/UUID';
 import type { Vector2 } from '../core/helpers/Vector2';
 import type { Physics } from '../core/physics/Physics';
 import type { Time } from '../core/Time';
-import type { IPrefabSettings, PrefabName } from '../core/types';
+import type { IPrefabSettings } from '../core/types';
 import type { IGameObjectConstructionParams } from '../core/types';
 import type { ISerializedComponent, ISerializedGameObject } from '../core/types';
 import type { Terrain } from './Terrain';
@@ -241,15 +241,6 @@ export abstract class GameObject<TConfig extends IGameObjectConstructionParams =
     parent?: Transform
   ): GameObject {
     return this.gameEngine.instantiate(type, position, rotation, parent);
-  }
-
-  public instantiatePrefab(
-    prefabName: PrefabName,
-    position?: Vector2,
-    rotation?: number,
-    parent?: Transform
-  ): GameObject {
-    return this.gameEngine.instantiatePrefab(prefabName, position, rotation, parent);
   }
 
   public destroy(object: GameObject, time: number = 0): void {
