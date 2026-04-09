@@ -68,7 +68,7 @@ Games define `Scene` objects with factory functions for GameObjects, pass them t
 ### General
 
 - `any` is not allowed.
-- Always commit after completing a logical unit of work (e.g. a new feature, bug fix, refactor). Use descriptive commit messages.
+- Always commit after completing a logical unit of work (e.g. a new feature, bug fix, refactor). Use descriptive commit messages. Never use attribution (ie: no 'co-authored-by' or 'signed-off-by' trailers) — commits should be attributed to the actual author only (not an agent tool).
 
 ### File Naming
 

@@ -26,21 +26,42 @@
       "request": "launch",
       "name": "Launch Chrome - Game 1",
       "url": "http://localhost:8080",
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-1"
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-1",
+      "sourceMapPathOverrides": {
+        "/@fs/*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///*": "*",
+        "meteor://💻app/*": "${webRoot}/*"
+      }
     },
     {
       "type": "chrome",
       "request": "launch",
       "name": "Launch Chrome - Game 2",
       "url": "http://localhost:8081",
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-2"
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-2",
+      "sourceMapPathOverrides": {
+        "/@fs/*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///*": "*",
+        "meteor://💻app/*": "${webRoot}/*"
+      }
     },
     {
       "type": "chrome",
       "request": "launch",
       "name": "Launch Chrome - Game 3",
       "url": "http://localhost:8082",
-      "webRoot": "${workspaceFolder}/sample-games/sample-game-3"
+      "webRoot": "${workspaceFolder}/sample-games/sample-game-3",
+      "sourceMapPathOverrides": {
+        "/@fs/*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///*": "*",
+        "meteor://💻app/*": "${webRoot}/*"
+      }
     },
     {
       "type": "node",

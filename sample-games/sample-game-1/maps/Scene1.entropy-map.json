@@ -9950,17 +9950,35 @@
       "name": "Object Layer 1",
       "instances": [
         {
-          "id": "1dcba49e-4fec-485d-b2b2-02b0b9cdac82",
-          "prefabId": "982f11e6-f3f9-461a-849d-06379fcae174",
-          "name": "New Prefab",
-          "x": 512,
-          "y": 384,
-          "rotation": 9,
+          "id": "abc3f7c7-078e-488c-9bcd-ad7116883de4",
+          "gameObjectClass": "Minotaur",
+          "name": "Minotaur",
+          "tag": "default",
+          "layer": 0,
+          "x": 448,
+          "y": 800,
+          "rotation": 0,
           "scaleX": 1,
           "scaleY": 1,
-          "componentOverrides": [],
+          "properties": {},
           "parentInstanceId": null,
           "zIndex": 1,
+          "enabled": true
+        },
+        {
+          "id": "9f7ec70d-ec69-44fd-9405-2902e139ce80",
+          "gameObjectClass": "Minotaur",
+          "name": "Minotaur (1)",
+          "tag": "default",
+          "layer": 0,
+          "x": 608,
+          "y": 448,
+          "rotation": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "properties": {},
+          "parentInstanceId": null,
+          "zIndex": 2,
           "enabled": true
         }
       ],
@@ -9993,7 +10011,5 @@
     }
   ],
   "objectSprites": [],
-  "prefabIds": [
-    "982f11e6-f3f9-461a-849d-06379fcae174"
-  ]
+  "prefabIds": []
 }
