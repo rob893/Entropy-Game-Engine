@@ -227,9 +227,28 @@ export interface IMapTileLayer {
   weights?: number[][];
 }
 
+export interface IMapObjectInstance {
+  id?: string;
+  gameObjectClass: string;
+  name?: string;
+  tag?: string;
+  layer?: number;
+  x: number;
+  y: number;
+  rotation?: number;
+  scaleX?: number;
+  scaleY?: number;
+  properties?: Record<string, unknown>;
+  zIndex?: number;
+  enabled?: boolean;
+}
+
 export interface IMapObjectLayer {
   type: 'object';
-  [key: string]: unknown;
+  name: string;
+  instances: IMapObjectInstance[];
+  visible?: boolean;
+  opacity?: number;
 }
 
 export type IMapLayer = IMapTileLayer | IMapObjectLayer;

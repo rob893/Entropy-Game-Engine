@@ -1,5 +1,12 @@
-import type { IMapFile } from '../../types';
+import 'vitest-canvas-mock';
+import { Component } from '../../../components/Component';
+import { GameObject } from '../../../game-objects/GameObject';
+import { Layer } from '../../enums/Layer';
+import { GameEngine } from '../../GameEngine';
+import type { IGameObjectConstructionParams, IMapFile, IMapObjectInstance, IPrefabSettings, IScene } from '../../types';
+import type { AssetPool } from '../AssetPool';
 import { MapLoader } from '../MapLoader';
+import type { RectangleBackground } from '../RectangleBackground';
 
 function createMinimalMap(overrides?: Partial<IMapFile>): IMapFile {
   return {
@@ -133,7 +140,7 @@ describe('MapLoader.toTerrainSpec', () => {
         {
           type: 'object',
           name: 'Objects',
-          objects: []
+          instances: []
         },
         {
           type: 'tile',
@@ -244,7 +251,21 @@ describe('MapLoader.toTerrainSpec', () => {
         {
           type: 'object',
           name: 'Objects',
-          objects: []
+          instances: []
+        }
+      ]
+    });
+
+    expect(() => MapLoader.toTerrainSpec(map)).toThrow('Map file contains no tile layers');
+  });
+
+  test('handles map with only object layers (no tile layers)', () => {
+    const map = createMinimalMap({
+      layers: [
+        {
+          type: 'object',
+          name: 'Objects',
+          instances: [{ gameObjectClass: 'Player', x: 0, y: 0 }]
         }
       ]
     });
@@ -413,5 +434,321 @@ describe('MapLoader.fromUrl', () => {
     } finally {
       globalThis.fetch = originalFetch;
     }
+  });
+});
+
+// ── getGameObjects tests ──
+
+class TestMapGameObject extends GameObject {
+  protected buildInitialComponents(): Component[] {
+    return [];
+  }
+
+  protected getPrefabSettings(): IPrefabSettings {
+    return {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      name: 'default',
+      tag: 'default',
+      layer: Layer.Default
+    };
+  }
+}
+
+class AnotherTestGameObject extends GameObject {
+  protected buildInitialComponents(): Component[] {
+    return [];
+  }
+
+  protected getPrefabSettings(): IPrefabSettings {
+    return {
+      x: 100,
+      y: 200,
+      rotation: 0,
+      name: 'another',
+      tag: 'another',
+      layer: Layer.Hostile
+    };
+  }
+}
+
+function createObjectLayerMap(instances: IMapObjectInstance[], layerName: string = 'Object Layer 1'): IMapFile {
+  return {
+    name: 'TestMap',
+    tileWidth: 32,
+    tileHeight: 32,
+    layers: [
+      {
+        type: 'tile',
+        name: 'Ground',
+        grid: [[1]],
+        tileSetId: 'ts-1',
+        visible: true,
+        opacity: 1
+      },
+      {
+        type: 'object',
+        name: layerName,
+        instances
+      }
+    ],
+    tilesets: [
+      {
+        id: 'ts-1',
+        imagePath: 'assets/tilesets/test.png',
+        tileWidth: 16,
+        tileHeight: 16,
+        columns: 4,
+        rows: 4,
+        tileCount: 16
+      }
+    ]
+  };
+}
+
+describe('MapLoader.getGameObjects', () => {
+  let testEngine: GameEngine;
+  const classRegistry = new Map<string, new (params: IGameObjectConstructionParams) => GameObject>([
+    ['TestObj', TestMapGameObject],
+    ['AnotherObj', AnotherTestGameObject]
+  ]);
+
+  const emptyScene: IScene = {
+    name: 'Empty',
+    loadOrder: 1,
+    terrainSpec: null,
+    getSkybox(): RectangleBackground { return null!; },
+    getStartingGameObjects(): GameObject[] { return []; },
+    async getAssetPool(): Promise<AssetPool> { return null!; }
+  };
+
+  beforeAll(async () => {
+    const gameCanvas = document.createElement('canvas');
+    testEngine = new GameEngine({ gameCanvas });
+    testEngine.setScenes([emptyScene]);
+    await testEngine.loadScene(1);
+  });
+
+  test('instantiates GameObjects from object layer instances', () => {
+    const map = createObjectLayerMap([
+      { gameObjectClass: 'TestObj', x: 100, y: 200 },
+      { gameObjectClass: 'AnotherObj', x: 300, y: 400 }
+    ]);
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+
+    expect(objects).toHaveLength(2);
+    expect(objects[0]).toBeInstanceOf(TestMapGameObject);
+    expect(objects[0].transform.position.x).toBe(100);
+    expect(objects[0].transform.position.y).toBe(200);
+    expect(objects[1]).toBeInstanceOf(AnotherTestGameObject);
+    expect(objects[1].transform.position.x).toBe(300);
+    expect(objects[1].transform.position.y).toBe(400);
+  });
+
+  test('applies name, tag, layer, rotation, and id from instance data', () => {
+    const map = createObjectLayerMap([
+      {
+        id: 'custom-id',
+        gameObjectClass: 'TestObj',
+        name: 'MyPlayer',
+        tag: 'player',
+        layer: Layer.Friendly,
+        x: 50,
+        y: 60,
+        rotation: 1.5
+      }
+    ]);
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+
+    expect(objects).toHaveLength(1);
+    expect(objects[0].id).toBe('custom-id');
+    expect(objects[0].name).toBe('MyPlayer');
+    expect(objects[0].tag).toBe('player');
+    expect(objects[0].layer).toBe(Layer.Friendly);
+    expect(objects[0].transform.rotation).toBe(1.5);
+  });
+
+  test('uses gameObjectClass as default name when name is not provided', () => {
+    const map = createObjectLayerMap([
+      { gameObjectClass: 'TestObj', x: 0, y: 0 }
+    ]);
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+    expect(objects[0].name).toBe('TestObj');
+  });
+
+  test('warns and skips unknown class names', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const map = createObjectLayerMap([
+      { gameObjectClass: 'NonExistent', x: 0, y: 0 },
+      { gameObjectClass: 'TestObj', x: 10, y: 20 }
+    ]);
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+
+    expect(objects).toHaveLength(1);
+    expect(objects[0]).toBeInstanceOf(TestMapGameObject);
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Unknown game object class "NonExistent"')
+    );
+
+    warnSpy.mockRestore();
+  });
+
+  test('sorts instances by zIndex', () => {
+    const map = createObjectLayerMap([
+      { gameObjectClass: 'AnotherObj', x: 0, y: 0, zIndex: 5 },
+      { gameObjectClass: 'TestObj', x: 10, y: 10, zIndex: 1 },
+      { gameObjectClass: 'TestObj', x: 20, y: 20, zIndex: 3 }
+    ]);
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+
+    expect(objects).toHaveLength(3);
+    expect(objects[0]).toBeInstanceOf(TestMapGameObject);
+    expect(objects[0].transform.position.x).toBe(10);
+    expect(objects[1]).toBeInstanceOf(TestMapGameObject);
+    expect(objects[1].transform.position.x).toBe(20);
+    expect(objects[2]).toBeInstanceOf(AnotherTestGameObject);
+    expect(objects[2].transform.position.x).toBe(0);
+  });
+
+  test('returns empty array when map has no object layers', () => {
+    const map: IMapFile = {
+      name: 'TestMap',
+      tileWidth: 32,
+      tileHeight: 32,
+      layers: [
+        { type: 'tile', name: 'Ground', grid: [[1]], tileSetId: 'ts-1', visible: true, opacity: 1 }
+      ],
+      tilesets: [
+        { id: 'ts-1', imagePath: 'test.png', tileWidth: 16, tileHeight: 16, columns: 4, rows: 4, tileCount: 16 }
+      ]
+    };
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+    expect(objects).toEqual([]);
+  });
+
+  test('returns empty array when object layer has empty instances', () => {
+    const map = createObjectLayerMap([]);
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+    expect(objects).toEqual([]);
+  });
+
+  test('applies scale from instance data', () => {
+    const map = createObjectLayerMap([
+      { gameObjectClass: 'TestObj', x: 0, y: 0, scaleX: 2, scaleY: 3 }
+    ]);
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+
+    expect(objects[0].transform.scale.x).toBe(2);
+    expect(objects[0].transform.scale.y).toBe(3);
+  });
+
+  test('does not modify scale when scaleX or scaleY is not provided', () => {
+    const map = createObjectLayerMap([
+      { gameObjectClass: 'TestObj', x: 0, y: 0, scaleX: 2 }
+    ]);
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+
+    expect(objects[0].transform.scale.x).toBe(1);
+    expect(objects[0].transform.scale.y).toBe(1);
+  });
+
+  test('sets enabled to false when instance specifies enabled: false', () => {
+    const map = createObjectLayerMap([
+      { gameObjectClass: 'TestObj', x: 0, y: 0, enabled: false }
+    ]);
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+    expect(objects[0].enabled).toBe(false);
+  });
+
+  test('defaults enabled to true when not specified', () => {
+    const map = createObjectLayerMap([
+      { gameObjectClass: 'TestObj', x: 0, y: 0 }
+    ]);
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+    expect(objects[0].enabled).toBe(true);
+  });
+
+  test('merges custom properties into constructor params', () => {
+    const constructorSpy = vi.fn();
+
+    class SpyGameObject extends GameObject {
+      public constructor(params: IGameObjectConstructionParams) {
+        super(params);
+        constructorSpy(params);
+      }
+
+      protected buildInitialComponents(): Component[] { return []; }
+
+      protected getPrefabSettings(): IPrefabSettings {
+        return { x: 0, y: 0, rotation: 0, name: 'spy', tag: 'spy', layer: Layer.Default };
+      }
+    }
+
+    const registry = new Map<string, new (params: IGameObjectConstructionParams) => GameObject>([
+      ['SpyObj', SpyGameObject]
+    ]);
+
+    const map = createObjectLayerMap([
+      { gameObjectClass: 'SpyObj', x: 5, y: 10, properties: { customField: 'hello', anotherField: 42 } }
+    ]);
+
+    MapLoader.getGameObjects(map, registry, testEngine);
+
+    expect(constructorSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        x: 5,
+        y: 10,
+        customField: 'hello',
+        anotherField: 42
+      })
+    );
+  });
+
+  test('handles multiple object layers', () => {
+    const map: IMapFile = {
+      name: 'TestMap',
+      tileWidth: 32,
+      tileHeight: 32,
+      layers: [
+        {
+          type: 'object',
+          name: 'Layer A',
+          instances: [{ gameObjectClass: 'TestObj', x: 1, y: 1 }]
+        },
+        {
+          type: 'tile',
+          name: 'Ground',
+          grid: [[1]],
+          tileSetId: 'ts-1',
+          visible: true,
+          opacity: 1
+        },
+        {
+          type: 'object',
+          name: 'Layer B',
+          instances: [{ gameObjectClass: 'AnotherObj', x: 2, y: 2 }]
+        }
+      ],
+      tilesets: [
+        { id: 'ts-1', imagePath: 'test.png', tileWidth: 16, tileHeight: 16, columns: 4, rows: 4, tileCount: 16 }
+      ]
+    };
+
+    const objects = MapLoader.getGameObjects(map, classRegistry, testEngine);
+
+    expect(objects).toHaveLength(2);
+    expect(objects[0]).toBeInstanceOf(TestMapGameObject);
+    expect(objects[1]).toBeInstanceOf(AnotherTestGameObject);
   });
 });

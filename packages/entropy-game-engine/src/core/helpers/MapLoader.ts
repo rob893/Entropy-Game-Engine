@@ -1,4 +1,17 @@
-import type { IMapFile, IMapLoaderOptions, IMapTileLayer, ITerrainLayer, ITerrainSpec } from '../types';
+import type { GameObject } from '../../game-objects/GameObject';
+import { Layer } from '../enums/Layer';
+import type { GameEngine } from '../GameEngine';
+import type {
+  IGameObjectConstructionParams,
+  IMapFile,
+  IMapLoaderOptions,
+  IMapObjectLayer,
+  IMapTileLayer,
+  ITerrainLayer,
+  ITerrainSpec
+} from '../types';
+
+type GameObjectConstructor = new (params: IGameObjectConstructionParams) => GameObject;
 
 export class MapLoader {
   /**
@@ -39,6 +52,74 @@ export class MapLoader {
 
     const mapData = (await response.json()) as IMapFile;
     return this.toTerrainSpec(mapData, options);
+  }
+
+  /**
+   * Instantiates GameObjects from the object layers of a map file.
+   *
+   * @param mapData - Parsed .entropy-map.json data
+   * @param classRegistry - Map of className → constructor (e.g., new Map([['Player', Player]]))
+   * @param gameEngine - The game engine instance
+   * @returns Array of instantiated GameObjects
+   */
+  public static getGameObjects(
+    mapData: IMapFile,
+    classRegistry: ReadonlyMap<string, GameObjectConstructor>,
+    gameEngine: GameEngine
+  ): GameObject[] {
+    const objectLayers = mapData.layers.filter(
+      (layer): layer is IMapObjectLayer => layer.type === 'object'
+    );
+
+    const gameObjects: GameObject[] = [];
+
+    for (const layer of objectLayers) {
+      if (layer.instances === undefined) continue;
+
+      const sortedInstances = [...layer.instances].sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0));
+
+      for (const instance of sortedInstances) {
+        const Constructor = classRegistry.get(instance.gameObjectClass);
+
+        if (Constructor === undefined) {
+          console.warn(
+            `MapLoader: Unknown game object class "${instance.gameObjectClass}". ` +
+            `Register it in the class registry to instantiate it.`
+          );
+          continue;
+        }
+
+        const params: IGameObjectConstructionParams = {
+          gameEngine,
+          id: instance.id,
+          name: instance.name ?? instance.gameObjectClass,
+          x: instance.x,
+          y: instance.y,
+          rotation: instance.rotation,
+          tag: instance.tag,
+          layer: instance.layer as Layer | undefined
+        };
+
+        if (instance.properties !== undefined) {
+          Object.assign(params, instance.properties);
+        }
+
+        const gameObject = new Constructor(params);
+
+        if (instance.scaleX !== undefined && instance.scaleY !== undefined) {
+          gameObject.transform.scale.x = instance.scaleX;
+          gameObject.transform.scale.y = instance.scaleY;
+        }
+
+        if (instance.enabled === false) {
+          gameObject.enabled = false;
+        }
+
+        gameObjects.push(gameObject);
+      }
+    }
+
+    return gameObjects;
   }
 
   private static convertTileLayer(

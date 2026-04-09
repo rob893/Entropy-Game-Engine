@@ -8,6 +8,7 @@ import {
   RectangleBackground,
   IScene,
   IMapFile,
+  IGameObjectConstructionParams,
   SpriteSheet
 } from '@entropy-engine/entropy-game-engine';
 import Scene1MapRaw from '../maps/Scene1.entropy-map.json?raw';
@@ -25,6 +26,7 @@ import TrumpIdle from './assets/images/trump_idle.png';
 import TrumpRun from './assets/images/trump_run.png';
 import { Box } from './game-objects/Box';
 import { GameManagerObject } from './game-objects/GameManagerObject';
+import { Ground } from './game-objects/Ground';
 import { MainCamera } from './game-objects/MainCamera';
 import { Minotaur } from './game-objects/Minotaur';
 import { Player } from './game-objects/Player';
@@ -32,6 +34,17 @@ import { PlayerRB } from './game-objects/PlayerRB';
 import { UICanvas } from './game-objects/UICanvas';
 
 type SceneAsset = AudioClip | SpriteSheet;
+
+// Register all game object classes that the editor can place
+const GAME_OBJECT_CLASSES = new Map<string, new (params: IGameObjectConstructionParams) => GameObject>([
+  ['Player', Player],
+  ['Minotaur', Minotaur],
+  ['Box', Box],
+  ['Ground', Ground],
+  ['MainCamera', MainCamera],
+  ['GameManagerObject', GameManagerObject],
+  ['UICanvas', UICanvas]
+]);
 
 export const scene1: IScene = {
   name: 'Scene1',
@@ -43,13 +56,23 @@ export const scene1: IScene = {
   },
 
   getStartingGameObjects(gameEngine: GameEngine): GameObject[] {
-    return [
+    // Objects placed in the editor are auto-instantiated from the map file
+    const editorObjects = MapLoader.getGameObjects(
+      JSON.parse(Scene1MapRaw) as IMapFile,
+      GAME_OBJECT_CLASSES,
+      gameEngine
+    );
+
+    // Objects that are always in this scene (not placed via editor)
+    const sceneObjects = [
       new GameManagerObject({ gameEngine, name: 'gameManager' }),
       new Minotaur({ gameEngine, name: 'minotaur' }),
       new Player({ gameEngine, name: 'player', x: 400, y: 250 }),
       new UICanvas({ gameEngine, name: 'ui-canvas' }),
       new MainCamera({ gameEngine, name: 'mainCamera' })
     ];
+
+    return [...sceneObjects, ...editorObjects];
   },
 
   async getAssetPool(): Promise<AssetPool> {
