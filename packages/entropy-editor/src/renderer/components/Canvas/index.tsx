@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactElement } from 'react';
-import type { IEditorObjectLayer, IEditorPrefab, IEditorPrefabInstance, IEditorTileLayer } from '../../../shared/types';
+import type { IEditorObjectLayer, IEditorPrefabInstance, IEditorTileLayer } from '../../../shared/types';
 import { cn } from '../../lib/utils';
 import type { BrushShape, EditorMode } from '../../stores/editor-store';
 import { useEditorStore } from '../../stores/editor-store';
@@ -121,62 +121,13 @@ interface IInstanceRenderInfo {
   readonly isMarker: boolean;
 }
 
-const DEFAULT_MARKER_SIZE = 16;
+const DEFAULT_MARKER_SIZE = 32;
 
 /**
- * Returns base (unscaled) render geometry and colors for a prefab instance.
- * Component overrides are not yet resolved — only the prefab template is inspected.
+ * Returns render geometry and colors for an instance marker.
+ * Code-only prefabs have no component data to inspect — all instances render as simple markers.
  */
-function getInstanceRenderInfo(
-  prefab: IEditorPrefab | undefined,
-  tileWidth: number,
-  tileHeight: number
-): IInstanceRenderInfo {
-  if (prefab === undefined) {
-    return {
-      width: DEFAULT_MARKER_SIZE,
-      height: DEFAULT_MARKER_SIZE,
-      fillColor: 'rgba(239, 68, 68, 0.4)',
-      strokeColor: 'rgba(239, 68, 68, 0.8)',
-      isMarker: true
-    };
-  }
-
-  const components = prefab.template.components;
-
-  const rectRenderer = components.find(c => c.typeName === 'RectangleRenderer');
-  if (rectRenderer !== undefined) {
-    const w = typeof rectRenderer.data.renderWidth === 'number' && rectRenderer.data.renderWidth > 0
-      ? rectRenderer.data.renderWidth
-      : tileWidth;
-    const h = typeof rectRenderer.data.renderHeight === 'number' && rectRenderer.data.renderHeight > 0
-      ? rectRenderer.data.renderHeight
-      : tileHeight;
-    const fill = typeof rectRenderer.data.color === 'string' ? rectRenderer.data.color : 'rgba(100, 149, 237, 0.5)';
-    const stroke = typeof rectRenderer.data.borderColor === 'string'
-      ? rectRenderer.data.borderColor
-      : 'rgba(100, 149, 237, 0.9)';
-    return { width: w, height: h, fillColor: fill, strokeColor: stroke, isMarker: false };
-  }
-
-  const imageRenderer = components.find(c => c.typeName === 'ImageRenderer');
-  if (imageRenderer !== undefined) {
-    const w = typeof imageRenderer.data.renderWidth === 'number' && imageRenderer.data.renderWidth > 0
-      ? imageRenderer.data.renderWidth
-      : tileWidth;
-    const h = typeof imageRenderer.data.renderHeight === 'number' && imageRenderer.data.renderHeight > 0
-      ? imageRenderer.data.renderHeight
-      : tileHeight;
-    return {
-      width: w,
-      height: h,
-      fillColor: 'rgba(168, 85, 247, 0.3)',
-      strokeColor: 'rgba(168, 85, 247, 0.8)',
-      isMarker: false
-    };
-  }
-
-  // No renderer component — draw a small marker
+function getInstanceRenderInfo(): IInstanceRenderInfo {
   return {
     width: DEFAULT_MARKER_SIZE,
     height: DEFAULT_MARKER_SIZE,
@@ -207,7 +158,7 @@ export function Canvas(): ReactElement {
   const activeTileId = useEditorStore(state => state.activeTileId);
   const activeTilesetId = useEditorStore(state => state.activeTilesetId);
   const selectedInstanceId = useEditorStore(state => state.selectedInstanceId);
-  const selectedPrefabId = useEditorStore(state => state.selectedPrefabId);
+  const selectedGameObjectClass = useEditorStore(state => state.selectedGameObjectClass);
   const brushSize = useEditorStore(state => state.brushSize);
   const brushShape = useEditorStore(state => state.brushShape);
   const showGrid = useEditorStore(state => state.showGrid);
@@ -224,16 +175,7 @@ export function Canvas(): ReactElement {
   const showWeights = useEditorStore(state => state.showWeights);
   const setActiveWeight = useEditorStore(state => state.setActiveWeight);
   const pushUndoSnapshot = useEditorStore(state => state.pushUndoSnapshot);
-  const prefabs = useEditorStore(state => state.prefabs);
   const objectSnapToGrid = useEditorStore(state => state.objectSnapToGrid);
-
-  const prefabById = useMemo(() => {
-    const map = new Map<string, IEditorPrefab>();
-    for (const p of prefabs) {
-      map.set(p.id, p);
-    }
-    return map;
-  }, [prefabs]);
 
   // Register canvas element for export operations
   useEffect(() => {
@@ -436,8 +378,7 @@ export function Canvas(): ReactElement {
         const sortedInstances = [...layer.instances].sort((a, b) => a.zIndex - b.zIndex);
 
         for (const inst of sortedInstances) {
-          const prefab = prefabById.get(inst.prefabId);
-          const info = getInstanceRenderInfo(prefab, mapFile.tileWidth, mapFile.tileHeight);
+          const info = getInstanceRenderInfo();
           const scaledW = info.width * inst.scaleX;
           const scaledH = info.height * inst.scaleY;
 
@@ -586,8 +527,7 @@ export function Canvas(): ReactElement {
           continue;
         }
 
-        const prefab = prefabById.get(inst.prefabId);
-        const info = getInstanceRenderInfo(prefab, mapFile.tileWidth, mapFile.tileHeight);
+        const info = getInstanceRenderInfo();
         const scaledW = info.width * inst.scaleX;
         const scaledH = info.height * inst.scaleY;
 
@@ -602,7 +542,7 @@ export function Canvas(): ReactElement {
         break;
       }
     }
-  }, [mapFile, selectedInstanceId, showGrid, showPassability, showWeights, prefabById]);
+  }, [mapFile, selectedInstanceId, showGrid, showPassability, showWeights]);
 
   const applyTool = useCallback((row: number, col: number): void => {
     if (mapFile === null) {
@@ -873,13 +813,13 @@ export function Canvas(): ReactElement {
       const clickX = position.x;
       const clickY = position.y;
 
-      if (activeTool === 'brush' && selectedPrefabId !== null) {
-        placeInstance(selectedPrefabId, clickX, clickY);
+      if (activeTool === 'brush' && selectedGameObjectClass !== null) {
+        placeInstance(selectedGameObjectClass, clickX, clickY);
         return;
       }
 
       if (activeTool === 'select') {
-        const hitInstance = findInstanceAtPoint(layer, clickX, clickY, mapFile.tileWidth, mapFile.tileHeight, prefabById);
+        const hitInstance = findInstanceAtPoint(layer, clickX, clickY);
 
         selectInstance(hitInstance?.id ?? null);
 
@@ -904,7 +844,7 @@ export function Canvas(): ReactElement {
       const offset = Math.floor(brushSize / 2);
       applyTool(pos.row - offset, pos.col - offset);
     }
-  }, [activeLayerIndex, selectedPrefabId, activeTool, applyTool, brushSize, getCanvasPosition, getGridPosition, mapFile, placeInstance, prefabById, pushUndoSnapshot, selectInstance]);
+  }, [activeLayerIndex, selectedGameObjectClass, activeTool, applyTool, brushSize, getCanvasPosition, getGridPosition, mapFile, placeInstance, pushUndoSnapshot, selectInstance]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
     if (isPanningRef.current) {
@@ -1026,9 +966,9 @@ export function Canvas(): ReactElement {
 
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
-    const prefabId = e.dataTransfer.getData('application/entropy-prefab');
+    const className = e.dataTransfer.getData('application/entropy-prefab');
 
-    if (!prefabId || mapFile === null) {
+    if (!className || mapFile === null) {
       return;
     }
 
@@ -1050,7 +990,7 @@ export function Canvas(): ReactElement {
       return;
     }
 
-    placeInstance(prefabId, canvasX, canvasY);
+    placeInstance(className, canvasX, canvasY);
   }, [mapFile, placeInstance]);
 
   if (mapFile === null) {
@@ -1103,17 +1043,13 @@ export function Canvas(): ReactElement {
 function findInstanceAtPoint(
   layer: IEditorObjectLayer,
   x: number,
-  y: number,
-  tileWidth: number,
-  tileHeight: number,
-  prefabMap: Map<string, IEditorPrefab>
+  y: number
 ): IEditorPrefabInstance | null {
   // Iterate top-to-bottom (highest zIndex first) for correct pick order
   const sortedInstances = [...layer.instances].sort((a, b) => b.zIndex - a.zIndex);
 
   for (const inst of sortedInstances) {
-    const prefab = prefabMap.get(inst.prefabId);
-    const info = getInstanceRenderInfo(prefab, tileWidth, tileHeight);
+    const info = getInstanceRenderInfo();
     const scaledW = info.width * inst.scaleX;
     const scaledH = info.height * inst.scaleY;
 

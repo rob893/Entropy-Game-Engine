@@ -1,13 +1,8 @@
 import { Button, Input, Label, NumberField, Separator, TextField } from '@heroui/react';
 import { Trash2 } from 'lucide-react';
-import { useMemo } from 'react';
 import type { ReactElement } from 'react';
-import { COMPONENT_SCHEMAS } from '../../../shared/schemas/component-schemas';
 import type {
-  IComponentOverride,
-  IComponentSchema,
   IEditorMapFile,
-  IEditorPrefab,
   IEditorPrefabInstance,
   IEditorTileLayer
 } from '../../../shared/types';
@@ -30,22 +25,6 @@ function findInstance(mapFile: IEditorMapFile, instanceId: string): IEditorPrefa
   }
 
   return null;
-}
-
-function resolveComponentValue(
-  componentData: Record<string, unknown>,
-  overrides: IComponentOverride[],
-  typeName: string
-): Record<string, unknown> {
-  const resolved = { ...componentData };
-
-  for (const override of overrides) {
-    if (override.typeName === typeName) {
-      resolved[override.fieldPath] = override.value;
-    }
-  }
-
-  return resolved;
 }
 
 function formatFieldValue(value: unknown): string {
@@ -79,7 +58,6 @@ function formatFieldValue(value: unknown): string {
     }
   }
 
-  // symbol, bigint, function — stringify safely
   try {
     return JSON.stringify(value) ?? '—';
   } catch {
@@ -178,32 +156,14 @@ function MapProperties({ mapFile }: { mapFile: IEditorMapFile }): ReactElement {
   );
 }
 
-interface IInstancePropertiesProps {
-  instance: IEditorPrefabInstance;
-  prefab: IEditorPrefab | undefined;
-}
-
-function InstanceProperties({ instance, prefab }: IInstancePropertiesProps): ReactElement {
+function InstanceProperties({ instance }: { instance: IEditorPrefabInstance }): ReactElement {
   const moveInstance = useEditorStore(state => state.moveInstance);
   const rotateInstance = useEditorStore(state => state.rotateInstance);
   const scaleInstance = useEditorStore(state => state.scaleInstance);
   const deleteInstance = useEditorStore(state => state.deleteInstance);
   const pushUndoSnapshot = useEditorStore(state => state.pushUndoSnapshot);
-  const userComponentSchemas = useEditorStore(state => state.userComponentSchemas);
 
-  const allSchemaMap = useMemo((): ReadonlyMap<string, IComponentSchema> => {
-    const map = new Map<string, IComponentSchema>(COMPONENT_SCHEMAS);
-    for (const schema of userComponentSchemas) {
-      if (!map.has(schema.typeName)) {
-        map.set(schema.typeName, schema);
-      }
-    }
-    return map;
-  }, [userComponentSchemas]);
-
-  const templateComponents = prefab?.template.components ?? [];
-  // Exclude Transform from read-only list — instance fields cover it
-  const displayComponents = templateComponents.filter(c => c.typeName !== 'Transform');
+  const propertyEntries = Object.entries(instance.properties);
 
   return (
     <div className="space-y-4">
@@ -211,11 +171,15 @@ function InstanceProperties({ instance, prefab }: IInstancePropertiesProps): Rea
         <div className="text-sm text-foreground">
           <span className="font-medium">Instance:</span> {instance.name}
         </div>
-        {prefab !== undefined && (
-          <div className="text-xs text-muted">
-            <span className="font-medium">Prefab:</span> {prefab.name}
-          </div>
-        )}
+        <div className="text-xs text-muted">
+          <span className="font-medium">Class:</span> {instance.gameObjectClass}
+        </div>
+        <div className="text-xs text-muted">
+          <span className="font-medium">Tag:</span> {instance.tag || '—'}
+        </div>
+        <div className="text-xs text-muted">
+          <span className="font-medium">Layer:</span> {instance.layer}
+        </div>
       </div>
 
       <Separator />
@@ -287,46 +251,19 @@ function InstanceProperties({ instance, prefab }: IInstancePropertiesProps): Rea
         </NumberField>
       </div>
 
-      {displayComponents.length > 0 && (
+      {propertyEntries.length > 0 && (
         <>
           <Separator />
 
-          <div className="space-y-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted">Components</span>
+          <div className="space-y-1">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted">Properties</span>
 
-            {displayComponents.map(component => {
-              const schema = allSchemaMap.get(component.typeName);
-              const resolved = resolveComponentValue(
-                component.data,
-                instance.componentOverrides,
-                component.typeName
-              );
-              const displayName = schema?.displayName ?? component.typeName;
-
-              return (
-                <div key={component.typeName} className="space-y-1">
-                  <span className="text-xs font-medium text-foreground">{displayName}</span>
-
-                  {schema !== undefined && schema.fields.length > 0 ? (
-                    schema.fields.map(field => (
-                      <div key={field.name} className="grid grid-cols-[88px,1fr] gap-x-2 text-xs">
-                        <span className="text-muted truncate">{field.displayName}</span>
-                        <span className="text-foreground truncate">
-                          {formatFieldValue(resolved[field.name] ?? field.defaultValue)}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    Object.entries(resolved).map(([key, value]) => (
-                      <div key={key} className="grid grid-cols-[88px,1fr] gap-x-2 text-xs">
-                        <span className="text-muted truncate">{key}</span>
-                        <span className="text-foreground truncate">{formatFieldValue(value)}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              );
-            })}
+            {propertyEntries.map(([key, value]) => (
+              <div key={key} className="grid grid-cols-[88px,1fr] gap-x-2 text-xs">
+                <span className="truncate text-muted">{key}</span>
+                <span className="truncate text-foreground">{formatFieldValue(value)}</span>
+              </div>
+            ))}
           </div>
         </>
       )}
@@ -346,57 +283,11 @@ function InstanceProperties({ instance, prefab }: IInstancePropertiesProps): Rea
   );
 }
 
-function PrefabSummary({ prefab }: { prefab: IEditorPrefab }): ReactElement {
-  const userComponentSchemas = useEditorStore(state => state.userComponentSchemas);
-
-  const allSchemaMap = useMemo((): ReadonlyMap<string, IComponentSchema> => {
-    const map = new Map<string, IComponentSchema>(COMPONENT_SCHEMAS);
-    for (const schema of userComponentSchemas) {
-      if (!map.has(schema.typeName)) {
-        map.set(schema.typeName, schema);
-      }
-    }
-    return map;
-  }, [userComponentSchemas]);
-
-  const componentNames = prefab.template.components.map(c => {
-    const schema = allSchemaMap.get(c.typeName);
-
-    return schema?.displayName ?? c.typeName;
-  });
-
-  return (
-    <div className="space-y-3">
-      <div className="space-y-1">
-        <div className="text-sm text-foreground">
-          <span className="font-medium">Prefab:</span> {prefab.name}
-        </div>
-        <div className="text-xs text-muted">
-          <span className="font-medium">Category:</span> {prefab.category}
-        </div>
-        <div className="text-xs text-muted">
-          <span className="font-medium">Components:</span> {prefab.template.components.length}
-        </div>
-      </div>
-
-      {componentNames.length > 0 && (
-        <div className="space-y-1">
-          {componentNames.map(name => (
-            <div key={name} className="text-xs text-muted pl-2">— {name}</div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 // ── Main Component ──
 
 export function PropertiesPanel(): ReactElement {
   const mapFile = useEditorStore(state => state.mapFile);
   const selectedInstanceId = useEditorStore(state => state.selectedInstanceId);
-  const selectedPrefabId = useEditorStore(state => state.selectedPrefabId);
-  const prefabs = useEditorStore(state => state.prefabs);
 
   if (mapFile === null) {
     return (
@@ -409,42 +300,21 @@ export function PropertiesPanel(): ReactElement {
     );
   }
 
-  // Instance selected — resolve and show inspector
   if (selectedInstanceId !== null) {
     const instance = findInstance(mapFile, selectedInstanceId);
 
     if (instance !== null) {
-      const prefab = prefabs.find(p => p.id === instance.prefabId);
-
       return (
         <Panel className="h-full border-l border-border bg-surface">
           <PanelHeader>Properties</PanelHeader>
           <PanelContent>
-            <InstanceProperties instance={instance} prefab={prefab} />
-          </PanelContent>
-        </Panel>
-      );
-    }
-    // Stale selection — fall through to prefab or map view
-  }
-
-  // Prefab selected in library
-  if (selectedPrefabId !== null) {
-    const prefab = prefabs.find(p => p.id === selectedPrefabId);
-
-    if (prefab !== undefined) {
-      return (
-        <Panel className="h-full border-l border-border bg-surface">
-          <PanelHeader>Properties</PanelHeader>
-          <PanelContent>
-            <PrefabSummary prefab={prefab} />
+            <InstanceProperties instance={instance} />
           </PanelContent>
         </Panel>
       );
     }
   }
 
-  // Default: map properties
   return (
     <Panel className="h-full border-l border-border bg-surface">
       <PanelHeader>Properties</PanelHeader>
