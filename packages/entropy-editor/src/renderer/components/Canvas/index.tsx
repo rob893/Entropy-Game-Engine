@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactElement } from 'react';
-import type { IEditorObjectLayer, IEditorPrefabInstance, IEditorTileLayer } from '../../../shared/types';
+import type { IEditorObjectLayer, IEditorPrefab, IEditorPrefabInstance, IEditorTileLayer } from '../../../shared/types';
 import { cn } from '../../lib/utils';
 import type { BrushShape, EditorMode } from '../../stores/editor-store';
 import { useEditorStore } from '../../stores/editor-store';
@@ -113,6 +113,79 @@ function getBrushOverlayColors(mode: EditorMode): { fill: string; stroke: string
   }
 }
 
+interface IInstanceRenderInfo {
+  readonly width: number;
+  readonly height: number;
+  readonly fillColor: string;
+  readonly strokeColor: string;
+  readonly isMarker: boolean;
+}
+
+const DEFAULT_MARKER_SIZE = 16;
+
+/**
+ * Returns base (unscaled) render geometry and colors for a prefab instance.
+ * Component overrides are not yet resolved — only the prefab template is inspected.
+ */
+function getInstanceRenderInfo(
+  prefab: IEditorPrefab | undefined,
+  tileWidth: number,
+  tileHeight: number
+): IInstanceRenderInfo {
+  if (prefab === undefined) {
+    return {
+      width: DEFAULT_MARKER_SIZE,
+      height: DEFAULT_MARKER_SIZE,
+      fillColor: 'rgba(239, 68, 68, 0.4)',
+      strokeColor: 'rgba(239, 68, 68, 0.8)',
+      isMarker: true
+    };
+  }
+
+  const components = prefab.template.components;
+
+  const rectRenderer = components.find(c => c.typeName === 'RectangleRenderer');
+  if (rectRenderer !== undefined) {
+    const w = typeof rectRenderer.data.renderWidth === 'number' && rectRenderer.data.renderWidth > 0
+      ? rectRenderer.data.renderWidth
+      : tileWidth;
+    const h = typeof rectRenderer.data.renderHeight === 'number' && rectRenderer.data.renderHeight > 0
+      ? rectRenderer.data.renderHeight
+      : tileHeight;
+    const fill = typeof rectRenderer.data.color === 'string' ? rectRenderer.data.color : 'rgba(100, 149, 237, 0.5)';
+    const stroke = typeof rectRenderer.data.borderColor === 'string'
+      ? rectRenderer.data.borderColor
+      : 'rgba(100, 149, 237, 0.9)';
+    return { width: w, height: h, fillColor: fill, strokeColor: stroke, isMarker: false };
+  }
+
+  const imageRenderer = components.find(c => c.typeName === 'ImageRenderer');
+  if (imageRenderer !== undefined) {
+    const w = typeof imageRenderer.data.renderWidth === 'number' && imageRenderer.data.renderWidth > 0
+      ? imageRenderer.data.renderWidth
+      : tileWidth;
+    const h = typeof imageRenderer.data.renderHeight === 'number' && imageRenderer.data.renderHeight > 0
+      ? imageRenderer.data.renderHeight
+      : tileHeight;
+    return {
+      width: w,
+      height: h,
+      fillColor: 'rgba(168, 85, 247, 0.3)',
+      strokeColor: 'rgba(168, 85, 247, 0.8)',
+      isMarker: false
+    };
+  }
+
+  // No renderer component — draw a small marker
+  return {
+    width: DEFAULT_MARKER_SIZE,
+    height: DEFAULT_MARKER_SIZE,
+    fillColor: 'rgba(100, 149, 237, 0.4)',
+    strokeColor: 'rgba(100, 149, 237, 0.9)',
+    isMarker: true
+  };
+}
+
 export function Canvas(): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
@@ -151,6 +224,16 @@ export function Canvas(): ReactElement {
   const showWeights = useEditorStore(state => state.showWeights);
   const setActiveWeight = useEditorStore(state => state.setActiveWeight);
   const pushUndoSnapshot = useEditorStore(state => state.pushUndoSnapshot);
+  const prefabs = useEditorStore(state => state.prefabs);
+  const objectSnapToGrid = useEditorStore(state => state.objectSnapToGrid);
+
+  const prefabById = useMemo(() => {
+    const map = new Map<string, IEditorPrefab>();
+    for (const p of prefabs) {
+      map.set(p.id, p);
+    }
+    return map;
+  }, [prefabs]);
 
   // Register canvas element for export operations
   useEffect(() => {
@@ -353,26 +436,38 @@ export function Canvas(): ReactElement {
         const sortedInstances = [...layer.instances].sort((a, b) => a.zIndex - b.zIndex);
 
         for (const inst of sortedInstances) {
-          // Placeholder rendering: draw a labeled rectangle for each instance
-          const instWidth = mapFile.tileWidth * inst.scaleX;
-          const instHeight = mapFile.tileHeight * inst.scaleY;
+          const prefab = prefabById.get(inst.prefabId);
+          const info = getInstanceRenderInfo(prefab, mapFile.tileWidth, mapFile.tileHeight);
+          const scaledW = info.width * inst.scaleX;
+          const scaledH = info.height * inst.scaleY;
 
           ctx.save();
-          ctx.globalAlpha = layer.opacity;
-          ctx.translate(inst.x + instWidth / 2, inst.y + instHeight / 2);
+          ctx.globalAlpha = layer.opacity * (inst.enabled ? 1 : 0.4);
+          ctx.translate(inst.x + scaledW / 2, inst.y + scaledH / 2);
           ctx.rotate((inst.rotation * Math.PI) / 180);
-          ctx.fillStyle = 'rgba(100, 149, 237, 0.3)';
-          ctx.fillRect(-instWidth / 2, -instHeight / 2, instWidth, instHeight);
-          ctx.strokeStyle = 'rgba(100, 149, 237, 0.8)';
+
+          ctx.fillStyle = info.fillColor;
+          ctx.fillRect(-scaledW / 2, -scaledH / 2, scaledW, scaledH);
+          ctx.strokeStyle = info.strokeColor;
           ctx.lineWidth = 1;
-          ctx.strokeRect(-instWidth / 2, -instHeight / 2, instWidth, instHeight);
+          ctx.strokeRect(-scaledW / 2, -scaledH / 2, scaledW, scaledH);
+
+          if (info.isMarker) {
+            // Draw crosshair for marker-only instances
+            ctx.beginPath();
+            ctx.moveTo(-scaledW / 4, 0);
+            ctx.lineTo(scaledW / 4, 0);
+            ctx.moveTo(0, -scaledH / 4);
+            ctx.lineTo(0, scaledH / 4);
+            ctx.stroke();
+          }
 
           ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
           ctx.font = '10px sans-serif';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           const label = inst.name.length > 12 ? `${inst.name.slice(0, 10)}…` : inst.name;
-          ctx.fillText(label, 0, 0);
+          ctx.fillText(label, 0, scaledH / 2 + 8);
           ctx.restore();
         }
       }
@@ -491,19 +586,23 @@ export function Canvas(): ReactElement {
           continue;
         }
 
-        const instWidth = mapFile.tileWidth * inst.scaleX;
-        const instHeight = mapFile.tileHeight * inst.scaleY;
+        const prefab = prefabById.get(inst.prefabId);
+        const info = getInstanceRenderInfo(prefab, mapFile.tileWidth, mapFile.tileHeight);
+        const scaledW = info.width * inst.scaleX;
+        const scaledH = info.height * inst.scaleY;
 
         ctx.save();
+        ctx.translate(inst.x + scaledW / 2, inst.y + scaledH / 2);
+        ctx.rotate((inst.rotation * Math.PI) / 180);
         ctx.strokeStyle = '#22c55e';
         ctx.lineWidth = 2;
         ctx.setLineDash([4, 4]);
-        ctx.strokeRect(inst.x - 1, inst.y - 1, instWidth + 2, instHeight + 2);
+        ctx.strokeRect(-scaledW / 2 - 1, -scaledH / 2 - 1, scaledW + 2, scaledH + 2);
         ctx.restore();
         break;
       }
     }
-  }, [mapFile, selectedInstanceId, showGrid, showPassability, showWeights]);
+  }, [mapFile, selectedInstanceId, showGrid, showPassability, showWeights, prefabById]);
 
   const applyTool = useCallback((row: number, col: number): void => {
     if (mapFile === null) {
@@ -780,7 +879,7 @@ export function Canvas(): ReactElement {
       }
 
       if (activeTool === 'select') {
-        const hitInstance = findInstanceAtPoint(layer, clickX, clickY, mapFile.tileWidth, mapFile.tileHeight);
+        const hitInstance = findInstanceAtPoint(layer, clickX, clickY, mapFile.tileWidth, mapFile.tileHeight, prefabById);
 
         selectInstance(hitInstance?.id ?? null);
 
@@ -805,7 +904,7 @@ export function Canvas(): ReactElement {
       const offset = Math.floor(brushSize / 2);
       applyTool(pos.row - offset, pos.col - offset);
     }
-  }, [activeLayerIndex, selectedPrefabId, activeTool, applyTool, brushSize, getCanvasPosition, getGridPosition, mapFile, placeInstance, pushUndoSnapshot, selectInstance]);
+  }, [activeLayerIndex, selectedPrefabId, activeTool, applyTool, brushSize, getCanvasPosition, getGridPosition, mapFile, placeInstance, prefabById, pushUndoSnapshot, selectInstance]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>): void => {
     if (isPanningRef.current) {
@@ -815,12 +914,18 @@ export function Canvas(): ReactElement {
     if (isDraggingObjectRef.current && selectedInstanceId !== null) {
       const position = getCanvasPosition(e);
 
-      if (position === null) {
+      if (position === null || mapFile === null) {
         return;
       }
 
-      const newX = dragObjectStartRef.current.x + (position.x - dragStartRef.current.x);
-      const newY = dragObjectStartRef.current.y + (position.y - dragStartRef.current.y);
+      let newX = dragObjectStartRef.current.x + (position.x - dragStartRef.current.x);
+      let newY = dragObjectStartRef.current.y + (position.y - dragStartRef.current.y);
+
+      if (objectSnapToGrid) {
+        newX = Math.round(newX / mapFile.tileWidth) * mapFile.tileWidth;
+        newY = Math.round(newY / mapFile.tileHeight) * mapFile.tileHeight;
+      }
+
       moveInstance(selectedInstanceId, newX, newY);
       return;
     }
@@ -841,7 +946,7 @@ export function Canvas(): ReactElement {
       const offset = Math.floor(brushSize / 2);
       applyTool(pos.row - offset, pos.col - offset);
     }
-  }, [activeTool, applyTool, brushSize, drawOverlay, getCanvasPosition, getGridPosition, moveInstance, selectedInstanceId]);
+  }, [activeTool, applyTool, brushSize, drawOverlay, getCanvasPosition, getGridPosition, mapFile, moveInstance, objectSnapToGrid, selectedInstanceId]);
 
   const handleMouseUp = useCallback((): void => {
     isPaintingRef.current = false;
@@ -914,6 +1019,40 @@ export function Canvas(): ReactElement {
     applyTransform();
   }, [applyTransform, mapFile]);
 
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+    const prefabId = e.dataTransfer.getData('application/entropy-prefab');
+
+    if (!prefabId || mapFile === null) {
+      return;
+    }
+
+    const canvas = canvasRef.current;
+
+    if (canvas === null) {
+      return;
+    }
+
+    // Convert screen coords to canvas coords (getBoundingClientRect accounts for CSS transforms)
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const canvasX = (e.clientX - rect.left) * scaleX;
+    const canvasY = (e.clientY - rect.top) * scaleY;
+
+    // Reject drops outside the canvas area
+    if (canvasX < 0 || canvasX > canvas.width || canvasY < 0 || canvasY > canvas.height) {
+      return;
+    }
+
+    placeInstance(prefabId, canvasX, canvasY);
+  }, [mapFile, placeInstance]);
+
   if (mapFile === null) {
     return <div className="canvas-area" />;
   }
@@ -929,6 +1068,8 @@ export function Canvas(): ReactElement {
       onMouseMove={handlePanMove}
       onMouseUp={handlePanEnd}
       onMouseLeave={handlePanEnd}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
       onAuxClick={(e): void => e.preventDefault()}
     >
       <div
@@ -964,16 +1105,39 @@ function findInstanceAtPoint(
   x: number,
   y: number,
   tileWidth: number,
-  tileHeight: number
+  tileHeight: number,
+  prefabMap: Map<string, IEditorPrefab>
 ): IEditorPrefabInstance | null {
+  // Iterate top-to-bottom (highest zIndex first) for correct pick order
   const sortedInstances = [...layer.instances].sort((a, b) => b.zIndex - a.zIndex);
 
   for (const inst of sortedInstances) {
-    const width = tileWidth * inst.scaleX;
-    const height = tileHeight * inst.scaleY;
+    const prefab = prefabMap.get(inst.prefabId);
+    const info = getInstanceRenderInfo(prefab, tileWidth, tileHeight);
+    const scaledW = info.width * inst.scaleX;
+    const scaledH = info.height * inst.scaleY;
 
-    if (x >= inst.x && x <= inst.x + width && y >= inst.y && y <= inst.y + height) {
-      return inst;
+    if (inst.rotation === 0) {
+      // Fast axis-aligned check
+      if (x >= inst.x && x <= inst.x + scaledW && y >= inst.y && y <= inst.y + scaledH) {
+        return inst;
+      }
+    } else {
+      // Transform hit point into instance-local space (centered, then inverse-rotate)
+      const cx = inst.x + scaledW / 2;
+      const cy = inst.y + scaledH / 2;
+      const rad = -(inst.rotation * Math.PI) / 180;
+      const dx = x - cx;
+      const dy = y - cy;
+      const localX = dx * Math.cos(rad) - dy * Math.sin(rad);
+      const localY = dx * Math.sin(rad) + dy * Math.cos(rad);
+
+      if (
+        localX >= -scaledW / 2 && localX <= scaledW / 2
+        && localY >= -scaledH / 2 && localY <= scaledH / 2
+      ) {
+        return inst;
+      }
     }
   }
 
