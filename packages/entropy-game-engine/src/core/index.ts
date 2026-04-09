@@ -1,5 +1,6 @@
 export * from './ComponentRegistry';
 export * from './GameEngine';
+export * from './PrefabRegistry';
 export * from './SceneSerializer';
 export * from './enums';
 export * from './helpers';

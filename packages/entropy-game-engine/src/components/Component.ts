@@ -6,7 +6,7 @@ import { Topic } from '../core/helpers/Topic';
 import type { Vector2 } from '../core/helpers/Vector2';
 import type { Physics } from '../core/physics/Physics';
 import type { Time } from '../core/Time';
-import type { IGameObjectConstructionParams } from '../core/types';
+import type { IGameObjectConstructionParams, PrefabName } from '../core/types';
 import type { GameObject } from '../game-objects/GameObject';
 import type { Terrain } from '../game-objects/Terrain';
 import type { Transform } from './Transform';
@@ -200,6 +200,15 @@ export abstract class Component {
     parent?: Transform
   ): GameObject {
     return this.gameObject.instantiate(type, position, rotation, parent);
+  }
+
+  protected instantiatePrefab(
+    prefabName: PrefabName,
+    position?: Vector2,
+    rotation?: number,
+    parent?: Transform
+  ): GameObject {
+    return this.gameObject.instantiatePrefab(prefabName, position, rotation, parent);
   }
 
   protected destroy(object: GameObject, time: number = 0): void {
